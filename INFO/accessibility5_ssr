@@ -1,0 +1,10 @@
+Server-Side Rendering
+
+server renders website s.t.browser of user can load it faster
+
+- Implement SSR to improve the website’s loading speed and overall performance.
+- Ensure that content is pre-rendered on the server and delivered to users’ browsers for faster initial page loads.
+- Optimize SEO by providing search engines with pre-rendered HTML content. - can take google to help with this
+
+
+SEO = search engine optimizer
