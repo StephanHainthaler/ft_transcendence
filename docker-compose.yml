@@ -1,6 +1,6 @@
 services:
   frontend:
-    container_name: transcendence_client
+    container_name: transcendence_frontend
 
     build:
       context: .
@@ -12,15 +12,15 @@ services:
     networks:
       transcendence_network:
 
-  backend:
-    container_name: transcendence_server
+  api:
+    container_name: transcendence_api
 
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: backend/api/Dockerfile
 
     ports:
-      - "3000:3000"
+      - "3001:3000"
 
     networks:
       transcendence_network:

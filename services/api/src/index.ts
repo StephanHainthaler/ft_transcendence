@@ -1,6 +1,11 @@
 import Fastify from 'fastify'
+import { healthRoutes } from './healthcheck/healthcheck';
 
 const fastify = Fastify({ logger: true });
+
+fastify.register(healthRoutes, {
+  prefix: "/api/health/"
+});
 
 fastify.get("/api/ping", async () => {
   return "pong";

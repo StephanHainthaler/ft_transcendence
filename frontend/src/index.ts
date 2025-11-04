@@ -1,27 +1,30 @@
-import "./app.css";
+import { router } from "./routes/router";
 
 try {
-  const el = document.getElementById("hello-world-trigger");
-  if (!el) throw new Error("Failed to get 'hello-world-trigger'");
+  document.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement;
+    const link = target.closest('a[href^="/"]');
 
-  el.addEventListener('click', async () => {
-    try {
-      const output = document.getElementById('hello-world-response');
-      if (!output) throw new Error("Failed to get 'hello-world-response' element");
-
-      const response = await fetch("/api/", {
-        method: "GET",
-      });
-
-      console.log(response);
-      const respJson = await response.text();
-      output.innerHTML = respJson;
-      output.className = 'bg-red-500';
-      console.log(respJson);
-    } catch (e: any) {
-      console.error(e);
+    if (link) {
+      e.preventDefault();
+      const ref = link.getAttribute('href');
+      if (ref) {
+        await router.goto(ref);
+      }
     }
-  })
+  });
+
+  (async () => {
+    if (router.location !== window.location.pathname) {
+      await router.goto('/');
+    } else {
+      await router.refresh();
+    }
+    window.addEventListener('popstate', async () => {
+      console.log(history);
+      await router.goto(window.location.pathname, true);
+    })
+  })();
 } catch (e: any) {
-  console.error(e);
+
 }

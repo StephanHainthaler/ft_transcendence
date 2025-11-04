@@ -1,10 +1,20 @@
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
 
 export default defineConfig({
   plugins: [tailwindcss()],
-  root: './',
+  resolve: {
+    alias: {
+      '@lib': path.resolve(__dirname, './src/lib')
+    }
+  },
   server: {
+    watch: {
+      ignored: ['**/.nfs*'],
+      usePolling: true,
+      interval: 1000
+    },
     port: 8080,
     proxy: {
       "/api": {
@@ -15,6 +25,6 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    target: 'esnext'
+    target: 'esnext',
   }
-})
+});

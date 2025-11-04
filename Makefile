@@ -1,23 +1,37 @@
-.PHONY: dev frontend backend install clean
+.PHONY: prod dev frontend backend install clean api test test-backend test-frontend
+
+FRONTEND := ./frontend
+
+BACKEND := ./services
+API_DIR := $(BACKEND)/api
 
 dev:
-	@make -j2 frontend backend
+	@npm run dev
 
 frontend:
-	@cd frontend && npm run dev
+	@cd ${FRONTEND} && npm run dev
 
-backend:
-	@cd backend && npm run dev
+api:
+	@cd ${API_DIR} && npm run dev
 
 install:
-	@cd frontend && npm install
-	@cd backend && npm install
+	@npm install
 
 clean:
-	@rm -rf frontend/node_modules frontend/dist
-	@rm -rf backend/node_modules backend/dist
+	@rm -rf frontend/node_modules
+	@rm -rf node_modules
 
-prod:
+test:
+	@make test-backend
+	@make test-frontend
+
+test-backend:
+	cd $(API_DIR) && npm run test
+
+test-frontend:
+	@./scripts/test-frontend.sh
+
+up:
 	@docker compose up --build
 
 down:

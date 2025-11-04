@@ -42,8 +42,10 @@ While testing, the command
 npm run dev
 ```
 
-will run [vite](https://vite.dev/guide/), and serves files at **http://localhost:5173**.
+will run [vite](https://vite.dev/guide/), and serves files at **http://localhost:3000**;
 Vite is a utility that bundles and translates our TypeScript files into JavaScript files and serves them.
+
+This will also start the backend services in dev mode.
 
 For production builds, we will use
 
@@ -51,12 +53,13 @@ For production builds, we will use
 make prod
 ```
 
-which will start the docker compose, and run both frontend and backend in separate containers
+which will start the docker compose, and run frontend and backend services in separate containers
 
 #### Module List
 
-- Web []
-- User Management []
+- Web               []
+- User Management   []
+- Server Side Pong  []
 - etc...
 
 #### Dependencies
@@ -73,30 +76,57 @@ Possible project structure:
 
 ```
 ft_transcendence/
-├── backend                     # server / private code
-│   ├── src
-│   │   ├── user                # user server module
-│   │   │   └── userService.ts  # user backend service
-│   │   └── index.ts
-│   └── Dockerfile
-├── frontend                    # client / public code
-│   ├── nginx
-│   │   └── nginx.conf
+├── frontend                        # client / public code
+│   ├── nginx                       # webserver
+│   │   └── ...
 │   ├── src
 │   │   ├── routes
-│   │   ├── user                # user client module
-│   │   │   └── userClient.ts   # user api client
-│   │   ├── app.css
-│   │   └── index.ts            # 'entrypoint'
+│   │   │   └── ...
+│   │   ├── lib                     # client modules
+│   │   │   └── user                # user client module
+│   │   │       └── userClient.ts   # user api client
+│   │   └── ...
 │   ├── Dockerfile
 │   └── index.html
-├── shared                      # shared files
+├── scripts                         # scripts for tests usw.
+│   └── ...
+├── services                        # server / private code
+│   ├── api                         # api service module
+│   │   ├── src
+│   │   │   ├── user                # user server module
+│   │   │   │   └── userService.ts  # user service
+│   │   │   └── index.ts
+│   │   └── Dockerfile              # service-level docker file
+│   └── database                    # database module
+│       └── ...
+├── shared                          # interfaces used in client and server modules
 │   └── user
-│       └── interfaces.ts       # interfaces used in client and server modules
-├── docker-compose.yml
-├── Makefile
-└── README.md
-```
+│       └── interfaces.ts
+├── docker-compose.yml              # compose starts the app in production mode
+└── ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #### Pro's
 

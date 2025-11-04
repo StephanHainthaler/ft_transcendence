@@ -3,16 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link href="/src/app.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ft_transcendence</title>
   </head>
   <body style="height: 100%; width: 100%;">
-    <div class="size-full" id="app">
-        <h1 class="flex w-full justify-center text-3xl">ft_transcendence</h1>
-        <div class="size-full flex flex-col gap-4 justify-center items-center">
-            <button class="btn" id="hello-world-trigger">Hello?</button>
-            <div class="w-fit" id="hello-world-response"></div>
+    <nav class="flex flex-row justify-between w-full h-[5%] bg-[#20202020]" id="header">
+        <div class="px-2 h-full flex flex-row items-center justify-center">
+            <h1 class="text-3xl font-bold"><a href="/">Transcendence</a></h1>
         </div>
+    </nav>
+    <div class="size-full overflow-y-scroll" id="app">
     </div>
     <script type="module" src="/src/index.ts"></script>
   </body>

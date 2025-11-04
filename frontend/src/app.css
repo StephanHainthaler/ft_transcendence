@@ -1,11 +1,38 @@
 @import "tailwindcss";
 
 @layer components {
+  .bg-teal { @apply bg-[#008585]; }
+  .bg-teal-dark { @apply bg-[#004343]; }
+  .bg-rust { @apply bg-[#c7522a]; }
+  .bg-sage { @apply bg-[#74a892]; }
+  .bg-mint { @apply bg-[#b8cdab]; }
+  .bg-tan { @apply bg-[#f0daa5]; }
+  .bg-cream { @apply bg-[#fbf2c4]; }
+  .bg-tan-border { @apply bg-[#e5c185]; }
+
+  .text-teal { @apply text-[#008585]; }
+  .text-rust { @apply text-[#c7522a]; }
+
+  .border-tan { @apply border-[#e5c185]; }
+
   .btn {
-    @apply px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600;
+    @apply px-4 py-2 bg-teal text-white rounded transition-colors duration-250 hover:bg-teal-dark;
   }
 
-  .btn-secondary {
-    @apply px-4 py-2 bg-gray-500 text-white rounded;
+  .btn.secondary {
+    @apply bg-rust hover:bg-teal-dark;
+  }
+  .btn.accent {
+    @apply bg-sage hover:bg-teal-dark;
+  }
+  .btn.positive {
+    @apply bg-mint hover:bg-teal-dark;
+  }
+
+  .background {
+    @apply bg-cream;
+  }
+  .card {
+    @apply bg-tan border-2 border-tan;
   }
 }
