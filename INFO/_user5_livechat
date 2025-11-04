@@ -1,0 +1,5 @@
+- direct messages
+- user should be able to block other users, preventing them from seeing any further messages from the blocked account
+- invite other users to play a Pong game through the chat interface
+- tournament system should be able to notify users about the next game
+- able to access other players’ profiles through the chat interface - linked to friend profile window

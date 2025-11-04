@@ -1,0 +1,8 @@
+User should be able to:
+- sign in / sign up
+- should have username / email -  take care of duplicates
+- unique nickname, seen by other users
+- can have avatar / profile picture - else gets default one
+- can update user info
+- add friends + view online status (friend list)
+- wins/losses + Match History (incl 1v1 games) displayed in user profiles
