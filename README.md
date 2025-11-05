@@ -105,31 +105,9 @@ ft_transcendence/
 ├── docker-compose.yml              # compose starts the app in production mode
 └── ...
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #### Pro's
 
 - simple
 - separated client and server code
+- services grouped in one dir, frontend separate
 - shared types/interfaces between server and client modules
