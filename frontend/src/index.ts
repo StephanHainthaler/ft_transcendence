@@ -20,8 +20,8 @@ try {
     } else {
       await router.refresh();
     }
+
     window.addEventListener('popstate', async () => {
-      console.log(history);
       await router.goto(window.location.pathname, true);
     })
   })();

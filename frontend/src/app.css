@@ -9,30 +9,26 @@
   .bg-tan { @apply bg-[#f0daa5]; }
   .bg-cream { @apply bg-[#fbf2c4]; }
   .bg-tan-border { @apply bg-[#e5c185]; }
-
   .text-teal { @apply text-[#008585]; }
   .text-rust { @apply text-[#c7522a]; }
-
   .border-tan { @apply border-[#e5c185]; }
 
   .btn {
-    @apply px-4 py-2 bg-teal text-white rounded transition-colors duration-250 hover:bg-teal-dark;
+    @apply px-4 py-2 bg-[#008585] text-white rounded transition-colors duration-250 hover:bg-[#004343];
   }
-
   .btn.secondary {
-    @apply bg-rust hover:bg-teal-dark;
+    @apply bg-[#c7522a] hover:bg-[#004343];
   }
   .btn.accent {
-    @apply bg-sage hover:bg-teal-dark;
+    @apply bg-[#74a892] hover:bg-[#004343];
   }
   .btn.positive {
-    @apply bg-mint hover:bg-teal-dark;
+    @apply bg-[#b8cdab] hover:bg-[#004343];
   }
-
   .background {
-    @apply bg-cream;
+    @apply bg-[#fbf2c4];
   }
   .card {
-    @apply bg-tan border-2 border-tan;
+    @apply bg-[#f0daa5] border-2 border-[#e5c185];
   }
 }
