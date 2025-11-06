@@ -29,7 +29,9 @@ test-backend:
 	cd $(API_DIR) && npm run test
 
 test-frontend:
-	@./scripts/test-frontend.sh
+	npm run dev:frontend:test
+
+prod: up
 
 up:
 	@docker compose up --build

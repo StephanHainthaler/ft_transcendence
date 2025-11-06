@@ -4,6 +4,7 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [tailwindcss()],
+  envDir: '../',
   resolve: {
     alias: {
       '@lib': path.resolve(__dirname, './src/lib')
@@ -18,7 +19,8 @@ export default defineConfig({
     port: 8080,
     proxy: {
       "/api": {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:3000/',
+        rewrite: (path) => path.replace(/^\/api/, ''),
         changeOrigin: true,
       }
     }

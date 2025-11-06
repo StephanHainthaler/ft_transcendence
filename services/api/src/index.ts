@@ -1,10 +1,17 @@
 import Fastify from 'fastify'
 import { healthRoutes } from './healthcheck/healthcheck';
+import { userRoutes } from './user/userService';
 
 const fastify = Fastify({ logger: true });
 
+console.log(`API_URL: ${process.env.API_URL}`);
+
+fastify.register(userRoutes, {
+  prefix: "/user"
+})
+
 fastify.register(healthRoutes, {
-  prefix: "/api/health/"
+  prefix: "/health"
 });
 
 fastify.get("/api/ping", async () => {

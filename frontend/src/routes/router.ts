@@ -5,9 +5,13 @@ export const routes = [
     pathname: "/",
     file: "HomePage",
   },
-  { 
+  {
     pathname: "/user",
     file: "UserPage",
+  },
+  {
+    pathname: "/health",
+    file: "HealthPage"
   }
 ];
 
@@ -50,11 +54,10 @@ export class Router {
         this.app.innerHTML = route.page();
         route.setup();
 
-        this.curLocation = matchedRoute.pathname;
-
-        if (!isPopState)
+        if (!isPopState && location !== this.curLocation)
           history.pushState({}, '', location);
 
+        this.curLocation = matchedRoute.pathname;
       } else {
         throw new Error("Route not found!");
       }

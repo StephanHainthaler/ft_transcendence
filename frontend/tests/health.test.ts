@@ -1,8 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-process.loadEnvFile('.env.tests');
-const API_URL = process.env.API_URL;
+const API_URL = process.env.VITE_API_URL;
 
 test('backend health', async () => {
   const response = await fetch(`${API_URL}/api/health/`, {

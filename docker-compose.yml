@@ -1,10 +1,10 @@
 services:
-  frontend:
-    container_name: transcendence_frontend
+  webserver:
+    container_name: transcendence_webserver
 
     build:
       context: .
-      dockerfile: frontend/Dockerfile
+      dockerfile: services/nginx/Dockerfile
 
     ports:
       - "8080:80"
@@ -17,8 +17,10 @@ services:
 
     build:
       context: .
-      dockerfile: backend/api/Dockerfile
+      dockerfile: services/api/Dockerfile
 
+    env_file:
+        - env/.env.api
     ports:
       - "3001:3000"
 
