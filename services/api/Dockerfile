@@ -2,8 +2,8 @@ FROM node:24-alpine3.22 AS builder
 
 WORKDIR /app
 
-COPY ./backend/api/package*.json ./backend/api/tsconfig.json ./
-COPY ./backend/api/src ./src
+COPY ./services/api/package*.json ./services/api/tsconfig.json ./
+COPY ./services/api/src ./src
 COPY ./shared ../shared
 
 RUN npm ci
@@ -13,7 +13,7 @@ FROM node:24-alpine
 
 WORKDIR /app
 
-COPY ./backend/api/package*.json ./
+COPY ./services/api/package*.json ./
 RUN npm ci --only=production
 
 COPY --from=builder /app/dist ./dist

@@ -192,9 +192,9 @@ Possible project structure:
 
 ```
 ft_transcendence/
+├── env                             # env files
+│   └── ...
 ├── frontend                        # client / public code
-│   ├── nginx                       # webserver
-│   │   └── ...
 │   ├── src
 │   │   ├── routes
 │   │   │   └── ...
@@ -213,7 +213,9 @@ ft_transcendence/
 │   │   │   │   └── userService.ts  # user service
 │   │   │   └── index.ts
 │   │   └── Dockerfile              # service-level docker file
-│   └── database                    # database module
+│   ├── database                    # database module
+│   │   └── ...
+│   └── nginx                       # webserver
 │       └── ...
 ├── shared                          # interfaces used in client and server modules
 │   └── user
