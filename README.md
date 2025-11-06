@@ -73,18 +73,18 @@ For env, maybe we just keep one the in this repo, and just dont put it into the 
 
 Possible Workflow:
 - pull changes from main into current working branch after every commit/merge to main
-- run 'make install' to sync deps
-- run 'make test' to check if all tests work after commit to main
-- run 'make prod' to check the docker setup runs ( maybe we add some 'make prod-test' with tests for the docker setup also)
+- run ```make install``` to sync deps
+- run ```make test``` to check if all tests work after commit to main
+- run ```make prod``` to check the docker setup runs ( maybe we add some ```make prod-test``` with tests for the docker setup also)
 - work, work, work && write tests for changes
-- when ready for PR, first run 'make test' to run old and new tests
-- if all goes well, run 'make prod' to see that all builds as expected (evtl. 'make prod-test' if available)
+- when ready for PR, first run ```make test``` to run old and new tests
+- if all goes well, run ```make prod``` to see that all builds as expected (evtl. ```make prod-test``` if available)
 - push branch, create PR and describe changes
 - some other group member reviews the PR (can be requested with github feature)
 - PR gets merged, group is notified
 - everybody pulls from main to sync new feature
 - start from top
- 
+
 ### Modules
 
 #### Mandatory
