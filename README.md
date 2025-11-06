@@ -36,13 +36,17 @@ to sync installed dependencies, in case anybody added new ones.
 
 ### Developpment
 
-While testing, the command
+While developping, the command
 
 ```sh
-npm run dev
+make dev
+```
+or just
+```sh
+make
 ```
 
-will run [vite](https://vite.dev/guide/), and serves files at **http://localhost:3000**;
+will run [vite](https://vite.dev/guide/), and serves files at **http://localhost:8080**;
 Vite is a utility that bundles and translates our TypeScript files into JavaScript files and serves them.
 
 This will also start the backend services in dev mode.
@@ -54,6 +58,34 @@ make prod
 ```
 
 which will start the docker compose, and run frontend and backend services in separate containers
+
+There is also a test feature
+```sh
+make test
+```
+which doesnt work perfectly right now and will need to be maintained/extendend as new services get added.
+
+### Submission
+
+I think before a PR to main, test should have been written for the change. A change doesnt have to be a full module, might be just a part of a module or feature.
+Also, if a new module was started / submitted, it should have a corresponding service entry in the docker compose and docker file in the service dir.
+For env, maybe we just keep one the in this repo, and just dont put it into the intra repo when submitting.
+
+Possible Workflow:
+- pull changes from main into current working branch after every commit/merge to main
+- run 'make install' to sync deps
+- run 'make test' to check if all tests work after commit to main
+- run 'make prod' to check the docker setup runs ( maybe we add some 'make prod-test' with tests for the docker setup also)
+- work, work, work && write tests for changes
+- when ready for PR, first run 'make test' to run old and new tests
+- if all goes well, run 'make prod' to see that all builds as expected (evtl. 'make prod-test' if available)
+- push branch, create PR and describe changes
+- some other group member reviews the PR (can be requested with github feature)
+- PR gets merged, group is notified
+- everybody pulls from main to sync new feature
+- start from top
+ 
+### Modules
 
 #### Mandatory
 
@@ -140,7 +172,7 @@ NEEDED: 14pts mandatory + min 5 bonus
     - Microservices seems like a natural way to work, especially as a team (work on one module in one service)
     - Other modules too much i think
 - accesibility
-    - We are allowed to use localization libs by the subject, might be fairly simple + multi langual team :)
+    - We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :)
     - Visually imparies access. could be not too complicated, seems like simple frontend stuff, might be much though for 1 point
 - server side
     - Running on server can protect from cheating/hacks, makes remote playing easier, seems natural
@@ -188,6 +220,7 @@ ft_transcendence/
 │       └── interfaces.ts
 ├── docker-compose.yml              # compose starts the app in production mode
 └── ...
+```
 
 #### Pro's
 
