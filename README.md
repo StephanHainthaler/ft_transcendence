@@ -81,36 +81,41 @@ which will start the docker compose, and run frontend and backend services in se
 
 NEEDED: 14pts mandatory + min 5 bonus
 
-Legend:
-    - v:    victor
-    - g:    gamemaker/in
-    - all:  used by all members, can be dev by one
+##### Legend
 
-- Web                           Total: 4
-    - Backend Framework         (2) | all
-    - Frontend Framework        (1) | v
-    - Database                  (1) | all
-- User Management               Total: 4
-    - Standard user management  (2) | v / all
-    - remote auth               (2) | v
-- Gameplay and ui               Total: 2 + 3?
-    - Remote players            (2) | g
-    - Customization             (1) (maybe?)
-    - Live Chat                 (2) (maybe?)
-- Ai                            Total: 2 + 1?
-    - Ai Opponent               (2) | g
-    - Game stats                (1) (maybe?)
-- Security                      Total: 2
-    - JWT and 2FA               (2) | v
-- DevOps                        Total: 2
-    - micro services            (2) | all
-- Accessibility                 Total: 2
-    - Language Support          (1)
-    - Accessibility vis.        (1)
-- Server-Side Pong              Total: 2
-    - Run on server             (2) | g
+| Short     | Meaning                                   |
+|:----------|:------------------------------------------|
+|   v       | victor                                    |
+|   g       | gamemaker/in                              |
+|   all     | used by all members, can be dev by one    |
+|   ?       | maybe                                     |
 
-TOTAL: 20 + 4?
+| Module    |Sub Module |short| points | total |
+|:----------|:----------|:---:|:------:|------:|
+|Web| | | 4|
+|-|Backend Framework|all|2||
+|-|Frontend Framework|v|1||
+|-|Database |all|1| |
+|User Management| | | |4|
+|-|Standard user management|v|2||
+|-|remote auth|v|2||
+|Gameplay and ui| | | |2 + 3?|
+|-|Remote players|g|2||
+|-|Customization|g|1?||
+|-|Live Chat|g?|2?||
+|Ai| |g| |2 + 1?|
+|-|Ai Opponent|g|2||
+|-|Game stats|g|1?||
+|Security| | | |2|
+|-|JWT and 2FA|v|2||
+|DevOps| | | |2|
+|-|micro services|all|2||
+|Accessibility| | | |2|
+|-|Language Support| |1||
+|-|Accessibility vis.| |1||
+|Server-Side Pong| | | |2|
+|-|Run on server|g|2||
+| | | | |20 + 4?|
 
 #### Reasoning
 
