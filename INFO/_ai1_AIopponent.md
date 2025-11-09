@@ -15,7 +15,7 @@ the use of the A* algorithm is not permitted for this task
 
 # Interaction with other parts
 
-##Interface:
+## Interface:
 ### What do I receive?
 - The information where the point is - as a (x,y) vector
 - The information where the human opponent is - as a (x,y) vector
