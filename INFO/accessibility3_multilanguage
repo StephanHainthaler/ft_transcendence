@@ -1,9 +1,0 @@
-support for a minimum of three languages
-- german, english, ukrainisch
-- nicht nur ASCII supporten
-
-- Provide a language switcher or selector
-- Translate essential website content, such as navigation menus, headings, and key information
-- Consider using language packs or localization libraries to simplify the translation process
-- Allow users to set their preferred language as the default for subsequent visits - has to be fixed to the user (add to user class f.e.)
-

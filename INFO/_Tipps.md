@@ -26,5 +26,3 @@
     Because usual is the one who'll have to merge PR, dismiss them, create github actions (if you do that), etc.
     It's the one responsible for the work that is pending to be merge, to be work that is actually good to be merged.
     Of course, that pwrson can receive help from the others; but I've seen cases that the repo owner is the one that ha does that the most
-
-______________
