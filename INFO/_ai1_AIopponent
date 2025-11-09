@@ -9,3 +9,15 @@ the use of the A* algorithm is not permitted for this task
 
 (!) A* algorithm is not allowed (https://www.geeksforgeeks.org/dsa/a-search-algorithm/)
 (!) AI must utilize power-ups if you have chosen to implement the Game customization options module
+
+_________________________________
+
+Ideas:
+
+Ich brauche die Info wann die Kugel wo ist. Und die Position des Gegenübers sowie die Große vom Spielfenster.
+So kann ich dann die benötigte Position vom AI Opponent berechnen - und sie zurückgeben.
+
+Die Positionen werden wir vermutlich in Form von 2 dimensionalen Vektoren (x, y) machen oder?
+
+Ich würde Python dafür benutzen. 
+https://www.linkedin.com/pulse/creating-classical-pong-game-pygame-step-by-step-tutorial-nuno-bispo-xgg8e
