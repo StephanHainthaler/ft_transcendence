@@ -1,4 +1,4 @@
-_________________________________________Subject's constraints____________________________________________
+# Subject's constraints
 
 the use of the A* algorithm is not permitted for this task
 
@@ -13,22 +13,22 @@ the use of the A* algorithm is not permitted for this task
 (!) AI must utilize power-ups if you have chosen to implement the Game customization options module
 
 
-______________________________________Interaction with other parts_________________________________________
+# Interaction with other parts
 
-*Interface:
-** What do I receive?
+##Interface:
+### What do I receive?
 - The information where the point is - as a (x,y) vector
 - The information where the human opponent is - as a (x,y) vector
+- ? Game customization options - depend on what the Game customization will look like
 
-** What other information do I need?
+### What other information do I need?
 - The window size - as a (x,y) vector
 
-** What do I send?
+### What do I send?
 - I will provide the calculated position of the AI opponent - as a (x,y) vector
 
 
-
-_____________________________________________Implementation________________________________________________
+# Implementation
 
 Ich würde Python dafür benutzen. 
 https://www.linkedin.com/pulse/creating-classical-pong-game-pygame-step-by-step-tutorial-nuno-bispo-xgg8e
