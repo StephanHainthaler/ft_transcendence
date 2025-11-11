@@ -8,15 +8,21 @@
     "shared"
   ],
   "scripts": {
-    "dev": "dotenv -e .env.development -- concurrently -n frontend,api -c blue,red,yellow \"npm:dev:frontend\" \"npm:dev:api\"",
+    "dev": "dotenv -e .env.development -- concurrently -n frontend,api,user -c blue,red,yellow \"npm:dev:frontend\" \"npm:dev:api\" \"npm:dev:user\"",
     "dev:api": "npm run dev -w @ft_transcendence/api",
+    "dev:user": "npm run dev -w @ft_transcendence/user",
     "dev:frontend": "cd frontend && vite",
-    "dev:frontend:test": "tsx --env-file=\"./.env.development\" --test ./frontend/tests/*.test.ts",
-    "build:docker:frontend": "vite build"
+    "dev:frontend:test": "tsx --env-file=\"env/.env.development\" --test ./frontend/tests/*.test.ts",
+    "build:docker:frontend": "vite build",
+    "test:backend:api": "npm run test -w @ft_transcendence/api",
+    "test:backend:database": "npm run test -w @ft_transcendence/database",
+    "test:backend:user": "npm run test -w @ft_transcendence/user",
+    "test:backend": "npm-run-all --continue-on-error test:backend:*"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.16",
     "dotenv-cli": "^11.0.0",
+    "npm-run-all": "^4.1.5",
     "tsx": "^4.20.6",
     "turbo": "^2.0.0"
   },

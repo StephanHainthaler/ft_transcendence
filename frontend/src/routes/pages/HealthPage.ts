@@ -10,7 +10,7 @@ async function healthCheckBtnEvent() {
       const data = await response.json();
       if (healthContent) {
         healthContent.className = `bg-green-500 p-4 text-white`;
-        healthContent.innerHTML = `server responded with: ${data.status}`;
+        healthContent.innerHTML = `server responded with: ${data.message}`;
       }
     } else {
       throw new Error(`${response.status}`)

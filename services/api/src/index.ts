@@ -1,6 +1,6 @@
 import Fastify from 'fastify'
 import { healthRoutes } from './healthcheck/healthcheck';
-import { userRoutes } from './user/userService';
+import { userRoutes } from './user/userApi';
 
 const fastify = Fastify({ logger: true });
 
@@ -13,14 +13,6 @@ fastify.register(userRoutes, {
 fastify.register(healthRoutes, {
   prefix: "/health"
 });
-
-fastify.get("/api/ping", async () => {
-  return "pong";
-})
-
-fastify.get("/api/", async () => {
-  return { hello: "world" };
-})
 
 const start = async () => {
   try {

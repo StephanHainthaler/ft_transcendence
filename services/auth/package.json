@@ -1,8 +1,8 @@
 {
-  "name": "@ft_transcendence/api",
+  "name": "@ft_transcendence/auth",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx watch --env-file=../../env/.env.api src/index.ts",
+    "dev": "tsx watch --env-file=../../env/.env.auth src/index.ts",
     "test": "tsx --test --test-reporter=spec ./tests/*.test.ts"
   },
   "dependencies": {

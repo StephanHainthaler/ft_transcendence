@@ -1,4 +1,5 @@
 import { type Route } from "@lib/types/route"
+import { div } from "@lib/vdom"
 
 export const Page: Route = {
   page() {
@@ -11,5 +12,10 @@ export const Page: Route = {
   setup() {
   },
   destroy() {
+  },
+  node() {
+    const ret = div({ class: "h-[50px] w-[100px] bg-green-300", id: 'bless' }, 'hello')
+    console.log(`ret after node() ${JSON.stringify(ret)}`);
+    return ret
   },
 }
