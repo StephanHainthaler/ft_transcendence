@@ -4,7 +4,8 @@
   "private": true,
   "workspaces": [
     "frontend",
-    "services/*"
+    "services/*",
+    "shared"
   ],
   "scripts": {
     "dev": "dotenv -e ./env/.env.development -- concurrently -n frontend,api -c blue,red,yellow \"npm:dev:frontend\" \"npm:dev:api\"",

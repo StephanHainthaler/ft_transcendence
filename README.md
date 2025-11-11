@@ -8,6 +8,8 @@ ft_transcendence ecole42 final project
 
 ### Setup
 
+testing
+
 First you need to install [nvm, node and npm](https://nodejs.org/en/download) for you OS.
 
 Then in the root of the project, run
