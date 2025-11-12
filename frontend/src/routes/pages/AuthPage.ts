@@ -1,5 +1,6 @@
 import type { Route } from "@lib/types/route";
-import { button, div, form, input, label, update } from "@lib/vdom";
+import { button, h2, div, form, update } from "@lib/vdom";
+import { Input } from "@lib/components/Input";
 
 let usernameBuffer = '';
 let userPasswordBuffer = '';
@@ -26,44 +27,58 @@ const handlePasswordInputRepeat = (e: Event) => {
   console.log(userPasswordRepeatBuffer);
 }
 
-let selectedTab: number = 0;
-
-const REGISTER_FORM = div({ class: 'flex flex-col gap-4' },
-  label({ for: 'input-register-username' }, 'Username'),
-  input({ id: "input-register-username", class: "bg-white", onchange: handleUsernameInput, type: "text" }),
-  label({ for: 'input-register-password' }, 'Password'),
-  input({ id: "input-register-password", class: "bg-white", onchange: handlePasswordInput, type:"password" }),
-  label({ for: 'input-register-password-repeat' }, 'Password Repeat'),
-  input({ id: "input-register-password-repeat", class: "bg-white", onchange: handlePasswordInputRepeat, type: "password" }),
+const LOGIN_FORM =
+div({ class: 'p-8 w-full max-w-md' },
+  h2({ class: 'text-2xl font-bold text-teal mb-6 text-center' }, 'Sign in'),
+  Input('Email or Username', handleUsernameInput),
+  Input('Password', handlePasswordInput, { type: 'password' }),
 )
 
-const LOGIN_FORM = div({ class: "flex flex-col gap-4" },
-  label({ for: 'input-signin-username' }, 'Username'),
-  input({ id: 'input-signin-username', type: 'text', onchange: handleUsernameInput, class: 'bg-white' }),
-  label({ for: 'input-signin-password' }, 'Password'),
-  input({ id: 'input-signin-password', type: 'text', onchange: handlePasswordInput, class: 'bg-white' }),
+const REGISTER_FORM =
+div({ class: 'p-8 w-full max-w-md' },
+  h2({ class: 'text-2xl font-bold text-teal mb-6 text-center' }, 'Register'),
+  Input('Email or Username', handleUsernameInput),
+  Input('Password', handlePasswordInput, { type: 'password' }),
+  Input('Password Repeat', handlePasswordInputRepeat, { type: 'password' })
 )
 
 const setLoginForm = () => {
-  selectedTab = 0;
+  selectedTab = LOGIN;
   update(Page());
 }
 
 const setRegisterForm = () => {
-  selectedTab = 1;
+  selectedTab = REGISTER;
   update(Page());
 }
 
+const LOGIN = 0;
+const REGISTER = 1;
+let selectedTab: number = LOGIN;
+
+const tabClassSelected = 'flex-1 py-3 px-4 bg-cream text-teal-dark hover:bg-tan-border transition-colors'
+const tabClass = 'flex-1 py-2 px-4 rounded bg-tan text-teal-dark hover:bg-tan-border'
 export const Page: Route = () => {
-  const page = div({ class: 'size-full flex flex-col place-items-center justify-center' },
-    div( { class: 'grid grid-col-1 h-[60%] w-[40%] items-center justify-center gap-4'},
-      div({ class: 'flex w-full p-4 gap-4 place-items-center place-self-start justify-center flex-row justify-self-start' },
-        button({ class: selectedTab === 0 ? 'bg-white' : 'bg-gray', onclick: setLoginForm}, 'Login'),
-        button({ class: selectedTab === 1 ? 'bg-white' : 'bg-gray', onclick: setRegisterForm}, 'Register')),
-      form({ type: 'submit' },
-        selectedTab === 0 ? LOGIN_FORM : REGISTER_FORM,
+  const page =
+    div({ class: 'size-full flex flex-col items-center justify-center background' },
+      div({ class: 'card shadow-lg h-[50%] min-w-[300px] w-[30%] p-0 overflow-hidden' },
+        div({ class: 'flex w-full border-b-2 border-tan' },
+          button({
+            class: selectedTab === LOGIN ? tabClassSelected : tabClass,
+            onclick: setLoginForm
+          }, 'Login'),
+          button({
+            class: selectedTab === REGISTER ? tabClassSelected : tabClass,
+            onclick: setRegisterForm
+          }, 'Register')
+        ),
+        form({ class: 'space-y-4 px-8' },
+          selectedTab === 0 ? LOGIN_FORM : REGISTER_FORM,
+          div({ class: 'px-8' },
+            button({ type: 'submit', class: 'btn w-full justify-self-end' }, selectedTab === LOGIN ? 'Sign in' : 'Sign up')
+          )
+        )
       )
     )
-  )
   return page;
 }

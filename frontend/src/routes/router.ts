@@ -68,7 +68,7 @@ export class Router {
         throw new Error(`Failed to load location ${location}`)
       };
 
-      route();
+      update(route());
 
       if (!isPopState && location !== this.curLocation)
         history.pushState({}, '', location);

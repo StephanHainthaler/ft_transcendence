@@ -11,16 +11,17 @@ export function p(props?: Props, ...children: Child[]): VNode {
 }
 
 export function h1(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'h1', props, append, children};
+  return { tag: 'canvas', props, append, children};
 }
 
 export function h2(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'h2', props, append, children};
+  return { tag: 'canvas', props, append, children};
 }
 
 export function h3(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'h3', props, append, children};
+  return { tag: 'canvas', props, append, children};
 }
+
 
 export function form(props?: Props, ...children: Child[]): VNode {
   return { tag: 'form', props, append, children};

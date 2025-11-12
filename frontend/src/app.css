@@ -9,26 +9,57 @@
   .bg-tan { @apply bg-[#f0daa5]; }
   .bg-cream { @apply bg-[#fbf2c4]; }
   .bg-tan-border { @apply bg-[#e5c185]; }
+  
   .text-teal { @apply text-[#008585]; }
+  .text-teal-dark { @apply text-[#004343]; }
   .text-rust { @apply text-[#c7522a]; }
+  .text-sage { @apply text-[#74a892]; }
+  .text-mint { @apply text-[#b8cdab]; }
+  .text-tan { @apply text-[#f0daa5]; }
+  .text-cream { @apply text-[#fbf2c4]; }
+
+  .border-teal { @apply border-[#008585]; }
+  .border-teal-dark { @apply border-[#004343]; }
+  .border-rust { @apply border-[#c7522a]; }
+  .border-sage { @apply border-[#74a892]; }
+  .border-mint { @apply border-[#b8cdab]; }
   .border-tan { @apply border-[#e5c185]; }
+  .border-cream { @apply border-[#fbf2c4]; }
+
+  .hover\:bg-teal:hover { @apply bg-[#008585]; }
+  .hover\:bg-teal-dark:hover { @apply bg-[#004343]; }
+  .hover\:bg-rust:hover { @apply bg-[#c7522a]; }
+  .hover\:bg-tan-border:hover { @apply bg-[#e5c185]; }
+
+  .focus\:border-teal:focus { @apply border-[#008585]; }
+  .focus\:border-rust:focus { @apply border-[#c7522a]; }
 
   .btn {
     @apply px-4 py-2 bg-[#008585] text-white rounded transition-colors duration-250 hover:bg-[#004343];
   }
   .btn.secondary {
-    @apply bg-[#c7522a] hover:bg-[#004343];
+    @apply bg-[#c7522a] hover:bg-[#a5421f];
   }
   .btn.accent {
-    @apply bg-[#74a892] hover:bg-[#004343];
+    @apply bg-[#74a892] hover:bg-[#5d8674];
   }
   .btn.positive {
-    @apply bg-[#b8cdab] hover:bg-[#004343];
+    @apply bg-[#b8cdab] hover:bg-[#9ab18f];
   }
+  .btn.outline {
+    @apply bg-transparent border-2 border-[#008585] text-[#008585] hover:bg-[#008585] hover:text-white;
+  }
+
   .background {
     @apply bg-[#fbf2c4];
   }
   .card {
-    @apply bg-[#f0daa5] border-2 border-[#e5c185];
+    @apply bg-[#f0daa5] border-2 border-[#e5c185] rounded-lg;
+  }
+  .input {
+    @apply w-full px-3 py-2 border-2 border-[#e5c185] rounded bg-neutral-100/70 focus:outline-none focus:border-[#008585] transition-colors;
+  }
+  .label {
+    @apply block text-sm font-medium text-[#004343] mb-1;
   }
 }
