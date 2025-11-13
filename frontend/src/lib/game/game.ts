@@ -12,7 +12,7 @@ class Pong
 	private _context: CanvasRenderingContext2D;
 	private _player1: Player;
 	private _player2: Player;
-	private _ball: Ball
+	private _ball: Ball;
 
 	public constructor(player1_name: string, player2_name: string)
 	{
@@ -35,7 +35,7 @@ class Pong
 		this._context.fillStyle = "#ffffffff";
 
 		//draw upper and lower borders To Do set the borders accordingly to collisions zone
-		this._context.fillRect(0, this._canvas.height * 0.1, this._canvas.width, this._canvas.height * 0.01);
+		this._context.fillRect(0, this._canvas.height * 0.1 - this._canvas.height * 0.01, this._canvas.width, this._canvas.height * 0.01);
 		this._context.fillRect(0, this._canvas.height * 0.9, this._canvas.width, this._canvas.height * 0.01);
 
 		//draw middle line
@@ -65,6 +65,13 @@ class Pong
 		return (this._canvas);
 	}
 
+	public getPlayer(player_number: number) : Player
+	{
+		if (player_number == 1)
+			return (this._player1);
+		else
+			return (this._player2);
+	}
 	public getBall() : Ball
 	{
 		return (this._ball);
@@ -92,6 +99,21 @@ class Player
 		this._height = canvas.height * 0.12;
 		this._button_up = 119;
 		this._button_down = 115;
+	}
+
+	public move(): void
+	{
+		if ((this._origin.y + this._height) + this._velocity > (game.getCanvas().height * 0.9) || this._origin.y + this._velocity < game.getCanvas().height * 0.1)
+		{
+			this._velocity = -this._velocity;
+			//return ;
+		} 
+		this._origin.y += this._velocity;
+	}
+
+	public moveByAI(): void
+	{
+
 	}
 
 	public setName(name: string): void
@@ -158,19 +180,31 @@ class Ball
 		return ({x, y});
 	}
 
-	public move(): void
+	public move(player1: Player, player2: Player): void
 	{
 		if (this._origin.x + this._direction.x > (game.getCanvas().width) || this._origin.x + this._direction.x < 0)
 		{
 			this._direction.x = -this._direction.x;
 		} 
+		this._origin.x += this._direction.x; //SCORE/spawn new ball
+
+		if (this._origin.x + this._direction.x < player1.getOrigin().x + player1.getWidth() && this.isHittingPlayer(this, player1) == true)
+		{
+			this._direction.x = -this._direction.x;
+		} 
 		this._origin.x += this._direction.x;
 
-		if (this._origin.y + this._direction.y > (game.getCanvas().height * 0.9) || this._origin.y + this._direction.y < game.getCanvas().height * 0.1)
+		if ((this._origin.y + this._height) + this._direction.y > (game.getCanvas().height * 0.9) || this._origin.y + this._direction.y < game.getCanvas().height * 0.1)
 		{
 			this._direction.y = -this._direction.y;
 		} 
 		this._origin.y += this._direction.y;
+	}
+
+	public isHittingPlayer(ball: Ball, player: Player): boolean
+	{
+		//if (ball.)
+		return (false);
 	}
 
 	public getWidth(): number
@@ -199,7 +233,9 @@ game = new Pong("Stephan", "Julian");
 
 const updateState = () => {
 
-	game.getBall().move();
+	game.getBall().move(game.getPlayer(1), game.getPlayer(2));
+	game.getPlayer(1).move();
+	game.getPlayer(2).moveByAI();
 	game.draw_arena();
   	window.requestAnimationFrame(() => updateState());
 };
