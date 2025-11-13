@@ -33,3 +33,10 @@ the use of the A* algorithm is not permitted for this task
 Ich würde Python dafür benutzen. 
 https://www.linkedin.com/pulse/creating-classical-pong-game-pygame-step-by-step-tutorial-nuno-bispo-xgg8e
 
+
+# Next steps
+learn TypeScript and JavaScript
+
+Write ticket for Julian and Stephan
+
+Think about logic
