@@ -1,0 +1,13 @@
+{
+  "name": "@ft_transcendence/shared",
+  "version": "1.0.0",
+  "description": "shared modules",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13"
+  }
+}
