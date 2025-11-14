@@ -43,7 +43,7 @@ export function label(props?: Props, ...children: Child[]): VNode {
 }
 
 export function div(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'div', props, append, children};
+  return { tag: 'div', props, children, append};
 }
 
 export function select(props?: Props, ...children: Child[]): VNode {
@@ -67,18 +67,22 @@ export type VNode = {
 function updateProps(node: Node, oldProps: Props, newProps: Props) {
   const { set, remove } = diffProps(oldProps, newProps);
 
-  for (const key in set) {
-    if (key.startsWith('on'))
-      node.addEventListener(key.slice(2).toLowerCase(), set[key]);
-    else
-      (node as HTMLElement).setAttribute(key, set[key]);
-  }
-
   for (const key in remove) {
     if (key.startsWith('on'))
       node.removeEventListener(key.slice(2).toLowerCase(), remove[key]);
     else
-      (node as HTMLElement).setAttribute(key, remove[key]);
+      (node as HTMLElement).removeAttribute(key);
+  }
+
+  for (const key in set) {
+    if (key.startsWith('on')) {
+      const eventName = key.slice(2).toLowerCase();
+      if (oldProps[key])
+        node.removeEventListener(eventName, oldProps[key]);
+      node.addEventListener(eventName, set[key]);
+    }
+    else
+      (node as HTMLElement).setAttribute(key, set[key]);
   }
 }
 
@@ -102,45 +106,57 @@ function diffProps(oldProps: Props, newProps: Props) {
 }
 
 export function patch(domeNode: Node, oldNode: Child, newNode: Child) {
-  if (typeof oldNode === 'string' || typeof newNode === 'string') {
-    if (oldNode !== newNode) {
-      return domeNode.parentNode?.replaceChild(
-        document.createTextNode(newNode as string),
-        domeNode
-      )
+  try {
+    if (typeof newNode === 'string') {
+      if (oldNode !== newNode) {
+        return domeNode.parentNode?.replaceChild(
+          document.createTextNode(newNode as string),
+          domeNode
+        )
+      }
+      return domeNode
     }
-    return domeNode
-  }
 
-  if (oldNode.tag !== newNode.tag) {
-    const node = render(newNode);
-    domeNode.parentNode?.replaceChild(node, domeNode);
-    return node;
-  }
-
-  if (newNode.props && oldNode.props)
-    updateProps(domeNode, oldNode.props, newNode.props)
-  const oldChildren = oldNode.children;
-  const newChildren = newNode.children;
-
-  const childNodes = Array.from(domeNode.childNodes);
-
-  for (let i = 0; i < Math.max(newChildren.length, oldChildren.length); i++) {
-    if (i >= newChildren.length) {
-      domeNode.removeChild(childNodes[i]);
-    } else if (i >= oldChildren.length) {
-      domeNode.appendChild(render(newChildren[i]));
-    } else {
-      patch(childNodes[i], oldChildren[i], newChildren[i]);
+    if (typeof oldNode === 'string') {
+      if (typeof newNode === 'object') {
+        const node = render(newNode);
+        domeNode.parentNode?.replaceChild(node, domeNode);
+        return node;
+      }
+      return domeNode;
     }
-  }
 
-  return domeNode;
+    if (oldNode.tag !== newNode.tag || newNode.props?.['replace'] === true) {
+      const node = render(newNode);
+      domeNode.parentNode?.replaceChild(node, domeNode);
+      return node;
+    }
+
+    if (newNode.props && oldNode.props)
+      updateProps(domeNode, oldNode.props, newNode.props)
+    const oldChildren = oldNode.children;
+    const newChildren = newNode.children;
+
+    const childNodes = Array.from(domeNode.childNodes);
+
+    for (let i = 0; i < Math.max(newChildren.length, oldChildren.length); i++) {
+      if (i >= newChildren.length) {
+        domeNode.removeChild(childNodes[i]);
+      } else if (i >= oldChildren.length) {
+        domeNode.appendChild(render(newChildren[i]));
+      } else {
+        patch(childNodes[i], oldChildren[i], newChildren[i]);
+      }
+    }
+
+    return domeNode;
+  } catch (e: any) {
+    console.error(`Caught exception with input: old: ${JSON.stringify(oldNode)} new: ${JSON.stringify(newNode)}`);
+  }
 }
 
 export function mount(node: VNode, container: HTMLElement) {
   rootElement = render(node) as Node;
-  console.log(`root element`, rootElement);
   container.appendChild(rootElement);
   oldVNode = node;
 }
@@ -163,6 +179,10 @@ export function render(node: Child): HTMLElement | Text {
       el.setAttribute(k, v);
   })
 
-  node.children.forEach((c) => el.appendChild(render(c)));
+  node.children.forEach((c) => {
+    if (c !== undefined && c !== null) {
+      el.appendChild(render(c));
+    }}
+  );
   return el;
 }

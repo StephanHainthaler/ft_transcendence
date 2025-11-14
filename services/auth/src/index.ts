@@ -26,7 +26,7 @@ async function startAuth() {
   const fastify = buildAuth();
 
   try {
-    await fastify.listen({ port: 3001 });
+    await fastify.listen({ port: 3002 });
   } catch (e: any){
     console.error(e);
   }

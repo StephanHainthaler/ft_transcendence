@@ -15,7 +15,7 @@ const authUsers = defineTable(
     user_id: int().notNull().unique(),
     user_name: text().unique(),
     email: text().unique(),
-    passwd_hash: text().notNull(),
+    passwd: text().notNull(),
   },
   { col: 'user_name', notNull: true, chainOp: 'or' },
   { col: 'email', notNull: true }

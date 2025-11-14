@@ -1,20 +1,45 @@
 import Fastify from 'fastify'
 import { healthRoutes } from './healthcheck/healthcheck';
-import { userRoutes } from './user/userApi';
 
-const fastify = Fastify({ logger: true });
+const AUTH_URL = process.env.AUTH_SERVICE_URL;
 
-console.log(`API_URL: ${process.env.API_URL}`);
+const USER_URL = process.env.USER_SERVICE_URL;
 
-fastify.register(userRoutes, {
-  prefix: "/user"
-})
+async function startApiGateway() {
 
-fastify.register(healthRoutes, {
-  prefix: "/health"
-});
+  if (!AUTH_URL) throw new Error("AUTH_SERVICE_URL is not defined");
+  if (!USER_URL) throw new Error("USER_SERVICE_URL is not defined");
 
-const start = async () => {
+  const fastify = Fastify({
+    logger: {
+      level: 'info',
+      transport: {
+        target: 'pino-pretty'
+      },
+    },
+    disableRequestLogging: true
+ });
+
+  const proxy = await import ('@fastify/http-proxy');
+
+  console.log(`API_URL: ${process.env.API_URL}`);
+
+  fastify.register(proxy, {
+    upstream: USER_URL,
+    prefix: '/user',
+    http2: false,
+  })
+
+  fastify.register(proxy, {
+    upstream: AUTH_URL,
+    prefix: '/auth',
+    http2: false,
+  })
+
+  fastify.register(healthRoutes, {
+    prefix: "/health"
+  });
+
   try {
     await fastify.listen({ port: 3000, host: '0.0.0.0' });
   } catch (err: any) {
@@ -22,5 +47,4 @@ const start = async () => {
     process.exit(1);
   }
 }
-
-start();
+startApiGateway();

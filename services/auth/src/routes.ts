@@ -1,8 +1,8 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 import { createAuthUser, getAuthUser, verifyUserCredentials } from "./dbHandlers";
-import { AuthUser } from "./db";
 import { getUser } from "@ft_transcendence/user/src/api";
 import { User } from "@shared/user";
+import { AuthUser } from "./db";
 
 interface UserReply {
   200: { success: boolean, user: User },
@@ -22,12 +22,6 @@ interface SignUpReq {
   email?: string,
 }
 
-interface LogInReq {
-  passwd: string,
-  email?: string,
-  username?: string
-}
-
 const SESSION_COOKIE = `logged-in=1; HttpOnly; domain=http://localhost:8080; path=/`;
 
 export function authRoutes(fastify: FastifyInstance) {
@@ -43,8 +37,11 @@ export function authRoutes(fastify: FastifyInstance) {
   ('/login', async (request, reply) => {
     const { passwd, username, email } = request.body;
 
+    console.log('request body', request.body);
+    console.log(`passwd: ${passwd}\nusername: ${username}\nemail: ${email}`);
+
     const requestAuthUser = { passwd, username, email };
-    const verifiedAuthUser = verifyUserCredentials(requestAuthUser);
+    const verifiedAuthUser = await verifyUserCredentials(requestAuthUser);
 
     const replyUser = await getUser(verifiedAuthUser.user_id);
 
@@ -67,10 +64,12 @@ export function authRoutes(fastify: FastifyInstance) {
   }>('/sign-up', async (request, reply) => {
     const { passwd, username, email } = request.body;
 
-    const authUser = getAuthUser({ userName: username, email });
-    if (!authUser) return reply.status(400).send({ error: "Username already taken" });
+    const authUser = getAuthUser({ username, email });
+    if (authUser) return reply.status(400).send({ error: "Username already taken" });
 
-    const { user } = await createAuthUser({ ...authUser, passwd });
+    const newAuthUser: Partial<AuthUser> = { user_name: username, email };
+
+    const { user } = await createAuthUser({ ...newAuthUser, passwd });
 
     const replyCookie = SESSION_COOKIE;
 
