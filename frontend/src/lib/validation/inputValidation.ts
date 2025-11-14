@@ -14,7 +14,7 @@ export function validateInputThrow(input?: string, {
 }:{
   type?: InputType,
 } = {}) {
-  if (!input) throw new Error(`Missing ${type || 'input'}!`);
+  if (!input || input.length === 0) throw new Error(`Missing ${type || 'input'}!`);
 
   if (type && type === 'email') {
     console.log('input in validation', input);

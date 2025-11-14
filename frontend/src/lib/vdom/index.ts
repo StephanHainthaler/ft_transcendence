@@ -1,58 +1,7 @@
 export type Props = Record<string, any>;
-export type Child = VNode | string;
+export type Child = VNode | string | undefined;
 
-export const append = (target: VNode, other: Child) => {
-  if (typeof target === 'string') return;
-  target.children.push(other);
-}
-
-export function p(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'p', props, append, children};
-}
-
-export function h1(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'h1', props, append, children};
-}
-
-export function h2(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'h2', props, append, children};
-}
-
-export function h3(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'h3', props, append, children};
-}
-
-export function form(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'form', props, append, children};
-}
-
-export function button(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'button', props, append, children};
-}
-
-export function a(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'a', props, append, children};
-}
-
-export function input(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'input', props, append, children};
-}
-
-export function label(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'label', props, append, children};
-}
-
-export function div(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'div', props, children, append};
-}
-
-export function select(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'select', props, append, children};
-}
-
-export function canvas(props?: Props, ...children: Child[]): VNode {
-  return { tag: 'canvas', props, append, children};
-}
+export * from "./elements"
 
 let oldVNode: VNode | null = null;
 let rootElement: Node | null = null;
@@ -61,7 +10,6 @@ export type VNode = {
   tag: string,
   props?: Props,
   children: Child[],
-  append: (t: VNode, o: Child) => void,
 }
 
 function updateProps(node: Node, oldProps: Props, newProps: Props) {
@@ -105,8 +53,24 @@ function diffProps(oldProps: Props, newProps: Props) {
   return { set, remove };
 }
 
+function cleanupNode(node: Node, vnode: Child) {
+  if (typeof vnode === 'string') return;
+  for (const key in vnode?.props) {
+    if (key.startsWith('on')) {
+      const eventName = key.slice(2).toLowerCase();
+      node.removeEventListener(eventName, vnode.props[key]);
+    }
+  }
+
+  vnode?.children.forEach((child, i) => {
+    if (node.childNodes[i])
+      cleanupNode(node.childNodes[i], child);
+  })
+}
+
 export function patch(domeNode: Node, oldNode: Child, newNode: Child) {
   try {
+    if (!oldNode && !newNode) return;
     if (typeof newNode === 'string') {
       if (oldNode !== newNode) {
         return domeNode.parentNode?.replaceChild(
@@ -126,23 +90,25 @@ export function patch(domeNode: Node, oldNode: Child, newNode: Child) {
       return domeNode;
     }
 
-    if (oldNode.tag !== newNode.tag || newNode.props?.['replace'] === true) {
+    if (oldNode?.tag !== newNode?.tag || newNode?.props?.['replace'] === true) {
+      cleanupNode(domeNode, oldNode);
       const node = render(newNode);
       domeNode.parentNode?.replaceChild(node, domeNode);
       return node;
     }
 
-    if (newNode.props && oldNode.props)
-      updateProps(domeNode, oldNode.props, newNode.props)
-    const oldChildren = oldNode.children;
-    const newChildren = newNode.children;
+    if (newNode?.props && oldNode?.props)
+      updateProps(domeNode, oldNode?.props, newNode.props)
+    const oldChildren = oldNode!.children;
+    const newChildren = newNode!.children;
 
     const childNodes = Array.from(domeNode.childNodes);
 
     for (let i = 0; i < Math.max(newChildren.length, oldChildren.length); i++) {
       if (i >= newChildren.length) {
+        cleanupNode(childNodes[i], oldChildren[i]);
         domeNode.removeChild(childNodes[i]);
-      } else if (i >= oldChildren.length) {
+      } else if (i >= oldChildren.length && newChildren[i]) {
         domeNode.appendChild(render(newChildren[i]));
       } else {
         patch(childNodes[i], oldChildren[i], newChildren[i]);
@@ -151,11 +117,12 @@ export function patch(domeNode: Node, oldNode: Child, newNode: Child) {
 
     return domeNode;
   } catch (e: any) {
-    console.error(`Caught exception with input: old: ${JSON.stringify(oldNode)} new: ${JSON.stringify(newNode)}`);
+    console.error(`Caught exception with input: old: ${JSON.stringify(oldNode)} new: ${JSON.stringify(newNode)}; e: ${e}`);
   }
 }
 
 export function mount(node: VNode, container: HTMLElement) {
+  if (!node) return ;
   rootElement = render(node) as Node;
   container.appendChild(rootElement);
   oldVNode = node;
@@ -169,20 +136,43 @@ export function update(newNode: VNode) {
   oldVNode = newNode;
 }
 
+const nodeRegistry = new WeakMap<Node, VNode>();
+
+export function updateId(newNode: VNode | (() => VNode)) {
+  let vnode;
+  if (typeof newNode === 'function')
+    vnode = newNode();
+  else
+    vnode = newNode;
+  const id = vnode.props?.id;
+  if (id) {
+    const node = document.querySelector(`#${id}`);
+    if (node) {
+      const oldvnode = nodeRegistry.get(node);
+      if (oldvnode) {
+        patch(node, oldvnode, vnode);
+        nodeRegistry.set(node, vnode);
+      }
+    }
+  }
+}
+
 export function render(node: Child): HTMLElement | Text {
   if (typeof node === 'string') return document.createTextNode(node);
-  const el = document.createElement(node.tag);
-  Object.entries(node.props || {}).forEach(([k, v]) => {
+  const el = document.createElement(node!.tag);
+  Object.entries(node!.props || {}).forEach(([k, v]) => {
     if (k.startsWith('on'))
       el.addEventListener(k.slice(2).toLowerCase(), v);
     else
       el.setAttribute(k, v);
   })
 
-  node.children.forEach((c) => {
+  node?.children.forEach((c) => {
     if (c !== undefined && c !== null) {
       el.appendChild(render(c));
     }}
   );
+  if (node?.props?.id && (node?.props.id as string).startsWith('dyn'))
+    nodeRegistry.set(el, node!);
   return el;
 }

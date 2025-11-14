@@ -71,6 +71,12 @@ export class DB<Schema extends Record<string, any>> {
     tx();
   }
 
+  tx(tx: () => void) {
+    const transaction = this.db?.transaction(tx);
+    if (transaction)
+      transaction();
+  }
+
   /**
    * Creates a type-safe query builder for a table
    * @template TableName - Name of the table (keyof Schema)

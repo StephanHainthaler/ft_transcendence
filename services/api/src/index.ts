@@ -5,6 +5,12 @@ const AUTH_URL = process.env.AUTH_SERVICE_URL;
 
 const USER_URL = process.env.USER_SERVICE_URL;
 
+const publicRoutes = [
+  '/auth/login',
+  '/auth/refresh',
+  '/auth/sign-up',
+];
+
 async function startApiGateway() {
 
   if (!AUTH_URL) throw new Error("AUTH_SERVICE_URL is not defined");
@@ -23,6 +29,33 @@ async function startApiGateway() {
   const proxy = await import ('@fastify/http-proxy');
 
   console.log(`API_URL: ${process.env.API_URL}`);
+
+  fastify.addHook('onRequest', async (request, reply) => {
+    if (!publicRoutes.some(r => request.url.includes(r))) {
+      const authHeader = request.headers.authorization;
+      if (!authHeader) {
+        return reply.code(401).send({ success: false, message: 'Missing auth header' });
+      } else if (!authHeader.startsWith('Bearer ')) {
+        return reply.code(401).send({ success: false, message: 'Invalid auth header' });
+      }
+
+      const token = authHeader.replace('Bearer ', '');
+
+      try {
+        const response = await fetch(`${AUTH_URL}/validate`, {
+          method: 'post',
+          headers: {
+            'Authorization': authHeader,
+          },
+          body: JSON.stringify({ token: token }),
+        });
+        const data = await response.json();
+        if (!response.ok) return reply.status(response.status).send(data);
+      } catch (e: any) {
+        return reply.code(401).send({ message: 'You are not authenticated' });
+      }
+    }
+  })
 
   fastify.register(proxy, {
     upstream: USER_URL,
@@ -47,4 +80,5 @@ async function startApiGateway() {
     process.exit(1);
   }
 }
+
 startApiGateway();

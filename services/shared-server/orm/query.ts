@@ -92,6 +92,11 @@ export class Query<Row, SelectedRow = Row> {
     return this;
   }
 
+  delete(): Query<Row, SelectedRow> {
+    this.type = 'delete';
+    return this;
+  }
+
   /**
    * Selects specific columns from the table
    * @param tableFields - Column names to select
@@ -270,7 +275,7 @@ INSERT INTO "${this.table.name}" (${keys.join(',')})
       }
       case 'update': {
         if (!this.insertValues) throw new Error('Missing Insert Values!');
-        if (!this.constraints) throw new Error('Missing constraint for update!');
+        if (this.constraints.length === 0) throw new Error('Missing constraint for update!');
         const keys = Object.keys(this.insertValues);
         const values = Object.values(this.insertValues);
         return {
@@ -282,6 +287,16 @@ UPDATE "${this.table.name}"
           params: [...values, ...this.constraints.map(c => c.arg)]
         };
       }
+      case 'delete': {
+        if (this.constraints.length === 0) throw new Error('Missing constraint for update!');
+        return {
+          sql: `
+DELETE FROM "${this.table.name}"
+  WHERE ${this.constraints.map(c => `${c.col.toString()} ${getOperator(c.kind)} ?`).join(' AND ')}
+          `,
+          params: [],
+        }
+      }
       default:
         return { sql: '', params: [] };
     }
@@ -291,7 +306,7 @@ UPDATE "${this.table.name}"
    * Executes the query without returning results
    * @returns better-sqlite3 RunResult
    */
-  run() {
+  run(): Database.RunResult {
     const { sql, params } = this.stringify();
     return this.db.prepare(sql).run(...params);
   }

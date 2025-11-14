@@ -1,6 +1,6 @@
-import { DB } from "@shared/orm";
+import { DB } from "@server/orm";
 
-import { int, text, defineTable } from "@shared/orm"
+import { int, text, defineTable } from "@server/orm"
 import { Game, User, UserGame } from "@shared/user";
 
 export interface Schema {
@@ -12,6 +12,8 @@ export interface Schema {
 const users = defineTable('users', {
   id: int().primarykey().autoIncrement().notNull(),
   name: text().notNull(),
+  username: text().unique(),
+  email: text().unique(),
 });
 
 const games = defineTable('games', {

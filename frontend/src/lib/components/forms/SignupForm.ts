@@ -1,7 +1,6 @@
 import { button, h2, div, form } from "@lib/vdom";
-import { Input } from "@lib/components/Input";
-import { authClient } from "@lib/auth/authClient";
-import type { User } from "@shared/user";
+import { Input } from "@lib/components/ui/Input";
+import { client } from "@lib/api/client";
 import { validateInputThrow } from "@lib/validation/inputValidation";
 let usernameBuffer = '';
 let emailBuffer = '';
@@ -14,16 +13,15 @@ let updateFunc: (() => void) | null = null;
 const handleLoginFormSubmit = async (e: Event) => {
   e.preventDefault();
   e.stopPropagation();
-  let user: User;
   try {
     const username = validateInputThrow(usernameBuffer, { type: 'username' });
     const email = validateInputThrow(emailBuffer, { type: 'email' });
-    user = await authClient.signup({
+    if (userPasswordBuffer !== userPasswordRepeatBuffer) throw new Error("Passwords dont match");
+    await client.signup({
       username,
       email,
       passwd: userPasswordBuffer,
     });
-    console.log("User after signup request: ", user);
   } catch (e: any) {
     console.error(e);
     errorMessage = e.message || e.error || JSON.stringify(e);
@@ -67,18 +65,22 @@ const handlePasswordInputRepeat = (e: Event) => {
 }
 
 export const SignupForm = (update: () => void) => {
-  updateFunc = update;
+  updateFunc = () => { update() };
   return (
-    form({ class: 'space-y-4 px-8 pt-8'},
-      div({ class: 'w-full max-w-md' },
+    form({ class: 'space-y-4 px-8 pt-8', onclick: updateFunc },
+      div({ class: 'w-full gap-2 flex flex-col max-w-md' },
         h2({ class: 'text-2xl font-bold text-teal mb-6 text-center' }, 'Register'),
         Input('Username', handleUsernameInput),
-        Input('Email', handleEmailInput, { type: 'email', autocomplete: 'off', 'replace': true }),
+        div(),
+        Input('Email', handleEmailInput, { type: 'email', autocomplete: 'off' }),
         Input('Password', handlePasswordInput, { type: 'password', autocomplete: 'new-password' }),
         Input('Password Repeat', handlePasswordInputRepeat, { type: 'password', autocomplete: 'new-password'})
       ),
-      div(errorMessage.length > 0 ? { class: 'bg-red-400 p-4 w-full shadow-md rounded-md' } : {}, String(errorMessage)),
-      div({ class: 'px-8' },
+      div({
+        class: errorMessage.length > 0 ? 'bg-red-400 text-sm p-4 w-full shadow-md rounded-md' : 'flex flex-grow',
+        replace: true,
+      }, errorMessage),
+      div({ class: 'px-8 mt-auto' },
         button({ onclick: handleLoginFormSubmit, class: 'btn w-full mb-8 justify-self-end' }, 'Sign up')
       )
     )

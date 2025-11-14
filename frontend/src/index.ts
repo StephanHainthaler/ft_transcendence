@@ -1,3 +1,4 @@
+import { client } from "@lib/api/client";
 import { router } from "./routes/router";
 
 try {
@@ -13,9 +14,11 @@ try {
     }
   });
 
+  setTimeout(() => client.init, 500);
   if (router.location !== window.location.pathname) {
     await router.goto('/');
   } else {
+    console.log('refreshing')
     await router.refresh();
   }
 
@@ -23,5 +26,5 @@ try {
     await router.goto(window.location.pathname, true);
   })
 } catch (e: any) {
-
+  console.error(e)
 }
