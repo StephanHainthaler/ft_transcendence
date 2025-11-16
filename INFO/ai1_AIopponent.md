@@ -35,8 +35,6 @@ https://www.linkedin.com/pulse/creating-classical-pong-game-pygame-step-by-step-
 
 
 # Next steps
-learn TypeScript and JavaScript
+learn TypeScript
 
-Write ticket for Julian and Stephan
-
-Think about logic
+think about logic
