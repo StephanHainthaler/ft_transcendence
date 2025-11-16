@@ -17,8 +17,10 @@ class Pong
 	public constructor(player1_name: string, player2_name: string)
 	{
 		this._canvas = document.getElementById("canvas") as HTMLCanvasElement;
-		this._canvas.width = window.innerWidth * 0.66;
-		this._canvas.height = window.innerHeight * 0.66;
+		// this._canvas.width = window.innerWidth * 0.66;
+		// this._canvas.height = window.innerHeight * 0.66;
+		this._canvas.width = screen.width * 0.66;
+		this._canvas.height = screen.height * 0.66;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
 
 		this._player1 = new Player(player1_name, this._canvas.width * 0.1, this._canvas.height * 0.5, this._canvas);
@@ -45,6 +47,8 @@ class Pong
 		}
 
 		// to do: draw point score
+		this.drawPlayerScore(this._player1.getScore(), this._canvas.width * 0.45, this._canvas.height * 0.01);
+		this.drawPlayerScore(this._player2.getScore(), this._canvas.width * 0.535, this._canvas.height * 0.01);
 
 		//draw player paddles
 		this._context.fillRect(this._player1.getOrigin().x, this._player1.getOrigin().y, this._player1.getWidth(), this._player1.getHeight());
@@ -58,6 +62,77 @@ class Pong
 		this._context.lineWidth = 3;
 		this._context.moveTo(game._ball.getOrigin().x, game._ball.getOrigin().y);
 
+	}
+
+	public drawPlayerScore(score: number, x: number, y: number)
+	{
+		let number_width = this._canvas.width * 0.02;
+		let number_height = this._canvas.height * 0.065;
+		
+			switch (score)
+			{
+				// case 0:
+				// 	this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
+				// 	this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
+				// 	this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
+				// 	this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
+				// 	break;
+				case 1:
+					this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
+					break;
+				case 2:
+					this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
+					this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height * 0.5);
+					this._context.fillRect(x, y + number_height * 0.5, number_width, this._canvas.height * 0.005);
+					this._context.fillRect(x, y + number_height * 0.5, this._canvas.height * 0.005, number_height * 0.5);
+					this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
+					break;
+				case 3:
+					this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
+					this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height * 0.5);
+					this._context.fillRect(x, y + number_height * 0.5, number_width, this._canvas.height * 0.005);
+					this._context.fillRect(x, y + number_height * 0.5, this._canvas.height * 0.005, number_height * 0.5);
+					this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
+					break;
+				case 4:
+					// 	this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
+					// 	this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
+					break;
+				case 5:
+					// 	this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
+					// 	this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
+					break;
+				case 6:
+					// 	this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
+					// 	this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
+					break;
+				case 7:
+					// 	this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
+					// 	this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
+					break;
+				case 8:
+					// 	this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
+					// 	this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
+					break;
+				case 9:
+					// 	this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
+					// 	this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
+					// 	this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
+					break;
+				default:
+					return ;
+		}
 	}
 
 	public getCanvas() : HTMLCanvasElement
@@ -88,7 +163,7 @@ class Player
 	private	_button_up: number;
 	private	_button_down: number;
 	private	_origin: vector;
-	//score
+	private	_score: number;
 
 	public constructor(name: string, x: number, y: number, canvas: HTMLCanvasElement)
 	{
@@ -99,6 +174,7 @@ class Player
 		this._height = canvas.height * 0.12;
 		this._button_up = 119;
 		this._button_down = 115;
+		this._score = 0;
 	}
 
 	public move(): void
@@ -134,6 +210,11 @@ class Player
 	public getHeight(): number
 	{
     	return (this._height);
+	}
+
+	public getScore(): number
+	{
+    	return (this._score);
 	}
 }
 
@@ -182,13 +263,16 @@ class Ball
 
 	public move(player1: Player, player2: Player): void
 	{
+		//ball hits left or right screen end
 		if (this._origin.x + this._direction.x > (game.getCanvas().width) || this._origin.x + this._direction.x < 0)
 		{
 			this._direction.x = -this._direction.x;
 		} 
 		this._origin.x += this._direction.x; //SCORE/spawn new ball
 
-		if (this._origin.x + this._direction.x < player1.getOrigin().x + player1.getWidth() && this.isHittingPlayer(this, player1) == true)
+		//ball hits left or right player paddle
+		if ((this._origin.x + this._direction.x < player1.getOrigin().x + player1.getWidth() && this.isHittingPlayer(player1) == true) ||
+			(this._origin.x + this._width + this._direction.x > player2.getOrigin().x && this.isHittingPlayer(player2) == true))
 		{
 			this._direction.x = -this._direction.x;
 		} 
@@ -201,9 +285,10 @@ class Ball
 		this._origin.y += this._direction.y;
 	}
 
-	public isHittingPlayer(ball: Ball, player: Player): boolean
+	public isHittingPlayer(player: Player): boolean
 	{
-		//if (ball.)
+		if (this._origin.y >= player.getOrigin().y && this._origin.y + this._height <= player.getOrigin().y + player.getHeight())
+			return (true);
 		return (false);
 	}
 
@@ -231,13 +316,13 @@ class Ball
 let game: Pong;
 game = new Pong("Stephan", "Julian");
 
-const updateState = () => {
+const updatePong = () => {
 
 	game.getBall().move(game.getPlayer(1), game.getPlayer(2));
 	game.getPlayer(1).move();
 	game.getPlayer(2).moveByAI();
 	game.draw_arena();
-  	window.requestAnimationFrame(() => updateState());
+  	window.requestAnimationFrame(() => updatePong());
 };
 
-window.requestAnimationFrame(() => updateState());
+window.requestAnimationFrame(() => updatePong());
