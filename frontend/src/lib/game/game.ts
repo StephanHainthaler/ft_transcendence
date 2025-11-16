@@ -163,7 +163,7 @@ class Player
 	{
 		this._origin = {x, y};
     	this._name = name;
-		this._velocity = 6;
+		this._velocity = 15;
 		this._width = canvas.width * 0.004;
 		this._height = canvas.height * 0.12;
 		this._button_up = 119;
@@ -184,29 +184,17 @@ class Player
 	public moveByAI(ball: Ball): void
 	{
 		// if the ball is in opponents field, go to the middle
-		let gamer_point: number;
-	
-		// if ball velocity = + = down => choose this._origin.y  + this._height as comp
-		if (ball.getDirection().y > 0) // ball heading downwards
-			gamer_point = this._origin.y + this._height;
-		else // ball heading upwards
-			gamer_point = this._origin.y;
-
 		if (ball.getOrigin().x < (game.getCanvas().width / 2))
 		{
-			if (gamer_point < game.getCanvas().height / 2)
+			if (this._origin.y < game.getCanvas().height / 2)
 				this._origin.y += this._velocity;
-			else if (gamer_point > game.getCanvas().height / 2)
+			else if (this._origin.y > game.getCanvas().height / 2)
 				this._origin.y -= this._velocity;
 		}
-		else if (ball.getOrigin().y > gamer_point && (this._origin.y + this._height) + this._velocity < (game.getCanvas().height * 0.9))
-		{
+		else if (ball.getOrigin().y - ball.getHeight() > this._origin.y && (this._origin.y + this._height) + this._velocity < (game.getCanvas().height * 0.9))
 			this._origin.y += this._velocity;
-		}
-		else if (ball.getOrigin().y + ball.getHeight() <= (this._origin.y + this._height / 2) && this._origin.y - this._velocity > game.getCanvas().height * 0.1)
-		{
+		else if (ball.getOrigin().y <= this._origin.y && this._origin.y - this._velocity > game.getCanvas().height * 0.1)
 			this._origin.y -= this._velocity;
-		}
 	}
 
 	public setName(name: string): void
@@ -255,7 +243,7 @@ class Ball
 	{
 		this._width = canvas.width * 0.01;
 		this._height = this._width;
-		this._velocity = 2;
+		this._velocity = 15;
 		this.spawnBall(canvas.width * 0.5, canvas.height * 0.5);
 	}
 
