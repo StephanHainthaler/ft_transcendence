@@ -164,7 +164,7 @@ class Player
 	{
 		this._origin = {x, y};
     	this._name = name;
-		this._velocity = 1;
+		this._velocity = 15;
 		this._width = canvas.width * 0.004;
 		this._height = canvas.height * 0.12;
 		this._button_up = 119;
@@ -182,9 +182,20 @@ class Player
 		this._origin.y += this._velocity;
 	}
 
-	public moveByAI(): void
+	public moveByAI(ball: Ball): void
 	{
-
+		// if the ball is in opponents field, go to the middle
+		if (ball.getOrigin().x < (game.getCanvas().width / 2))
+		{
+			if (this._origin.y < game.getCanvas().height / 2)
+				this._origin.y += this._velocity;
+			else if (this._origin.y > game.getCanvas().height / 2)
+				this._origin.y -= this._velocity;
+		}
+		else if (ball.getOrigin().y - ball.getHeight() > this._origin.y && (this._origin.y + this._height) + this._velocity < (game.getCanvas().height * 0.9))
+			this._origin.y += this._velocity;
+		else if (ball.getOrigin().y <= this._origin.y && this._origin.y - this._velocity > game.getCanvas().height * 0.1)
+			this._origin.y -= this._velocity;
 	}
 
 	public setName(name: string): void
@@ -233,7 +244,7 @@ class Ball
 	{
 		this._width = canvas.width * 0.01;
 		this._height = this._width;
-		this._velocity = 2;
+		this._velocity = 15;
 		this.spawnBall(canvas.width * 0.5, canvas.height * 0.5);
 	}
 
@@ -341,7 +352,7 @@ const updatePong = () => {
 
 	game.getBall().move(game.getPlayer(1), game.getPlayer(2));
 	game.getPlayer(1).move();
-	game.getPlayer(2).move();
+	game.getPlayer(2).moveByAI(game.getBall());
 	game.draw_arena();
   	window.requestAnimationFrame(() => updatePong());
 };
