@@ -141,6 +141,7 @@ class Pong
 		else
 			return (this._player2);
 	}
+
 	public getBall() : Ball
 	{
 		return (this._ball);
