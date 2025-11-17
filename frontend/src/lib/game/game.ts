@@ -141,6 +141,7 @@ class Pong
 		else
 			return (this._player2);
 	}
+
 	public getBall() : Ball
 	{
 		return (this._ball);
@@ -185,7 +186,6 @@ class Player
 	{
 
 	}
-
 
 	public setName(name: string): void
 	{
@@ -341,7 +341,7 @@ const updatePong = () => {
 
 	game.getBall().move(game.getPlayer(1), game.getPlayer(2));
 	game.getPlayer(1).move();
-	game.getPlayer(2).moveByAI();
+	game.getPlayer(2).move();
 	game.draw_arena();
   	window.requestAnimationFrame(() => updatePong());
 };

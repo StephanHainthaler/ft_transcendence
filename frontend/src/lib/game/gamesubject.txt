@@ -4,7 +4,7 @@ What we need:
 
     -) Background:  black
     -) Players:     white
-    -) Ball:        white
+    -) Ball:        red
     -) U/L Borders: white
     -) Points:      white
     -) Middle line: white
