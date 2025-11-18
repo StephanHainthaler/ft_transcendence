@@ -16,7 +16,7 @@ class Pong
 
 	public constructor(player1_name: string, player2_name: string)
 	{
-		this._canvas = document.getElementById("canvas") as HTMLCanvasElement;
+		this._canvas = document.getElementById("pong-game-canvas") as HTMLCanvasElement;
 		// this._canvas.width = window.innerWidth * 0.66;
 		// this._canvas.height = window.innerHeight * 0.66;
 		this._canvas.width = screen.width * 0.66;
