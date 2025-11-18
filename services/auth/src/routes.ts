@@ -4,7 +4,8 @@ import { updateUser } from "@ft_transcendence/user/src/api";
 import { AuthUserClient, } from "@shared/user";
 import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody, parseJWT } from "@shared/api";
 import { AuthUser } from "./db";
-import { extractJWTFromHeader, generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
+import { generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
+import { extractJWTFromHeader } from "@server/jwt/validate";
 
 type AuthReply = {
   200: AuthResponseSuccess,

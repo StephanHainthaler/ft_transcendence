@@ -44,7 +44,7 @@ export const Page: Route = () => {
   return (
     form({
       id: 'dyn-profile-form',
-      class: 'px-[20%] w-full h-full flex flex-col justify-center items-center',
+      class: 'page-container',
       onsubmit: (e: Event) => { e.preventDefault() },
     },
       ProfileFormDiv(),
@@ -84,19 +84,12 @@ const userAuthenticationInfo = (userCred: AuthUserClient & { passwd: string, pas
             ...(!editMode ? { disabled: '' } : {})
           }
         ),
-        client.user!.name
       )
     )
   )
 }
 
 const ProfileFormDiv: () => VNode = () => {
-  console.log('running profile form div')
-  if (!client.isLoggedIn) {
-    console.log('client returning not logged in');
-    return ErrorNotLoggedIn();
-  }
-
   if (!session) {
     session = {
       auth: client.auth!,
@@ -106,7 +99,7 @@ const ProfileFormDiv: () => VNode = () => {
     };
   }
   return (
-    div({ class: 'card bg-tan my-[1em] p-4 flex w-full flex-grow flex-col', onclick: () => updateId(ProfileFormDiv()) },
+    div({ class: 'card bg-tan p-4 flex w-full flex-grow flex-col', onclick: () => updateId(ProfileFormDiv()) },
       h1({ class: 'text-3xl' }, 'Profile'),
       Separator(),
         div({},

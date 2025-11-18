@@ -1,5 +1,5 @@
 import { client } from "@lib/api/client";
-import { router } from "./routes/router";
+import { router } from "@lib/router";
 
 try {
   console.log(import.meta.env.VITE_API_URL);
@@ -15,6 +15,7 @@ try {
     }
   });
 
+  await router.init();
   setTimeout(() => client.init(), 500);
   if (router.location !== window.location.pathname) {
     await router.goto('/');

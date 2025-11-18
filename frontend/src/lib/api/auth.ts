@@ -1,10 +1,9 @@
-import type { Writable } from "@lib/types/writable";
 import type { SignupRequestBody, LoginRequestBody, AuthResponseSuccess } from "@shared/api/authRequest";
 import { request } from './utils';
-import { type JWT } from "@shared/api";
+import { parseJWT } from "@shared/api";
+import { client } from "./client";
 
-export async function updateRequest(
-  accessToken: Writable<JWT | null>, {
+export async function updateRequest({
   email, username, passwd
 }: {
   email?: string, username?: string, passwd?: string
@@ -16,12 +15,12 @@ export async function updateRequest(
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken.get()?.raw}`,
+      'Authorization': client.authHeader
     },
     body: JSON.stringify({ email, username, passwd }),
   });
 
-  const response = await request(req, accessToken);
+  const response = await request(req);
 
   const data: AuthResponseSuccess = await response.json();
   if (!response.ok) {
@@ -32,27 +31,27 @@ export async function updateRequest(
 
 export async function signupRequest(
   info: SignupRequestBody,
-  accessToken: Writable<JWT | null>
 ): Promise<AuthResponseSuccess> {
-    if ((!info.username && !info.email))
-      throw new Error("Missing Email of Username!");
-    if (!info.passwd) throw new Error("Missing Password!");
+  if ((!info.username && !info.email))
+    throw new Error("Missing Email of Username!");
+  if (!info.passwd) throw new Error("Missing Password!");
 
-    const signupReq = new Request('/api/auth/sign-up', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken.get()?.raw}`,
-      },
-      body: JSON.stringify(info),
-    });
+  const signupReq = new Request('/api/auth/sign-up', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(info),
+  });
 
-    const response = await request(signupReq, accessToken);
+  const response = await request(signupReq);
 
-    const data: AuthResponseSuccess = await response.json();
-    if (!response.ok) throw data;
-    console.info(`Received Sign-Up Response: ${JSON.stringify(data)}`)
-    return data;
+  const data: AuthResponseSuccess = await response.json();
+  if (!response.ok || !data.access_token) throw data;
+  const jwt = parseJWT(data.access_token);
+  client.jwt = jwt;
+
+  return data;
 }
 
 export async function loginRequest(
@@ -80,34 +79,34 @@ export async function loginRequest(
   return data;
 }
 
-export async function logoutRequest(accessToken: Writable<JWT | null>) {
+export async function logoutRequest() {
   const req = new Request('/api/auth/logout', {
     method: 'post',
     headers: {
-      'Authorization': `Bearer ${accessToken.get()?.raw}`,
+      'Authorization': client.authHeader,
     }
   });
 
   try {
-    accessToken.delete();
-    await request(req, accessToken);
+    client.clearSession();
+    await request(req);
   } catch {
     throw new Error('Failed to log out');
   }
 }
 
-export async function getAuth(accessToken: Writable<JWT | null>) {
+export async function getAuth() {
   const req = new Request('/api/auth', {
     method: 'get',
     headers: {
-      'Authorization': `Bearer ${accessToken.get()?.raw}`,
+      'Authorization': client.authHeader,
     }
   })
 
-  const response = await request(req, accessToken);
+  const response = await request(req);
   const data = await response.json();
   if (!response.ok) {
     throw data;
   }
-  return data.auth;
+  return data;
 }

@@ -2,6 +2,8 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { db } from "./db";
 import { User } from "@shared/user"
 import { JWT, parseJWT } from '@shared/api';
+import { extractJWTFromHeader } from "@server/jwt/validate";
+import { eq, ne } from "@server/orm";
 
 type GetUserIdReq = FastifyRequest<{
   Params: {
@@ -24,18 +26,6 @@ type UpdateUserReq = FastifyRequest<{
   }
 }>
 
-export function parseJWTUserService(tokenHeader: string | undefined, userId?: number): JWT {
-    if (!tokenHeader || !tokenHeader.startsWith('Bearer '))
-      throw { code: 500, message: 'Internal Server Error: Unauthorized' };
-    const tokenRaw = tokenHeader.replace('Bearer ', '');
-    const token = parseJWT(tokenRaw);
-
-    if (userId && userId !== token.payload.sub) {
-      throw { code: 403, message: 'Forbidden' };
-    }
-    return token;
-}
-
 export function userRoutes(fastify: FastifyInstance) {
   fastify.get<{
     Params: {
@@ -43,11 +33,11 @@ export function userRoutes(fastify: FastifyInstance) {
     }
   }>('/:userId?', (request, reply) => {
     try {
-      const token = parseJWTUserService(request.headers.authorization, request.params.userId);
+      const token = extractJWTFromHeader(request.headers.authorization);
       const user = db
         .from('users')
         .select('*')
-        .eq('id', token.payload.sub)
+        .where(eq('id', token.payload.sub))
         .single();
       if (!user) {
         return reply.status(400).send({ message: "No such user" })
@@ -70,13 +60,23 @@ export function userRoutes(fastify: FastifyInstance) {
     reply.status(200).send({ id: result.id })
   });
 
-  fastify.get('/all', (request, reply) => {
-    const users = db
-      .from('users')
-      .select('*')
-      .all();
+  fastify.get<{
+    Reply: {
+      200: { success: boolean, users: User[] },
+      '4xx': { success: boolean, message: string },
+      500: { success: boolean, message: string }
+    }
+  }>('/all', (request, reply) => {
+      try {
+        const users = db
+          .from('users')
+          .select('*')
+          .all();
 
-    reply.status(200).send({ users });
+        reply.status(200).send({ success: true, users });
+      } catch (e: any) {
+        reply.status(e.code || e.status || 500).send({ success: false, message: e.message || `Internal Server Error: ${e}` })
+      }
   })
 
   fastify.patch<{
@@ -100,7 +100,7 @@ export function userRoutes(fastify: FastifyInstance) {
       const response = db
         .from('users')
         .update(user)
-        .eq('id', user.id)
+        .where(eq('id', user.id))
         .select('*')
         .single();
 

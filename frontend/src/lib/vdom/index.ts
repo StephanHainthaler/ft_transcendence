@@ -68,56 +68,89 @@ function cleanupNode(node: Node, vnode: Child) {
   })
 }
 
-export function patch(domeNode: Node, oldNode: Child, newNode: Child) {
+export function patch(domeNode: Node, oldNode: Child, newNode: Child): Node | null | undefined {
   try {
-    if (!oldNode && !newNode) return;
-    if (typeof newNode === 'string') {
-      if (oldNode !== newNode) {
-        return domeNode.parentNode?.replaceChild(
-          document.createTextNode(newNode as string),
-          domeNode
-        )
-      }
-      return domeNode
-    }
+    if (!domeNode) return null;
+    if (!oldNode && !newNode) return domeNode;
 
-    if (typeof oldNode === 'string') {
-      if (typeof newNode === 'object') {
-        const node = render(newNode);
-        domeNode.parentNode?.replaceChild(node, domeNode);
-        return node;
-      }
-      return domeNode;
-    }
-
-    if (oldNode?.tag !== newNode?.tag || newNode?.props?.['replace'] === true) {
+    if (!newNode && oldNode) {
       cleanupNode(domeNode, oldNode);
+      domeNode.parentNode?.removeChild(domeNode);
+      return null;
+    }
+
+    if (!oldNode && newNode) {
       const node = render(newNode);
       domeNode.parentNode?.replaceChild(node, domeNode);
       return node;
     }
 
-    if (newNode?.props && oldNode?.props)
-      updateProps(domeNode, oldNode?.props, newNode.props)
-    const oldChildren = oldNode!.children;
-    const newChildren = newNode!.children;
+    if (typeof oldNode === 'string' && typeof newNode === 'string') {
+      domeNode.textContent = newNode;
+      return domeNode;
+    }
 
+    if (typeof oldNode === 'string' && typeof newNode !== 'string') {
+      const node = render(newNode);
+      domeNode.parentNode?.replaceChild(node, domeNode);
+      return node;
+    }
+
+    if (typeof newNode === 'string') {
+      cleanupNode(domeNode, oldNode);
+      const textNode = document.createTextNode(newNode);
+      domeNode.parentNode?.replaceChild(textNode, domeNode);
+      return textNode;
+    }
+
+    const oldEl = oldNode as VNode;
+    const newEl = newNode as VNode;
+
+    if (oldEl.tag !== newEl.tag || newEl.props?.['replace'] === true) {
+      cleanupNode(domeNode, oldEl);
+      const node = render(newEl);
+      domeNode.parentNode?.replaceChild(node, domeNode);
+      return node;
+    }
+
+    if (newEl.props || oldEl.props) {
+      updateProps(domeNode, oldEl.props || {}, newEl.props || {});
+    }
+
+    const oldChildren = oldEl.children || [];
+    const newChildren = newEl.children || [];
     const childNodes = Array.from(domeNode.childNodes);
+    const maxLen = Math.max(oldChildren.length, newChildren.length);
 
-    for (let i = 0; i < Math.max(newChildren.length, oldChildren.length); i++) {
-      if (i >= newChildren.length) {
-        cleanupNode(childNodes[i], oldChildren[i]);
-        domeNode.removeChild(childNodes[i]);
-      } else if (i >= oldChildren.length && newChildren[i]) {
-        domeNode.appendChild(render(newChildren[i]));
-      } else {
-        patch(childNodes[i], oldChildren[i], newChildren[i]);
+    for (let i = 0; i < maxLen; i++) {
+      const oldChild = oldChildren[i];
+      const newChild = newChildren[i];
+      const domChild = childNodes[i];
+
+      if (!newChild && oldChild && domChild) {
+        cleanupNode(domChild, oldChild);
+        domeNode.removeChild(domChild);
+      } else if (newChild && !oldChild) {
+        const newDomChild = render(newChild);
+        if (i < childNodes.length) {
+          domeNode.insertBefore(newDomChild, childNodes[i]);
+        } else {
+          domeNode.appendChild(newDomChild);
+        }
+      } else if (newChild && oldChild && domChild) {
+        patch(domChild, oldChild, newChild);
+      } else if (newChild && !domChild) {
+        domeNode.appendChild(render(newChild));
       }
     }
 
     return domeNode;
   } catch (e: any) {
-    console.error(`Caught exception with input: old: ${JSON.stringify(oldNode)} new: ${JSON.stringify(newNode)}; e: ${e}`);
+    console.error(
+      `Patch error - Old: ${JSON.stringify(oldNode)}, New: ${JSON.stringify(newNode)}, Error: ${e.message}`,
+      e
+    );
+    return domeNode;
   }
 }
 
@@ -138,20 +171,24 @@ export function update(newNode: VNode) {
 
 const nodeRegistry = new WeakMap<Node, VNode>();
 
-export function updateId(newNode: VNode | (() => VNode)) {
+export function updateId(...newNodes: (VNode | (() => VNode))[]) {
   let vnode;
-  if (typeof newNode === 'function')
-    vnode = newNode();
-  else
-    vnode = newNode;
-  const id = vnode.props?.id;
-  if (id) {
-    const node = document.querySelector(`#${id}`);
-    if (node) {
-      const oldvnode = nodeRegistry.get(node);
-      if (oldvnode) {
-        patch(node, oldvnode, vnode);
-        nodeRegistry.set(node, vnode);
+  let node;
+  for (const newNode of newNodes) {
+    if (typeof newNode === 'function')
+      vnode = newNode();
+    else
+      vnode = newNode;
+    const id = vnode.props?.id;
+    if (id) {
+      node = document.querySelector(`#${id}`);
+      console.log('Updating node ', node);
+      if (node) {
+        const oldvnode = nodeRegistry.get(node);
+        if (oldvnode) {
+          patch(node, oldvnode, vnode);
+          nodeRegistry.set(node, vnode);
+        }
       }
     }
   }
@@ -172,7 +209,7 @@ export function render(node: Child): HTMLElement | Text {
       el.appendChild(render(c));
     }}
   );
-  if (node?.props?.id && (node?.props.id as string).startsWith('dyn'))
+  if (node?.props?.id && (node?.props.id as string).startsWith('dyn-'))
     nodeRegistry.set(el, node!);
   return el;
 }

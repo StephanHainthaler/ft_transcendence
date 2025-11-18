@@ -1,10 +1,10 @@
 import { Writable } from "@lib/types/writable";
-import type { AuthUserClient, User } from "@shared/user";
+import type { AuthUserClient, Friendship, User } from "@shared/user";
 import { getAuth, loginRequest, signupRequest, updateRequest } from "./auth";
 import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authRequest";
 import type { JWT } from "@shared/api";
 import { parseJWT } from "@shared/api";
-import { getUser } from "./user";
+import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest } from "./user";
 
 export type ApiError = {
   code: number,
@@ -26,7 +26,6 @@ class ApiClient {
 
   async init() {
     try {
-      console.log('running init');
       const [user, auth] = await Promise.all([
         this.getUser(),
         this.getAuth(),
@@ -34,8 +33,8 @@ class ApiClient {
       this.userStore.set(user);
       this.authStore.set(auth);
       this.notify();
-    } catch {
-
+    } catch (e: any) {
+      console.error(e);
     }
   }
 
@@ -64,11 +63,13 @@ class ApiClient {
     let user = this.userStore.get();
     let auth = this.authStore.get();
     if (!user) {
-      user = await this.getUser();
+      const response = await this.getUser();
+      user = response.user as User;
       this.userStore.set(user);
     }
     if (!auth) {
-      auth = await this.getAuth();
+      const data = await this.getAuth();
+      auth = data.auth as AuthUserClient;
       this.authStore.set(auth);
     }
     return { auth, user }
@@ -116,8 +117,10 @@ class ApiClient {
 
   async signup(info: SignupRequestBody) {
     try {
-      const response = await signupRequest(info, this.accessToken);
-      this.authStore.set(response.auth);
+      const response = await signupRequest(info);
+      this.auth = response.auth;
+      this.user = await this.getUser()
+      client.notify();
     } catch (e: any) {
       const error = new Error(`Signup Failed: ${e.message || e}`)
       console.error(error);
@@ -125,12 +128,37 @@ class ApiClient {
     }
   }
 
-  async getAuth(): Promise<User> {
-    return await getAuth(this.accessToken);
+  async getAuth(): Promise<any> {
+    return await getAuth();
   }
 
-  async getUser(): Promise<User> {
-    return await getUser(this.accessToken);
+  async getUser(): Promise<any> {
+    const response = await getUser();
+    return response.user;
+  }
+
+  async getUsers(): Promise<User[]> {
+    const response = await getUsers();
+    return response.users;
+  }
+
+  async getFriends(): Promise<{ friends: User[], friendships: Friendship[] }> {
+    const data = await getFriends();
+    return { friends: data.friends, friendships: data.friendships };
+  }
+
+  async sendFriendRequest(friendId: number): Promise<Friendship> {
+    const response = await sendFriendRequest(friendId);
+
+    return response.friendship;
+  }
+
+  async acceptFriendRequest(reqId: number) {
+    return await acceptFriendRequest(reqId);
+  }
+
+  async removeFriendship(friendshipId: number) {
+    await removeFriendship(friendshipId);
   }
 
   async login(info: LoginRequestBody) {
@@ -140,8 +168,9 @@ class ApiClient {
       if (authResponse.access_token) {
         const jwt = parseJWT(authResponse.access_token);
         this.accessToken.set(jwt);
-        const user = await getUser(this.accessToken)
+        const user = await getUser()
         this.userStore.set(user);
+        this.notify();
       }
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
@@ -159,7 +188,15 @@ class ApiClient {
     this.listeners.clear();
   }
 
-  private clearSession() {
+  get authHeader(): string {
+    return `Bearer ${this.accessToken.get()?.raw}`;
+  }
+
+  set jwt(jwt: JWT) {
+    this.accessToken.set(jwt);
+  }
+
+  clearSession() {
     this.userStore.set(null);
     this.authStore.set(null);
     this.accessToken.set(null);
@@ -174,7 +211,7 @@ class ApiClient {
       throw new Error("No Credentials to update!");
     }
     try {
-      const authResponse = await updateRequest(this.accessToken, {
+      const authResponse = await updateRequest({
         email, username, passwd
       });
       this.authStore.set(authResponse.auth)
