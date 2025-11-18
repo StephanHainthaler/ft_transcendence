@@ -16,6 +16,10 @@ export const routes: Location[] = [
     file: "ProfilePage",
   },
   {
+    pathname: "/game",
+    file: "GamePage"
+  },
+  {
     pathname: "/health",
     file: "HealthPage"
   },
@@ -44,10 +48,10 @@ export class Router {
     console.log(this.app);
     try {
       const route = await this.loadPage(this.curLocation);
-      mount(await Layout(await route()), this.app);
+      mount(Layout(route()), this.app);
     } catch (e: any) {
       console.error(`Failed to load route ${this.curLocation}`);
-      mount(await Layout(ErrorPage('404')), this.app);
+      mount(Layout(ErrorPage('404')), this.app);
     }
 
     return this;
@@ -80,8 +84,8 @@ export class Router {
         };
 
         update(Loader())
-        setTimeout(async () => {
-          update(await Layout(await route()));
+        setTimeout(() => {
+          update(Layout(route()));
         }, 400);
 
         if (!isPopState && location !== this.curLocation)
@@ -91,9 +95,9 @@ export class Router {
       } catch (e: any) {
         console.error(`Routing Error: ${e.message || e}`);
         if (e.page) {
-          update(await Layout(await e.page()))
+          update(Layout(e.page()))
         } else {
-          update(await Layout(ErrorPage('404')));
+          update(Layout(ErrorPage('404')));
         }
       }
   }

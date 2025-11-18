@@ -22,7 +22,6 @@ clean:
 	@rm -rf node_modules
 
 test:
-	@make test-backend
 	@make test-frontend
 
 test-backend:

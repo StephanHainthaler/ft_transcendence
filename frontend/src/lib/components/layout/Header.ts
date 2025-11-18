@@ -16,6 +16,7 @@ const dropdownMenu = () => {
     ...(client.isLoggedIn
       ? [
         a({ class: 'block m-2 px-4 py-2 rounded-lg hover:bg-gray-100', href: '/user'}, 'Profile'),
+        a({ class: 'block m-2 px-4 py-2 rounded-lg hover:bg-gray-100', href: '/game'}, 'Game'),
       ]
       : [
         a({ class: 'block m-2 px-4 py-2 rounded-lg hover:bg-gray-100', href: '/auth' }, 'Login'),
