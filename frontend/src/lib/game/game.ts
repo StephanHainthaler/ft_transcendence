@@ -155,10 +155,12 @@ class Player
 	private	_velocity: number;
 	private	_width: number;
 	private	_height: number;
-	private	_button_up: number;
-	private	_button_down: number;
+	//private	_button_up: number;
+	//private	_button_down: number;
 	private	_origin: vector;
 	private	_score: number;
+	private	_movingUp: boolean;
+	private	_movingDown: boolean;
 
 	public constructor(name: string, x: number, y: number, canvas: HTMLCanvasElement)
 	{
@@ -167,20 +169,43 @@ class Player
 		this._velocity = 15;
 		this._width = canvas.width * 0.004;
 		this._height = canvas.height * 0.12;
-		this._button_up = 119;
-		this._button_down = 115;
+		//this._button_up = 119;
+		//this._button_down = 115;
 		this._score = 0;
+		this._movingUp = false;
+		this._movingDown = false;
 	}
 
 	public move(): void
 	{
-		if ((this._origin.y + this._height) + this._velocity > (game.getCanvas().height * 0.9) || this._origin.y + this._velocity < game.getCanvas().height * 0.1)
+		const canvas = game.getCanvas();
+
+		if (this._movingUp && !this._movingDown)
+		{
+			const newY = this._origin.y - this._velocity;
+			this._origin.y = Math.max(newY, canvas.height * 0.1);
+			return;
+		}
+		if (this._movingDown && !this._movingUp)
+		{
+			const newY = this._origin.y + this._velocity;
+			this._origin.y = Math.min(newY, canvas.height * 0.9 - this._height);
+			return;
+		}
+
+	/* 	if ((this._origin.y + this._height) + this._velocity > (canvas.height * 0.9) || this._origin.y + this._velocity < canvas.height * 0.1)
 		{
 			this._velocity = -this._velocity;
-			//return ;
-		} 
-		this._origin.y += this._velocity;
+		}
+		this._origin.y += this._velocity; */
 	}
+
+	// Keyboard control helpers
+	public startMoveUp(): void { this._movingUp = true; }
+	public startMoveDown(): void { this._movingDown = true; }
+	public stopMoveUp(): void { this._movingUp = false; }
+	public stopMoveDown(): void { this._movingDown = false; }
+	public isMoving(): boolean { return this._movingUp || this._movingDown; }
 
 	public moveByAI(ball: Ball): void
 	{
@@ -236,9 +261,9 @@ class Ball
 	private	_width: number;
 	private	_height: number;
 	private	_velocity: number;
-	private	_origin: vector;
-	private _direction: vector;
-	private _hasStartingSpeed: boolean;
+	private	_origin!: vector;
+	private _direction!: vector;
+	private _hasStartingSpeed!: boolean;
 
 	public constructor(canvas: HTMLCanvasElement)
 	{
@@ -348,13 +373,36 @@ class Ball
 let game: Pong;
 game = new Pong("Stephan", "Julian");
 
+// Keyboard listeners: W/S for player 1, ArrowUp/ArrowDown for player 2
+window.addEventListener('keydown', (e: KeyboardEvent) =>
+{
+	const k = e.key;
+	if (k.toLowerCase() === 'w') game.getPlayer(1).startMoveUp();
+	else if (k.toLowerCase() === 's') game.getPlayer(1).startMoveDown();
+	else if (k === 'ArrowUp') game.getPlayer(2).startMoveUp();
+	else if (k === 'ArrowDown') game.getPlayer(2).startMoveDown();
+});
+
+window.addEventListener('keyup', (e: KeyboardEvent) =>
+{
+	const k = e.key;
+	if (k.toLowerCase() === 'w') game.getPlayer(1).stopMoveUp();
+	else if (k.toLowerCase() === 's') game.getPlayer(1).stopMoveDown();
+	else if (k === 'ArrowUp') game.getPlayer(2).stopMoveUp();
+	else if (k === 'ArrowDown') game.getPlayer(2).stopMoveDown();
+});
+
 const updatePong = () => {
 
 	game.getBall().move(game.getPlayer(1), game.getPlayer(2));
 	game.getPlayer(1).move();
-	game.getPlayer(2).moveByAI(game.getBall());
+	const p2 = game.getPlayer(2);
+	if (p2.isMoving())
+		p2.move();
+	else
+		p2.moveByAI(game.getBall());
 	game.draw_arena();
-  	window.requestAnimationFrame(() => updatePong());
+	window.requestAnimationFrame(() => updatePong());
 };
 
 window.requestAnimationFrame(() => updatePong());
