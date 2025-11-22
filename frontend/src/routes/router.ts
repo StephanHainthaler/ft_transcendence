@@ -1,17 +1,31 @@
 import type { Route } from '@lib/types/route';
+import { mount, update } from '@lib/vdom';
+import { Layout } from '@lib/components/layout';
+import { ErrorPage } from './pages/ErrorPage';
+import { Loader } from '@lib/components/ui/Loader';
 
-export const routes = [
+type Location = { pathname: string, file: string };
+
+export const routes: Location[] = [
   {
     pathname: "/",
     file: "HomePage",
   },
   {
     pathname: "/user",
-    file: "UserPage",
+    file: "ProfilePage",
+  },
+  {
+    pathname: "/game",
+    file: "GamePage"
   },
   {
     pathname: "/health",
     file: "HealthPage"
+  },
+  {
+    pathname: "/auth",
+    file: "AuthPage",
   }
 ];
 
@@ -19,51 +33,73 @@ export class Router {
   private app: HTMLDivElement;
   private curLocation: string;
   private routes: Map<string, Route>;
+
   constructor(curLocation?: string) {
+    console.log('current location ', curLocation)
     const app = document.querySelector("#app");
-    if (!app) throw new Error("FATAL: Failed to find app  element");
+    if (!app) throw new Error("FATAL: Failed to find app element");
     this.app = app as HTMLDivElement;
     this.routes = new Map();
     this.curLocation = curLocation || '/';
+  }
+
+  async init(): Promise<Router> {
+    console.log('router init location: ', this.curLocation)
+    console.log(this.app);
+    try {
+      const route = await this.loadPage(this.curLocation);
+      mount(Layout(route()), this.app);
+    } catch (e: any) {
+      console.error(`Failed to load route ${this.curLocation}`);
+      mount(Layout(ErrorPage('404')), this.app);
+    }
+
+    return this;
   }
 
   async refresh() {
     this.goto(this.curLocation);
   }
 
+  async loadPage(location: string): Promise<Route> {
+    const matchedRoute = routes.find(r => r.pathname === location);
+    if (!matchedRoute)
+      throw new Error(`Location ${location} doesnt exits`);
+
+    console.log(matchedRoute)
+    const fetchedRoute = await import(`./pages/${matchedRoute.file}.ts`);
+
+    this.routes.set(matchedRoute.pathname, fetchedRoute.Page);
+    return fetchedRoute.Page;
+  }
+
   async goto(location: string, isPopState?: boolean) {
-    try {
-      console.info(`Navigating to: ${location}`);
-      const matchedRoute = routes.find(r => r.pathname === location);
+      try {
+        console.info(`Navigating to: ${location}`);
 
-      if (matchedRoute) {
-        const currentRoute = this.routes.get(this.curLocation);
-        if (currentRoute) {
-          currentRoute.destroy()
-        }
-        if (!this.routes.has(matchedRoute.pathname)) {
-          const fetchedRoute = await import(`./pages/${matchedRoute.file}.ts`);
-          this.routes.set(matchedRoute.pathname, fetchedRoute.Page);
-        }
+        const route = await this.loadPage(location);
 
-        const route = this.routes.get(location);
         if (!route) {
           throw new Error(`Failed to load location ${location}`)
         };
 
-        this.app.innerHTML = route.page();
-        route.setup();
+        update(Loader())
+        setTimeout(() => {
+          update(Layout(route()));
+        }, 400);
 
         if (!isPopState && location !== this.curLocation)
           history.pushState({}, '', location);
 
-        this.curLocation = matchedRoute.pathname;
-      } else {
-        throw new Error("Route not found!");
+        this.curLocation = location;
+      } catch (e: any) {
+        console.error(`Routing Error: ${e.message || e}`);
+        if (e.page) {
+          update(Layout(e.page()))
+        } else {
+          update(Layout(ErrorPage('404')));
+        }
       }
-    } catch (e: any) {
-      console.error(`Routing Error: ${e.message || e}`);
-    }
   }
 
   get location(): string {
@@ -71,4 +107,11 @@ export class Router {
   }
 }
 
-export const router = new Router(window.location.pathname);
+export const router = await new Router(window.location.pathname).init();
+
+export const goto = async (path: string) => {
+  await router.goto(path);
+}
+export const refresh = async () => {
+  await router.refresh();
+}

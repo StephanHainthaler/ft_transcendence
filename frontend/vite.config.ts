@@ -7,7 +7,8 @@ export default defineConfig({
   envDir: '../',
   resolve: {
     alias: {
-      '@lib': path.resolve(__dirname, './src/lib')
+      '@lib': path.resolve(__dirname, './src/lib'),
+      '@shared': path.resolve(__dirname, '../shared')
     }
   },
   server: {

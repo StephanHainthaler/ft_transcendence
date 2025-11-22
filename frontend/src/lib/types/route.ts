@@ -1,5 +1,4 @@
-export interface Route {
-  page: () => string,
-  setup: () => void,
-  destroy: () => void,
-}
+import type { VNode } from "@lib/vdom";
+
+export type Route = () => VNode;
+export type LayoutWrapper = (node: VNode) => VNode;
