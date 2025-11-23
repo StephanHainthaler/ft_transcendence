@@ -1,46 +1,18 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-        <link href="/src/app.css" rel="stylesheet" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>ft_transcendence</title>
-    </head>
-    <body class="background" style="height: 100%; width: 100%">
-        <div class="flex flex-col h-full w-full">
-            <nav
-                class="flex flex-row justify-between w-full h-[5%] bg-[#20202020]"
-                id="header"
-            >
-                <div
-                    class="px-2 h-full flex flex-row items-center justify-center"
-                >
-                    <h1 class="text-3xl font-bold">
-                        <a href="/">Transcendence</a>
-                    </h1>
-                </div>
-                <div class="flex flex-row h-full justify-between align-middle">
-                    <a
-                        class="px-2 text-center flex items-center justify-center"
-                        href="/user"
-                        >Profile</a
-                    >
-                    <a
-                        class="px-2 text-center flex items-center justify-center"
-                        href="/health"
-                        >Health</a
-                    >
-                </div>
-            </nav>
-            <div class="flex-1 h-full w-full overflow-y-scroll" id="app"></div>
-        </div>
-        <script type="module" src="/src/index.ts"></script>
-        <div style="text-align:center; margin: 10px auto;">
-            <canvas id="canvas" style="background-color: black;"></canvas>
-        </div>
-        <script type="module" src="/src/lib/game/game.ts"></script>
-    </body>
+   <head>
+     <meta charset="UTF-8" />
+     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+     <link href="/src/app.css" rel="stylesheet">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <title>ft_transcendence</title>
+   </head>
+  <body class="background" style="height: 100%; width: 100%;">
+    <div class="flex flex-col h-full w-full">
+      <div class="flex-1 overflow-y-auto" id="app"></div>
+    </div>
+    <script type="module" src="/src/index.ts"></script>
+  </body>
 </html>
 
 <style>

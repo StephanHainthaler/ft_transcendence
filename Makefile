@@ -25,7 +25,7 @@ test:
 	@make test-frontend
 
 test-backend:
-	cd $(API_DIR) && npm run test
+	npm run test:backend
 
 test-frontend:
 	npm run dev:frontend:test
