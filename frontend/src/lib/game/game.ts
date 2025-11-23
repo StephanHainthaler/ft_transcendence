@@ -167,7 +167,7 @@ class Player
 	{
 		this._origin = {x, y};
     	this._name = name;
-		this._velocity = 5;
+		this._velocity = 3;
 		this._width = canvas.width * 0.004;
 		this._height = canvas.height * 0.12;
 		//this._button_up = 119;
@@ -200,9 +200,20 @@ class Player
 	public stopMoveUp(): void { this._movingUp = false; }
 	public stopMoveDown(): void { this._movingDown = false; }
 
-	public moveByAI(): void
+	public moveByAI(ball: Ball): void
 	{
-
+		// if the ball is in opponents field, go to the middle
+		if (ball.getOrigin().x < (game.getCanvas().width / 2))
+		{
+			if (this._origin.y < game.getCanvas().height / 2)
+				this._origin.y += this._velocity;
+			else if (this._origin.y > game.getCanvas().height / 2)
+				this._origin.y -= this._velocity;
+		}
+		else if (ball.getOrigin().y - ball.getHeight() > this._origin.y && (this._origin.y + this._height) + this._velocity < (game.getCanvas().height * 0.9))
+			this._origin.y += this._velocity;
+		else if (ball.getOrigin().y <= this._origin.y && this._origin.y - this._velocity > game.getCanvas().height * 0.1)
+			this._origin.y -= this._velocity;
 	}
 
 	public setName(name: string): void
@@ -355,23 +366,38 @@ class Ball
 let game: Pong;
 game = new Pong("Stephan", "Julian");
 
+const canvas = game.getCanvas();
+canvas.tabIndex = 0;
+
+canvas.addEventListener('mousedown', () => canvas.focus());
+
 // Keyboard listeners: W/S for player 1, ArrowUp/ArrowDown for player 2
-window.addEventListener('keydown', (e: KeyboardEvent) =>
+canvas.addEventListener('keydown', (e: KeyboardEvent) =>
 {
-	const k = e.key;
-	if (k.toLowerCase() === 'w') game.getPlayer(1).startMoveUp();
-	else if (k.toLowerCase() === 's') game.getPlayer(1).startMoveDown();
-	else if (k === 'ArrowUp') game.getPlayer(2).startMoveUp();
-	else if (k === 'ArrowDown') game.getPlayer(2).startMoveDown();
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+  const k = e.key;
+  if (k.toLowerCase() === 'w') game.getPlayer(1).startMoveUp();
+  else if (k.toLowerCase() === 's') game.getPlayer(1).startMoveDown();
+  else if (k === 'ArrowUp') game.getPlayer(2).startMoveUp();
+  else if (k === 'ArrowDown') game.getPlayer(2).startMoveDown();
 });
 
-window.addEventListener('keyup', (e: KeyboardEvent) =>
+canvas.addEventListener('keyup', (e: KeyboardEvent) =>
 {
-	const k = e.key;
-	if (k.toLowerCase() === 'w') game.getPlayer(1).stopMoveUp();
-	else if (k.toLowerCase() === 's') game.getPlayer(1).stopMoveDown();
-	else if (k === 'ArrowUp') game.getPlayer(2).stopMoveUp();
-	else if (k === 'ArrowDown') game.getPlayer(2).stopMoveDown();
+  const k = e.key;
+  if (k.toLowerCase() === 'w') game.getPlayer(1).stopMoveUp();
+  else if (k.toLowerCase() === 's') game.getPlayer(1).stopMoveDown();
+  else if (k === 'ArrowUp') game.getPlayer(2).stopMoveUp();
+  else if (k === 'ArrowDown') game.getPlayer(2).stopMoveDown();
+});
+
+// prevents movement from getting stuck when losing canvas focus
+canvas.addEventListener('blur', () =>
+{
+  game.getPlayer(1).stopMoveUp();
+  game.getPlayer(1).stopMoveDown();
+  game.getPlayer(2).stopMoveUp();
+  game.getPlayer(2).stopMoveDown();
 });
 
 const updatePong = () => {
