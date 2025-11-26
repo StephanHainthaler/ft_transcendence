@@ -1,10 +1,11 @@
 import { Writable } from "@lib/types/writable";
 import type { AuthUserClient, Friendship, User } from "@shared/user";
-import { getAuth, loginRequest, signupRequest, updateRequest } from "./auth";
+import { getAuth, loginRequest, logoutRequest, signupRequest, updateRequest } from "./auth";
 import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authRequest";
 import type { JWT } from "@shared/api";
 import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest } from "./user";
+import { goto } from "..";
 
 export type ApiError = {
   code: number,
@@ -16,7 +17,7 @@ export type Session = {
   auth: AuthUserClient,
 }
 
-class ApiClient {
+export class ApiClient {
   private readonly userStore: Writable<User | null> = new Writable('user');
   private readonly authStore: Writable<AuthUserClient | null> = new Writable('auth');
   private readonly accessToken: Writable<JWT | null> = new Writable('token');
@@ -36,6 +37,7 @@ class ApiClient {
     } catch (e: any) {
       console.error(e);
     }
+    return this;
   }
 
   get user(): User | null {
@@ -117,10 +119,10 @@ class ApiClient {
 
   async signup(info: SignupRequestBody) {
     try {
-      const response = await signupRequest(info);
+      const response = await signupRequest(this.accessToken, info);
       this.auth = response.auth;
       this.user = await this.getUser()
-      client.notify();
+      this.notify();
     } catch (e: any) {
       const error = new Error(`Signup Failed: ${e.message || e}`)
       console.error(error);
@@ -129,36 +131,36 @@ class ApiClient {
   }
 
   async getAuth(): Promise<any> {
-    return await getAuth();
+    return await getAuth(this.accessToken);
   }
 
   async getUser(): Promise<any> {
-    const response = await getUser();
+    const response = await getUser(this.accessToken);
     return response.user;
   }
 
   async getUsers(): Promise<User[]> {
-    const response = await getUsers();
+    const response = await getUsers(this.accessToken);
     return response.users;
   }
 
   async getFriends(): Promise<{ friends: User[], friendships: Friendship[] }> {
-    const data = await getFriends();
+    const data = await getFriends(this.accessToken);
     return { friends: data.friends, friendships: data.friendships };
   }
 
   async sendFriendRequest(friendId: number): Promise<Friendship> {
-    const response = await sendFriendRequest(friendId);
+    const response = await sendFriendRequest(this.accessToken, friendId);
 
     return response.friendship;
   }
 
   async acceptFriendRequest(reqId: number) {
-    return await acceptFriendRequest(reqId);
+    return await acceptFriendRequest(this.accessToken, reqId);
   }
 
   async removeFriendship(friendshipId: number) {
-    await removeFriendship(friendshipId);
+    await removeFriendship(this.accessToken, friendshipId);
   }
 
   async login(info: LoginRequestBody) {
@@ -168,8 +170,8 @@ class ApiClient {
       if (authResponse.access_token) {
         const jwt = parseJWT(authResponse.access_token);
         this.accessToken.set(jwt);
-        const user = await getUser()
-        this.userStore.set(user);
+        const response = await getUser(this.accessToken)
+        this.userStore.set(response.user);
         this.notify();
       }
     } catch (e: any) {
@@ -179,9 +181,15 @@ class ApiClient {
     }
   }
 
-  logout() {
-    this.clearSession();
-    this.notify();
+  async logout() {
+    try {
+      await logoutRequest(this.accessToken);
+      this.clearSession();
+      this.notify();
+      goto('/auth');
+    } catch (e: any) {
+      console.error(e);
+    }
   }
 
   clearListeners() {
@@ -211,7 +219,7 @@ class ApiClient {
       throw new Error("No Credentials to update!");
     }
     try {
-      const authResponse = await updateRequest({
+      const authResponse = await updateRequest(this.accessToken, {
         email, username, passwd
       });
       this.authStore.set(authResponse.auth)
@@ -222,5 +230,3 @@ class ApiClient {
     }
   }
 }
-
-export const client = new ApiClient()

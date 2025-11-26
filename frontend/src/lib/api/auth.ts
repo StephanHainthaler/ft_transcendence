@@ -1,9 +1,9 @@
 import type { SignupRequestBody, LoginRequestBody, AuthResponseSuccess } from "@shared/api/authRequest";
 import { request } from './utils';
-import { parseJWT } from "@shared/api";
-import { client } from "./client";
+import { parseJWT, type JWT } from "@shared/api";
+import type { Writable } from "@lib/types/writable";
 
-export async function updateRequest({
+export async function updateRequest(token: Writable<JWT | null>, {
   email, username, passwd
 }: {
   email?: string, username?: string, passwd?: string
@@ -15,12 +15,12 @@ export async function updateRequest({
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': client.authHeader
+      'Authorization': `Bearer ${token.get()?.raw}`,
     },
     body: JSON.stringify({ email, username, passwd }),
   });
 
-  const response = await request(req);
+  const response = await request(req, token);
 
   const data: AuthResponseSuccess = await response.json();
   if (!response.ok) {
@@ -30,6 +30,7 @@ export async function updateRequest({
 }
 
 export async function signupRequest(
+  token: Writable<JWT | null>,
   info: SignupRequestBody,
 ): Promise<AuthResponseSuccess> {
   if ((!info.username && !info.email))
@@ -44,12 +45,12 @@ export async function signupRequest(
     body: JSON.stringify(info),
   });
 
-  const response = await request(signupReq);
+  const response = await request(signupReq, token);
 
   const data: AuthResponseSuccess = await response.json();
   if (!response.ok || !data.access_token) throw data;
   const jwt = parseJWT(data.access_token);
-  client.jwt = jwt;
+  token.set(jwt);
 
   return data;
 }
@@ -79,31 +80,30 @@ export async function loginRequest(
   return data;
 }
 
-export async function logoutRequest() {
+export async function logoutRequest(token: Writable<JWT | null>) {
   const req = new Request('/api/auth/logout', {
     method: 'post',
     headers: {
-      'Authorization': client.authHeader,
+      'Authorization': `Bearer ${token.get()?.raw}`,
     }
   });
 
   try {
-    client.clearSession();
-    await request(req);
+    await request(req, token);
   } catch {
     throw new Error('Failed to log out');
   }
 }
 
-export async function getAuth() {
+export async function getAuth(token: Writable<JWT | null>) {
   const req = new Request('/api/auth', {
     method: 'get',
     headers: {
-      'Authorization': client.authHeader,
+      'Authorization': `Bearer ${token.get()?.raw}`,
     }
   })
 
-  const response = await request(req);
+  const response = await request(req, token);
   const data = await response.json();
   if (!response.ok) {
     throw data;

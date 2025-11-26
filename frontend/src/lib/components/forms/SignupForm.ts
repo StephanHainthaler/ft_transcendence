@@ -1,8 +1,9 @@
 import { button, h2, div, form } from "@lib/vdom";
 import { Input } from "@lib/components/ui/Input";
-import { client } from "@lib/api/client";
+import { client } from "@lib/index";
 import { validateInputThrow } from "@lib/validation/inputValidation";
-import { goto } from "@lib/router";
+import { goto } from "@lib/index";
+
 let usernameBuffer = '';
 let emailBuffer = '';
 let userPasswordBuffer = '';

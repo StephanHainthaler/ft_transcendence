@@ -1,10 +1,11 @@
-import { client } from "@lib/api/client";
+import { client } from "@lib/index";
 import { Separator } from "@lib/components/ui";
 import { UserCard } from "@lib/components/ui/UserCard";
 import { Tournament } from "@lib/tournament/tournament";
 import type { Route } from "@lib/types/route";
 import { button, canvas, div, h1, h2, p, updateId } from "@lib/vdom";
 import type { Game, User } from "@shared/user";
+import { Layout } from "@lib/components/layout";
 
 let availableUsers: User[] = await client.getUsers();
 let selectedUsers: User[] = [];
@@ -165,21 +166,25 @@ const SelectedPlayersGrid = () => {
 }
 
 const updateContainer = () => {
-  updateId(Page())
+  updateId(PageContent())
 }
 
-export const Page: Route = () => {
-  return (
-    div({ id: 'dyn-tournament-container', class: 'size-full box-border' },
-      tournament.running
-        ? div({ class: 'p-[5%] size-full overflow-hidden' },
-            div({ class: 'card size-full bg-tan'},
-              TournamentRunning(),
-            )
+const PageContent = () =>
+  div({ class: 'size-full box-border' },
+    tournament.running
+      ? div({ class: 'p-[5%] size-full overflow-hidden' },
+          div({ class: 'card size-full bg-tan'},
+            TournamentRunning(),
           )
-        : div({ class: 'page-container'},
-          TournamentSetup()
         )
-    )
+      : div({ class: 'page-container'},
+        TournamentSetup()
+      )
+  )
+
+
+export const Page: Route = () => {
+  return Layout(
+    PageContent()
   )
 }

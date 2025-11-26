@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient } from "./dbHandlers";
 import { updateUser } from "@ft_transcendence/user/src/api";
 import { AuthUserClient, } from "@shared/user";
-import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody, parseJWT } from "@shared/api";
+import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody } from "@shared/api";
 import { AuthUser } from "./db";
 import { generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
@@ -112,7 +112,7 @@ export function authRoutes(fastify: FastifyInstance) {
           });
         } catch (e: any) {
           console.error(e);
-          return reply.code(500).send({ success: false, message: `Internal Server Error` });
+          return reply.code(e.code || 500).send({ success: false, message: e.message || e });
         }
       } catch (e: any) {
         console.error(e);
@@ -121,11 +121,15 @@ export function authRoutes(fastify: FastifyInstance) {
   });
 
   fastify.post('/logout', (request, reply) => {
+    try {
       const cookies = request;
       if (cookies)
         reply.status(200).header('set-cookie', `logged-in=0`).send()
       else
         return reply.status(400).send({ message: 'User not logged in' });
+    } catch (e: any) {
+      return reply.code(500).send({ success: false, message: `Internal server error: ${e}` })
+    }
   });
 
   fastify.post<{

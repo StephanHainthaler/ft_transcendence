@@ -6,8 +6,19 @@ import { eq, IN } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
 
 const getFriendships = (userId: number): { friends: User[], friendships: Friendship[] } => {
-  const friendships = db.from('friendships').select('*').where(eq('user_from_id', userId)).or(eq('user_to_id', userId)).all();
-  const friends = db.from('users').select('*').where(IN('id', friendships.map(f => f.user_from_id))).all();
+  const friendships = db
+    .from('friendships')
+    .select('*')
+    .where(eq('user_from_id', userId))
+    .or(eq('user_to_id', userId))
+    .all();
+
+  const friends = db
+    .from('users')
+    .select('*')
+    .where(IN('id', [...friendships.map(f => f.user_from_id), ...friendships.map(f => f.user_to_id)]))
+    .all();
+
   return { friends, friendships };
 }
 
@@ -17,13 +28,6 @@ const registerFriendRequest = (fromId: number, toId: number) => {
     throw new ApiError({ code: 409, message: 'Request already exists' });
   console.log(`fromId: ${fromId}\ntoId: ${toId}`);
   return db.from('friendships').insert({ user_from_id: fromId, user_to_id: toId, status: 'pending' }).select('*').single();
-}
-
-const acceptFriendRequestFromUserId = (toId: number, fromId: number) => {
-  const existing = db.from('friendships').select('*').where(eq('user_from_id', fromId)).and(eq('user_to_id', toId)).single();
-  if (!existing)
-    throw new ApiError({ code: 404, message: 'Request doesnt exist' });
-  db.from('friendships').update({ status: 'accepted' }).where(eq('user_from_id', fromId)).and(eq('user_to_id', toId)).run();
 }
 
 const acceptFriendRequestFromReqId = (toId: number, reqId: number) => {

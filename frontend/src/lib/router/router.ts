@@ -1,10 +1,7 @@
 import type { Route } from '@lib/types/route';
 import { mount, update } from '@lib/vdom';
-import { Layout } from '@lib/components/layout';
 import { ErrorPage } from '../../routes/pages/ErrorPage';
 import { Loader } from '@lib/components/ui/Loader';
-import { client } from '@lib/api/client';
-import { ErrorNotLoggedIn } from '@lib/components/error';
 
 type Location = { pathname: string, file: string, protected: boolean };
 
@@ -50,8 +47,9 @@ export class Router {
   private app: HTMLDivElement;
   private curLocation: string;
   private routes: Map<string, Route>;
+  private isInitialized = false;
 
-  constructor(curLocation?: string) {
+  constructor(curLocation: string = window.location.pathname) {
     console.log('current location ', curLocation)
     const app = document.querySelector("#app");
     if (!app) throw new Error("FATAL: Failed to find app element");
@@ -62,16 +60,17 @@ export class Router {
 
   async init(): Promise<Router> {
     console.log('router init location: ', this.curLocation)
-    console.log(this.app);
     try {
       let matchedRoute = routes.find(r => r.pathname === this.curLocation);
       if (!matchedRoute) matchedRoute = routes.find(r => r.pathname === '/')!;
 
       const route = await this.loadPage(matchedRoute);
-      mount(Layout(route()), this.app);
+      mount(route(), this.app);
+      this.isInitialized = true;
+      console.log('initialized');
     } catch (e: any) {
       console.error(`Failed to load route ${this.curLocation}`);
-      mount(Layout(ErrorPage('404')), this.app);
+      mount(ErrorPage('404'), this.app);
     }
 
     return this;
@@ -98,8 +97,6 @@ export class Router {
       const matchedRoute = routes.find(r => r.pathname === location);
       if (!matchedRoute) {
         throw new Error(`Location ${location} doesnt exits`);
-      } else if (matchedRoute.protected && !client.isLoggedIn) {
-        return update(ErrorNotLoggedIn());
       }
 
       const route = await this.loadPage(matchedRoute);
@@ -111,31 +108,27 @@ export class Router {
       if (!isPopState && location !== this.curLocation)
         history.pushState({}, '', location);
 
+      console.log('updating route')
       setTimeout(() => {
-        update(Layout(route()));
+        update(route());
       }, 400);
 
       this.curLocation = location;
     } catch (e: any) {
       console.error(`Routing Error: ${e.message || e}`);
       if (e.page) {
-        update(Layout(e.page()))
+        update(e.page())
       } else {
-        update(Layout(ErrorPage('404')));
+        update(ErrorPage('404'));
       }
     }
+  }
+
+  get initialized() {
+    return this.isInitialized;
   }
 
   get location(): string {
     return this.curLocation;
   }
-}
-
-export let router = new Router(window.location.pathname);
-
-export const goto = async (path: string) => {
-  await router.goto(path);
-}
-export const refresh = async () => {
-  await router.refresh();
 }

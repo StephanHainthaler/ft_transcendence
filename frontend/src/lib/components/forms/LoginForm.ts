@@ -1,8 +1,8 @@
 import { button, h2, div, form, type VNode } from "@lib/vdom";
 import { Input } from "@lib/components/ui/Input";
-import { client } from "@lib/api/client";
+import { client } from "@lib/index";
 import { validateInput } from "@lib/validation/inputValidation";
-import { goto } from "@lib/router";
+import { goto } from "@lib/index";
 
 let usernameBuffer = '';
 let userPasswordBuffer = '';

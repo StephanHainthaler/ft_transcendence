@@ -1,29 +1,13 @@
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { db } from "./db";
 import { User } from "@shared/user"
-import { JWT, parseJWT } from '@shared/api';
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { eq, ne } from "@server/orm";
-
-type GetUserIdReq = FastifyRequest<{
-  Params: {
-    userId: string,
-  }
-}>
+import { eq, } from "@server/orm";
 
 type CreateUserReq = FastifyRequest<{
   Body: {
     user: User
   },
-}>
-
-type UpdateUserReq = FastifyRequest<{
-  Body: {
-    user: User
-  },
-  Params: {
-    userId: number | undefined,
-  }
 }>
 
 export function userRoutes(fastify: FastifyInstance) {

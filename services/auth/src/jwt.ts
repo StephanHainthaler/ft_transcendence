@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { AuthUser, db } from "./db";
 import { refreshTokenLifetime } from "./dbHandlers";
-import { parseJWT, type JWT } from "@shared/api";
+import { type JWT } from "@shared/api";
 import { User } from "@shared/user";
 import { eq } from "@server/orm";
 

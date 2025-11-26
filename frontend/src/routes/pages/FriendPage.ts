@@ -1,9 +1,10 @@
-import { client } from "@lib/api/client";
+import { client } from "@lib/index";
 import { Alert } from "@lib/components/ui/Alert";
 import { UserCard } from "@lib/components/ui/UserCard";
 import type { Route } from "@lib/types/route";
 import { button, div, h1, updateId, type Child } from "@lib/vdom";
 import type { Friendship, User } from "@shared/user";
+import { Layout } from "@lib/components/layout";
 
 let requestMade = false;
 let sending = false;
@@ -141,7 +142,12 @@ const sendFriendRequest = async (friendId: number) => {
 
 export const Page: Route = () => {
   console.log('running friend page');
-  return (
+  users = []
+  accepted = []
+  pendingSend = []
+  pendingRec = []
+  loadPageData();
+  return Layout(
     div({ id: '', class: 'size-full page-container' },
       PageContent()
     )
@@ -171,7 +177,7 @@ const loadPageData = async () => {
   pendingSend = friendships.filter(f => f.status === 'pending' && f.user_from_id === client.user?.id);
   pendingRec = friendships.filter(f => f.status === 'pending' && f.user_to_id === client.user?.id);
   logState();
+  updateId(PageContent());
 }
 
 await loadPageData();
-updateId(PageContent());

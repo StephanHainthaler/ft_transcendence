@@ -3,7 +3,7 @@ import { AuthUser, Session } from "./db";
 import { AuthUserClient, User } from "@shared/user"
 import { createUser } from "@ft_transcendence/user/src/api"
 import argon2 from "argon2";
-import { generateJWT, generateRefreshTokenCookie } from "./jwt";
+import { generateJWT } from "./jwt";
 import crypto from "crypto";
 import { JWT } from "@shared/api";
 import { eq } from "@server/orm";

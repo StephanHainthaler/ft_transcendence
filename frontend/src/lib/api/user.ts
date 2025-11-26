@@ -1,17 +1,16 @@
-import type { Writable } from "@lib/types/writable";
 import { request } from "./utils";
+import type { Writable } from "@lib/types/writable";
 import type { JWT } from "@shared/api";
-import { client } from "./client";
 
-export async function getUser() {
+export async function getUser(token: Writable<JWT | null>) {
   const req = new Request(`/api/user`, {
     method: "GET",
     headers: {
-      'Authorization': client.authHeader
+      'authorization': `Bearer ${ token.get()?.raw }`
     },
   })
 
-  const response = await request(req);
+  const response = await request(req, token);
   const data = await response.json();
   if (!response.ok) {
     throw data;
@@ -19,30 +18,30 @@ export async function getUser() {
   return data;
 }
 
-export const getUsers = async () => {
+export const getUsers = async (token: Writable<JWT | null>) => {
   const req = new Request('/api/user/all', {
     method: 'get',
     headers: {
-      'Authorization': client.authHeader,
+      'authorization': `Bearer ${ token.get()?.raw }`
     }
   })
 
-  const response = await request(req);
+  const response = await request(req, token);
   const data = await response.json();
   if (!response.ok) throw data;
 
   return data;
 }
 
-export const getFriends = async () => {
+export const getFriends = async (token: Writable<JWT | null>) => {
   const req = new Request('/api/user/friend/', {
     method: 'get',
     headers: {
-      'authorization': client.authHeader
+      'authorization': `Bearer ${ token.get()?.raw }`
     }
   })
 
-  const response = await request(req);
+  const response = await request(req, token);
   const data = await response.json()
   if (!response.ok) {
     throw data;
@@ -50,15 +49,15 @@ export const getFriends = async () => {
   return data;
 }
 
-export const acceptFriendRequest = async (reqId: number) => {
+export const acceptFriendRequest = async (token: Writable<JWT | null>, reqId: number) => {
   const req = new Request(`/api/user/friend/accept/${reqId}`, {
     method: 'post',
     headers: {
-      'authorization': client.authHeader,
+      'authorization': `Bearer ${ token.get()?.raw }`
     }
   });
 
-  const response = await request(req);
+  const response = await request(req, token);
   const data = await response.json();
   if (!response.ok) {
     throw data;
@@ -66,15 +65,15 @@ export const acceptFriendRequest = async (reqId: number) => {
   return data;
 }
 
-export const sendFriendRequest = async (friendId: number) => {
+export const sendFriendRequest = async (token: Writable<JWT | null>, friendId: number) => {
   const req = new Request(`/api/user/friend/request/${friendId}`, {
     method: 'post',
     headers: {
-      'authorization': client.authHeader
+      'authorization': `Bearer ${ token.get()?.raw }`
     }
   });
 
-  const response = await request(req);
+  const response = await request(req, token);
   const data = await response.json();
   if (!response.ok) {
     throw data;
@@ -82,15 +81,15 @@ export const sendFriendRequest = async (friendId: number) => {
   return data;
 }
 
-export const removeFriendship = async (friendshipID: number) => {
+export const removeFriendship = async (token: Writable<JWT | null>, friendshipID: number) => {
   const req = new Request(`/api/user/friend/remove/${friendshipID}`, {
     method: 'delete',
     headers: {
-      'authorization': client.authHeader,
+      'authorization': `Bearer ${ token.get()?.raw }`
     }
   });
 
-  const response = await request(req);
+  const response = await request(req, token);
 
   const data = await response.json();
   if (!response.ok) {
