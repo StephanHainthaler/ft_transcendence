@@ -1,7 +1,8 @@
 import { button, h2, div, form, type VNode } from "@lib/vdom";
 import { Input } from "@lib/components/ui/Input";
-import { client } from "@lib/api/client";
+import { client } from "@lib/index";
 import { validateInput } from "@lib/validation/inputValidation";
+import { goto } from "@lib/index";
 
 let usernameBuffer = '';
 let userPasswordBuffer = '';
@@ -12,13 +13,14 @@ const handleLoginFormSubmit = async (e: Event) => {
   e.preventDefault();
   e.stopPropagation();
   try {
-      const email = validateInput(usernameBuffer, { type: 'email' }).input;
-      const username = validateInput(usernameBuffer, { type: 'username' }).input;
-      await client.login({
-        username,
-        email,
-        passwd: userPasswordBuffer,
-      });
+    const email = validateInput(usernameBuffer, { type: 'email' }).input;
+    const username = validateInput(usernameBuffer, { type: 'username' }).input;
+    await client.login({
+      username,
+      email,
+      passwd: userPasswordBuffer,
+    });
+    await goto('/');
   } catch (e: any) {
     errorMessage = e.message || e.toString();
   } finally {
@@ -47,7 +49,7 @@ export const LoginForm = (update: () => void): VNode => {
   updateFunc = update;
   return (
     form({ class: 'space-y-4 flex flex-grow flex-col px-8 pt-8', onclick: () => { errorMessage = '', update() } },
-      div({ class: 'w-full gap-2 flex flex-col max-w-md' },
+      div({ class: 'w-auto gap-2 flex items-center flex-col' },
         h2({ class: 'text-2xl font-bold text-teal mb-6 text-center' }, 'Sign in'),
         Input('Email or Username', handleUsernameInput),
         Input('Password', handlePasswordInput, { type: 'password'}),

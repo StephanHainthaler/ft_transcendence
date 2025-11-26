@@ -1,11 +1,10 @@
 import { Input } from "@lib/components/ui/Input";
 import { Separator } from "@lib/components/ui/Seperator";
 import type { Route } from "@lib/types/route";
-import { client } from "@lib/api/client";
+import { client } from "@lib/index";
 import { button, div, form, h1, h2, updateId, type VNode } from "@lib/vdom";
 import type { AuthUserClient, User } from "@shared/user";
-import { ErrorNotLoggedIn } from "@lib/components/error";
-
+import { Layout } from "@lib/components/layout";
 let editMode: boolean = false;
 
 type ProfilePageData = {
@@ -17,7 +16,27 @@ type ProfilePageData = {
 
 let session: ProfilePageData;
 
-client.onChange(() => (console.log('notifying profile form'), updateId(Page())));
+client.onChange(() => (console.log('notifying profile form'), updateId(ProfileFormDiv())));
+
+export const Page: Route = () => {
+  if (!session) {
+    session = {
+      auth: client.auth!,
+      user: client.user!,
+      passwd: '',
+      passwdRepeat: ''
+    };
+  }
+  return Layout(
+    form({
+      id: 'dyn-profile-form',
+      class: 'page-container',
+      onsubmit: (e: Event) => { e.preventDefault() },
+    },
+      ProfileFormDiv(),
+    )
+  )
+}
 
 const userPersonalInfo = (session: ProfilePageData) => {
   return (
@@ -36,18 +55,6 @@ const userPersonalInfo = (session: ProfilePageData) => {
           { value: session.user.name, ...(!editMode ? { disabled: '' } : {}) }
         ),
       )
-    )
-  )
-}
-
-export const Page: Route = () => {
-  return (
-    form({
-      id: 'dyn-profile-form',
-      class: 'px-[20%] w-full h-full flex flex-col justify-center items-center',
-      onsubmit: (e: Event) => { e.preventDefault() },
-    },
-      ProfileFormDiv(),
     )
   )
 }
@@ -84,29 +91,14 @@ const userAuthenticationInfo = (userCred: AuthUserClient & { passwd: string, pas
             ...(!editMode ? { disabled: '' } : {})
           }
         ),
-        client.user!.name
       )
     )
   )
 }
 
 const ProfileFormDiv: () => VNode = () => {
-  console.log('running profile form div')
-  if (!client.isLoggedIn) {
-    console.log('client returning not logged in');
-    return ErrorNotLoggedIn();
-  }
-
-  if (!session) {
-    session = {
-      auth: client.auth!,
-      user: client.user!,
-      passwd: '',
-      passwdRepeat: ''
-    };
-  }
   return (
-    div({ class: 'card bg-tan my-[1em] p-4 flex w-full flex-grow flex-col', onclick: () => updateId(ProfileFormDiv()) },
+    div({ id: 'dyn-profile-form-div', class: 'card bg-tan p-4 flex w-full flex-grow flex-col', onclick: () => updateId(ProfileFormDiv()) },
       h1({ class: 'text-3xl' }, 'Profile'),
       Separator(),
         div({},

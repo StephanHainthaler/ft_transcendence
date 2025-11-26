@@ -3,9 +3,10 @@ import { AuthUser, Session } from "./db";
 import { AuthUserClient, User } from "@shared/user"
 import { createUser } from "@ft_transcendence/user/src/api"
 import argon2 from "argon2";
-import { generateJWT, generateRefreshTokenCookie } from "./jwt";
+import { generateJWT } from "./jwt";
 import crypto from "crypto";
 import { JWT } from "@shared/api";
+import { eq } from "@server/orm";
 
 async function hashPassword(passwd: string): Promise<string> {
   const hash = await argon2.hash(passwd)
@@ -29,19 +30,19 @@ export function getAuthUser({
   email?: string,
 }): AuthUser | null {
   if (username) {
-    const user = db.from('auth_users').select('*').eq('user_name', username).single();
+    const user = db.from('auth_users').select('*').where(eq('user_name', username)).single();
     if (user) return user;
   }
   if (authId) {
-    const user = db.from('auth_users').select('*').eq('id', authId).single();
+    const user = db.from('auth_users').select('*').where(eq('id', authId)).single();
     if (user) return user;
   }
   if (userId) {
-    const user = db.from('auth_users').select('*').eq('user_id', userId).single();
+    const user = db.from('auth_users').select('*').where(eq('user_id', userId)).single();
     if (user) return user;
   }
   if (email) {
-    const user = db.from('auth_users').select('*').eq('email', email).single();
+    const user = db.from('auth_users').select('*').where(eq('email', email)).single();
     if (user) return user;
   }
 
@@ -90,7 +91,7 @@ export async function verifyUserCredentials({
 export function updateUserCredentials(newAuthUser: Partial<AuthUser>) {
   return db.from('auth_users')
     .update(newAuthUser)
-    .eq('id', newAuthUser.id)
+    .where(eq('id', newAuthUser.id))
     .single()
 }
 
@@ -126,14 +127,14 @@ export function createSession(user: AuthUser, secret: string): { accessToken: JW
   const currentSession = db
     .from('sessions')
     .select('*')
-    .eq('auth_id', user.id)
+    .where(eq('auth_id', user.id))
     .single();
   console.log("CURRENT_SESSION", currentSession);
 
   if (currentSession) {
     console.log('updating current sesstion', session);
     console.log('for token: ', refreshToken);
-    db.from('sessions').update(session).eq('auth_id', user.id).run();
+    db.from('sessions').update(session).where(eq('auth_id', user.id)).run();
   } else {
     const query = db.from('sessions').insert(session);
     console.log(`QUERY: ${query.stringify().sql}`)
@@ -152,13 +153,13 @@ export function getSession({
   authId?: number, userId?: number, token?: string
 }): Session {
   if (userId) {
-    const session = db.from('sessions').select('*').eq('user_id', userId).single();
+    const session = db.from('sessions').select('*').where(eq('user_id', userId)).single();
     if (!session)
       throw new Error('No session for that user');
 
     return session;
   } else if (authId) {
-    const session = db.from('sessions').select('*').eq('auth_id', authId).single();
+    const session = db.from('sessions').select('*').where(eq('auth_id', authId)).single();
     if (!session)
       throw new Error('No session for that user');
 
@@ -167,7 +168,9 @@ export function getSession({
     console.log('send token: ', token);
     const tokenHash = hashRefreshToken(token);
     console.log('tokenhash:', tokenHash);
-    const session = db.from('sessions').select('*').eq('token', tokenHash).single();
+    const sessionQuery = db.from('sessions').select('*').where(eq('token', tokenHash));
+    console.log(sessionQuery.stringify());
+    const session = sessionQuery.single();
     const allSession = db.from('sessions').select('*').all();
     console.log('currentSessions: ', allSession);
     if (!session)
@@ -185,20 +188,20 @@ export function deleteSession({
   authId?: number, userId?: number, token?: string
 }) {
   if (userId) {
-    const session = db.from('sessions').delete().eq('user_id', userId).single();
+    const session = db.from('sessions').delete().where(eq('user_id', userId)).single();
     if (!session)
       throw new Error('No session for that user');
 
     return session;
   } else if (authId) {
-    const session = db.from('sessions').delete().eq('auth_id', authId).single();
+    const session = db.from('sessions').delete().where(eq('auth_id', authId)).single();
     if (!session)
       throw new Error('No session for that user');
 
     return session;
   } else if (token) {
     const tokenHash = hashRefreshToken(token);
-    const session = db.from('sessions').delete().eq('token', tokenHash).single();
+    const session = db.from('sessions').delete().where(eq('token', tokenHash)).single();
     if (!session)
       throw new Error('No session for that user');
 

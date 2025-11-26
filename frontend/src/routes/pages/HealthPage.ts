@@ -1,3 +1,4 @@
+import { Layout } from "@lib/components/layout";
 import type { Route } from "@lib/types/route";
 import { button, div, h1, update } from "@lib/vdom";
 
@@ -24,7 +25,7 @@ async function healthCheckBtnEvent() {
 }
 
 export const Page: Route = () => {
-  return (
+  return Layout(
     div({ class: 'size-full flex flex-col justify-center items-center' },
       h1({ class: 'mt-4 text-3xl' }),
       div({ class: 'flex gap-4 flex-1 items-center' },
