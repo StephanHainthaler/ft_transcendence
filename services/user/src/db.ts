@@ -18,6 +18,7 @@ const users = defineTable('users', {
   email: text().unique(),
 });
 
+// DEPRECATED
 const games = defineTable('games', {
   id: int().primarykey().autoIncrement().notNull(),
   player1: int().notNull(),

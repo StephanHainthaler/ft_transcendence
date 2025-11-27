@@ -11,8 +11,6 @@ export interface Game extends Record<string, string | number | undefined> {
   player2: number,
   score1: number,
   score2: number
-  date: string,
-  duration: number,
 }
 
 /* Junction table between users and played games */

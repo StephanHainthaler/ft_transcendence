@@ -8,10 +8,11 @@
     "shared"
   ],
   "scripts": {
-    "dev": "dotenv -e .env.development -- concurrently -n frontend,api,user,auth -c blue,violet,yellow,green \"npm:dev:frontend\" \"npm:dev:api\" \"npm:dev:user\" \"npm:dev:auth\"",
+    "dev": "dotenv -e env/.env.development -- concurrently -n frontend,api,user,auth,game -c blue,magenta,yellow,green,cyan \"npm:dev:frontend\" \"npm:dev:api\" \"npm:dev:user\" \"npm:dev:auth\" \"npm:dev:game\"",
     "dev:api": "npm run dev -w @ft_transcendence/api",
     "dev:auth": "npm run dev -w @ft_transcendence/auth",
     "dev:user": "npm run dev -w @ft_transcendence/user",
+    "dev:game": "npm run dev -w @ft_transcendence/game",
     "dev:frontend": "cd frontend && vite",
     "dev:frontend:test": "tsx --env-file=\"env/.env.development\" --test ./frontend/tests/*.test.ts",
     "build:docker:frontend": "vite build",
