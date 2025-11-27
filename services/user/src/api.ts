@@ -1,5 +1,4 @@
 import { User } from "@shared/user";
-import { db } from "./db";
 
 const USER_API = process.env.USER_API_URL!;
 

@@ -25,3 +25,10 @@ export interface AuthUserClient {
   username?: string,
   email?: string,
 }
+
+export interface Friendship {
+  id: number,
+  user_from_id: number,
+  user_to_id: number,
+  status: 'pending' | 'accepted' | 'rejected',
+}
