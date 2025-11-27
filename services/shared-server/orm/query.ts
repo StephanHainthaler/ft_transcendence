@@ -194,6 +194,18 @@ export class Query<Row, SelectedRow = Row> {
   }
 
   /**
+   * Adds OR equality constraint (OR col = ?)
+   * NOTE: This should follow at least one initial constraint (e.g., eq, gt).
+   * @param col - Column name
+   * @param arg - Value to match
+   * @returns Query instance for chaining
+   */
+  orEq<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
+    this.constraints.push({kind: 'eq', col, arg, logic: ' OR '});
+    return this;
+  }
+
+  /**
    * Adds not-equal constraint (!=)
    * @param col - Column name
    * @param arg - Value to exclude
