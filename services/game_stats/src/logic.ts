@@ -46,9 +46,9 @@ export function getMatchStats(MatchID: number): MatchHistoryEntry | null
  *
  * @param {number} userId - The unique identifier of the user whose history is requested.
  * @param {number} page - The page number (starting from 1) for pagination.
- * @returns {(MatchHistoryEntry[] | null)} An array of match history entries, or null if an error occurs.
+ * @returns {(MatchHistoryEntry[] | null)} An array of match history entries, or empty array if an error occurs.
  */
-export function getUserMatchHistory(userId: number, page: number): MatchHistoryEntry[] | null
+export function getUserMatchHistory(userId: number, page: number): MatchHistoryEntry[] | []
 {
 	const offset = (page - 1) * MATCHES_PER_PAGE;
 	return db
@@ -139,18 +139,30 @@ export function recordMatch(data: MatchSubmissionData) : void
 	catch (dbError) 
 	{
 		console.error("Database error during match recording:", dbError);
-        throw new ApiError
+		throw new ApiError
 		({
-            message: "Failed to process match result due to a server error.", 
-            code: 500 
-        });
+			message: "Failed to process match result due to a server error.", 
+			code: 500 
+		});
 	}
 }
 
-export function getLeaderboard(page: number) : UserStats[] | null
+/**
+ * Retrieves the global player ranking (Leaderboard) with pagination.
+ * The results are sorted primarily by 'rank' in descending order, 
+ * and secondarily by 'total_points' to handle ties in rank.
+ * * @param {number} page - The current page number for pagination (must be >= 1).
+ * @returns {UserStats[]} An array of UserStats objects representing the leaderboard slice. 
+ * Returns an empty array if no users are found on the specified page.
+ */
+export function getLeaderboard(page: number) : UserStats[] | []
 {
 	const offset = (page - 1) * USERS_PER_PAGE;
 	return db
 		.from<'user_stats'>('user_stats')
+		.select('*')
+		.desc('rank').desc('wins').desc('total_points')
+		.limit(USERS_PER_PAGE)
+		.offset(offset)
 		.all();
 }
