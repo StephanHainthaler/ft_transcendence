@@ -1,11 +1,23 @@
 # Index
-DOM = structure of the HTML file
+DOM = Document Object Model = structure of the HTML file
 
 VDOM = virtual DOM, its basically a lightweight JavaScript representation of the real DOM. When a component changes, a new VDOM is created and compared to the previous one, and only the minimal necessary updates are applied to the actual DOM.
 
-# How the website is built
-We keep the html file the bare minimum and "outsource" everything to the code.
+> **_NOTE:_**  Basic Idea behind JavaScript: Make web pages become interactive by allowing the browser to dynamically change content.
 
+# The Framework
+We keep the html file the bare minimum and "outsource" everything to the code.
+The framework used here basically keeps a very leightweight copy of the DOM but with custom defined virtual nodes - a VDOM.
+
+> **_DEFINITION:_** A "node" can be understood as follows:
+> 
+> <img width="401" height="267" alt="image" src="https://github.com/user-attachments/assets/6dc9a2c1-17e7-4b54-bfb6-90e590abcea9" />
+
+When a component changes, a new VDOM is created and compared to the previous one, and only the minimal necessary updates are applied to the actual DOM, so that it mirrors the VDOM.
+
+<img width="331" height="117" alt="image" src="https://github.com/user-attachments/assets/7d3d3736-7a24-461f-b132-917d20480f61" />
+
+# How the website is built
 <img width="551" height="412" alt="image" src="https://github.com/user-attachments/assets/392e6239-f60b-4501-b49c-f0d8bcf77024" />
 
 Here, "app" is the "div" element with the id "app".
@@ -31,15 +43,39 @@ And this is done in the "mount" function in vdom.ts:
 >  newParagraph.innerText = "Hello";
 >  newDiv.appendChild(newParagraph);
 >  container.appendChild(newDiv);
->```
->is the same as 
->```js
+> ```
+> is the same as 
+> ```js
 >  container.innerHTML = `
 >  <div>
 >    <p>Hello</p>
 >  </div>
 >  `;
->```
+> ```
+
+> **_NOTE:_** If you want to add button click functionality, in HTML you would do:
+> ```js
+>  container.innerHTML = `
+>  <div>
+>    <button id="myButton">Click me!</button>
+>    <p id="myButtonResponse"></p>
+>  </div>
+>  `;
+> ```
+> and in JavaScript you have to add an EventListener for this button:
+> ```js
+> const answer = () => {
+>  const response = document.getElementById("myButtonResponse");
+>  const message = "Button clicked successfully!"; // or some fctn to fetch sth from the server path
+>  response.innerText = message;
+> }
+> 
+> const button = document.getElementById("myButton");
+> button.addEventListener("click", answer); // asigns answer function to "onclick" field in the HTML node / element document.getElementById("myButton");
+> // -> which is the same as:
+> button.onclick = answer;
+> ```
+
 
 
 
