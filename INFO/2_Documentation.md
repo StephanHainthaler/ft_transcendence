@@ -165,10 +165,25 @@ Then we go through all children and for each child if they change, we will recur
 
 
 # 4. The Login Process
+When the AuthPage.ts gets loaded, the user can click f.e. on "Login" ..
 
+<img width="636" height="702" alt="image" src="https://github.com/user-attachments/assets/45d6b7fb-685d-426a-9779-43343f20b574" />
 
+.. and he then will be directed (onclick) to the LoginForm:
 
+<img width="797" height="312" alt="image" src="https://github.com/user-attachments/assets/82afbe94-5b56-4b86-b25f-5420bfc8bf48" />
 
+When a user inputs sth into the fields 'Email or Username' / 'Password', which get triggered "oninput" instead of "onclick", the input gets stored in a variable.
+
+When the user then clicks on 'Sign in', the input gets validated. Then the login function of "client" is called:
+
+<img width="562" height="308" alt="image" src="https://github.com/user-attachments/assets/929ce72a-4069-4035-b25d-917cf5e956b0" />
+
+> **_NOTE:_**
+> 
+>  e.preventDefault() means the submission of an input is not interpreted as a HTML resubmission
+> 
+> e.stopPropagation() means that the "onclick" event in line 61 of LoginForm.ts does not trigger the "onclick" in line 51 of the file.
 
 
 
