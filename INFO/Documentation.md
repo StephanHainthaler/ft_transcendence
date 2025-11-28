@@ -127,23 +127,25 @@ And the pages are - as can be seen in the code - located here:
 <img width="148" height="163" alt="image" src="https://github.com/user-attachments/assets/a28008fd-d3a6-4651-bae4-899f17ab5221" />
 
 All of these pages will have a function "Page" that returns a HTML "div" node/element - using the VNODEs defined in elements.ts
+
 F.e.:
 
 <img width="498" height="175" alt="image" src="https://github.com/user-attachments/assets/2e27fc70-f047-48ec-a38f-1f5ca3529490" />
 </details>
-As you can see, the "goto" function uses the "update" function, to update the website ...
+
+As you can see, the "goto" function then passes this loaded page (basically the "div" node/element defined+returned in the resp "Page" function) to the "update" function, to update the website ...
 
 
 ## 3.2 Updating the Website
-This works via the "update" function. This function will update everything from the root node/element ("app" - see frontend/index.html) downwards and finally assign "newNode" to the "oldVNode" (=the current one).
+This works via the "update" function. This function will update everything from the node/element that is passed to it downwards and finally assign "newNode" to the "oldVNode" (=the current one).
 
 <img width="326" height="139" alt="image" src="https://github.com/user-attachments/assets/976e8ca2-1f3e-4070-83da-6e707407c72d" />
 
-This function further calls the "patch" function
+This function further calls the "patch" function, which renders the provided node/element to the DOM:
 
 <img width="506" height="619" alt="image" src="https://github.com/user-attachments/assets/f68ea3e3-69fe-430c-ab21-64661649514a" />
 
-Which takes 
+It takes 
 1. a "domeNode", which is a real DOM node
 2. the oldNode, which is the VNODE before our changes
 3. and the "newNode", which is the VNODE after our changes
