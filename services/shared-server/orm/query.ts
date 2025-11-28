@@ -195,71 +195,71 @@ export class Query<Row, SelectedRow = Row> {
     return this;
   }
 
-  /**
-   * Adds equality constraint (=)
-   * @param col - Column name
-   * @param arg - Value to match
-   * @returns Query instance for chaining
-   */
-  eq<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
-    this.constraints.push({kind: 'eq', col, arg});
-    return this;
-  }
+  // /**
+  //  * Adds equality constraint (=)
+  //  * @param col - Column name
+  //  * @param arg - Value to match
+  //  * @returns Query instance for chaining
+  //  */
+  // eq<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
+  //   this.constraints.push({kind: 'eq', col, arg});
+  //   return this;
+  // }
 
-  /**
-   * Adds not-equal constraint (!=)
-   * @param col - Column name
-   * @param arg - Value to exclude
-   * @returns Query instance for chaining
-   */
-  ne<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
-    this.constraints.push({kind: 'ne', col, arg});
-    return this;
-  }
+  // /**
+  //  * Adds not-equal constraint (!=)
+  //  * @param col - Column name
+  //  * @param arg - Value to exclude
+  //  * @returns Query instance for chaining
+  //  */
+  // ne<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
+  //   this.constraints.push({kind: 'ne', col, arg});
+  //   return this;
+  // }
 
-  /**
-   * Adds greater-than constraint (>)
-   * @param col - Column name
-   * @param arg - Minimum value (exclusive)
-   * @returns Query instance for chaining
-   */
-  gt<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
-    this.constraints.push({kind: 'gt', col, arg});
-    return this;
-  }
+  // /**
+  //  * Adds greater-than constraint (>)
+  //  * @param col - Column name
+  //  * @param arg - Minimum value (exclusive)
+  //  * @returns Query instance for chaining
+  //  */
+  // gt<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
+  //   this.constraints.push({kind: 'gt', col, arg});
+  //   return this;
+  // }
 
-  /**
-   * Adds less-than constraint (<)
-   * @param col - Column name
-   * @param arg - Maximum value (exclusive)
-   * @returns Query instance for chaining
-   */
-  lt<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
-    this.constraints.push({kind: 'lt', col, arg});
-    return this;
-  }
+  // /**
+  //  * Adds less-than constraint (<)
+  //  * @param col - Column name
+  //  * @param arg - Maximum value (exclusive)
+  //  * @returns Query instance for chaining
+  //  */
+  // lt<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
+  //   this.constraints.push({kind: 'lt', col, arg});
+  //   return this;
+  // }
 
-  /**
-   * Adds greater-than-or-equal constraint (>=)
-   * @param col - Column name
-   * @param arg - Minimum value (inclusive)
-   * @returns Query instance for chaining
-   */
-  ge<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
-    this.constraints.push({kind: 'ge', col, arg});
-    return this;
-  }
+  // /**
+  //  * Adds greater-than-or-equal constraint (>=)
+  //  * @param col - Column name
+  //  * @param arg - Minimum value (inclusive)
+  //  * @returns Query instance for chaining
+  //  */
+  // ge<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
+  //   this.constraints.push({kind: 'ge', col, arg});
+  //   return this;
+  // }
 
-  /**
-   * Adds less-than-or-equal constraint (<=)
-   * @param col - Column name
-   * @param arg - Maximum value (inclusive)
-   * @returns Query instance for chaining
-   */
-  le<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
-    this.constraints.push({kind: 'le', col, arg});
-    return this;
-  }
+  // /**
+  //  * Adds less-than-or-equal constraint (<=)
+  //  * @param col - Column name
+  //  * @param arg - Maximum value (inclusive)
+  //  * @returns Query instance for chaining
+  //  */
+  // le<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
+  //   this.constraints.push({kind: 'le', col, arg});
+  //   return this;
+  // }
 
   /**
    * Generates SQL string and parameters
@@ -463,6 +463,19 @@ export const le = <K>(col: K, arg: Argument): Constraint<K> => {
   return ({kind: 'le', col, arg});
 }
 
+/**
+ * Creates an `IN` constraint for a query.
+ *
+ * @template K - The type of the column identifier.
+ * @param {K} col - The column the constraint applies to.
+ * @param {Argument[]} arg - A list of argument values that the column
+ *   must match. Typically represents the values inside an SQL `IN (...)` clause.
+ * @returns {Constraint<K>} A constraint object describing an `IN` operation.
+ *
+ * @example
+ * IN("status", ["active", "pending"]);
+ * // → { kind: "in", col: "status", arg: ["active", "pending"] }
+ */
 export const IN = <K>(col: K, arg: Argument[]): Constraint<K> => {
   return ({ kind: 'in', col, arg });
 }

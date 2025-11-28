@@ -1,6 +1,6 @@
 import Fastify from "fastify";
 import { initDB } from './database'; 
-// import statsRoutes from './routes'; 
+import { ApiError } from '@server/error/apiError';
 import { registerHealthRoute } from './health';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001; 
@@ -15,6 +15,14 @@ async function start() {
 	try {
 		// 1. Initializing the database
 		initDB('./db/game_stats.db'); 
+
+		server.setErrorHandler((error, request, reply) =>
+		{
+			if (error instanceof ApiError)
+				reply.code(error.code).send({ error: error.message });
+			else
+				reply.code(500).send({ error: 'Internal Server Error' });
+		});
 		
 		// 2. Register Health Check
 		server.register(registerHealthRoute);

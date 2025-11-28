@@ -15,14 +15,15 @@ export interface MatchHistoryEntry {
 	player_two: number;
 	winner_id: number;
 	match_duration?: number;
+	player_one_score: number;
+	player_two_score: number;
 }
 
 export interface MatchSubmissionData {
+    player_one_id: number;
+    player_two_id: number;
+    p1_score: number;
+    p2_score: number;
     winner_id: number;
-    loser_id: number;
-    winner_nickname: string;
-    loser_nickname: string;
-    winner_score: number;
-    loser_score: number;
-    duration?: number;
+    duration: number;
 }
