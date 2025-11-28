@@ -17,17 +17,24 @@ When a component changes, a new VDOM is created and compared to the previous one
 
 <img width="331" height="117" alt="image" src="https://github.com/user-attachments/assets/7d3d3736-7a24-461f-b132-917d20480f61" />
 
-# 3. How the website is built
+# 3. How the website is built / works
+When visiting http://localhost:8080/ we download the following from the server the HTML page: 
+
 <img width="551" height="412" alt="image" src="https://github.com/user-attachments/assets/392e6239-f60b-4501-b49c-f0d8bcf77024" />
 
-Here, "app" is the "div" element with the id "app".
-Everything in line 12 will be on our website.
+In line 14, you can see the "script" part. This is going to request / run the index.ts file:
 
-In the router, it gets selected (see line 54):
+<img width="414" height="542" alt="image" src="https://github.com/user-attachments/assets/36165c44-5354-48d5-b714-38f437a5317b" />
+
+This will "construct" and initialize the router (line 18).
 
 <img width="562" height="526" alt="image" src="https://github.com/user-attachments/assets/67767e0f-121b-4a22-a9ea-1842a90a7297" />
 
-And then in line 68 the VDOM of the page gets mounted into the "app" div. This happens every time the router get's initialized!
+In the router's constructor, the app element gets selected (see line 54).
+In the HTML code above, "app" is the "div" element with the id "app".
+This meand everything in line 12 of this index.html will be on our website.
+
+And then in line 68 - in the "init" function - the VDOM of the page gets mounted into the "app" div. This happens every time the router get's initialized!
 
 What we do is we add content to this "div" element.
 And this is done in the "mount" function in vdom.ts:
@@ -157,7 +164,7 @@ Then we go through all children and for each child if they change, we will recur
 <img width="500" height="460" alt="image" src="https://github.com/user-attachments/assets/a31f40aa-388b-4544-a965-6b14eb9e4f98" />
 
 
-# 5. The Login Process
+# 4. The Login Process
 
 
 
