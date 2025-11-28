@@ -45,6 +45,7 @@ export class Query<Row, SelectedRow = Row> {
   private table: Table;
   private order?: Order;
   private limitCount?: number;
+  private offsetCount?: number;
   private queryTargets?: string[];
   private insertValues?: Record<string, Argument>;
   private type: 'select' | 'insert' | 'delete' | 'update' | '' = '';
@@ -183,6 +184,18 @@ export class Query<Row, SelectedRow = Row> {
   }
 
   /**
+   * Skips a specified number of rows before returning results (pagination)
+   * @param offset - Number of rows to skip
+   * @returns Query instance for chaining
+   * @example
+   * query.offset(10); // Skip first 10 rows
+   */
+  offset(offset: number): Query<Row, SelectedRow> {
+    this.offsetCount = offset;
+    return this;
+  }
+
+  /**
    * Adds equality constraint (=)
    * @param col - Column name
    * @param arg - Value to match
@@ -190,18 +203,6 @@ export class Query<Row, SelectedRow = Row> {
    */
   eq<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
     this.constraints.push({kind: 'eq', col, arg});
-    return this;
-  }
-
-  /**
-   * Adds OR equality constraint (OR col = ?)
-   * NOTE: This should follow at least one initial constraint (e.g., eq, gt).
-   * @param col - Column name
-   * @param arg - Value to match
-   * @returns Query instance for chaining
-   */
-  orEq<K extends keyof Row>(col: K, arg: Argument): Query<Row, SelectedRow> {
-    this.constraints.push({kind: 'eq', col, arg, logic: ' OR '});
     return this;
   }
 
@@ -282,9 +283,14 @@ export class Query<Row, SelectedRow = Row> {
           query += ` ORDER BY ${this.order.col} ${this.order.order.toUpperCase()}`;
         }
 
-        if (this.limitCount) {
+        if (this.limitCount !== undefined) {
           query += ` LIMIT ?`;
           params.push(this.limitCount);
+        }
+
+        if (this.offsetCount !== undefined) {
+          query += ` OFFSET ?`;
+          params.push(this.offsetCount);
         }
 
         return { sql: query, params };
