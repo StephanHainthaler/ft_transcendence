@@ -191,9 +191,9 @@ export class Query<Row, SelectedRow = Row> {
    * query.offset(10); // Skip first 10 rows
    */
   offset(offset: number): Query<Row, SelectedRow> {
-  this.offsetCount = offset;
-  return this;
-}
+    this.offsetCount = offset;
+    return this;
+  }
 
   /**
    * Generates SQL string and parameters
@@ -217,10 +217,6 @@ export class Query<Row, SelectedRow = Row> {
           query += ` ORDER BY ${this.order.col} ${this.order.order.toUpperCase()}`;
         }
 
-        // if (this.limitCount) {
-        //   query += ` LIMIT ?`;
-        //   params.push(this.limitCount);
-        // }
         if (this.limitCount !== undefined) {
           query += ` LIMIT ?`;
           params.push(this.limitCount);
