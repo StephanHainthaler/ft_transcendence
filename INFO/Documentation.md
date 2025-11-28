@@ -76,8 +76,9 @@ And this is done in the "mount" function in vdom.ts:
 > button.onclick = answer;
 > ```
 
-
-## Definition of the Nodes
+The "mount" function takes a VNODE and renders it.
+<details>
+  <summary>Definition of VNODE</summary>
 The functions in elements.ts basically just return the VNODE type. These are elements for our VDOM. 
 
 Technically, VNODE is a description of an node/element consisting of
@@ -95,14 +96,10 @@ Technically, VNODE is a description of an node/element consisting of
 > );
 > ```
 
-### 2. props
 The props are updated via this function:
 
 <img width="524" height="357" alt="image" src="https://github.com/user-attachments/assets/b8e729b9-ea0b-47b4-8f05-eac799a1cd09" />
-
-
-
-
+</details>
 
 
 
