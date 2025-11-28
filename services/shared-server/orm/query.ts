@@ -45,6 +45,7 @@ export class Query<Row, SelectedRow = Row> {
   private table: Table;
   private order?: Order;
   private limitCount?: number;
+  private offsetCount?: number;
   private queryTargets?: string[];
   private insertValues?: Record<string, Argument>;
   private type: 'select' | 'insert' | 'delete' | 'update' | '' = '';
@@ -183,6 +184,18 @@ export class Query<Row, SelectedRow = Row> {
   }
 
   /**
+   * Skips a specified number of rows before returning results (pagination)
+   * @param offset - Number of rows to skip
+   * @returns Query instance for chaining
+   * @example
+   * query.offset(10); // Skip first 10 rows
+   */
+  offset(offset: number): Query<Row, SelectedRow> {
+    this.offsetCount = offset;
+    return this;
+  }
+
+  /**
    * Generates SQL string and parameters
    * @returns Object containing SQL query and parameter array
    */
@@ -204,9 +217,14 @@ export class Query<Row, SelectedRow = Row> {
           query += ` ORDER BY ${this.order.col} ${this.order.order.toUpperCase()}`;
         }
 
-        if (this.limitCount) {
+        if (this.limitCount !== undefined) {
           query += ` LIMIT ?`;
           params.push(this.limitCount);
+        }
+
+        if (this.offsetCount !== undefined) {
+          query += ` OFFSET ?`;
+          params.push(this.offsetCount);
         }
 
         return { sql: query, params };
