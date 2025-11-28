@@ -1,11 +1,11 @@
-# Index
+# 1. Index
 DOM = Document Object Model = structure of the HTML file
 
-VDOM = virtual DOM, its basically a lightweight JavaScript representation of the real DOM. When a component changes, a new VDOM is created and compared to the previous one, and only the minimal necessary updates are applied to the actual DOM.
+VDOM = virtual DOM, its basically a lightweight JavaScript representation of the real DOM. When a component changes, a new VDOM is created and compared to the previous one, and only the minimal necessary updates are applied to the actual DOM. This will then actually change the website.
 
 > **_NOTE:_**  Basic Idea behind JavaScript: Make web pages become interactive by allowing the browser to dynamically change content.
 
-# The Framework
+# 2. The Framework
 We keep the html file the bare minimum and "outsource" everything to the code.
 The framework used here basically keeps a very leightweight copy of the DOM but with custom defined virtual nodes - a VDOM.
 
@@ -17,7 +17,7 @@ When a component changes, a new VDOM is created and compared to the previous one
 
 <img width="331" height="117" alt="image" src="https://github.com/user-attachments/assets/7d3d3736-7a24-461f-b132-917d20480f61" />
 
-# How the website is built
+# 3. How the website is built
 <img width="551" height="412" alt="image" src="https://github.com/user-attachments/assets/392e6239-f60b-4501-b49c-f0d8bcf77024" />
 
 Here, "app" is the "div" element with the id "app".
@@ -100,6 +100,37 @@ The props are updated via this function:
 
 <img width="524" height="357" alt="image" src="https://github.com/user-attachments/assets/b8e729b9-ea0b-47b4-8f05-eac799a1cd09" />
 </details>
+
+<img width="517" height="333" alt="image" src="https://github.com/user-attachments/assets/e1012a7e-eb39-4e47-97bc-2805ccdef489" />
+
+Here we create the elements, we look for the "on" keyword (f.e. "onclick") and if we have that we add an eventlistener using the value of the "on..." attribute.
+We also add all the children of the node, specified in the VNODE.
+
+## 3.1 Updating the Website
+This works via the "update" function. This function will update everything from the root node/element ("app" - see frontend/index.html) downwards and finally assign "newNode" to the "oldVNode" (=the current one).
+
+<img width="326" height="139" alt="image" src="https://github.com/user-attachments/assets/976e8ca2-1f3e-4070-83da-6e707407c72d" />
+
+This function further calls the "patch" function
+
+<img width="506" height="619" alt="image" src="https://github.com/user-attachments/assets/f68ea3e3-69fe-430c-ab21-64661649514a" />
+
+Which takes 
+1. a "domeNode", which is a real DOM node
+2. the oldNode, which is the VNODE before our changes
+3. and the "newNode", which is the VNODE after our changes
+
+It will compare "oldNode" with "newNode" and apply the changes to "domeNode".
+
+Then we go through all children and for each child if they change, we will recursively call the patch function on them:
+
+<img width="500" height="460" alt="image" src="https://github.com/user-attachments/assets/a31f40aa-388b-4544-a965-6b14eb9e4f98" />
+
+# 4. The Login Process
+
+
+
+
 
 
 
