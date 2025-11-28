@@ -1,4 +1,4 @@
-import type { VNode, Props, Child } from ".";
+import type { VNode, Props, Child } from "./vdom";
 
 const el = (tag: string, props?: Props, ...children: Child[]) => {
   return { tag, props, children};

@@ -9,7 +9,7 @@
   .bg-tan { @apply bg-[#f0daa5]; }
   .bg-cream { @apply bg-[#fbf2c4]; }
   .bg-tan-border { @apply bg-[#e5c185]; }
-  
+
   .text-teal { @apply text-[#008585]; }
   .text-teal-dark { @apply text-[#004343]; }
   .text-rust { @apply text-[#c7522a]; }
@@ -50,11 +50,20 @@
     @apply bg-transparent border-2 border-[#008585] text-[#008585] hover:bg-[#008585] hover:text-white;
   }
 
+  .btn.sm {
+    @apply text-sm;
+  }
+
   .background {
     @apply bg-[#fbf2c4];
   }
   .card {
-    @apply bg-[#f0daa5] border-2 border-[#e5c185] rounded-lg;
+    @apply border-2 border-[#e5c185] rounded-lg;
+  }
+
+  .page-container {
+    @apply px-1 py-1 md:px-[20%] md:py-[1em] w-full h-full max-h-full flex flex-col justify-center items-center overflow-y-scroll;
+
   }
   .input {
     @apply w-full px-3 py-2 border-2 border-[#e5c185] rounded bg-neutral-100/70 focus:outline-none focus:border-[#008585] transition-colors;

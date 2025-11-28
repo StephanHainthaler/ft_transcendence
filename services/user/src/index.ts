@@ -1,7 +1,8 @@
 import Fastify, { FastifyServerOptions } from 'fastify'
-import { userRoutes } from './routes';
+import { userRoutes } from './userRoutes';
 import { initDB } from './db';
 import { healthRoute } from './health';
+import { friendRoutes } from './friendRoutes';
 
 const DB_PATH = process.env.DB_FILE_PATH;
 console.log(process.env.DB_FILE_PATH);
@@ -24,6 +25,10 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
 
   fastify.register(userRoutes);
   fastify.register(healthRoute);
+  fastify.register(friendRoutes, {
+    prefix: '/friend/',
+  });
+
   fastify.addHook('onResponse', async (request, reply) => {
     if (reply.statusCode >= 400) {
       request.log.info({

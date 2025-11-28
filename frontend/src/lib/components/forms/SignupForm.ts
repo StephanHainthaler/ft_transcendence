@@ -1,7 +1,9 @@
 import { button, h2, div, form } from "@lib/vdom";
 import { Input } from "@lib/components/ui/Input";
-import { client } from "@lib/api/client";
+import { client } from "@lib/index";
 import { validateInputThrow } from "@lib/validation/inputValidation";
+import { goto } from "@lib/index";
+
 let usernameBuffer = '';
 let emailBuffer = '';
 let userPasswordBuffer = '';
@@ -22,6 +24,7 @@ const handleLoginFormSubmit = async (e: Event) => {
       email,
       passwd: userPasswordBuffer,
     });
+    await goto('/');
   } catch (e: any) {
     console.error(e);
     errorMessage = e.message || e.error || JSON.stringify(e);
@@ -68,7 +71,7 @@ export const SignupForm = (update: () => void) => {
   updateFunc = () => { update() };
   return (
     form({ class: 'space-y-4 px-8 pt-8', onclick: updateFunc },
-      div({ class: 'w-full gap-2 flex flex-col max-w-md' },
+      div({ class: 'w-full gap-2 flex flex-col' },
         h2({ class: 'text-2xl font-bold text-teal mb-6 text-center' }, 'Register'),
         Input('Username', handleUsernameInput),
         div(),
