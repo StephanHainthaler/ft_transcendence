@@ -201,4 +201,14 @@ When the header / the dropdownMenu gets rendered, we check for this:
 
 and this defines which of the dropdown option are available to the user.
 
+> **_NOTE:_** The /user route is defined again in the router:
+>
+> <img width="279" height="202" alt="image" src="https://github.com/user-attachments/assets/af3da76b-de4d-4d63-9912-157f7dba73e0" />
+>
+> leading to this file being loaded:
+>
+> <img width="415" height="337" alt="image" src="https://github.com/user-attachments/assets/7bd2027a-8987-4140-ae05-3a79223f90c9" />
+
+
+
 
