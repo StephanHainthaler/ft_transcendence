@@ -27,7 +27,7 @@ In the router, it gets selected (see line 54):
 
 <img width="562" height="526" alt="image" src="https://github.com/user-attachments/assets/67767e0f-121b-4a22-a9ea-1842a90a7297" />
 
-And then in line 68 the VDOM of the page gets mounted into the "app" div. 
+And then in line 68 the VDOM of the page gets mounted into the "app" div. This happens every time the router get's initialized!
 
 What we do is we add content to this "div" element.
 And this is done in the "mount" function in vdom.ts:
@@ -71,10 +71,37 @@ And this is done in the "mount" function in vdom.ts:
 > }
 > 
 > const button = document.getElementById("myButton");
-> button.addEventListener("click", answer); // asigns answer function to "onclick" field in the HTML node / element document.getElementById("myButton");
+> button.addEventListener("click", answer); // asigns answer function to "onclick" field in the HTML node/element document.getElementById("myButton");
 > // -> which is the same as:
 > button.onclick = answer;
 > ```
+
+
+## Definition of the Nodes
+The functions in elements.ts basically just return the VNODE type. These are elements for our VDOM. 
+
+Technically, VNODE is a description of an node/element consisting of
+1. a string called "tag", which will eigther be "div" or "p" or ...
+2. "props" are the properties (so these are basically the "onclick" field's value, ...) of that node/element.
+3. "...children" meaning I can put as many (comma-separated) child elements as I want
+
+<img width="518" height="581" alt="image" src="https://github.com/user-attachments/assets/e34880e5-eb39-4fa4-858b-8ad86bee3fd3" />
+
+> **_NOTE:_** So out of these we could create the above example HTML code too:
+> ```js
+> const newNode = div({}, 
+>  button({ id: "myButton" }, "Click me!"), // "Click me!" is a child of "myButton"
+>  p({ id: "myButtonResponse" })
+> );
+> ```
+
+### 2. props
+The props are updated via this function:
+
+<img width="524" height="357" alt="image" src="https://github.com/user-attachments/assets/b8e729b9-ea0b-47b4-8f05-eac799a1cd09" />
+
+
+
 
 
 
