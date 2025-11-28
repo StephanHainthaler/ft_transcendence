@@ -106,7 +106,35 @@ The props are updated via this function:
 Here we create the elements, we look for the "on" keyword (f.e. "onclick") and if we have that we add an eventlistener using the value of the "on..." attribute.
 We also add all the children of the node, specified in the VNODE.
 
-## 3.1 Updating the Website
+
+## 3.1 The Router - Navigating the website.
+
+There, the "app" node/element is stored.
+
+Logic to navigate somewhere (f.e. "/user", "/profile", ...):
+
+<img width="505" height="595" alt="image" src="https://github.com/user-attachments/assets/fb11b404-34d5-4e53-890d-ad1f4a4be232" />
+
+<details>
+  <summary>Loading a Page</summary>
+
+When we navigate somewhere with the "goto", we actually load the page by fetching the respective file from the server - which can then be used dynamically at runtime. 
+
+<img width="600" height="183" alt="image" src="https://github.com/user-attachments/assets/bdbbf52d-c11e-46f3-8065-d97fb7e9d881" />
+
+And the pages are - as can be seen in the code - located here:
+
+<img width="148" height="163" alt="image" src="https://github.com/user-attachments/assets/a28008fd-d3a6-4651-bae4-899f17ab5221" />
+
+All of these pages will have a function "Page" that returns a HTML "div" node/element - using the VNODEs defined in elements.ts
+F.e.:
+
+<img width="498" height="175" alt="image" src="https://github.com/user-attachments/assets/2e27fc70-f047-48ec-a38f-1f5ca3529490" />
+</details>
+As you can see, the "goto" function uses the "update" function, to update the website ...
+
+
+## 3.2 Updating the Website
 This works via the "update" function. This function will update everything from the root node/element ("app" - see frontend/index.html) downwards and finally assign "newNode" to the "oldVNode" (=the current one).
 
 <img width="326" height="139" alt="image" src="https://github.com/user-attachments/assets/976e8ca2-1f3e-4070-83da-6e707407c72d" />
@@ -126,7 +154,8 @@ Then we go through all children and for each child if they change, we will recur
 
 <img width="500" height="460" alt="image" src="https://github.com/user-attachments/assets/a31f40aa-388b-4544-a965-6b14eb9e4f98" />
 
-# 4. The Login Process
+
+# 5. The Login Process
 
 
 
