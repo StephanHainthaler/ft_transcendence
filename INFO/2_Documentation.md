@@ -185,5 +185,20 @@ When the user then clicks on 'Sign in', the input gets validated. Then the login
 > 
 > e.stopPropagation() means that the "onclick" event in line 61 of LoginForm.ts does not trigger the "onclick" in line 51 of the file.
 
+A certain state is stored in the browser during this process. This state defines, if I have the user and the auth intormation. As you can see, these are set to null initially:
+
+<img width="607" height="245" alt="image" src="https://github.com/user-attachments/assets/bac0d95b-f5ef-415f-80a3-764a39c078ff" />
+
+So from the client I call this function "isLoggedIn"
+
+<img width="305" height="96" alt="image" src="https://github.com/user-attachments/assets/6ff5bf99-2222-4a91-a91a-e291c20dbfa4" />
+
+where I check this information.
+
+When the header / the dropdownMenu gets rendered, we check for this:
+
+<img width="826" height="376" alt="image" src="https://github.com/user-attachments/assets/609c9034-329e-4c77-9a7a-68b348479b6a" />
+
+and this defines which of the dropdown option are available to the user.
 
 
