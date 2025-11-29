@@ -2,6 +2,7 @@ import { ApiError } from '@server/error/apiError';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as logic from './logic';
 import { MatchSubmissionData } from '@shared/game_stats'
+import { gameStatsRoutes } from './routes';
 
 function safeParseInt(value: any, name: string, min: number = 0): number
 {
