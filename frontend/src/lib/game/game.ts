@@ -14,9 +14,9 @@ class Pong
 	private _player2: Player;
 	private _ball: Ball;
 
-	public constructor(player1_name: string, player2_name: string)
+	public constructor(player1_name: string, player2_name: string, canvas: HTMLCanvasElement)
 	{
-		this._canvas = document.getElementById("pong-game-canvas") as HTMLCanvasElement;
+		this._canvas = canvas;
 		// this._canvas.width = window.innerWidth * 0.66;
 		// this._canvas.height = window.innerHeight * 0.66;
 		this._canvas.width = screen.width * 0.66;
@@ -27,6 +27,19 @@ class Pong
 		this._player2 = new Player(player2_name, this._canvas.width * 0.9, this._canvas.height * 0.5, this._canvas);
 		this._ball = new Ball(this._canvas);
 	}
+
+	public updatePong = () => {
+
+	game.getBall().move(game.getPlayer(1), game.getPlayer(2));
+	game.getPlayer(1).move();
+	const p2 = game.getPlayer(2);
+	//if (2 player mode)
+		p2.move();
+	//else
+		//p2.moveByAI(game.getBall());
+	game.draw_arena();
+	window.requestAnimationFrame(() => this.updatePong());
+	};
 
 	public draw_arena()
 	{
@@ -168,7 +181,7 @@ class Player
 		this._origin = {x, y};
     	this._name = name;
 		this._velocity = 3;
-		this._width = canvas.width * 0.004;
+		this._width = canvas.width * 0.01;
 		this._height = canvas.height * 0.12;
 		//this._button_up = 119;
 		//this._button_down = 115;
@@ -363,10 +376,15 @@ class Ball
 	}
 }
 
-let game: Pong;
-game = new Pong("Stephan", "Julian");
 
-const canvas = game.getCanvas();
+let canvas: HTMLCanvasElement;
+let game: Pong;
+
+
+canvas = document.getElementById("pong-game-canvas") as HTMLCanvasElement;
+game = new Pong("Stephan", "Julian", canvas);
+
+//const canvas = game.getCanvas();
 canvas.tabIndex = 0;
 
 canvas.addEventListener('mousedown', () => canvas.focus());
@@ -400,17 +418,4 @@ canvas.addEventListener('blur', () =>
   game.getPlayer(2).stopMoveDown();
 });
 
-const updatePong = () => {
-
-	game.getBall().move(game.getPlayer(1), game.getPlayer(2));
-	game.getPlayer(1).move();
-	const p2 = game.getPlayer(2);
-	//if (2 player mode)
-		p2.move();
-	//else
-		//p2.moveByAI(game.getBall());
-	game.draw_arena();
-	window.requestAnimationFrame(() => updatePong());
-};
-
-window.requestAnimationFrame(() => updatePong());
+window.requestAnimationFrame(() => game.updatePong());
