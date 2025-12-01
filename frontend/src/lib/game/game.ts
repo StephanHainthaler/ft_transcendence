@@ -67,7 +67,7 @@ class Pong
 
 	public getScale(): number
 	{
-		return this._canvas.width / this._baseWidth;
+		return (this._canvas.width / this._baseWidth);
 	}
 
 	public draw_arena()
