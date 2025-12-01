@@ -275,12 +275,12 @@ class Ball
 	{
 		this._width = canvas.width * 0.01;
 		this._height = this._width;
-		this._velocity = 15;
 		this.spawnBall(canvas.width * 0.5, canvas.height * 0.5);
 	}
 
 	public spawnBall(spawnArea_x: number, spawnArea_y: number) : void
 	{
+		this._velocity = 2;
 		this._origin = this.getRandomStartingPoint(spawnArea_x, spawnArea_y);
 		this._direction = this.getRandomStartingDirection();
 		this._hasStartingSpeed = true;
@@ -329,9 +329,16 @@ class Ball
 		}
 
 		//ball hits left or right player paddle
-		if ((this._origin.x + this._direction.x < player1.getOrigin().x + player1.getWidth() && this.isHittingPlayer(player1) == true) ||
-			(this._origin.x + this._width + this._direction.x > player2.getOrigin().x && this.isHittingPlayer(player2) == true))
+		if (this.isHittingPlayer1(player1) == true || this.isHittingPlayer2(player2) == true)
+		{
+			if (this._hasStartingSpeed == true)
+			{
+				this._direction.x *= 2.5;
+				this._direction.y *= 2.5;
+				this._hasStartingSpeed = false;
+			}
 			this._direction.x = -this._direction.x;
+		}
 		this._origin.x += this._direction.x;
 
 		//ball hits upper or lower wall
@@ -340,19 +347,87 @@ class Ball
 		this._origin.y += this._direction.y;
 	}
 
-	public isHittingPlayer(player: Player): boolean
+	// IN PROGRESS
+	public isHittingPlayer1(player1: Player): boolean
 	{
-		if (this._origin.y >= player.getOrigin().y && this._origin.y + this._height <= player.getOrigin().y + player.getHeight())
-		{
-			if (this._hasStartingSpeed == true)
-			{
-				this._direction.x *= 2;
-				this._direction.y *= 2;
-				this._hasStartingSpeed = false;
-			}
-			return (true);
-		}
+		//hitting left player on their right side
+		if (this._origin.x + this._direction.x <= player1.getOrigin().x + player1.getWidth())
+			//ball is within boundaries of the player horizontally
+			if (this._origin.y + this._direction.y >= player1.getOrigin().y && this._origin.y + this._height + this._direction.y <= player1.getOrigin().y + player1.getHeight())
+				return (this.calculateDirection(this._origin.y + (this.getHeight() * 0.5), player1.getOrigin().y + (player1.getHeight() * 0.5), true), true);
+		
+		// //hitting left player on their upper side
+		// if (this._origin.y + this.getHeight() + this._direction.y >= player1.getOrigin().y)
+		// 	//ball is within boundaries of the player vertically
+		// 	if (this._origin.x >= player1.getOrigin().x + player1.getWidth() && this._origin.x + this._width <= player1.getOrigin().x) //TEST this
+		// 		return (this.calculateDirection(this.getHeight() * 0.5, player1.getHeight() * 0.5, true), false);
+
+		// // //hitting left player on their lower side
+		// if (this._origin.y + this._direction.y >= player1.getOrigin().y + player1.getHeight())
+		// 	//ball is within boundaries of the player vertically
+		// 	if (this._origin.x >= player1.getOrigin().x + player1.getWidth() && this._origin.x + this._width <= player1.getOrigin().x)  //TEST this
+		// 		return (this.calculateDirection(this.getHeight() * 0.5, player1.getHeight() * 0.5, true), false);
+	
 		return (false);
+	}
+
+	//IN PROGRESS
+	public isHittingPlayer2(player2: Player): boolean
+	{
+		//hitting right player on their left side
+		if (this._origin.x + this.getWidth() + this._direction.x >= player2.getOrigin().x)
+			//ball is within boundaries of the player horizontally
+			if (this._origin.y + this._direction.y >= player2.getOrigin().y && this._origin.y + this._height + this._direction.y <= player2.getOrigin().y + player2.getHeight())
+				return (this.calculateDirection(this._origin.y + (this.getHeight() * 0.5), player2.getOrigin().y + (player2.getHeight() * 0.5), true), true);
+		
+		//hitting right player on their upper side
+		// if (this._origin.y + this.getHeight() + this._direction.y >= player2.getOrigin().y)
+		// 	//ball is within boundaries of the player vertically
+		// 	if (this._origin.x >= player2.getOrigin().x && this._origin.x + this._width <= player2.getOrigin().x + player2.getWidth()) //TEST this
+		// 		return (true);
+
+		// //hitting right player on their lower side
+		// if (this._origin.y + this._direction.y >= player2.getOrigin().y + player2.getHeight())
+		// 	//ball is within boundaries of the player vertically
+		// 	if (this._origin.x >= player2.getOrigin().x && this._origin.x + this._width <= player2.getOrigin().x + player2.getWidth()) //TEST this
+		// 		return (true);
+	
+		return (false);
+	}
+
+	public calculateDirection(ballCenterHeight: number, playerCenterHeight: number, hitSides: boolean): void
+	{
+		// if (hitSides == true)
+		// {
+		// 	let newDirectionY = ballCenterHeight - playerCenterHeight;
+		// 	if (newDirectionY < 0)
+		// 	{
+		// 		while (newDirectionY < -1)
+		// 			newDirectionY *= 0.10
+		// 	}
+		// 	else
+		// 	{
+		// 		while (newDirectionY > 1)
+		// 			newDirectionY *= 0.10
+		// 	}
+
+		// 	//for (; newDirectionY < -1 || newDirectionY > 1; newDirectionY *= 0.10)
+		// 	this._direction.y = newDirectionY * this._velocity;
+		// 	//this._direction.x = -this._direction.x;
+		// }
+
+		if (ballCenterHeight == playerCenterHeight)
+		{
+			this._direction.y = 0;
+		}
+		else if (ballCenterHeight < playerCenterHeight)
+		{
+			this._direction.y = -1;
+		}
+		else
+		{
+			this._direction.y = 1;
+		}
 	}
 
 	public getWidth(): number
@@ -380,42 +455,39 @@ class Ball
 let canvas: HTMLCanvasElement;
 let game: Pong;
 
-
 canvas = document.getElementById("pong-game-canvas") as HTMLCanvasElement;
 game = new Pong("Stephan", "Julian", canvas);
 
-//const canvas = game.getCanvas();
 canvas.tabIndex = 0;
-
 canvas.addEventListener('mousedown', () => canvas.focus());
 
 // Keyboard listeners: W/S for player 1, ArrowUp/ArrowDown for player 2
 canvas.addEventListener('keydown', (e: KeyboardEvent) =>
 {
-  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
-  const k = e.key;
-  if (k.toLowerCase() === 'w') game.getPlayer(1).startMoveUp();
-  else if (k.toLowerCase() === 's') game.getPlayer(1).startMoveDown();
-  else if (k === 'ArrowUp') game.getPlayer(2).startMoveUp();
-  else if (k === 'ArrowDown') game.getPlayer(2).startMoveDown();
+	if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+	const k = e.key;
+	if (k.toLowerCase() === 'w') game.getPlayer(1).startMoveUp();
+	else if (k.toLowerCase() === 's') game.getPlayer(1).startMoveDown();
+	else if (k === 'ArrowUp') game.getPlayer(2).startMoveUp();
+	else if (k === 'ArrowDown') game.getPlayer(2).startMoveDown();
 });
 
 canvas.addEventListener('keyup', (e: KeyboardEvent) =>
 {
-  const k = e.key;
-  if (k.toLowerCase() === 'w') game.getPlayer(1).stopMoveUp();
-  else if (k.toLowerCase() === 's') game.getPlayer(1).stopMoveDown();
-  else if (k === 'ArrowUp') game.getPlayer(2).stopMoveUp();
-  else if (k === 'ArrowDown') game.getPlayer(2).stopMoveDown();
+	const k = e.key;
+	if (k.toLowerCase() === 'w') game.getPlayer(1).stopMoveUp();
+	else if (k.toLowerCase() === 's') game.getPlayer(1).stopMoveDown();
+	else if (k === 'ArrowUp') game.getPlayer(2).stopMoveUp();
+	else if (k === 'ArrowDown') game.getPlayer(2).stopMoveDown();
 });
 
 // prevents movement from getting stuck when losing canvas focus
 canvas.addEventListener('blur', () =>
 {
-  game.getPlayer(1).stopMoveUp();
-  game.getPlayer(1).stopMoveDown();
-  game.getPlayer(2).stopMoveUp();
-  game.getPlayer(2).stopMoveDown();
+	game.getPlayer(1).stopMoveUp();
+	game.getPlayer(1).stopMoveDown();
+	game.getPlayer(2).stopMoveUp();
+	game.getPlayer(2).stopMoveDown();
 });
 
 window.requestAnimationFrame(() => game.updatePong());
