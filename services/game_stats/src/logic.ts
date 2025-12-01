@@ -62,7 +62,7 @@ export function getUserMatchHistory(userId: number, page: number): MatchHistoryE
 		.all();
 }
 
-function updateStatsForUser(userId: number, isWinner: boolean, score: number)
+export function updateStatsForUser(userId: number, isWinner: boolean, score: number)
 {
 	const currentStats = getUserStats(userId);
 	const RANK_CHANGE_WIN = 10;

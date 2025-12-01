@@ -5,6 +5,8 @@ const AUTH_URL = process.env.AUTH_SERVICE_URL;
 
 const USER_URL = process.env.USER_SERVICE_URL;
 
+const GAME_STATS_URL = process.env.GAME_STATS_SERVICE_URL;
+
 const publicRoutes = [
   '/auth/login',
   '/auth/refresh',
@@ -15,6 +17,7 @@ async function startApiGateway() {
 
   if (!AUTH_URL) throw new Error("AUTH_SERVICE_URL is not defined");
   if (!USER_URL) throw new Error("USER_SERVICE_URL is not defined");
+  if (!GAME_STATS_URL) throw new Error("GAME_STATS_SERVICE_URL is not defined");
 
   const fastify = Fastify({
     logger: {
@@ -66,6 +69,12 @@ async function startApiGateway() {
   fastify.register(proxy, {
     upstream: AUTH_URL,
     prefix: '/auth',
+    http2: false,
+  })
+
+  fastify.register(proxy, {
+    upstream: GAME_STATS_URL,
+    prefix: '/stats',
     http2: false,
   })
 
