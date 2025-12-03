@@ -1,6 +1,9 @@
 import Database from 'better-sqlite3';
 import { Table } from './table';
 
+/** The result object returned by Database.run() for INSERT/UPDATE/DELETE queries. */
+export type RunResult = Database.RunResult;
+
 /** Valid argument types for SQL parameters */
 export type Argument = string | number | undefined;
 
@@ -310,10 +313,19 @@ DELETE FROM "${this.table.name}"
    * @returns Array of all matching rows
    */
   all(): SelectedRow[] {
-    this.limitCount = undefined;
+  //  this.limitCount = undefined;//it broke the limit functionality together with offset
     const { sql, params } = this.stringify();
     console.log(sql);
-    return this.db.prepare<Argument[], SelectedRow>(sql).all(...params);
+
+    const rows = this.db.prepare<Argument[], SelectedRow>(sql).all(...params);
+    
+    this.limitCount = undefined;
+    this.offsetCount = undefined;
+    this.constraints = [];
+    this.order = undefined;
+    this.hasWhereClause = false;
+    this.type = '';
+    return rows;
   }
 }
 

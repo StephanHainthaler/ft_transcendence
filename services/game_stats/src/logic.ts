@@ -1,7 +1,8 @@
-import { db, user_stats_table, match_history_table } from './database';
+import { getDb, setDb, user_stats_table, match_history_table } from './database';
 import { eq } from '@server/orm';
 import { UserStats, MatchHistoryEntry, MatchSubmissionData } from '@shared/game_stats';
 import { ApiError } from '@server/error/apiError';
+import type { RunResult } from '@server/orm/query';
 
 export const MATCHES_PER_PAGE = 5;
 export const USERS_PER_PAGE = 5;
@@ -16,7 +17,7 @@ export const USERS_PER_PAGE = 5;
  */
 export function getUserStats(userId: number): UserStats | null
 {
-	return db
+	return getDb()
 		.from<'user_stats'>('user_stats')
 		.select('*')
 		.where(eq('user_id', userId))
@@ -32,7 +33,7 @@ export function getUserStats(userId: number): UserStats | null
  */
 export function getMatchStats(MatchID: number): MatchHistoryEntry | null
 {
-	return db
+	return getDb()
 		.from<'match_history'>('match_history')
 		.select('*')
 		.where(eq('match_id', MatchID))
@@ -51,18 +52,18 @@ export function getMatchStats(MatchID: number): MatchHistoryEntry | null
 export function getUserMatchHistory(userId: number, page: number): MatchHistoryEntry[] | []
 {
 	const offset = (page - 1) * MATCHES_PER_PAGE;
-	return db
+	return getDb()
 		.from<'match_history'>('match_history')
 		.select('*')
-		.where(eq('player_one', userId))
-		.or(eq('player_two', userId))
+		.where(eq('player_one_id', userId))
+		.or(eq('player_two_id', userId))
 		.desc('timestamp')
 		.limit(MATCHES_PER_PAGE)
 		.offset(offset)
 		.all();
 }
 
-export function updateStatsForUser(userId: number, isWinner: boolean, score: number)
+export async function updateStatsForUser(userId: number, isWinner: boolean, score: number)
 {
 	const currentStats = getUserStats(userId);
 	const RANK_CHANGE_WIN = 10;
@@ -70,7 +71,7 @@ export function updateStatsForUser(userId: number, isWinner: boolean, score: num
 	if (!currentStats)
 	{
 		const initialRank = 1000 + (isWinner == true ? RANK_CHANGE_WIN : RANK_CHANGE_LOSS);
-		db.from('user_stats').insert({
+		getDb().from('user_stats').insert({
 			user_id: userId,
 			wins: isWinner ? 1 : 0,
 			losses: isWinner ? 0 : 1,
@@ -90,7 +91,7 @@ export function updateStatsForUser(userId: number, isWinner: boolean, score: num
 		let newRank = (currentStats.rank || 1000) + (isWinner == true ? RANK_CHANGE_WIN : RANK_CHANGE_LOSS);
 		if (newRank < 0)
 			newRank = 0; 
-		db.from('user_stats').update({
+		getDb().from('user_stats').update({
 			wins: newWins,
 			losses: newLosses,
 			streak: newStreak,
@@ -112,20 +113,21 @@ export function updateStatsForUser(userId: number, isWinner: boolean, score: num
  * * @param {MatchSubmissionData} data - The detailed result data from the completed game.
  * @returns {void}
  */
-export function recordMatch(data: MatchSubmissionData) : void
+
+export function recordMatch(data: MatchSubmissionData) : number | bigint | null
 {
 	try
 	{
 		const timestamp = Math.floor(Date.now() / 1000); 
 
-		db.from('match_history').insert({
+		const insertResult = getDb().from('match_history').insert({
 			timestamp: timestamp,
-			player_one: data.player_one_id,
-			player_two: data.player_two_id,
+			player_one_id: data.player_one_id,
+			player_two_id: data.player_two_id,
 			winner_id: data.winner_id,
 			match_duration: data.duration || 0,
-			score_p1: data.p1_score,
-			score_p2: data.p2_score, 
+			p1_score: data.p1_score,
+			p2_score: data.p2_score, 
 		}).run();
 
 		if (data.winner_id == data.player_one_id) {
@@ -135,6 +137,8 @@ export function recordMatch(data: MatchSubmissionData) : void
 			updateStatsForUser(data.player_one_id, false, data.p1_score);
 			updateStatsForUser(data.player_two_id, true, data.p2_score);
 		}
+		const resultWithId = insertResult as { lastInsertRowid: number | bigint };//any;        
+        return resultWithId.lastInsertRowid;
 	}
 	catch (dbError) 
 	{
@@ -158,7 +162,7 @@ export function recordMatch(data: MatchSubmissionData) : void
 export function getLeaderboard(page: number) : UserStats[] | []
 {
 	const offset = (page - 1) * USERS_PER_PAGE;
-	return db
+	return getDb()
 		.from<'user_stats'>('user_stats')
 		.select('*')
 		.desc('rank').desc('wins').desc('total_points')
