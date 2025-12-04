@@ -2,7 +2,6 @@ import { getDb, setDb, user_stats_table, match_history_table } from './database'
 import { eq } from '@server/orm';
 import { UserStats, MatchHistoryEntry, MatchSubmissionData } from '@shared/game_stats';
 import { ApiError } from '@server/error/apiError';
-import type { RunResult } from '@server/orm/query';
 
 export const MATCHES_PER_PAGE = 5;
 export const USERS_PER_PAGE = 5;
@@ -63,7 +62,7 @@ export function getUserMatchHistory(userId: number, page: number): MatchHistoryE
 		.all();
 }
 
-export async function updateStatsForUser(userId: number, isWinner: boolean, score: number)
+export function updateStatsForUser(userId: number, isWinner: boolean, score: number)
 {
 	const currentStats = getUserStats(userId);
 	const RANK_CHANGE_WIN = 10;
@@ -88,7 +87,11 @@ export async function updateStatsForUser(userId: number, isWinner: boolean, scor
 		const newStreak = isWinner == true ? (currentStats.streak || 0) + 1 : 0;
 		const newPoints = (currentStats.total_points || 0) + score;
 		const newHighestScore = Math.max(currentStats.highest_score || 0, score);
-		let newRank = (currentStats.rank || 1000) + (isWinner == true ? RANK_CHANGE_WIN : RANK_CHANGE_LOSS);
+		const rankDelta = isWinner === true ? RANK_CHANGE_WIN : RANK_CHANGE_LOSS;
+		let currentRankValue = currentStats.rank;
+		if (currentRankValue == undefined || currentRankValue == null)
+			currentRankValue = 1000;
+		let newRank = currentRankValue + rankDelta;
 		if (newRank < 0)
 			newRank = 0; 
 		getDb().from('user_stats').update({
