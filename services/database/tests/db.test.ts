@@ -1,5 +1,5 @@
 import { beforeEach, test } from "node:test";
-import { DB, defineTable, int, text } from "../../../shared/orm";
+import { DB, defineTable, int, text } from "../../shared-server/orm";
 import assert from "node:assert";
 
 interface Schema {
@@ -16,8 +16,8 @@ beforeEach(() => {
   db = new DB<Schema>();
   db.open(':memory:');
   db.create(table);
-  db.from(table.name).insert({name: 'first-test-user'}).run();
-  db.from(table.name).insert({name: 'second-test-user'}).run();
+  db.from(table).insert({name: 'first-test-user'}).run();
+  db.from(table).insert({name: 'second-test-user'}).run();
 })
 
 test('fail-recreate-table', () => {

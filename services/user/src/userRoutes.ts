@@ -2,7 +2,8 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { db } from "./db";
 import { User } from "@shared/user"
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { eq, } from "@server/orm";
+import { eq, IN, } from "@server/orm";
+import { ApiError } from "@server/error/apiError";
 
 type CreateUserReq = FastifyRequest<{
   Body: {
@@ -31,6 +32,28 @@ export function userRoutes(fastify: FastifyInstance) {
       return reply.code(e.code || 500).send({ success: false, message: e.message || 'Unauthorized'})
     }
   });
+
+  fastify.get<{
+    Body: {
+      usersId: number[]
+    },
+    Reply: {
+      200: { success: true, users: User[] };
+      '4xx': { success: false, message: string };
+      500: { success: false, message: string };
+    }
+  }>('/users', (req, repl) => {
+    try {
+      const { usersId } = req.body;
+      if (!usersId) throw new ApiError({ code: 400, message: 'missing user ids in body' });
+      const users = db.from('users').select('*').where(IN('id', usersId)).get();
+      if (!users) throw new ApiError({ code: 400, message: 'invalid user ids'});
+
+      repl.code(200).send({ success: true, users });
+    } catch (e: any) {
+      repl.code(e.code || 500).send({ success: false, message: e.message || `Internal server Error ${e}` });
+    }
+  })
 
   fastify.post('/new', (request: CreateUserReq, reply) => {
     const { user } = request.body;

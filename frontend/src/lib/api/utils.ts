@@ -23,11 +23,7 @@ export const retryRequest = async (req: Request, token: Writable<JWT | null>) =>
   });
 
   const response = await fetch(retryReq);
-  const data = await response.json();
-  if (!response.ok && response.status === 401) {
-    throw data;
-  }
-  return data;
+  return response;
 }
 
 export async function refreshTokenRequest(): Promise<AuthResponseSuccess> {
