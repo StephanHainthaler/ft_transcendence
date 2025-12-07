@@ -2,6 +2,10 @@
 
 type vector = {x: number; y: number};
 
+const TARGET_FPS = 60;
+const TARGET_FRAME_TIME = 1000 / TARGET_FPS; // ~16.67ms
+let lastFrameTime = 0;
+
 const getRandomNumber = (min: number, max: number) => {
   return (Math.random() * (max - min) + min);
 }
@@ -216,11 +220,11 @@ class Player
 		this._movingDown = false;
 	}
 
-	public move(): void
+	public move(delta: number): void
 	{
 		const canvas = game.getCanvas();
 		const scale = game.getScale();
-		const scaledVelocity = this._velocity * scale;
+		const scaledVelocity = this._velocity * scale * delta;
 
 		if (this._movingUp && !this._movingDown)
 		{
@@ -249,10 +253,10 @@ class Player
 	public stopMoveUp(): void { this._movingUp = false; }
 	public stopMoveDown(): void { this._movingDown = false; }
 
-	public moveByAI(ball: Ball): void
+	public moveByAI(ball: Ball, delta: number): void
 	{
 		const scale = game.getScale();
-		const scaledVelocity = this._velocity * scale;
+		const scaledVelocity = this._velocity * scale * delta;
 
 		// if the ball is in opponents field, go to the middle
 		if (ball.getOrigin().x < (game.getCanvas().width / 2))
@@ -351,11 +355,11 @@ class Ball
 		return ({x, y});
 	}
 
-	public move(player1: Player, player2: Player): void
+	public move(player1: Player, player2: Player, delta: number): void
 	{
 		const scale = game.getScale();
-		const moveX = this._direction.x * scale;
-		const moveY = this._direction.y * scale;
+		const moveX = this._direction.x * scale * delta;
+		const moveY = this._direction.y * scale * delta;
 
 		//ball hits left screen end
 		if (this._origin.x + moveX < 0)
@@ -377,12 +381,12 @@ class Ball
 		if ((this._origin.x + moveX < player1.getOrigin().x + player1.getWidth() && this.isHittingPlayer(player1) == true) ||
 			(this._origin.x + this._width + moveX > player2.getOrigin().x && this.isHittingPlayer(player2) == true))
 			this._direction.x = -this._direction.x;
-		this._origin.x += this._direction.x * scale;
+		this._origin.x += this._direction.x * scale * delta;
 
 		//ball hits upper or lower wall
 		if ((this._origin.y + this._height) + moveY > (game.getCanvas().height * 0.9) || this._origin.y + moveY < game.getCanvas().height * 0.1)
 			this._direction.y = -this._direction.y;
-		this._origin.y += this._direction.y * scale;
+		this._origin.y += this._direction.y * scale * delta;
 	}
 
 	public updateForResize(canvas: HTMLCanvasElement, relativeX: number, relativeY: number): void
@@ -466,17 +470,24 @@ canvas.addEventListener('blur', () =>
   game.getPlayer(2).stopMoveDown();
 });
 
-const updatePong = () => {
+const updatePong = (currentTime: number) => {
+	// calculate delta: how many "60fps frames" worth of time passed
+	if (lastFrameTime === 0) lastFrameTime = currentTime;
+	const elapsed = currentTime - lastFrameTime;
+	lastFrameTime = currentTime;
 
-	game.getBall().move(game.getPlayer(1), game.getPlayer(2));
-	game.getPlayer(1).move();
+	// clamp to max 3 to prevent huge jumps after tab switch
+	const delta = Math.min(elapsed / TARGET_FRAME_TIME, 3);
+
+	game.getBall().move(game.getPlayer(1), game.getPlayer(2), delta);
+	game.getPlayer(1).move(delta);
 	const p2 = game.getPlayer(2);
 	//if (2 player mode)
-		p2.move();
+		p2.move(delta);
 	//else
-		//p2.moveByAI(game.getBall());
+		//p2.moveByAI(game.getBall(), delta);
 	game.draw_arena();
-	window.requestAnimationFrame(() => updatePong());
+	window.requestAnimationFrame(updatePong);
 };
 
-window.requestAnimationFrame(() => updatePong());
+window.requestAnimationFrame(updatePong);
