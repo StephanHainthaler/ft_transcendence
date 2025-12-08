@@ -4,7 +4,6 @@ import { Layout } from "@lib/components/layout";
 import { callbackFunction } from "@lib/components/forms/OAuthForm";
 
 export const Page: Route = () => {
-  // ✅ run ONCE when route is entered
   callbackFunction()
     .then(() => {
       window.location.replace("/");
