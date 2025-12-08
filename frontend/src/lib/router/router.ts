@@ -40,11 +40,6 @@ export const routes: Location[] = [
     pathname: "/auth",
     file: "AuthPage",
     protected: false,
-  },
-  {
-    pathname: "/callback",
-    file: "CallbackPage",
-    protected: false,
   }
 ];
 

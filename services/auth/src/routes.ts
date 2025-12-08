@@ -6,6 +6,7 @@ import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRe
 import { AuthUser } from "./db";
 import { generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
+import { callbackFunction } from "@lib/components/forms/OAuthForm";
 
 type AuthReply = {
   200: AuthResponseSuccess,
@@ -131,6 +132,12 @@ export function authRoutes(fastify: FastifyInstance) {
       return reply.code(500).send({ success: false, message: `Internal server error: ${e}` })
     }
   });
+
+  
+
+export const Page: Route = () => {
+  callbackFunction()
+    
 
   fastify.post('/githubOAuth', async (request, reply) => {
   try {

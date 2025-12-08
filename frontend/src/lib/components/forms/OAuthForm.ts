@@ -37,7 +37,7 @@ export async function handleOAuthRequest(
 
   const info: OAuthRequestBody = {
     client_id: 'Ov23likjrNVolqMyu8L5',
-    redirect_uri: "http://localhost:8080/callback", // this is a frontend page handling redirection
+    redirect_uri: "http://localhost:8080/api/auth/callback", // this is a frontend page handling redirection
     // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
     state, // create a CSRF token - BugFix: store for specific client?
     allow_signup: 'true',
