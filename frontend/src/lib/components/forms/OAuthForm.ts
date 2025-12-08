@@ -19,8 +19,6 @@ async function GithubRedirect(
   const params = new URLSearchParams(info)
   const oauthUrl = `https://github.com/login/oauth/authorize?${params.toString()}`;
 
-  console.log('Redirect to GitHub OAuth URL:', oauthUrl);
-  
   window.location.href = oauthUrl;
 }
 
@@ -39,7 +37,7 @@ export async function handleOAuthRequest(
 
   const info: OAuthRequestBody = {
     client_id: 'Ov23likjrNVolqMyu8L5',
-    redirect_uri: "http://localhost:8080/callback",
+    redirect_uri: "http://localhost:8080/callback", // this is a frontend page handling redirection
     // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
     state, // create a CSRF token - BugFix: store for specific client?
     allow_signup: 'true',
@@ -49,19 +47,28 @@ export async function handleOAuthRequest(
   await GithubRedirect(info);
 }
 
-
+// this function will make POST request to endpoint, which then exchanges the GH code for an access_token
 async function GithubGetToken(code: string | null) {
 
   // const accesshUrl = `https://github.com/login/oauth/access_token`;
-  const accessEndpoint = `githubOAuth`
+  const accessEndpoint = `/githubOAuth`;
 
-  await fetch(accessEndpoint, {
-  method: 'POST',
-    headers: { "content-type": 'application/json' },
+  // send the code to the backend
+  const response = await fetch(accessEndpoint, {
+    method: 'POST',
+    headers: { "content-type": "application/json" },
     body: JSON.stringify({ code })
   });
+
+  if (!response.ok) {
+    throw new Error("Error: OAuth code for access_token exchange failed");
+  }
+
+  return response.json(); // contains user information
 }
 
+// function called by endpoint "/callback" - which calls "CallbackPage"
+// It will extract the code and state out of redirect_uri: http://localhost:8080/?code=f34161fb93969efa515b&state=abc
 export async function callbackFunction() {
   const params = new URLSearchParams(window.location.search); // url looks like this after redirect_uri: http://localhost:8080/?code=f34161fb93969efa515b&state=abc
 
@@ -75,7 +82,7 @@ export async function callbackFunction() {
     throw new Error(errorMessage);
   }
 
-  if (!code ) { // check for CSRF
+  if (!code ) { // check if code was sent back - need to exchange this code for an access_token 
     errorMessage = "Error. OAuth code was not returned ..."
     updateFunc?.();
     throw new Error(errorMessage);

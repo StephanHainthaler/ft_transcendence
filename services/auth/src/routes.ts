@@ -132,6 +132,51 @@ export function authRoutes(fastify: FastifyInstance) {
     }
   });
 
+  fastify.post('/githubOAuth', async (request, reply) => {
+  try {
+    const { code } = request.body as { code?: string }; // stating receiving structure to be able to extract the value of code
+
+    if (!code) {
+      return reply.status(400).send({ success: false, message: "Error: Missing OAuth code" });
+    }
+
+    // Exchange code for access_token with GitHub
+    const response = await fetch(`https://github.com/login/oauth/access_token`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: new URLSearchParams({
+        client_id: process.env.GITHUB_CLIENT_ID!,
+        client_secret: process.env.GITHUB_CLIENT_SECRET!,
+        code,
+        redirect_uri: `http://localhost:8080/`,
+      }),
+    });
+
+    const responseData = await response.json();
+    if (!responseData.access_token) {
+      return reply.status(401).send({ success: false, message: 'Invalid OAuth code' });
+    }
+
+    // Now I can get user info from github
+    const user_response = await fetch("https://api.github.com/user", {
+      headers: { Authorization: `Bearer ${responseData.access_token}` },
+    });
+    const github_user = await user_response.json();
+
+    const session = createSession(github_user, secret);
+    const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken); // json web token (jwt)
+
+    return reply.header('set-cookie', refreshTokenCookie).code(200).send({
+      success: true, 
+      user: github_user, 
+      access_token: session.accessToken.raw });
+
+  } catch (e) {
+    console.error(e);
+     return reply.code(500).send({ success: false, message: `OAuth Login Error` });
+  }
+});
+
   fastify.post<{
     Body: SignupRequestBody,
     Reply: AuthReply,
