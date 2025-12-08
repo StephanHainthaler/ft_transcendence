@@ -16,7 +16,8 @@ export type OAuthRequestBody = {
   client_id?: string,
   redirect_uri?: string,
   state?: string,
-  allow_signup?: string
+  allow_signup?: string,
+  scope?: string
 };
 
 export type UpdateCredsRequestBody = {
