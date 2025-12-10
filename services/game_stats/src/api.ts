@@ -2,7 +2,7 @@ import { ApiError } from '@server/error/apiError';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as logic from './logic';
 import { MatchSubmissionData } from '@shared/game_stats'
-import { gameStatsRoutes } from './routes';
+import { UserStats } from '@shared/game_stats';
 
 function safeParseInt(value: any, name: string, min: number = 0): number
 {
@@ -17,14 +17,26 @@ function safeParseInt(value: any, name: string, min: number = 0): number
 	return (nb);
 }
 
+function handleControllerError(e: any, reply: FastifyReply, request: FastifyRequest) {
+	const status = e.code || e.status || 500;
+	const message = e.message || 'Internal server error';
+	!(e instanceof ApiError) &&
+	request.log.error(e, `Unhandled error in controller, returning ${status}`);
+	return reply.status(status).send({ success: false, message });
+}
+
 export const GameStatsControllers = {
 
 	getUserStatsHandler: async (request: FastifyRequest, reply: FastifyReply) =>
 	{
-		const params = request.params as { userId: string };
-		const userId = safeParseInt(params.userId, 'userId', 1);
-		const stats = logic.getUserStats(userId);
-		return stats || { user_id: userId, wins: 0, losses: 0, rank: 1000, total_points: 0, highest_score: 0, streak: 0 };
+		try {
+			const params = request.params as { userId: string };
+			const userId = safeParseInt(params.userId, 'userId', 1);
+			const stats = logic.getUserStats(userId);
+			return reply.status(200).send(stats || { user_id: userId, wins: 0, losses: 0, rank: 1000, total_points: 0, highest_score: 0, streak: 0 } as UserStats);
+		} catch (e: any) {
+			return handleControllerError(e, reply, request);
+		}
 	},
 	
 	getUserMatchHistoryHandler: async (request: FastifyRequest, reply: FastifyReply) =>
