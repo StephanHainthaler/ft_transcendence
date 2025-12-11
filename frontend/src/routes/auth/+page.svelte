@@ -6,7 +6,7 @@
 
 </script>
 
-<div class="min-h-screen w-full flex items-center justify-center p-4">
+<div class="w-full flex items-center justify-center p-4">
   <Tabs.Root value="login" class="w-full max-w-md">
     <Tabs.List class="grid w-full grid-cols-2">
       <Tabs.Trigger
