@@ -208,6 +208,8 @@ export class ApiClient {
     this.userStore.set(null);
     this.authStore.set(null);
     this.accessToken.set(null);
+    this.accessToken.delete();
+    document.cookie = '';
   }
 
   async updateCredentials({
