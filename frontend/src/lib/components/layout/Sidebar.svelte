@@ -2,11 +2,12 @@
   import * as Sidebar from "$lib/components/ui/sidebar";
   import { client } from "@lib/api";
 
-  let isLoggedIn = client?.isLoggedIn || false;
+  let isLoggedIn = $state(client?.isLoggedIn || false);
 
   const handleLogout = () => {
     client.logout();
   };
+
 
   client?.onChange(() => {
     isLoggedIn = client.isLoggedIn;
@@ -20,18 +21,55 @@
     </h1>
   </Sidebar.Header>
   <Sidebar.Content>
+    {#if isLoggedIn}
     <Sidebar.Group>
-      {#if isLoggedIn}
-        <a class="block m-2 px-4 py-2 rounded-lg hover:bg-background/80" href="/profile">Profile</a>
-        <a class="block m-2 px-4 py-2 rounded-lg hover:bg-background/80" href="/game">Game</a>
-        <a class="block m-2 px-4 py-2 rounded-lg hover:bg-background/80" href="/tournament">Tournament</a>
-        <a class="block m-2 px-4 py-2 rounded-lg hover:bg-background/80" href="/friend">Friends</a>
-        <button class="block m-2 px-4 py-2 rounded-lg hover:bg-background/80 w-full text-left" on:click={handleLogout}>
-          Logout
-        </button>
-      {:else}
-        <a class="block m-2 px-4 py-2 rounded-lg" href="/auth">Login</a>
-      {/if}
+      <Sidebar.GroupLabel>Routes</Sidebar.GroupLabel>
+      <Sidebar.GroupContent>
+        <Sidebar.Menu>
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton>
+              <a class="px-4 w-full" href="/profile">Profile</a>
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton>
+              <a class="px-4 w-full" href="/game">Game</a>
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton>
+              <a class="px-4 w-full" href="/tournament">Tournament</a>
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton>
+              <a class="px-4 w-full" href="/friends">Friends</a>
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+        </Sidebar.Menu>
+      </Sidebar.GroupContent>
+    </Sidebar.Group>
+    <Sidebar.Separator />
+    {/if}
+    <Sidebar.Group>
+      <Sidebar.GroupLabel>Account</Sidebar.GroupLabel>
+      <Sidebar.GroupContent>
+        <Sidebar.Menu>
+          {#if isLoggedIn}
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton onclick={handleLogout}>
+                <span class="px-4 w-full">Logout</span>
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+          {:else}
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton>
+                <a class="px-4 w-full" href="/auth">Login</a>
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+          {/if}
+        </Sidebar.Menu>
+      </Sidebar.GroupContent>
     </Sidebar.Group>
   </Sidebar.Content>
   <Sidebar.Footer />

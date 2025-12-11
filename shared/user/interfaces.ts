@@ -30,3 +30,9 @@ export interface Friendship {
   user_to_id: number,
   status: 'pending' | 'accepted' | 'rejected',
 }
+
+export interface Avatar {
+  id: number,
+  user_id: number,
+  location: string
+}

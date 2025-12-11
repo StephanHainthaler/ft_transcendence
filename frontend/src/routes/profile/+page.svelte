@@ -5,7 +5,7 @@
   import type { AuthUserClient, User } from "@shared/user";
   import Label from "@lib/components/ui/label/label.svelte";
   import * as Card from "@lib/components/ui/card";
-    import Button from "@lib/components/ui/button/button.svelte";
+  import Button from "@lib/components/ui/button/button.svelte";
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -36,19 +36,18 @@
     editMode = !editMode;
   };
 
-  const handleSubmit = (e: Event) => {
+  const handleSubmit = async (e: Event) => {
     e.preventDefault();
-    // Submit logic here
+    client.updateUser()
   };
 </script>
 
-<Card.Root class="w-full max-w-4xl mx-auto">
+<Card.Root class="size-full mx-auto">
   <Card.Header>
     <Card.Title class="text-3xl">Profile</Card.Title>
   </Card.Header>
   <Card.Content>
     <form class="space-y-8" on:submit={handleSubmit}>
-      <!-- Personal Info Section -->
       <div class="space-y-4">
         <div class="flex justify-between items-center">
           <h2 class="text-xl font-semibold">Personal Info</h2>
@@ -120,7 +119,6 @@
         </div>
       </div>
 
-      <!-- Submit Button -->
       {#if editMode}
         <div class="flex justify-end pt-4">
           <Button type="submit">Save Changes</Button>

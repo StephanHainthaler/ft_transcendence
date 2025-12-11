@@ -1,18 +1,22 @@
 <script lang="ts">
   import * as Item from "$lib/components/ui/item";
+    import type { Snippet } from "svelte";
   import Button from "../ui/button/button.svelte";
 
   const {
     title,
     desc,
     buttonDesc,
+    extraBtn,
     callback
   }: {
     title: string,
     desc?: string,
     buttonDesc?: string,
+    extraBtn?: Snippet,
     callback: () => void
   } = $props();
+
 </script>
 
 <Item.Root variant="outline" class="group hover:border-zinc-700 transition-colors">
@@ -36,5 +40,6 @@
     >
       {buttonDesc || 'Choose'}
     </Button>
+    {@render extraBtn?.()}
   </Item.Actions>
 </Item.Root>
