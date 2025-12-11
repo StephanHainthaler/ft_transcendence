@@ -8,7 +8,7 @@ let errorMessage: string = '';
 
 let updateFunc: (() => void) | null = null;
 
-// (A) Redirect the user from the browser to GitHub
+// (2) Redirect the user from the browser to GitHub
 async function GithubRedirect(
     info: OAuthRequestBody,
 ) {
@@ -26,6 +26,7 @@ function generateState() {
   return crypto.randomUUID();
 }
 
+// (1) create a request
 export async function handleOAuthRequest(
    e: Event
 ) {
@@ -37,7 +38,7 @@ export async function handleOAuthRequest(
 
   const info: OAuthRequestBody = {
     client_id: 'Ov23likjrNVolqMyu8L5',
-    redirect_uri: "http://localhost:8080/api/auth/callback", // this is a frontend page handling redirection
+    redirect_uri: "http://localhost:8080/oauth-callback", // frontend route for redirection
     // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
     state, // create a CSRF token - BugFix: store for specific client?
     allow_signup: 'true',
@@ -47,17 +48,14 @@ export async function handleOAuthRequest(
   await GithubRedirect(info);
 }
 
-// this function will make POST request to endpoint, which then exchanges the GH code for an access_token
+// (4) this function will make POST request to endpoint, which then exchanges the GH code for an access_token
 async function GithubGetToken(code: string | null) {
-
   // const accesshUrl = `https://github.com/login/oauth/access_token`;
-  const accessEndpoint = `/githubOAuth`;
 
-  // send the code to the backend
-  const response = await fetch(accessEndpoint, {
+  const response = await fetch(`/api/auth/github-oauth`, { // backend route
     method: 'POST',
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ code })
+    headers: { "Accept": "application/json" }, // define response type
+    body: JSON.stringify({ code }) // send the code to the backend
   });
 
   if (!response.ok) {
@@ -67,8 +65,8 @@ async function GithubGetToken(code: string | null) {
   return response.json(); // contains user information
 }
 
-// function called by endpoint "/callback" - which calls "CallbackPage"
-// It will extract the code and state out of redirect_uri: http://localhost:8080/?code=f34161fb93969efa515b&state=abc
+// (3) function will be called /oauth-callback
+// It will extract the code and state out of redirect_uri
 export async function callbackFunction() {
   const params = new URLSearchParams(window.location.search); // url looks like this after redirect_uri: http://localhost:8080/?code=f34161fb93969efa515b&state=abc
 
@@ -78,13 +76,11 @@ export async function callbackFunction() {
 
   if (!state_ret || state_ret != state) { // check for CSRF
     errorMessage = "Error. CSRF validation failed. A third party created the request. Aborting process ...";
-    updateFunc?.();
     throw new Error(errorMessage);
   }
 
   if (!code ) { // check if code was sent back - need to exchange this code for an access_token 
     errorMessage = "Error. OAuth code was not returned ..."
-    updateFunc?.();
     throw new Error(errorMessage);
   }
 

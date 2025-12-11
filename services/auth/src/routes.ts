@@ -6,7 +6,6 @@ import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRe
 import { AuthUser } from "./db";
 import { generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { callbackFunction } from "@lib/components/forms/OAuthForm";
 
 type AuthReply = {
   200: AuthResponseSuccess,
@@ -133,13 +132,7 @@ export function authRoutes(fastify: FastifyInstance) {
     }
   });
 
-  
-
-export const Page: Route = () => {
-  callbackFunction()
-    
-
-  fastify.post('/githubOAuth', async (request, reply) => {
+  fastify.post('/github-oauth', async (request, reply) => {
   try {
     const { code } = request.body as { code?: string }; // stating receiving structure to be able to extract the value of code
 
@@ -150,7 +143,7 @@ export const Page: Route = () => {
     // Exchange code for access_token with GitHub
     const response = await fetch(`https://github.com/login/oauth/access_token`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "Accept": "application/json" }, // define response type
       body: new URLSearchParams({
         client_id: process.env.GITHUB_CLIENT_ID!,
         client_secret: process.env.GITHUB_CLIENT_SECRET!,

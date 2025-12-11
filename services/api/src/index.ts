@@ -9,6 +9,7 @@ const publicRoutes = [
   '/auth/login',
   '/auth/refresh',
   '/auth/sign-up',
+  '/auth/github-oauth'
 ];
 
 async function startApiGateway() {
