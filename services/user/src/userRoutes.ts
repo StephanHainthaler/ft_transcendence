@@ -1,47 +1,85 @@
-import { FastifyInstance, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 import { db } from "./db";
-import { User } from "@shared/user"
+import { Avatar, User } from "@shared/user"
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { eq, } from "@server/orm";
-
-type CreateUserReq = FastifyRequest<{
-  Body: {
-    user: User
-  },
-}>
+import { eq, IN, } from "@server/orm";
+import { ApiError } from "@server/error/apiError";
+import { getUser } from "./dbHandlers";
 
 export function userRoutes(fastify: FastifyInstance) {
   fastify.get<{
+    Reply: {
+      200: { success: true, user: User, avatar: Avatar | null },
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string }
+    },
     Params: {
       userId?: number,
     }
   }>('/:userId?', (request, reply) => {
     try {
       const token = extractJWTFromHeader(request.headers.authorization);
-      const user = db
-        .from('users')
-        .select('*')
-        .where(eq('id', token.payload.sub))
-        .single();
-      if (!user) {
-        return reply.status(400).send({ message: "No such user" })
+      try {
+        const { user, avatar } = getUser(token.payload.sub);
+        if (!user) {
+          reply.status(404).send({ success: false, message: "No such user" })
+        } else {
+          reply.status(200).send({ success: true, user, avatar });
+        }
+      } catch (e: any) {
+        throw new ApiError({ message: `Database Error: ${e.message || e}`, code: 409 })
       }
-      return reply.status(200).send({ user });
     } catch (e: any) {
-      return reply.code(e.code || 500).send({ success: false, message: e.message || 'Unauthorized'})
+      reply.code(e.code || 500).send({ success: false, message: e.message || 'Unauthorized'})
     }
   });
 
-  fastify.post('/new', (request: CreateUserReq, reply) => {
-    const { user } = request.body;
-    const result = db
-      .from('users')
-      .insert(user)
-      .select('id')
-      .single();
+  fastify.get<{
+    Body: {
+      usersId: number[]
+    },
+    Reply: {
+      200: { success: true, users: User[] };
+      '4xx': { success: false, message: string };
+      500: { success: false, message: string };
+    }
+  }>('/users', (req, repl) => {
+    try {
+      const { usersId } = req.body;
+      if (!usersId) throw new ApiError({ code: 400, message: 'missing user ids in body' });
+      const users = db.from('users').select('*').where(IN('id', usersId)).get();
+      if (!users) throw new ApiError({ code: 400, message: 'invalid user ids'});
 
-    if (!result) throw new Error("Failed to insert User");
-    reply.status(200).send({ id: result.id })
+      repl.code(200).send({ success: true, users });
+    } catch (e: any) {
+      repl.code(e.code || 500).send({ success: false, message: e.message || `Internal server Error ${e}` });
+    }
+  })
+
+  fastify.post<{
+    Reply: {
+      200: { success: true, user: User },
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string }
+    },
+    Body: {
+      user: User,
+    }
+  }>
+    ('/new', (request, reply) => {
+    try {
+      const { user } = request.body;
+      const result = db
+        .from('users')
+        .insert(user)
+        .select('id')
+        .single();
+
+      if (!result) throw new ApiError({ message: "Failed to insert User", code: 400 });
+      reply.status(200).send({ success: true, user })
+    } catch (e: any) {
+      reply.status(e.code || e.status || 500).send({ success: false, message: e.message || e })
+    }
   });
 
   fastify.get<{
@@ -67,20 +105,18 @@ export function userRoutes(fastify: FastifyInstance) {
     Body: {
       user: User,
     },
-    Params: {
-      userId: number,
-    }
     Reply: {
       200: User,
       '4xx': Error,
       500: Error,
     }
-  }>('/update/:userId?', (request, reply) => {
-    const { user } = request.body;
-    const userId = request.params.userId;
-    if (userId) user.id = userId;
-
+  }>('/update', (request, reply) => {
     try {
+      const { user } = request.body;
+      const token = extractJWTFromHeader(request.headers.authorization);
+      const userId = request.params.userId;
+      if (userId) user.id = userId;
+
       const response = db
         .from('users')
         .update(user)

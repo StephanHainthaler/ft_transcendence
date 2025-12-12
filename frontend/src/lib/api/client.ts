@@ -5,7 +5,7 @@ import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authR
 import type { JWT } from "@shared/api";
 import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest } from "./user";
-import { goto } from "..";
+import { goto } from "$app/navigation";
 
 export type ApiError = {
   code: number,
@@ -208,6 +208,8 @@ export class ApiClient {
     this.userStore.set(null);
     this.authStore.set(null);
     this.accessToken.set(null);
+    this.accessToken.delete();
+    document.cookie = '';
   }
 
   async updateCredentials({

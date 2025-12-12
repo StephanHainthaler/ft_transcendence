@@ -73,8 +73,8 @@ export function friendRoutes(fastify: FastifyInstance) {
     },
     Reply: {
       200: { success: true, friendship: Friendship },
-      '5xx': { success: false, message: string },
-      501: { success: false, message: string }
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string }
     }
   }>('/request/:toId', (req, repl) => {
     try {
@@ -88,7 +88,7 @@ export function friendRoutes(fastify: FastifyInstance) {
       if (e.code) {
         repl.code(e.code).send({ success: false, message: e.message });
       } else {
-        repl.code(500).send({ success: false, message: "Internal Server Error" });
+        repl.code(500).send({ success: false, message: `Internal Server Error ${e}` });
       }
     }
   })
