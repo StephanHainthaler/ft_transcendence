@@ -1,5 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 
+export const ssr = false;
+
 export async function load({ request }: { request: Request }) {
   const token = request.headers.get('authorization');
   console.log(token);

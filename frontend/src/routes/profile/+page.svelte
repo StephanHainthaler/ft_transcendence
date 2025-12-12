@@ -38,6 +38,7 @@
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
+    client.updateUser()
   };
 </script>
 

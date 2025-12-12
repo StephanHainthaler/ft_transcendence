@@ -9,13 +9,25 @@
 </script>
 
 <div class="w-full flex items-center justify-center p-4">
-  <Tabs.Root bind:value={tab} class="w-full max-w-md">
+  <Tabs.Root value="login" class="w-full max-w-md">
     <Tabs.List class="grid w-full grid-cols-3">
-      <Tabs.Trigger value="login">Login</Tabs.Trigger>
-      <Tabs.Trigger value="register">Register</Tabs.Trigger>
-      <Tabs.Trigger value="oauth">OAuth</Tabs.Trigger>
-    </Tabs.List>
-
+      <Tabs.Trigger
+        value="login"
+      >
+        Login
+      </Tabs.Trigger>
+      <Tabs.Trigger
+        value="register"
+      >
+        Register
+      </Tabs.Trigger>
+      
+      <Tabs.Trigger
+      value="oauth"
+      >
+      OAuth
+    </Tabs.Trigger>
+  </Tabs.List>
     <Card.Root class="w-full max-w-md shadow-xl">
       <Card.Content class="pt-6 w-full">
         <Tabs.Content value="login">

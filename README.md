@@ -119,37 +119,37 @@ NEEDED: 14pts mandatory + min 5 bonus
 
 | Short     | Meaning                                   |
 |:----------|:------------------------------------------|
-|   v       | victor                                    |
-|   g       | gamemaker/in                              |
-|   all     | used by all members, can be dev by one    |
+| everyone  | used by all members, can be dev by one    |
 |   ?       | maybe                                     |
+| **Status:** |
+|  - ✅     | Done                                      |
+|  - 🚧     | In progress                               |
+|  - ❌     | Cancelled                                 |
 
-| Module    |Sub Module |short| points | total |
-|:----------|:----------|:---:|:------:|------:|
-|Web| | | 4|
-|-|Backend Framework|all|2||
-|-|Frontend Framework|v|1||
-|-|Database |all|1| |
-|User Management| | | |4|
-|-|Standard user management|v|2||
-|-|remote auth|v|2||
-|Gameplay and ui| | | |2 + 3?|
-|-|Remote players|g|2||
-|-|Customization|g|1?||
-|-|Live Chat|g?|2?||
-|Ai| |g| |2 + 1?|
-|-|Ai Opponent|g|2||
-|-|Game stats|g|1?||
-|Security| | | |2|
-|-|JWT and 2FA|v|2||
-|DevOps| | | |2|
-|-|micro services|all|2||
-|Accessibility| | | |2|
-|-|Language Support| |1||
-|-|Accessibility vis.| |1||
-|Server-Side Pong| | | |2|
-|-|Run on server|g|2||
-| | | | |20 + 4?|
+
+| Module| Sub Module | Assignee | Type | Points |  Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Web** | | | _2_ | _4_ | |
+| `-` | Backend Framework | everyone | Major | 2 | 🚧 |
+| `-` | Frontend Framework | everyone | Minor | 2 | 🚧 |
+| `-` | Database | everyone | Minor | 2 | 🚧 |
+| **User Management** |  |  | _2_ | _4_ |  |
+| `-` | Standard user management | Victor | Major |  2 |  🚧 |
+| `-` | Remote authentication | Victor and Pia |  Major | 2 | 🚧 |
+| **AI-Algo** | | | _1.5_ | _2 + 1?_ | |
+| `-` | AI Opponent | Pia | Major |  2 | ✅ |
+| `-` | Game stats | Katya | Minor |  1 | 🚧 |
+| **Cybersecurity** | | | _1_ | _2_ | |
+| `-` | JWT and 2FA | Victor and Julian| Major |  2 |🚧 |
+| **DevOps** | | | _1_ | _2_ | |
+| `-` | Micro services | everyone | Major | 2 | 🚧 |
+| **Accessibility** | | | _1_ | _2.5_ | |
+| `-` | Language Support | Katya | Minor |  1 | 🚧 |
+| `-` | Accessibility visual | Katya | Minor |  1 | 🚧 |
+| `-` | Exp. browser comp. | - | Minor |  1 | 🚧 |
+| **Server-Side Pong** | | | _1_ | _2_ | |
+| `-` | Run on server | Victor | Major |  2 | 🚧 |
+| **TOTAL** | | | _9.5_ | _20?_ | |
 
 #### Reasoning
 

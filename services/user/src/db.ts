@@ -6,7 +6,7 @@ import { Game, User, UserGame, Friendship, Avatar } from "@shared/user";
 export interface Schema {
   users: User,
   games: Game,
-  avatar: Avatar,
+  avatars: Avatar,
   user_games: UserGame,
   friendships: Friendship,
   date: string,
