@@ -1,8 +1,9 @@
 import { FastifyInstance, FastifyRequest } from "fastify";
 import { db } from "./db";
-import { User } from "@shared/user"
+import { Avatar, User } from "@shared/user"
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { eq, } from "@server/orm";
+import { eq, IN, } from "@server/orm";
+import { ApiError } from "@server/error/apiError";
 
 type CreateUserReq = FastifyRequest<{
   Body: {
@@ -12,25 +13,64 @@ type CreateUserReq = FastifyRequest<{
 
 export function userRoutes(fastify: FastifyInstance) {
   fastify.get<{
+    Reply: {
+      200: { success: true, user: User, avatar: Avatar | null },
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string }
+    },
     Params: {
       userId?: number,
     }
   }>('/:userId?', (request, reply) => {
     try {
       const token = extractJWTFromHeader(request.headers.authorization);
-      const user = db
-        .from('users')
-        .select('*')
-        .where(eq('id', token.payload.sub))
-        .single();
-      if (!user) {
-        return reply.status(400).send({ message: "No such user" })
+      let user = null;
+      let avatar = null;
+      try {
+        user = db
+          .from('users')
+          .select('*')
+          .where(eq('id', token.payload.sub))
+          .single();
+        avatar = db
+          .from('avatar')
+          .select('*')
+          .where(eq('user_id', token.payload.sub))
+          .single();
+      } catch (e: any) {
+        throw new ApiError({ message: `Database Error: ${e.message || e}`, code: 409 })
       }
-      return reply.status(200).send({ user });
+      if (!user) {
+        reply.status(404).send({ success: false, message: "No such user" })
+      } else {
+        reply.status(200).send({ success: true, user, avatar });
+      }
     } catch (e: any) {
-      return reply.code(e.code || 500).send({ success: false, message: e.message || 'Unauthorized'})
+      reply.code(e.code || 500).send({ success: false, message: e.message || 'Unauthorized'})
     }
   });
+
+  fastify.get<{
+    Body: {
+      usersId: number[]
+    },
+    Reply: {
+      200: { success: true, users: User[] };
+      '4xx': { success: false, message: string };
+      500: { success: false, message: string };
+    }
+  }>('/users', (req, repl) => {
+    try {
+      const { usersId } = req.body;
+      if (!usersId) throw new ApiError({ code: 400, message: 'missing user ids in body' });
+      const users = db.from('users').select('*').where(IN('id', usersId)).get();
+      if (!users) throw new ApiError({ code: 400, message: 'invalid user ids'});
+
+      repl.code(200).send({ success: true, users });
+    } catch (e: any) {
+      repl.code(e.code || 500).send({ success: false, message: e.message || `Internal server Error ${e}` });
+    }
+  })
 
   fastify.post('/new', (request: CreateUserReq, reply) => {
     const { user } = request.body;

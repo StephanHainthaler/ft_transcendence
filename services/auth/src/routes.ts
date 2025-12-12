@@ -124,7 +124,7 @@ export function authRoutes(fastify: FastifyInstance) {
     try {
       const cookies = request;
       if (cookies)
-        reply.status(200).header('set-cookie', `logged-in=0`).send()
+        reply.status(200).header('set-cookie', `refresh_token=0; Max-Age=0; Path=/`).send()
       else
         return reply.status(400).send({ message: 'User not logged in' });
     } catch (e: any) {

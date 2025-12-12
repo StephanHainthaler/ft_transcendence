@@ -1,11 +1,12 @@
 import { DB } from "@server/orm";
 
 import { int, text, defineTable } from "@server/orm"
-import { Game, User, UserGame, Friendship } from "@shared/user";
+import { Game, User, UserGame, Friendship, Avatar } from "@shared/user";
 
 export interface Schema {
   users: User,
   games: Game,
+  avatar: Avatar,
   user_games: UserGame,
   friendships: Friendship,
   date: string,
@@ -18,6 +19,13 @@ const users = defineTable('users', {
   email: text().unique(),
 });
 
+const avatars = defineTable('avatars', {
+  id: int().primarykey().autoIncrement().notNull(),
+  user_id: int().notNull().references(() => users.columns.id),
+  location: text().notNull(),
+})
+
+// DEPRECATED
 const games = defineTable('games', {
   id: int().primarykey().autoIncrement().notNull(),
   player1: int().notNull(),
@@ -41,7 +49,7 @@ const user_friends = defineTable('friendships', {
 })
 
 export function initTables() {
-  return { users, games, user_games, user_friends };
+  return { users, games, user_games, user_friends, avatars };
 }
 
 export const db = new DB<Schema>();
@@ -50,5 +58,5 @@ export function initDB(path: string) {
   const { users, user_games, games, user_friends } = initTables();
 
   db.open(path);
-  db.create([users, user_games, games, user_friends]);
+  db.create([users, user_games, games, user_friends, avatars]);
 }
