@@ -9,6 +9,14 @@ const HOST = process.env.HOST ? process.env.HOST : "0.0.0.0";
 
 const server = Fastify({ logger: true, });
 
+function getErrorMessage(e: unknown): string {
+	if (e instanceof Error)
+		return e.message;
+	if (typeof e === 'string')
+		return e;
+	return 'An unknown server exception occurred.';
+}
+
 async function start()
 {
 	try {
@@ -17,10 +25,24 @@ async function start()
 
 		server.setErrorHandler((error, request, reply) =>
 		{
-			if (error instanceof ApiError)
-				reply.code(error.code).send({ error: error.message });
+			const statusCode = (error as any).statusCode || 500;
+			const errorMessage = getErrorMessage(error);
+			if (statusCode >= 500)
+			{
+				request.log.error(error, `GLOBAL SERVER ERROR: ${errorMessage}`);
+				return reply.code(500).send({
+                    success: false,
+                    message: 'Internal Server Error', // 👈 Виправлення: завжди загальне повідомлення
+                });
+			}
 			else
-				reply.code(500).send({ error: 'Internal Server Error' });
+			{
+				request.log.warn(`Global Error (Client/Fastify): ${errorMessage}`);
+				return reply.code(statusCode).send({
+						success: false,
+						message: errorMessage,
+				});
+			}
 		});
 		
 		// Register Health Check
