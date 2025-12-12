@@ -13,19 +13,61 @@ class Pong
 	private _player1: Player;
 	private _player2: Player;
 	private _ball: Ball;
+	private _baseWidth: number = 1280;
+	private _baseHeight: number = 720;
 
 	public constructor(player1_name: string, player2_name: string, canvas: HTMLCanvasElement)
 	{
 		this._canvas = canvas;
-		// this._canvas.width = window.innerWidth * 0.66;
-		// this._canvas.height = window.innerHeight * 0.66;
-		this._canvas.width = screen.width * 0.66;
-		this._canvas.height = screen.height * 0.66;
+		this.resizeCanvas();
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
 
-		this._player1 = new Player(player1_name, this._canvas.width * 0.1, this._canvas.height * 0.5, this._canvas);
-		this._player2 = new Player(player2_name, this._canvas.width * 0.9, this._canvas.height * 0.5, this._canvas);
+		this._player1 = new Player(player1_name, this._canvas.width * 0.1, this._canvas.height * 0.5, this._canvas, 1);
+		this._player2 = new Player(player2_name, this._canvas.width * 0.9, this._canvas.height * 0.5, this._canvas, 2);
 		this._ball = new Ball(this._canvas);
+
+		// handle window resize
+		window.addEventListener('resize', () => this.handleResize());
+	}
+
+	private resizeCanvas(): void
+	{
+		const aspectRatio = this._baseWidth / this._baseHeight;
+		let width = window.innerWidth * 0.9;
+		let height = width / aspectRatio;
+
+		if (height > window.innerHeight * 0.8)
+		{
+			height = window.innerHeight * 0.8;
+			width = height * aspectRatio;
+		}
+
+		this._canvas.width = width;
+		this._canvas.height = height;
+	}
+
+	private handleResize(): void
+	{
+		const oldWidth = this._canvas.width;
+		const oldHeight = this._canvas.height;
+
+		// store relative Y positions
+		const p1RelY = this._player1.getOrigin().y / oldHeight;
+		const p2RelY = this._player2.getOrigin().y / oldHeight;
+		const ballRelX = this._ball.getOrigin().x / oldWidth;
+		const ballRelY = this._ball.getOrigin().y / oldHeight;
+
+		this.resizeCanvas();
+
+		// update positions based on new canvas size
+		this._player1.updateForResize(this._canvas, p1RelY);
+		this._player2.updateForResize(this._canvas, p2RelY);
+		this._ball.updateForResize(this._canvas, ballRelX, ballRelY);
+	}
+
+	public getScale(): number
+	{
+		return (this._canvas.width / this._baseWidth);
 	}
 
 	public updatePong = () => {
@@ -164,27 +206,24 @@ class Pong
 class Player
 {
 	private _name: string;
-	//private _color: Console._color;
+	private _playerNumber: number;
 	private	_velocity: number;
 	private	_width: number;
 	private	_height: number;
-	//private	_button_up: number;
-	//private	_button_down: number;
 	private	_origin: vector;
 	private	_score: number;
 	private	_movingUp: boolean;
 	private	_movingDown: boolean;
 
 
-	public constructor(name: string, x: number, y: number, canvas: HTMLCanvasElement)
+	public constructor(name: string, x: number, y: number, canvas: HTMLCanvasElement, playerNumber: number)
 	{
 		this._origin = {x, y};
     	this._name = name;
+		this._playerNumber = playerNumber;
 		this._velocity = 3;
-		this._width = canvas.width * 0.01;
+		this._width = canvas.width * 0.004;
 		this._height = canvas.height * 0.12;
-		//this._button_up = 119;
-		//this._button_down = 115;
 		this._score = 0;
 		this._movingUp = false;
 		this._movingDown = false;
@@ -193,19 +232,29 @@ class Player
 	public move(): void
 	{
 		const canvas = game.getCanvas();
+		const scale = game.getScale();
+		const scaledVelocity = this._velocity * scale;
 
 		if (this._movingUp && !this._movingDown)
 		{
-			const newY = this._origin.y - this._velocity;
+			const newY = this._origin.y - scaledVelocity;
 			this._origin.y = Math.max(newY, canvas.height * 0.1);
 			return;
 		}
 		if (this._movingDown && !this._movingUp)
 		{
-			const newY = this._origin.y + this._velocity;
+			const newY = this._origin.y + scaledVelocity;
 			this._origin.y = Math.min(newY, canvas.height * 0.9 - this._height);
 			return;
 		}
+	}
+
+	public updateForResize(canvas: HTMLCanvasElement, relativeY: number): void
+	{
+		this._origin.y = relativeY * canvas.height;
+		this._width = canvas.width * 0.004;
+		this._height = canvas.height * 0.12;
+		this._origin.x = this._playerNumber === 1 ? canvas.width * 0.1 : canvas.width * 0.9;
 	}
 
 	public startMoveUp(): void { this._movingUp = true; }
@@ -215,18 +264,21 @@ class Player
 
 	public moveByAI(ball: Ball): void
 	{
+		const scale = game.getScale();
+		const scaledVelocity = this._velocity * scale;
+
 		// if the ball is in opponents field, go to the middle
 		if (ball.getOrigin().x < (game.getCanvas().width / 2))
 		{
 			if (this._origin.y < game.getCanvas().height / 2)
-				this._origin.y += this._velocity;
+				this._origin.y += scaledVelocity;
 			else if (this._origin.y > game.getCanvas().height / 2)
-				this._origin.y -= this._velocity;
+				this._origin.y -= scaledVelocity;
 		}
-		else if (ball.getOrigin().y - ball.getHeight() > this._origin.y && (this._origin.y + this._height) + this._velocity < (game.getCanvas().height * 0.9))
-			this._origin.y += this._velocity;
-		else if (ball.getOrigin().y <= this._origin.y && this._origin.y - this._velocity > game.getCanvas().height * 0.1)
-			this._origin.y -= this._velocity;
+		else if (ball.getOrigin().y - ball.getHeight() > this._origin.y && (this._origin.y + this._height) + scaledVelocity < (game.getCanvas().height * 0.9))
+			this._origin.y += scaledVelocity;
+		else if (ball.getOrigin().y <= this._origin.y && this._origin.y - scaledVelocity > game.getCanvas().height * 0.1)
+			this._origin.y -= scaledVelocity;
 	}
 
 	public setName(name: string): void
@@ -267,14 +319,15 @@ class Ball
 	private	_width: number;
 	private	_height: number;
 	private	_velocity: number;
-	private	_origin: vector;
-	private _direction: vector;
-	private _hasStartingSpeed: boolean;
+	private	_origin!: vector;
+	private _direction!: vector;
+	private _hasStartingSpeed!: boolean;
 
 	public constructor(canvas: HTMLCanvasElement)
 	{
 		this._width = canvas.width * 0.01;
 		this._height = this._width;
+		this._velocity = 3;
 		this.spawnBall(canvas.width * 0.5, canvas.height * 0.5);
 	}
 
@@ -314,18 +367,24 @@ class Ball
 
 	public move(player1: Player, player2: Player): void
 	{
+		const scale = game.getScale();
+		const moveX = this._direction.x * scale;
+		const moveY = this._direction.y * scale;
+
 		//ball hits left screen end
-		if (this._origin.x + this._direction.x < 0)
+		if (this._origin.x + moveX < 0)
 		{
 			player2.setScore(player2.getScore() + 1);
 			this.spawnBall(game.getCanvas().width * 0.5, game.getCanvas().height * 0.5);
+			return;
 		}
 
 		//ball hits right screen end
-		if (this._origin.x + this._direction.x > (game.getCanvas().width))
+		if (this._origin.x + moveX > (game.getCanvas().width))
 		{
 			player1.setScore(player1.getScore() + 1);
 			this.spawnBall(game.getCanvas().width * 0.5, game.getCanvas().height * 0.5);
+			return;
 		}
 
 		//ball hits left or right player paddle
@@ -339,12 +398,20 @@ class Ball
 			}
 			this._direction.x = -this._direction.x;
 		}
-		this._origin.x += this._direction.x;
+		this._origin.x += this._direction.x  * scale;
 
 		//ball hits upper or lower wall
 		if ((this._origin.y + this._height) + this._direction.y > (game.getCanvas().height * 0.9) || this._origin.y + this._direction.y < game.getCanvas().height * 0.1)
 			this._direction.y = -this._direction.y;
-		this._origin.y += this._direction.y;
+		this._origin.y += this._direction.y * scale;
+	}
+
+	public updateForResize(canvas: HTMLCanvasElement, relativeX: number, relativeY: number): void
+	{
+		this._origin.x = relativeX * canvas.width;
+		this._origin.y = relativeY * canvas.height;
+		this._width = canvas.width * 0.01;
+		this._height = this._width;
 	}
 
 	// IN PROGRESS
