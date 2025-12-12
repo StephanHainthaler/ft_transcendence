@@ -1,6 +1,9 @@
 import Database from 'better-sqlite3';
 import { Table } from './table';
 
+/** The result object returned by Database.run() for INSERT/UPDATE/DELETE queries. */
+export type RunResult = Database.RunResult;
+
 /** Valid argument types for SQL parameters */
 export type Argument = string | number | undefined;
 
@@ -310,10 +313,19 @@ DELETE FROM "${this.table.name}"
    * @returns Array of all matching rows
    */
   all(): SelectedRow[] {
-    this.limitCount = undefined;
+  //  this.limitCount = undefined;//it broke the limit functionality together with offset
     const { sql, params } = this.stringify();
     console.log(sql);
-    return this.db.prepare<Argument[], SelectedRow>(sql).all(...params);
+
+    const rows = this.db.prepare<Argument[], SelectedRow>(sql).all(...params);
+    
+    this.limitCount = undefined;
+    this.offsetCount = undefined;
+    this.constraints = [];
+    this.order = undefined;
+    this.hasWhereClause = false;
+    this.type = '';
+    return rows;
   }
 }
 
@@ -397,6 +409,19 @@ export const le = <K>(col: K, arg: Argument): Constraint<K> => {
   return ({kind: 'le', col, arg});
 }
 
+/**
+ * Creates an `IN` constraint for a query.
+ *
+ * @template K - The type of the column identifier.
+ * @param {K} col - The column the constraint applies to.
+ * @param {Argument[]} arg - A list of argument values that the column
+ *   must match. Typically represents the values inside an SQL `IN (...)` clause.
+ * @returns {Constraint<K>} A constraint object describing an `IN` operation.
+ *
+ * @example
+ * IN("status", ["active", "pending"]);
+ * // → { kind: "in", col: "status", arg: ["active", "pending"] }
+ */
 export const IN = <K>(col: K, arg: Argument[]): Constraint<K> => {
   return ({ kind: 'in', col, arg });
 }

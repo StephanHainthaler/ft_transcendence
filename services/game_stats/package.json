@@ -1,0 +1,20 @@
+{
+	"name": "@ft_transcendence/game_stats",
+	"description": "Game Statistic",
+	"scripts": {
+		"build": "tsc",
+		"predev": "mkdir -p db",
+		"dev": "tsx watch --env-file=../../env/.env.game_stats ./src/index.ts",
+		"test": "tsx --tsconfig=./tsconfig.json --env-file=../../env/.env.game_stats --test ./tests/tests.ts"
+	},
+	"dependencies": {
+		"fastify": "^5.6.2",
+		"better-sqlite3": "^12.4.1"
+	},
+	"devDependencies": {
+		"typescript": "^5.9.3",
+		"tsx": "^4.16.2",
+		"@types/node": "^24.10.0",
+		"@types/better-sqlite3": "^7.6.13"
+	}
+}
