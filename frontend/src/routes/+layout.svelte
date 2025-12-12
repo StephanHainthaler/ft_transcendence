@@ -5,15 +5,13 @@
   import Sidebar from '@lib/components/layout/Sidebar.svelte';
   import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
   import { client } from '@lib/api';
-  import { useSidebar } from '$lib/components/ui/sidebar';
 
   let { children } = $props();
   let sidebarOpen = $state(false);
 
-  beforeNavigate((nav) => {
-    console.log(client.isLoggedIn);
+  beforeNavigate(async (nav) => {
     const target = nav.to;
-    console.log(target);
+    await client.getSession();
     if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
       if (!client.isLoggedIn) {
         console.log('cancel redirect')

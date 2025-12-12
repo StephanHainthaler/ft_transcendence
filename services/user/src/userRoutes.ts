@@ -2,11 +2,13 @@ import { FastifyInstance } from "fastify";
 import { db } from "./db";
 import { Avatar, User } from "@shared/user"
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { eq, IN, } from "@server/orm";
+import { IN } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
-import { getUser } from "./dbHandlers";
+import { createUser, getAllUsers, getUser, updateUser } from "./dbHandlers";
+import { MultipartFile } from "@fastify/multipart";
 
 export function userRoutes(fastify: FastifyInstance) {
+
   fastify.get<{
     Reply: {
       200: { success: true, user: User, avatar: Avatar | null },
@@ -69,14 +71,11 @@ export function userRoutes(fastify: FastifyInstance) {
     ('/new', (request, reply) => {
     try {
       const { user } = request.body;
-      const result = db
-        .from('users')
-        .insert(user)
-        .select('id')
-        .single();
 
-      if (!result) throw new ApiError({ message: "Failed to insert User", code: 400 });
-      reply.status(200).send({ success: true, user })
+      const data = createUser(user);
+
+      if (!data) throw new ApiError({ message: "Failed to insert User", code: 400 });
+      reply.status(200).send({ success: true, user: data.user });
     } catch (e: any) {
       reply.status(e.code || e.status || 500).send({ success: false, message: e.message || e })
     }
@@ -84,16 +83,13 @@ export function userRoutes(fastify: FastifyInstance) {
 
   fastify.get<{
     Reply: {
-      200: { success: boolean, users: User[] },
+      200: { success: boolean, users: { user: User, avatar: Avatar | null }[] },
       '4xx': { success: boolean, message: string },
       500: { success: boolean, message: string }
     }
-  }>('/all', (request, reply) => {
+  }>('/all', (_, reply) => {
       try {
-        const users = db
-          .from('users')
-          .select('*')
-          .all();
+        const users = getAllUsers();
 
         reply.status(200).send({ success: true, users });
       } catch (e: any) {
@@ -101,35 +97,43 @@ export function userRoutes(fastify: FastifyInstance) {
       }
   })
 
-  fastify.patch<{
-    Body: {
-      user: User,
-    },
+  fastify.post<{
     Reply: {
-      200: User,
+      200: { success: true, user: User, avatar: Avatar | null },
       '4xx': Error,
       500: Error,
     }
-  }>('/update', (request, reply) => {
+  }>('/update', async (request, reply) => {
     try {
-      const { user } = request.body;
       const token = extractJWTFromHeader(request.headers.authorization);
-      const userId = request.params.userId;
-      if (userId) user.id = userId;
 
-      const response = db
-        .from('users')
-        .update(user)
-        .where(eq('id', user.id))
-        .select('*')
-        .single();
+      const parts = request.parts();
+      let user: Partial<User> | undefined;
+      let avatar: MultipartFile | undefined;
 
-      if (!response)
+      for await (const part of parts) {
+        console.log('Part:', part.fieldname, part.type);
+
+        if (part.type === 'file' && part.fieldname === 'avatar') {
+          avatar = part;
+        } else if (part.type === 'field' && part.fieldname === 'user') {
+          user = JSON.parse(part.value as string);
+        }
+      }
+
+      console.log('Final user:', user);
+      console.log('Final avatar:', avatar);
+
+      if (!user) throw new ApiError({ code: 400, message: 'Missing user form data' });
+
+      const data = await updateUser(token.payload.sub, user, avatar);
+
+      if (!data)
         throw new Error('User update Failed');
 
-      reply.status(200).send(response);
+      reply.status(200).send({ success: true, user: data.user, avatar: data.avatar });
     } catch(e: any) {
-      reply.status(500).send(new Error(`Error ${e.message || e}`))
+      reply.status(e.code || e.statuscode || 400).send(new Error(`Error ${e.message || e}`))
     }
   })
 }

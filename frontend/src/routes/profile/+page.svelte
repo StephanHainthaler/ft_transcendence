@@ -10,6 +10,7 @@
   type ProfilePageData = {
     auth: AuthUserClient;
     user: User;
+    avatarFile?: File;
     passwd: string;
     passwdRepeat: string;
   };
@@ -36,31 +37,65 @@
     editMode = !editMode;
   };
 
+  const handleFileChange = (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    session.avatarFile = input.files?.[0] || undefined;
+  };
+
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
-    client.updateUser()
+    await client.updateUserInfo(session.user, session.avatarFile)
   };
+
 </script>
 
 <Card.Root class="size-full mx-auto">
   <Card.Header>
     <Card.Title class="text-3xl">Profile</Card.Title>
+    <Card.Action>
+      <Button
+        type="button"
+        variant={editMode ? "secondary" : "outline"}
+        size="sm"
+        onclick={toggleEditMode}
+      >
+        {editMode ? "Cancel" : "Edit"}
+      </Button>
+    </Card.Action>
   </Card.Header>
   <Card.Content>
-    <form class="space-y-8" on:submit={handleSubmit}>
+    <form class="space-y-6" onsubmit={handleSubmit}>
+      <div class="flex items-center gap-6">
+        {#if client.avatar}
+          <img
+            src={client.avatar}
+            alt={client.user?.name || 'user avatar'}
+            class="size-20 rounded-full object-cover"
+          />
+        {:else}
+          <div class="size-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-semibold">
+            {client.user?.name.slice(0, 1).toUpperCase()}
+          </div>
+        {/if}
+
+        {#if editMode}
+          <div class="flex-1">
+            <Label for="avatar">Change Avatar</Label>
+            <Input
+              id="avatar"
+              type="file"
+              accept="image/*"
+              class="mt-2"
+              onchange={handleFileChange}
+            />
+          </div>
+        {/if}
+      </div>
+
+      <Separator />
+
       <div class="space-y-4">
-        <div class="flex justify-between items-center">
-          <h2 class="text-xl font-semibold">Personal Info</h2>
-          <Button
-            type="button"
-            variant={editMode ? "secondary" : "outline"}
-            size="sm"
-            onclick={toggleEditMode}
-          >
-            {editMode ? "Cancel" : "Edit"}
-          </Button>
-        </div>
-        <Separator />
+        <h2 class="text-lg font-semibold">Personal Information</h2>
         <div class="space-y-2">
           <Label for="display-name">Display Name</Label>
           <Input
@@ -71,16 +106,15 @@
         </div>
       </div>
 
-      <!-- Credentials Section -->
+      <Separator />
+
       <div class="space-y-4">
-        <h2 class="text-xl font-semibold">Credentials</h2>
-        <Separator />
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h2 class="text-lg font-semibold">Account Credentials</h2>
+        <div class="grid gap-4 md:grid-cols-2">
           <div class="space-y-2">
             <Label for="username">Username</Label>
             <Input
               id="username"
-              type="text"
               bind:value={session.auth.username}
               disabled={!editMode}
             />
@@ -94,33 +128,39 @@
               disabled={!editMode}
             />
           </div>
-          <div class="space-y-2">
-            <Label for="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="********"
-              bind:value={session.passwd}
-              autocomplete="new-password"
-              disabled={!editMode}
-            />
-          </div>
-          <div class="space-y-2">
-            <Label for="password-repeat">Repeat Password</Label>
-            <Input
-              id="password-repeat"
-              type="password"
-              placeholder="********"
-              bind:value={session.passwdRepeat}
-              autocomplete="new-password"
-              disabled={!editMode}
-            />
-          </div>
         </div>
       </div>
 
       {#if editMode}
-        <div class="flex justify-end pt-4">
+        <Separator />
+
+        <div class="space-y-4">
+          <h2 class="text-lg font-semibold">Change Password</h2>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="space-y-2">
+              <Label for="password">New Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter new password"
+                bind:value={session.passwd}
+                autocomplete="new-password"
+              />
+            </div>
+            <div class="space-y-2">
+              <Label for="password-repeat">Confirm Password</Label>
+              <Input
+                id="password-repeat"
+                type="password"
+                placeholder="Confirm new password"
+                bind:value={session.passwdRepeat}
+                autocomplete="new-password"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-2">
           <Button type="submit">Save Changes</Button>
         </div>
       {/if}

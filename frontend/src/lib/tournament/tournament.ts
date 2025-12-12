@@ -1,23 +1,24 @@
-import type { Game, User } from "@shared/user";
+import type { AppUser } from "@lib/api/appUser";
+import type { Game } from "@shared/user";
 
 export class Tournament {
-  private currentPlayers: User[] = [];
-  private nextRoundPlayers: User[] = [];
+  private currentPlayers: AppUser[] = [];
+  private nextRoundPlayers: AppUser[] = [];
   private currentGame?: Game;
   private isRunning: boolean = false;
   inGame: boolean = false;
 
   constructor() {}
 
-  set players(players: User[]) {
+  set players(players: AppUser[]) {
     this.currentPlayers = players;
   }
 
-  get players(): User[] {
+  get players(): AppUser[] {
     return this.currentPlayers;
   }
 
-  get nextPlayers(): User[] {
+  get nextPlayers(): AppUser[] {
     return this.nextRoundPlayers;
   }
 

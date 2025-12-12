@@ -8,10 +8,11 @@
   import Grid from "@lib/components/custom/Grid.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";
   import Button from "@lib/components/ui/button/button.svelte";
-    import { tick } from "svelte";
+  import { tick } from "svelte";
+  import { AppUser } from "@lib/api/appUser";
 
-  let availableUsers: User[] = $state([]);
-  let selectedUsers: User[] = $state([]);
+  let availableUsers: AppUser[] = $state([]);
+  let selectedUsers: AppUser[] = $state([]);
 
   let tournament: Tournament = $state(new Tournament());
   let schedule: Game[] = $state([]);
@@ -27,7 +28,7 @@
 
   let gameCanvas: HTMLCanvasElement | null = $state(null);
 
-  const toggleUserSelected = (user: User) => {
+  const toggleUserSelected = (user: AppUser) => {
     if (availableUsers.some(u => u.id === user.id)) {
       availableUsers = availableUsers.filter(u => u.id !== user.id);
       selectedUsers = [...selectedUsers, user];
@@ -58,7 +59,7 @@
       <div class='flex flex-col overflow-y-scroll md:grid md:grid-cols-2 gap-4 h-full'>
         <Grid title="Available Players">
           {#each availableUsers as u}
-            <GridCard title={u.name} callback={() => toggleUserSelected(u)}/>
+            <GridCard title={u.name} avatarUrl={u.avatarUrl ?? undefined} callback={() => toggleUserSelected(u)}/>
           {/each}
         </Grid>
         <Grid title="Selected Players">

@@ -1,11 +1,13 @@
 import { Writable } from "@lib/types/writable";
-import type { AuthUserClient, Friendship, User } from "@shared/user";
+import type { AuthUserClient, Avatar, Friendship, User } from "@shared/user";
 import { getAuth, loginRequest, logoutRequest, signupRequest, updateRequest } from "./auth";
 import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authRequest";
 import type { JWT } from "@shared/api";
 import { parseJWT } from "@shared/api";
-import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest } from "./user";
+import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
+import { AppUser } from "./appUser";
+import { io, type Socket } from "socket.io-client"
 
 export type ApiError = {
   code: number,
@@ -22,6 +24,8 @@ export class ApiClient {
   private readonly authStore: Writable<AuthUserClient | null> = new Writable('auth');
   private readonly accessToken: Writable<JWT | null> = new Writable('token');
   private listeners: Set<Function> = new Set();
+  private avatarUrl?: string;
+  private socket: Socket | null = null;
 
   constructor() {}
 
@@ -44,6 +48,10 @@ export class ApiClient {
     return this.userStore.get() ?? null;
   }
 
+  get avatar() {
+    return this.avatarUrl;
+  }
+
   get auth(): AuthUserClient | null {
     return this.authStore.get() ?? null;
   }
@@ -62,18 +70,12 @@ export class ApiClient {
   }
 
   async getSession(): Promise<Session> {
-    let user = this.userStore.get();
-    let auth = this.authStore.get();
-    if (!user) {
-      const response = await this.getUser();
-      user = response.user as User;
-      this.userStore.set(user);
-    }
-    if (!auth) {
-      const data = await this.getAuth();
-      auth = data.auth as AuthUserClient;
-      this.authStore.set(auth);
-    }
+    const response = await this.getUser();
+    let user = response.user as User;
+    this.userStore.set(user);
+    const data = await this.getAuth();
+    let auth = data.auth as AuthUserClient;
+    this.authStore.set(auth);
     return { auth, user }
   }
 
@@ -88,33 +90,6 @@ export class ApiClient {
 
   private notify() {
     this.listeners.forEach(fn => fn());
-  }
-
-  updateUser(updateFunc: (e: Event, user: User) => void) {
-    return (e: Event) => {
-      const user = this.user;
-      if (!user) return;
-      updateFunc(e, user);
-    }
-  }
-
-  async updateUserInfo(newUser: Partial<User>): Promise<User> {
-    if (!newUser) throw new Error('No User Set');
-    const response = await fetch(`/api/user/update/${newUser.id}`, {
-      method: "patch",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newUser),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw data;
-    }
-    this.userStore.set(data.user);
-    return data.user;
   }
 
   async signup(info: SignupRequestBody) {
@@ -136,17 +111,23 @@ export class ApiClient {
 
   async getUser(): Promise<any> {
     const response = await getUser(this.accessToken);
-    return response.user;
+    const avatar = response.avatar;
+    console.log(avatar);
+    if (avatar)
+      this.avatarUrl = `/api/user/avatar/${response.avatar.location}`;
+    return response;
   }
 
-  async getUsers(): Promise<User[]> {
+  async getUsers(): Promise<AppUser[]> {
     const response = await getUsers(this.accessToken);
-    return response.users;
+    const users = response.users?.map((f: { user: User, avatar: Avatar }) => new AppUser(f.user, f.avatar ?? null));
+    return users;
   }
 
-  async getFriends(): Promise<{ friends: User[], friendships: Friendship[] }> {
+  async getFriends(): Promise<{ friends: AppUser[], friendships: Friendship[] }> {
     const data = await getFriends(this.accessToken);
-    return { friends: data.friends, friendships: data.friendships };
+    const friends = data.friends?.map((f: { user: User, avatar: Avatar }) => new AppUser(f.user, f.avatar ?? null));
+    return { friends: friends, friendships: data.friendships };
   }
 
   async sendFriendRequest(friendId: number): Promise<Friendship> {
@@ -173,12 +154,36 @@ export class ApiClient {
         const response = await getUser(this.accessToken)
         this.userStore.set(response.user);
         this.notify();
+        this.connectsocket();
       }
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
       console.error(error);
       throw error;
     }
+  }
+
+  getSocket(): Socket | null {
+    return this.socket;
+  }
+
+  disconnect(): void {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
+  }
+
+  private connectsocket() {
+    this.socket = io('http://localhost:8080/api/user/ws');
+
+    this.socket.on('connect', () => {
+      console.log('Socket connected:', this.socket?.id);
+    });
+
+    this.socket.on('disconnect', () => {
+      console.log('Socket disconnected');
+    });
   }
 
   async logout() {
@@ -230,5 +235,15 @@ export class ApiClient {
       console.error(error);
       throw error;
     }
+  }
+
+  async updateUserInfo(newUser: Partial<User>, avatar?: File): Promise<User> {
+    const data = await updateUser(this.accessToken, newUser, avatar);
+
+    if (data.avatar) {
+      this.avatarUrl = `/api/user/avatar/${data.avatar.location}`;
+    }
+    this.userStore.set(data.user);
+    return data.user;
   }
 }

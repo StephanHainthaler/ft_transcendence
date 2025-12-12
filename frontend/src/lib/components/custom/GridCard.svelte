@@ -1,12 +1,14 @@
 <script lang="ts">
   import * as Item from "$lib/components/ui/item";
-    import type { Snippet } from "svelte";
+  import type { Snippet } from "svelte";
   import Button from "../ui/button/button.svelte";
+  import * as Avatar from "$lib/components/ui/avatar";
 
   const {
     title,
     desc,
     buttonDesc,
+    avatarUrl,
     extraBtn,
     callback
   }: {
@@ -14,12 +16,21 @@
     desc?: string,
     buttonDesc?: string,
     extraBtn?: Snippet,
+    avatarUrl?: string,
     callback: () => void
   } = $props();
 
 </script>
 
 <Item.Root variant="outline" class="group hover:border-zinc-700 transition-colors">
+  <Item.Media>
+    {#if avatarUrl}
+    <Avatar.Root>
+      <Avatar.Image src={avatarUrl} />
+      <Avatar.Fallback>{title[0].toUpperCase()}</Avatar.Fallback>
+    </Avatar.Root>
+    {/if}
+  </Item.Media>
   <Item.Content class="gap-2">
     <Item.Header>
       <Item.Title>

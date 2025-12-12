@@ -3,6 +3,10 @@ import { userRoutes } from './userRoutes';
 import { initDB } from './db';
 import { healthRoute } from './health';
 import { friendRoutes } from './friendRoutes';
+import multipart from "@fastify/multipart";
+import { avatarRoutes } from './avatarRoutes';
+import fastifySocketIO from "fastify-socket.io";
+import { setupSocketIO } from './wsRoutes';
 
 const DB_PATH = process.env.DB_FILE_PATH;
 console.log(process.env.DB_FILE_PATH);
@@ -23,11 +27,19 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
     ...options
   });
 
+  fastify.register(multipart);
+  fastify.register(fastifySocketIO);
+  fastify.register(setupSocketIO, {
+    path: '/ws'
+  });
+  fastify.register(avatarRoutes);
   fastify.register(userRoutes);
   fastify.register(healthRoute);
   fastify.register(friendRoutes, {
     prefix: '/friend/',
   });
+
+  console.log(fastify.printRoutes());
 
   fastify.addHook('onResponse', async (request, reply) => {
     if (reply.statusCode >= 400) {
@@ -39,6 +51,7 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
       }, 'request completed');
     }
   });
+
   return fastify;
 }
 
