@@ -10,7 +10,6 @@ Key features and objectives include:
 - Ensure the secure exchange of authentication tokens and user information between the web application and the authentication provider.
 This major module aims to provide a remote user authentication, offering users a secure and convenient way to access the web application.
 
-
 # Used sources
 - https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
 - https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
@@ -110,6 +109,15 @@ _____________________________
 After this, the function returns the access_token from GitHub together with the user and the authUserClient:
 
 <img width="459" height="250" alt="image" src="https://github.com/user-attachments/assets/b85e0fa1-93b8-4e4e-82b6-54e173fa9084" />
+
+> **_cookie:_** The cookie is a browser feature and persists for apprx 15 days. Can do sth like setcookieHeader - which then tells browser to use the value that was assigned to this header as a cookie. Then this cookie will also contain a path f.e. /auth - which means that this cookie will be sent with every request heading to /auth/... So in the cookie there will be a value saved and this can f.e. represent an authenticated session (valid for 15 days).
+>
+> So then the cookie is passed with a request, the browser can check in a database if there is a session and if yes then the user won't have to login again.
+>
+> In our case the cookie is a refreshtoken - not for authentication (for this we have an access token).
+
+> **_access token:_** The access_token is a json and persists for 10 mins. Its stored in localStorage (F12 in browser > Application > LocalStorage). If the 10 mins passed, the browser needs to send a new request - but with the refreshtoken - and will then get a new access_token. It has to be a jwt token - containing payload, encoded ID (https://www.jwt.io/). 
+
 
 We come back to here:
 
