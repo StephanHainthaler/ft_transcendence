@@ -20,6 +20,8 @@
     const params = new URLSearchParams(info);
     const oauthUrl = `https://github.com/login/oauth/authorize?${params.toString()}`;
 
+    console.log(oauthUrl); // OK
+
     window.location.href = oauthUrl;
   }
 
@@ -29,11 +31,13 @@
     e.stopPropagation();
 
     const state = generateState();
+    console.log(state); // OK
+
     sessionStorage.setItem("oauth_state", state); // safe it in session
 
     const info ={
-    client_id: 'Ov23likjrNVolqMyu8L5',
-    redirect_uri: "http://localhost:8080/oauth-callback", // frontend route for redirection
+    client_id:  'Ov23likjrNVolqMyu8L5', // BUGFIX: process.env.GITHUB_CLIENT_ID, // stored in /env/.env.oauth
+    redirect_uri: "http://localhost:8080/auth/oauth-callback", // frontend route for redirection
     // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
     state, // create a CSRF token - BugFix: store for specific client?
     allow_signup: 'true',
@@ -45,24 +49,13 @@
 </script>
 
 <script module lang="ts">
-  import { client } from "$lib/api";
   import { goto } from "$app/navigation";
-
-  // (4) this function will make POST request to endpoint, which then exchanges the GH code for an access_token
-  async function GithubGetToken(code: string) {
-    // const accesshUrl = `https://github.com/login/oauth/access_token`;
-    const response = await client.post("/auth/github-oauth", { code });
-    if (!response.ok) {
-      throw new Error("OAuth token exchange failed");
-    }
-
-    goto("/");
-  }
+  import { client } from "$lib/api";
 
   // (3) function will be called /oauth-callback
   // It will extract the code and state out of redirect_uri
   export async function handleOAuthCallback() {
-    const params = new URLSearchParams(window.location.search); // url looks like this after redirect_uri: http://localhost:8080/?code=f34161fb93969efa515b&state=abc
+    const params = new URLSearchParams(window.location.search); // url looks like this after redirect_uri: http://localhost:8080/oauth-callback/?code=secretcode&state=abc
 
     const code = params.get("code");
     const state_ret = params.get("state");
@@ -78,9 +71,12 @@
 
     sessionStorage.removeItem("oauth_state");
 
-    await GithubGetToken(code);
-    goto("/"); // Redirect after successful auth
-  
+    // (4) send to backend to make POST request to endpoint, which then exchanges the GH code for an access_token `https://github.com/login/oauth/access_token`;
+    await client.oauth({
+        code: code
+      });
+
+    goto("/"); 
   }
 
 </script>

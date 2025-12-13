@@ -1,7 +1,7 @@
 import { Writable } from "@lib/types/writable";
 import type { AuthUserClient, Friendship, User } from "@shared/user";
-import { getAuth, loginRequest, logoutRequest, signupRequest, updateRequest } from "./auth";
-import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authRequest";
+import { getAuth, loginRequest, logoutRequest, signupRequest, updateRequest, oauthRequest } from "./auth";
+import { type LoginRequestBody, type SignupRequestBody, type OAuthCallBackBody } from "@shared/api/authRequest";
 import type { JWT } from "@shared/api";
 import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest } from "./user";
@@ -176,6 +176,28 @@ export class ApiClient {
       }
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async oauth(code: OAuthCallBackBody) {
+    try {
+      const authResponse = await oauthRequest(code); // this contains the access_token
+      
+      this.auth = authResponse.auth;
+      this.user = await this.getUser()
+
+      /*this.authStore.set(authResponse.auth) // BugFIX: re-check this part - just took it from login
+      if (authResponse.access_token) {
+        const jwt = parseJWT(authResponse.access_token);
+        this.accessToken.set(jwt);
+        const response = await getUser(this.accessToken)
+        this.userStore.set(response.user);
+        this.notify();
+      }*/
+    } catch (e: any) {
+      const error = new Error(`OAuth Failed: ${e.message || e}`)
       console.error(error);
       throw error;
     }

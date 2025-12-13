@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient } from "./dbHandlers";
 import { updateUser } from "@ft_transcendence/user/src/api";
 import { AuthUserClient, } from "@shared/user";
-import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody } from "@shared/api";
+import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody, OAuthCallBackBody } from "@shared/api";
 import { AuthUser } from "./db";
 import { generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
@@ -132,7 +132,12 @@ export function authRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.post('/github-oauth', async (request, reply) => {
+
+
+  fastify.post<{
+    Body: OAuthCallBackBody,
+    Reply: AuthReply,
+  }>('/github-oauth', async (request, reply) => { // needs to return the access_token
   try {
     const { code } = request.body as { code?: string }; // stating receiving structure to be able to extract the value of code
 
@@ -145,31 +150,62 @@ export function authRoutes(fastify: FastifyInstance) {
       method: "POST",
       headers: { "Accept": "application/json" }, // define response type
       body: new URLSearchParams({
-        client_id: process.env.GITHUB_CLIENT_ID!,
-        client_secret: process.env.GITHUB_CLIENT_SECRET!,
+        client_id: process.env.GITHUB_CLIENT_ID!, // stored in /env/.env.oauth
+        client_secret: process.env.GITHUB_CLIENT_SECRET!, // stored in /env/.env.oauth 
         code,
         redirect_uri: `http://localhost:8080/`,
       }),
     });
 
-    const responseData = await response.json();
-    if (!responseData.access_token) {
+    const response_data = await response.json();
+    if (!response_data.access_token) {
       return reply.status(401).send({ success: false, message: 'Invalid OAuth code' });
     }
 
-    // Now I can get user info from github
+    console.log("response_data.access_token")
+    console.log(response_data.access_token); // OK
+
+    //_______________________________________________________________BUGFIX - need to store userdata to db / REGISTER USER
+    // Now I can get user information from GitHub
     const user_response = await fetch("https://api.github.com/user", {
-      headers: { Authorization: `Bearer ${responseData.access_token}` },
+      headers: { Authorization: `Bearer ${response_data.access_token}` },
     });
     const github_user = await user_response.json();
 
-    const session = createSession(github_user, secret);
-    const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken); // json web token (jwt)
+    if (!github_user.login || !github_user.email) {
+      return reply.status(401).send({ success: false, message: 'Error fetching user credentials from GitHub.' });
+    }
 
-    return reply.header('set-cookie', refreshTokenCookie).code(200).send({
-      success: true, 
-      user: github_user, 
-      access_token: session.accessToken.raw });
+    console.log("github_user.login");
+    console.log(github_user.login);
+
+    // Now process the user creds in our backend - compare to sign-up process
+    const authUser = getAuthUser({ username: github_user.login, email: github_user.email });
+    if (authUser)
+      return reply.status(400).send({ success: false, message: "Username or Email already taken" });
+
+    const tempAuthUser: Partial<AuthUser> = { user_name: github_user.login, email: github_user.email };
+    const { user, authUser: newAuthUser } = await createAuthUser({ ...tempAuthUser, passwd: 'oauth' }); // BugFix: use other password!
+    //_______________________________________________________________
+
+    try {
+      const session = createSession(newAuthUser, secret);
+      const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken)
+      const authUserClient: AuthUserClient = {
+        email: newAuthUser.email,
+        username: newAuthUser.email,
+      }
+
+      return reply.header('set-cookie', refreshTokenCookie).code(200).send({
+        success: true,
+        user: user,
+        auth: authUserClient,
+        access_token: response_data.access_token, // is this correct?
+      } as any);
+    } catch (e: any) {
+      console.error(e);
+      return reply.code(e.code || 500).send({ success: false, message: e.message || e });
+    }
 
   } catch (e) {
     console.error(e);

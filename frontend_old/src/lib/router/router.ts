@@ -42,7 +42,7 @@ export const routes: Location[] = [
     protected: false,
   },
   {
-  pathname: "/oauth-callback",
+  pathname: "/auth/oauth-callback",
   file: "OAuthCallbackPage",
   protected: false,
   }

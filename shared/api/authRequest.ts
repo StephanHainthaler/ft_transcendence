@@ -20,6 +20,10 @@ export type OAuthRequestBody = {
   scope?: string
 };
 
+export type OAuthCallBackBody = {
+  code?: string
+};
+
 export type UpdateCredsRequestBody = {
   username?: string,
   email?: string,
