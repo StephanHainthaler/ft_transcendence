@@ -10,11 +10,12 @@ Key features and objectives include:
 - Ensure the secure exchange of authentication tokens and user information between the web application and the authentication provider.
 This major module aims to provide a remote user authentication, offering users a secure and convenient way to access the web application.
 
-
 # Used sources
 - https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
 - https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
-
+- https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28
+- https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
+  
 # The process - on frontend
 The OAuth tab in the /auth page of the frontend is defined here:
 
@@ -28,8 +29,7 @@ In this form, there is a button named "OAuth with GitHub". Clicking it will trig
 
 <img width="631" height="487" alt="image" src="https://github.com/user-attachments/assets/467ad34c-55d9-4113-8be7-e47a0661af7c" />
 
-
-This function will generate a **random state**. It will also take the **clientID** and the **redirect_uri** (defining where to go to after redirection to GitHub).
+This function will generate a **random state**. It will also take the **clientID** and the **redirect_uri** (defining where to go to after redirection to GitHub), as well as a **scope**.
 
 > **_state:_** The state is used to protect against Cross-site request forgery (CSRF). That is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated. It will be rechecked below to ensure noone interfered with your request.
 
@@ -38,6 +38,12 @@ This function will generate a **random state**. It will also take the **clientID
 > It can be found here: https://github.com/settings/applications/3261033
 > 
 > <img width="515" height="375" alt="image" src="https://github.com/user-attachments/assets/e02d6cfa-1eab-4d2e-acd6-a8f62a9b7daa" />
+>
+> there you (as the owner) can also create a client_secret in "Settings > Developer settings > transcendence" (=app name), which you will need later on
+
+> **_scope:_** How to define the scope can be found here: https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
+> 
+> It will be important when requesting information about the user on GitHub (like username and email) later on (for registering it to transcendence).
 
 Then it will send a request to **https://github.com/login/oauth/authorize**, passing the above mentioned parameters to it.
 
@@ -81,6 +87,7 @@ This then calls this function:
 
 <img width="714" height="326" alt="image" src="https://github.com/user-attachments/assets/6e7f8dd8-d5e6-47a9-baaf-c34c0970d68c" />
 
+> **_client_secret:_** The client_secret can be created in the GitHub application in "Settings > Developer settings > transcendence" (=app name)
 
 The responseData will be json formatted and look like this: {"access_token": "gho_xxxxx", "scope": "repo", "token_type": "bearer"}
 
@@ -90,14 +97,27 @@ _____________________________
 
 <img width="504" height="193" alt="image" src="https://github.com/user-attachments/assets/34ca76c1-77f6-4f0a-9153-8bd0fbf7fb9d" />
 
-This response will then be json formatted and look like this: {"id": "123456", "login": "myusername", "email": "my.email@github.com"}
+This response will then be json formatted and contain amongst others: {.., "login": "myusername", ..}, see: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28. 
+> The email can also be retrieved as follows: https://docs.github.com/en/rest/users/emails?apiVersion=2022-11-28
+> 
+> For this the scope variable needs to be set correctly, since it influences the kind of information you are entitled to.
+> More info can be found here: https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
 
-> The user asically needs to be saved to the database, which is sitll missing!
+The user basically needs to be saved to the database, which is still missing!
 _____________________________
 
 After this, the function returns the access_token from GitHub together with the user and the authUserClient:
 
 <img width="459" height="250" alt="image" src="https://github.com/user-attachments/assets/b85e0fa1-93b8-4e4e-82b6-54e173fa9084" />
+
+> **_cookie:_** The cookie is a browser feature and persists for apprx 15 days. Can do sth like setcookieHeader - which then tells browser to use the value that was assigned to this header as a cookie. Then this cookie will also contain a path f.e. /auth - which means that this cookie will be sent with every request heading to /auth/... So in the cookie there will be a value saved and this can f.e. represent an authenticated session (valid for 15 days).
+>
+> So then the cookie is passed with a request, the browser can check in a database if there is a session and if yes then the user won't have to login again.
+>
+> In our case the cookie is a refreshtoken - not for authentication (for this we have an access token).
+
+> **_access token:_** The access_token is a json and persists for 10 mins. Its stored in localStorage (F12 in browser > Application > LocalStorage). If the 10 mins passed, the browser needs to send a new request - but with the refreshtoken - and will then get a new access_token. It has to be a jwt token - containing payload, encoded ID (https://www.jwt.io/). 
+
 
 We come back to here:
 
