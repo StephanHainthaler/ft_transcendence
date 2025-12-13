@@ -38,6 +38,8 @@ This function will generate a **random state**. It will also take the **clientID
 > It can be found here: https://github.com/settings/applications/3261033
 > 
 > <img width="515" height="375" alt="image" src="https://github.com/user-attachments/assets/e02d6cfa-1eab-4d2e-acd6-a8f62a9b7daa" />
+>
+> there you (as the owner) can also create a client_secret, which you will need later on
 
 Then it will send a request to **https://github.com/login/oauth/authorize**, passing the above mentioned parameters to it.
 
