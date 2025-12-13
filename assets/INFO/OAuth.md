@@ -26,7 +26,8 @@ It uses the OAuthForm.svelte located in
 
 In this form, there is a button named "OAuth with GitHub". Clicking it will trigger the onsubmit function handleOAuthRequest.
 
-<img width="954" height="489" alt="image" src="https://github.com/user-attachments/assets/984d650f-2719-474b-bf24-558436dac82b" />
+<img width="631" height="487" alt="image" src="https://github.com/user-attachments/assets/467ad34c-55d9-4113-8be7-e47a0661af7c" />
+
 
 This function will generate a **random state**. It will also take the **clientID** and the **redirect_uri** (defining where to go to after redirection to GitHub).
 
@@ -44,9 +45,14 @@ Then the redirection to GitHub happens and after successful login in GitHub, the
 
 > It will look like this: http://localhost:8080/oauth-callback/?code=secretcode&state=abc
 
-Redirection happens since the route exists here:
+Redirection happens since the route exists in a folder /auth/oauth-callback:
 
-<img width="420" height="327" alt="image" src="https://github.com/user-attachments/assets/4a2a7605-d72c-4eab-a8bd-25dd6218bcde" />
+<img width="420" height="327" alt="image" src="https://github.com/user-attachments/assets/0204d6d5-3ffc-4a88-aae0-f90edf8509c9" />
+
+> **_Note:_** Redirection happens just because the page exists in /auth, because here it is checked if the redir is allowed:
+>
+> <img width="392" height="291" alt="image" src="https://github.com/user-attachments/assets/70305785-255b-46c8-9335-839d4e842f8b" />
+
 
 On mount calls the function when the page gets loaded. So the following function is called on the frontend:
 
@@ -63,7 +69,8 @@ As you can see, the handleOAuthCallback calls client.oauth
 
 Which then makes a post request to auth/github-oauth:
 
-<img width="353" height="364" alt="image" src="https://github.com/user-attachments/assets/680afa7a-959d-4f4f-9524-057142be1d47" />
+<img width="353" height="400" alt="image" src="https://github.com/user-attachments/assets/f84890dc-6803-4f00-a397-3230418e75dd" />
+
 
 # The process - on backend
 /auth/github-oauth is a public route on the backend:
@@ -72,12 +79,29 @@ Which then makes a post request to auth/github-oauth:
 
 This then calls this function:
 
-<img width="714" height="326" alt="image" src="https://github.com/user-attachments/assets/5ed62f34-be7e-40b7-b223-d50fe7ae30a8" />
+<img width="714" height="326" alt="image" src="https://github.com/user-attachments/assets/6e7f8dd8-d5e6-47a9-baaf-c34c0970d68c" />
+
 
 The responseData will be json formatted and look like this: {"access_token": "gho_xxxxx", "scope": "repo", "token_type": "bearer"}
 
 So you can extract the access_token, which you can then use to get the information you need to make a user profile:
 
-<img width="504" height="193" alt="image" src="https://github.com/user-attachments/assets/bac473b5-91dd-4aab-8c17-e501af0d4e74" />
+_____________________________
+
+<img width="504" height="193" alt="image" src="https://github.com/user-attachments/assets/34ca76c1-77f6-4f0a-9153-8bd0fbf7fb9d" />
 
 This response will then be json formatted and look like this: {"id": "123456", "login": "myusername", "email": "my.email@github.com"}
+
+> The user asically needs to be saved to the database, which is sitll missing!
+_____________________________
+
+After this, the function returns the access_token from GitHub together with the user and the authUserClient:
+
+<img width="459" height="250" alt="image" src="https://github.com/user-attachments/assets/b85e0fa1-93b8-4e4e-82b6-54e173fa9084" />
+
+We come back to here:
+
+<img width="338" height="391" alt="image" src="https://github.com/user-attachments/assets/c31223f7-2f18-47bc-b88d-1331d2f30ae6" />
+
+
+
