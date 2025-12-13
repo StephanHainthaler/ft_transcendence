@@ -14,7 +14,8 @@ This major module aims to provide a remote user authentication, offering users a
 # Used sources
 - https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
 - https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
-
+- https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28
+  
 # The process - on frontend
 The OAuth tab in the /auth page of the frontend is defined here:
 
@@ -93,7 +94,7 @@ _____________________________
 
 <img width="504" height="193" alt="image" src="https://github.com/user-attachments/assets/34ca76c1-77f6-4f0a-9153-8bd0fbf7fb9d" />
 
-This response will then be json formatted and look like this: {"id": "123456", "login": "myusername", "email": "my.email@github.com"}
+This response will then be json formatted and contain amongst odthers: {.., "login": "myusername", "email": "my.email@github.com", ..}, https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28. 
 
 > The user asically needs to be saved to the database, which is sitll missing!
 _____________________________
