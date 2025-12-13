@@ -96,7 +96,7 @@ export async function oauthRequest(
     });
 
     console.log("Code:");
-    console.log(info.code); // OK until here
+    console.log(info.code); // OK
 
     const response = await fetch(oauth);
 

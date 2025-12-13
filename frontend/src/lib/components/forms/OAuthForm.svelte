@@ -36,12 +36,12 @@
     sessionStorage.setItem("oauth_state", state); // safe it in session
 
     const info ={
-    client_id:  'Ov23likjrNVolqMyu8L5', // BUGFIX: process.env.GITHUB_CLIENT_ID, // stored in /env/.env.oauth
+    client_id: process.env.GITHUB_APP_CLIENT_ID!, // stored in /env/.env.oauth
     redirect_uri: "http://localhost:8080/auth/oauth-callback", // frontend route for redirection
     // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
     state, // create a CSRF token - BugFix: store for specific client?
     allow_signup: 'true',
-    scope: 'repo'
+    scope: 'read:user user:email' // https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
     };
 
     await GithubRedirect(info);

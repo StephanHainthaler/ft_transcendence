@@ -150,8 +150,8 @@ export function authRoutes(fastify: FastifyInstance) {
       method: "POST",
       headers: { "Accept": "application/json" }, // define response type
       body: new URLSearchParams({
-        client_id: process.env.GITHUB_CLIENT_ID!, // stored in /env/.env.oauth
-        client_secret: process.env.GITHUB_CLIENT_SECRET!, // stored in /env/.env.oauth 
+        client_id: process.env.GITHUB_APP_CLIENT_ID!, // stored in /env/.env.auth
+        client_secret: process.env.GITHUB_APP_CLIENT_SECRET!, // stored in /env/.env.auth 
         code,
         redirect_uri: `http://localhost:8080/`,
       }),
@@ -163,29 +163,47 @@ export function authRoutes(fastify: FastifyInstance) {
     }
 
     console.log("response_data.access_token")
-    console.log(response_data.access_token); // OK
+    console.log(response_data.access_token); // OK - terminal
 
     //_______________________________________________________________BUGFIX - need to store userdata to db / REGISTER USER
     // Now I can get user information from GitHub
     const user_response = await fetch("https://api.github.com/user", {
-      headers: { Authorization: `Bearer ${response_data.access_token}` },
+      headers: { Authorization: `Bearer ${response_data.access_token}`}, //, 'X-GitHub-Api-Version': '2022-11-28'},
     });
     const github_user = await user_response.json();
+
+    console.log("github_user");
+    console.log(github_user); // OK - terminal
+
+    if (!github_user.email) { // try to retrieve email from different endpoint
+      const user_email_response = await fetch("https://api.github.com/user/emails", {
+        headers: { Authorization: `Bearer ${response_data.access_token}`}, //, 'X-GitHub-Api-Version': '2022-11-28'},
+      });
+      const github_user_email = await user_email_response.json();
+      github_user.email = github_user_email.email;
+    }
+    console.log("response_data.scope");
+    console.log(response_data.scope);
+
+    console.log("github_user.email");
+    console.log(github_user.email); // = null or undefined for me -- what to do? - fix scope in OAuthForm.svelte
 
     if (!github_user.login || !github_user.email) {
       return reply.status(401).send({ success: false, message: 'Error fetching user credentials from GitHub.' });
     }
 
-    console.log("github_user.login");
-    console.log(github_user.login);
+    // Add github_user.id into user table in new column
 
     // Now process the user creds in our backend - compare to sign-up process
-    const authUser = getAuthUser({ username: github_user.login, email: github_user.email });
-    if (authUser)
-      return reply.status(400).send({ success: false, message: "Username or Email already taken" });
-
     const tempAuthUser: Partial<AuthUser> = { user_name: github_user.login, email: github_user.email };
-    const { user, authUser: newAuthUser } = await createAuthUser({ ...tempAuthUser, passwd: 'oauth' }); // BugFix: use other password!
+    const { user, authUser: newAuthUser } = await createAuthUser({ ...tempAuthUser, passwd: 'oauth' });
+    
+    console.log("user");
+    console.log(user);
+
+    console.log("authUser");
+    console.log(newAuthUser);
+
     //_______________________________________________________________
 
     try {
