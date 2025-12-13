@@ -94,9 +94,10 @@ _____________________________
 
 <img width="504" height="193" alt="image" src="https://github.com/user-attachments/assets/34ca76c1-77f6-4f0a-9153-8bd0fbf7fb9d" />
 
-This response will then be json formatted and contain amongst others: {.., "login": "myusername", "email": "my.email@github.com", ..}, see: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28. 
+This response will then be json formatted and contain amongst others: {.., "login": "myusername", ..}, see: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28. 
+> The email can also be retrieved as follows: https://docs.github.com/en/rest/users/emails?apiVersion=2022-11-28
 
-> The user asically needs to be saved to the database, which is sitll missing!
+> The user basically needs to be saved to the database, which is still missing!
 _____________________________
 
 After this, the function returns the access_token from GitHub together with the user and the authUserClient:
