@@ -26,7 +26,7 @@ It uses the OAuthForm.svelte located in
 
 In this form, there is a button named "OAuth with GitHub". Clicking it will trigger the onsubmit function handleOAuthRequest.
 
-<img width="519" height="461" alt="image" src="https://github.com/user-attachments/assets/ed99b8f2-0ff1-4341-b138-a6374f7623ad" />
+<img width="954" height="489" alt="image" src="https://github.com/user-attachments/assets/984d650f-2719-474b-bf24-558436dac82b" />
 
 This function will generate a **random state**. It will also take the **clientID** and the **redirect_uri** (defining where to go to after redirection to GitHub).
 
@@ -50,12 +50,20 @@ Redirection happens since the route exists here:
 
 On mount calls the function when the page gets loaded. So the following function is called on the frontend:
 
-<img width="863" height="391" alt="image" src="https://github.com/user-attachments/assets/c4453d5e-c378-4624-bd02-434cd12983c3" />
+<img width="863" height="391" alt="image" src="https://github.com/user-attachments/assets/d654ece5-02b9-4fbf-9858-10bec5848105" />
 
 - The **state** must now still matched the one you defined before, otherwise a CSRF attack happened and you should abort the process.
 - The **code** will be passed to the backend in the next section.
 
-As you can see, the handleOAuthCallback makes a post request to the auth/guthub-oauth.
+> **_code:_** The code is single-use only and will expire quickly. It only serves for exchanging it with the access token.
+
+As you can see, the handleOAuthCallback calls client.oauth
+
+<img width="348" height="231" alt="image" src="https://github.com/user-attachments/assets/983f58d4-a16c-4ddd-a287-70299fb0ff46" />
+
+Which then makes a post request to auth/github-oauth:
+
+<img width="353" height="364" alt="image" src="https://github.com/user-attachments/assets/680afa7a-959d-4f4f-9524-057142be1d47" />
 
 # The process - on backend
 /auth/github-oauth is a public route on the backend:
@@ -64,7 +72,12 @@ As you can see, the handleOAuthCallback makes a post request to the auth/guthub-
 
 This then calls this function:
 
-<img width="627" height="564" alt="image" src="https://github.com/user-attachments/assets/6e087d08-e4f0-41b3-8dc8-ec7bf696d0f8" />
+<img width="714" height="326" alt="image" src="https://github.com/user-attachments/assets/5ed62f34-be7e-40b7-b223-d50fe7ae30a8" />
 
+The responseData will be json formatted and look like this: {"access_token": "gho_xxxxx", "scope": "repo", "token_type": "bearer"}
 
+So you can extract the access_token, which you can then use to get the information you need to make a user profile:
 
+<img width="504" height="193" alt="image" src="https://github.com/user-attachments/assets/bac473b5-91dd-4aab-8c17-e501af0d4e74" />
+
+This response will then be json formatted and look like this: {"id": "123456", "login": "myusername", "email": "my.email@github.com"}
