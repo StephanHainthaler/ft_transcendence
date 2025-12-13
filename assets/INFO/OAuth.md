@@ -44,14 +44,26 @@ Then it will send a request to **https://github.com/login/oauth/authorize**, pas
 
 Then the redirection to GitHub happens and after successful login in GitHub, the user will be redirected to the **redirect_uri**. Looking at the uri, it will then contain also a code and a state parameter.
 
-> It will look like this: http://localhost:8080/?code=secretcode&state=abc
+> It will look like this: http://localhost:8080/oauth-callback/?code=secretcode&state=abc
+
+Redirection happens since the route exists here:
+
+<img width="420" height="327" alt="image" src="https://github.com/user-attachments/assets/4a2a7605-d72c-4eab-a8bd-25dd6218bcde" />
+
+On mount calls the function when the page gets loaded. So the following function is called on the frontend:
+
+<img width="863" height="391" alt="image" src="https://github.com/user-attachments/assets/c4453d5e-c378-4624-bd02-434cd12983c3" />
 
 - The **state** must now still matched the one you defined before, otherwise a CSRF attack happened and you should abort the process.
-- The **code** is further used in the following steps.
+- The **code** will be passed to the backend in the next section.
+
+As you can see, the handleOAuthCallback makes a post request to the auth/guthub-oauth.
 
 # The process - on backend
-/oauth-callback (which is the redirect_uri) is a public route on the backend:
+/github-oauth is a public route on the backend:
 
-<img width="369" height="138" alt="image" src="https://github.com/user-attachments/assets/d88382cf-7d4f-447f-9a1b-d88f212a897a" />
+<img width="429" height="256" alt="image" src="https://github.com/user-attachments/assets/9dc77bbf-e521-43c7-8712-0130ab14e9d8" />
+
+
 
 
