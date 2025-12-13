@@ -15,6 +15,7 @@ This major module aims to provide a remote user authentication, offering users a
 - https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
 - https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
 - https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28
+- https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
   
 # The process - on frontend
 The OAuth tab in the /auth page of the frontend is defined here:
@@ -29,8 +30,7 @@ In this form, there is a button named "OAuth with GitHub". Clicking it will trig
 
 <img width="631" height="487" alt="image" src="https://github.com/user-attachments/assets/467ad34c-55d9-4113-8be7-e47a0661af7c" />
 
-
-This function will generate a **random state**. It will also take the **clientID** and the **redirect_uri** (defining where to go to after redirection to GitHub).
+This function will generate a **random state**. It will also take the **clientID** and the **redirect_uri** (defining where to go to after redirection to GitHub), as well as a **scope**.
 
 > **_state:_** The state is used to protect against Cross-site request forgery (CSRF). That is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated. It will be rechecked below to ensure noone interfered with your request.
 
@@ -41,6 +41,10 @@ This function will generate a **random state**. It will also take the **clientID
 > <img width="515" height="375" alt="image" src="https://github.com/user-attachments/assets/e02d6cfa-1eab-4d2e-acd6-a8f62a9b7daa" />
 >
 > there you (as the owner) can also create a client_secret in "Settings > Developer settings > transcendence" (=app name), which you will need later on
+
+> **_scope:_** How to define the scope can be found here: https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
+> 
+> It will be important when requesting information about the user on GitHub (like username and email) later on (for registering it to transcendence).
 
 Then it will send a request to **https://github.com/login/oauth/authorize**, passing the above mentioned parameters to it.
 
@@ -96,8 +100,11 @@ _____________________________
 
 This response will then be json formatted and contain amongst others: {.., "login": "myusername", ..}, see: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28. 
 > The email can also be retrieved as follows: https://docs.github.com/en/rest/users/emails?apiVersion=2022-11-28
+> 
+> For this the scope variable needs to be set correctly, since it influences the kind of information you are entitled to.
+> More info can be found here: https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
 
-> The user basically needs to be saved to the database, which is still missing!
+The user basically needs to be saved to the database, which is still missing!
 _____________________________
 
 After this, the function returns the access_token from GitHub together with the user and the authUserClient:
