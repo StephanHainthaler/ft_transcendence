@@ -39,7 +39,7 @@ This function will generate a **random state**. It will also take the **clientID
 > 
 > <img width="515" height="375" alt="image" src="https://github.com/user-attachments/assets/e02d6cfa-1eab-4d2e-acd6-a8f62a9b7daa" />
 >
-> there you (as the owner) can also create a client_secret, which you will need later on
+> there you (as the owner) can also create a client_secret in "Settings > Developer settings > transcendence" (=app name), which you will need later on
 
 Then it will send a request to **https://github.com/login/oauth/authorize**, passing the above mentioned parameters to it.
 
@@ -83,7 +83,7 @@ This then calls this function:
 
 <img width="714" height="326" alt="image" src="https://github.com/user-attachments/assets/6e7f8dd8-d5e6-47a9-baaf-c34c0970d68c" />
 
-> **_client_secret:_** The client_secret can be created in the GitHub application.
+> **_client_secret:_** The client_secret can be created in the GitHub application in "Settings > Developer settings > transcendence" (=app name)
 
 The responseData will be json formatted and look like this: {"access_token": "gho_xxxxx", "scope": "repo", "token_type": "bearer"}
 
