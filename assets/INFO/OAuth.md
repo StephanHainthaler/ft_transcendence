@@ -12,12 +12,8 @@ This major module aims to provide a remote user authentication, offering users a
 
 
 # Used sources
-https://www.youtube.com/watch?v=Bx1JqfPROXA
-
-https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
-
-https://github.com/settings/applications/3261033
-
+- https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
+- https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
 
 # The process - on frontend
 The OAuth tab in the /auth page of the frontend is defined here:
@@ -36,7 +32,9 @@ This function will generate a **random state**. It will also take the **clientID
 
 > **_state:_** The state is used to protect against Cross-site request forgery (CSRF). That is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated. It will be rechecked below to ensure noone interfered with your request.
 
-> **_client_ID:_** The client_ID comes from the app registration in GitHub, that was done beforehand (following https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authenticating-to-the-rest-api-with-an-oauth-app#registering-your-app):
+> **_client_ID:_** The client_ID comes from the app registration in GitHub, that was done beforehand (following https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authenticating-to-the-rest-api-with-an-oauth-app#registering-your-app).
+>
+> It can be found here: https://github.com/settings/applications/3261033
 > 
 > <img width="515" height="375" alt="image" src="https://github.com/user-attachments/assets/e02d6cfa-1eab-4d2e-acd6-a8f62a9b7daa" />
 
@@ -60,10 +58,13 @@ On mount calls the function when the page gets loaded. So the following function
 As you can see, the handleOAuthCallback makes a post request to the auth/guthub-oauth.
 
 # The process - on backend
-/github-oauth is a public route on the backend:
+/auth/github-oauth is a public route on the backend:
 
-<img width="429" height="256" alt="image" src="https://github.com/user-attachments/assets/9dc77bbf-e521-43c7-8712-0130ab14e9d8" />
+<img width="321" height="192" alt="image" src="https://github.com/user-attachments/assets/9dc77bbf-e521-43c7-8712-0130ab14e9d8" />
 
+This then calls this function:
+
+<img width="627" height="564" alt="image" src="https://github.com/user-attachments/assets/6e087d08-e4f0-41b3-8dc8-ec7bf696d0f8" />
 
 
 
