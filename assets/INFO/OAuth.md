@@ -83,6 +83,7 @@ This then calls this function:
 
 <img width="714" height="326" alt="image" src="https://github.com/user-attachments/assets/6e7f8dd8-d5e6-47a9-baaf-c34c0970d68c" />
 
+> **_client_secret:_** The client_secret can be created in the GitHub application.
 
 The responseData will be json formatted and look like this: {"access_token": "gho_xxxxx", "scope": "repo", "token_type": "bearer"}
 
