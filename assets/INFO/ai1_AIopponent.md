@@ -2,16 +2,15 @@
 
 the use of the A* algorithm is not permitted for this task
 
-- AI opponent that provides a challenging and engaging gameplay experience for users
-- AI must replicate human behavior, which means that in your AI implementation, you must simulate keyboard input.   
-    The AI can only refresh its view of the game once per second, requiring it to anticipate bounces and other actions - anticipation area gets smaller and smaller the closer the pong is
-- Implement AI logic and decision-making processes that enable the AI player to make intelligent and strategic moves
-- Ensure that the AI adapts to different gameplay scenarios and user interactions
-- it must have the capability to win occasionally
+- The AI must be challenging and able to win occasionally
+- The AI should simulate human-like behavior (not perfect play)
+- If you implement game customization options, the AI must be able to use them.
+- You must be able to explain your AI implementation during evaluation
 
 (!) A* algorithm is not allowed (https://www.geeksforgeeks.org/dsa/a-search-algorithm/)
 (!) AI must utilize power-ups if you have chosen to implement the Game customization options module
 
+This module requires you to have implemented at least one game (see "Gaming and user experience" section). The AI must be able to play your game competently.
 
 # Interaction with other parts
 

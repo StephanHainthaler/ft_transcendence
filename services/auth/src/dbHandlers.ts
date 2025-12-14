@@ -22,12 +22,13 @@ export function hashRefreshToken(token: string): string {
 }
 
 export function getAuthUser({
-  username, authId, userId, email,
+  username, authId, userId, email, oauthId
 }:{
   username?: string,
   authId?: number,
   userId?: number,
   email?: string,
+  oauthId?: number,
 }): AuthUser | null {
   if (username) {
     const user = db.from('auth_users').select('*').where(eq('user_name', username)).single();
@@ -45,8 +46,12 @@ export function getAuthUser({
     const user = db.from('auth_users').select('*').where(eq('email', email)).single();
     if (user) return user;
   }
+  if (oauthId) {
+    const user = db.from('auth_users').select('*').where(eq('oauth_id', oauthId)).single();
+    if (user) return user;
+  }
 
-  if (!userId && !username && !authId) {
+  if (!userId && !username && !authId && !oauthId) {
     throw new Error("Missing fields: need either username, authid or userid");
   }
 
@@ -70,6 +75,7 @@ export function getAuthUserClient({
   }
   return null;
 }
+
 export async function verifyUserCredentials({
   email, username, passwd,
 }: {
@@ -97,8 +103,10 @@ export function updateUserCredentials(newAuthUser: Partial<AuthUser>) {
 
 export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ user: User, authUser: AuthUser }> {
   const user = { name: authUser.user_name };
-  const newUser = await createUser(user);
+  const { user: newUser } = await createUser(user);
   authUser.user_id = newUser.id;
+
+  console.log(newUser)
 
   if (!authUser.passwd) throw new Error("Auth user is missing password");
   authUser.passwd = await hashPassword(authUser.passwd);

@@ -182,43 +182,49 @@ export function authRoutes(fastify: FastifyInstance) {
       const github_user_email = await user_email_response.json();
       github_user.email = github_user_email.email;
     }
-    console.log("response_data.scope");
-    console.log(response_data.scope);
+    if (!github_user.email) { 
+      github_user.email = `${github_user.login}@users.noreply.github.com`;
+    }
+
+    // console.log("response_data.scope");
+    // console.log(response_data.scope);
 
     console.log("github_user.email");
-    console.log(github_user.email); // = null or undefined for me -- what to do? - fix scope in OAuthForm.svelte
+    console.log(github_user.email); // = null or undefined for me -- what to do?
 
     if (!github_user.login || !github_user.email) {
       return reply.status(401).send({ success: false, message: 'Error fetching user credentials from GitHub.' });
     }
 
     // Add github_user.id into user table in new column
+    // Check if user with this pauth_id exists in auth_users table
+    let authUser = getAuthUser({ oauthId: github_user.id });
 
     // Now process the user creds in our backend - compare to sign-up process
-    const tempAuthUser: Partial<AuthUser> = { user_name: github_user.login, email: github_user.email };
-    const { user, authUser: newAuthUser } = await createAuthUser({ ...tempAuthUser, passwd: 'oauth' });
-    
-    console.log("user");
-    console.log(user);
+    if (!authUser) {
+      const tempAuthUser: Partial<AuthUser> = { user_name: github_user.login, email: github_user.email, oauth_id: github_user.id };
+      const { user, authUser: newAuthUser } = await createAuthUser({ ...tempAuthUser, passwd: 'oauth' });
+      authUser = newAuthUser;
+    }
 
     console.log("authUser");
-    console.log(newAuthUser);
+    console.log(authUser);
 
     //_______________________________________________________________
 
     try {
-      const session = createSession(newAuthUser, secret);
+      const session = createSession(authUser, secret);
       const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken)
       const authUserClient: AuthUserClient = {
-        email: newAuthUser.email,
-        username: newAuthUser.email,
+        username: authUser.user_name,
+        email: authUser.email,
       }
 
       return reply.header('set-cookie', refreshTokenCookie).code(200).send({
         success: true,
-        user: user,
+        //user: user,
         auth: authUserClient,
-        access_token: response_data.access_token, // is this correct?
+        access_token: session.accessToken.raw, // is this correct?
       } as any);
     } catch (e: any) {
       console.error(e);
@@ -250,7 +256,7 @@ export function authRoutes(fastify: FastifyInstance) {
           const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken)
           const authUserClient: AuthUserClient = {
             email: newAuthUser.email,
-            username: newAuthUser.email,
+            username: newAuthUser.user_name,
           }
 
           return reply.header('set-cookie', refreshTokenCookie).code(200).send({

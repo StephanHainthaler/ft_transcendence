@@ -186,16 +186,15 @@ export class ApiClient {
       const authResponse = await oauthRequest(code); // this contains the access_token
       
       this.auth = authResponse.auth;
-      this.user = await this.getUser()
 
-      /*this.authStore.set(authResponse.auth) // BugFIX: re-check this part - just took it from login
+      this.authStore.set(authResponse.auth) // BugFIX: re-check this part - just took it from login
       if (authResponse.access_token) {
         const jwt = parseJWT(authResponse.access_token);
         this.accessToken.set(jwt);
         const response = await getUser(this.accessToken)
         this.userStore.set(response.user);
         this.notify();
-      }*/
+      }
     } catch (e: any) {
       const error = new Error(`OAuth Failed: ${e.message || e}`)
       console.error(error);

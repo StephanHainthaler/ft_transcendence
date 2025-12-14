@@ -58,7 +58,7 @@ export function userRoutes(fastify: FastifyInstance) {
 
   fastify.post<{
     Reply: {
-      200: { success: true, user: User },
+      200: { success: true, user: Partial<User> },
       '4xx': { success: false, message: string },
       500: { success: false, message: string }
     },
@@ -76,7 +76,7 @@ export function userRoutes(fastify: FastifyInstance) {
         .single();
 
       if (!result) throw new ApiError({ message: "Failed to insert User", code: 400 });
-      reply.status(200).send({ success: true, user })
+      reply.status(200).send({ success: true, user: result })
     } catch (e: any) {
       reply.status(e.code || e.status || 500).send({ success: false, message: e.message || e })
     }
