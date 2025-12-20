@@ -16,13 +16,18 @@
     if (!info.client_id || !info.redirect_uri || !info.state) {
       throw new Error("Missing OAuth information!");
     }
+    try {
+      const params = new URLSearchParams(info);
+      const oauthUrl = `https://github.com/login/oauth/authorize?${params.toString()}`;
 
-    const params = new URLSearchParams(info);
-    const oauthUrl = `https://github.com/login/oauth/authorize?${params.toString()}`;
+      console.log(oauthUrl); // OK
 
-    console.log(oauthUrl); // OK
-
-    window.location.href = oauthUrl;
+      window.location.href = oauthUrl;
+    } catch (e: any) {
+      const error = new Error(`OAuth Failed: ${e.message || e}`)
+      console.error(error);
+      throw error;
+    }
   }
 
   // (1) create a request
@@ -44,7 +49,14 @@
     scope: 'read:user user:email' // https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
     };
 
-    await GithubRedirect(info);
+    try {
+      await GithubRedirect(info);
+    } catch (e: any) {
+      const error = new Error(`GH Redirect Failed: ${e.message || e}`)
+      console.error(error);
+      throw error;
+    }
+
   };
 </script>
 
@@ -55,6 +67,7 @@
   // (3) function will be called /oauth-callback
   // It will extract the code and state out of redirect_uri
   export async function handleOAuthCallback() {
+    try {
     const params = new URLSearchParams(window.location.search); // url looks like this after redirect_uri: http://localhost:8080/oauth-callback/?code=secretcode&state=abc
 
     const code = params.get("code");
@@ -62,7 +75,7 @@
     const state = sessionStorage.getItem("oauth_state");
 
     if (!state_ret || state_ret !== state) {
-     throw new Error("Error. CSRF validation failed. A third party might have created the request. Aborting process...");
+     throw new Error("Error. CSRF validation failed. A third party might have created the request. Please try again.");
     }
 
     if (!code) { // check if code was sent back - need to exchange this code for an access_token 
@@ -72,10 +85,13 @@
     sessionStorage.removeItem("oauth_state");
 
     // (4) send to backend to make POST request to endpoint, which then exchanges the GH code for an access_token `https://github.com/login/oauth/access_token`;
-    await client.oauth({
-        code: code
-      });
-
+      await client.oauth({ code: code });
+    } catch (e: any) {
+      const error = new Error(`OAuth Failed: ${e.message || e}`)
+      console.error(error);
+      //client.logout();
+      throw error;
+    }
     goto("/"); 
   }
 
