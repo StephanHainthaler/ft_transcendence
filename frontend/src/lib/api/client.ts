@@ -187,7 +187,7 @@ export class ApiClient {
       
       this.auth = authResponse.auth;
 
-      this.authStore.set(authResponse.auth) // BugFIX: re-check this part - just took it from login
+      this.authStore.set(authResponse.auth)
       if (authResponse.access_token) {
         const jwt = parseJWT(authResponse.access_token);
         this.accessToken.set(jwt);

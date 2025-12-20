@@ -132,8 +132,6 @@ export function authRoutes(fastify: FastifyInstance) {
     }
   });
 
-
-
   fastify.post<{
     Body: OAuthCallBackBody,
     Reply: AuthReply,
@@ -165,7 +163,6 @@ export function authRoutes(fastify: FastifyInstance) {
     console.log("response_data.access_token")
     console.log(response_data.access_token); // OK - terminal
 
-    //_______________________________________________________________BUGFIX - need to store userdata to db / REGISTER USER
     // Now I can get user information from GitHub
     const user_response = await fetch("https://api.github.com/user", {
       headers: { Authorization: `Bearer ${response_data.access_token}`}, //, 'X-GitHub-Api-Version': '2022-11-28'},

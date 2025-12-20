@@ -39,7 +39,7 @@
     client_id: 'Ov23likjrNVolqMyu8L5',
     redirect_uri: "http://localhost:8080/auth/oauth-callback", // frontend route for redirection
     // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
-    state, // create a CSRF token - BugFix: store for specific client?
+    state, // create a CSRF token
     allow_signup: 'true',
     scope: 'read:user user:email' // https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
     };
