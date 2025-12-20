@@ -75,7 +75,7 @@
     const state = sessionStorage.getItem("oauth_state");
 
     if (!state_ret || state_ret !== state) {
-     throw new Error("Error. CSRF validation failed. A third party might have created the request. Please try again.");
+      throw new Error("Error. CSRF validation failed. A third party might have created the request. Please try again.");
     }
 
     if (!code) { // check if code was sent back - need to exchange this code for an access_token 
