@@ -97,7 +97,7 @@ export function updateUserCredentials(newAuthUser: Partial<AuthUser>) {
 
 export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ user: User, authUser: AuthUser }> {
   const user = { name: authUser.user_name };
-  const newUser = await createUser(user);
+  const { user: newUser } = await createUser(user);
   authUser.user_id = newUser.id;
 
   if (!authUser.passwd) throw new Error("Auth user is missing password");
