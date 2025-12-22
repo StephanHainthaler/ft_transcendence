@@ -1,12 +1,13 @@
 import { db } from "./db";
 import { AuthUser, Session } from "./db";
 import { AuthUserClient, User } from "@shared/user"
-import { createUser } from "@ft_transcendence/user/src/api"
+import { createUser, getUser } from "@ft_transcendence/user/src/api"
 import argon2 from "argon2";
 import { generateJWT } from "./jwt";
 import crypto from "crypto";
 import { JWT } from "@shared/api";
 import { eq } from "@server/orm";
+import { sqliteErrorToApiError } from "@server/orm/error";
 
 async function hashPassword(passwd: string): Promise<string> {
   const hash = await argon2.hash(passwd)
@@ -22,12 +23,13 @@ export function hashRefreshToken(token: string): string {
 }
 
 export function getAuthUser({
-  username, authId, userId, email,
+  username, authId, userId, email, oauthId
 }:{
   username?: string,
   authId?: number,
   userId?: number,
   email?: string,
+  oauthId?: number,
 }): AuthUser | null {
   if (username) {
     const user = db.from('auth_users').select('*').where(eq('user_name', username)).single();
@@ -45,12 +47,31 @@ export function getAuthUser({
     const user = db.from('auth_users').select('*').where(eq('email', email)).single();
     if (user) return user;
   }
+  if (oauthId) {
+    const user = db.from('auth_users').select('*').where(eq('oauth_id', oauthId)).single();
+    if (user) return user;
+  }
 
-  if (!userId && !username && !authId) {
+  if (!userId && !username && !authId && !oauthId) {
     throw new Error("Missing fields: need either username, authid or userid");
   }
 
   return null;
+}
+
+export async function deleteAuthUser(authUser: AuthUser){
+  try {
+    console.log('deleting session');
+    deleteSession({ authId: authUser.id });
+    console.log('deleted session');
+    db.from('auth_users')
+      .where(eq('id', authUser.id))
+      .delete()
+      .run();
+    console.log('deleted user');
+  } catch (e: any) {
+    throw sqliteErrorToApiError(e);
+  }
 }
 
 export function getAuthUserClient({
@@ -70,6 +91,7 @@ export function getAuthUserClient({
   }
   return null;
 }
+
 export async function verifyUserCredentials({
   email, username, passwd,
 }: {
@@ -97,8 +119,10 @@ export function updateUserCredentials(newAuthUser: Partial<AuthUser>) {
 
 export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ user: User, authUser: AuthUser }> {
   const user = { name: authUser.user_name };
-  const newUser = await createUser(user);
+  const { user: newUser } = await createUser(user);
   authUser.user_id = newUser.id;
+
+  console.log(newUser)
 
   if (!authUser.passwd) throw new Error("Auth user is missing password");
   authUser.passwd = await hashPassword(authUser.passwd);
@@ -183,25 +207,25 @@ export function getSession({
 }
 
 export function deleteSession({
-  authId, userId,  token,
+  authId, userId, token,
 }: {
   authId?: number, userId?: number, token?: string
 }) {
   if (userId) {
-    const session = db.from('sessions').delete().where(eq('user_id', userId)).single();
+    const session = db.from('sessions').delete().where(eq('user_id', userId)).run();
     if (!session)
       throw new Error('No session for that user');
 
     return session;
   } else if (authId) {
-    const session = db.from('sessions').delete().where(eq('auth_id', authId)).single();
+    const session = db.from('sessions').delete().where(eq('auth_id', authId)).run();
     if (!session)
       throw new Error('No session for that user');
 
     return session;
   } else if (token) {
     const tokenHash = hashRefreshToken(token);
-    const session = db.from('sessions').delete().where(eq('token', tokenHash)).single();
+    const session = db.from('sessions').delete().where(eq('token', tokenHash)).run();
     if (!session)
       throw new Error('No session for that user');
 

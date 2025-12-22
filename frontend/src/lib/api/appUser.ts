@@ -17,6 +17,6 @@ export class AppUser {
 
   get avatarUrl() {
     if (this.avatar)
-      return `/api/user/avatar/${this.avatar?.location}`;
+      return `${this.avatar?.location}`;
   }
 }

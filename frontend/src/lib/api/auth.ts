@@ -1,4 +1,4 @@
-import type { SignupRequestBody, LoginRequestBody, AuthResponseSuccess } from "@shared/api/authRequest";
+import type { SignupRequestBody, LoginRequestBody, AuthResponseSuccess, OAuthCallBackBody } from "@shared/api/authRequest";
 import { request } from './utils';
 import { parseJWT, type JWT } from "@shared/api";
 import type { Writable } from "@lib/types/writable";
@@ -78,6 +78,55 @@ export async function loginRequest(
 
   if (!response.ok || !data.access_token) throw data;
   return data;
+}
+
+export async function oauthRequest(
+  info: OAuthCallBackBody,
+): Promise<AuthResponseSuccess> {
+
+    if ((!info.code))
+      throw new Error("Missing OAuth Code!");
+
+    const oauth: Request = new Request('/api/auth/github-oauth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(info),
+    });
+
+    console.log("Code:");
+    console.log(info.code); // OK
+
+    const response = await fetch(oauth);
+
+    if (!response.ok) {
+      throw new Error("OAuth token exchange failed");
+    }
+
+    const data: AuthResponseSuccess = await response.json();
+
+    console.log("Access token:");
+    console.log(data);
+
+    if (!response.ok || !data.access_token) throw data;
+
+    return data; // this contains the access_token
+}
+
+export async function deleteRequest(token: Writable<JWT | null>) {
+  const req = new Request('/api/auth/delete', {
+    method: 'delete',
+    headers: {
+      'Authorization': `Bearer ${token.get()?.raw}`,
+    }
+  });
+
+  try {
+    await request(req, token);
+  } catch (e: any) {
+    throw new Error('Failed to Delete Account');
+  }
 }
 
 export async function logoutRequest(token: Writable<JWT | null>) {

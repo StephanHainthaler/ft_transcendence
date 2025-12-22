@@ -6,6 +6,8 @@
   import Label from "@lib/components/ui/label/label.svelte";
   import * as Card from "@lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
+  import * as Dialog from "$lib/components/ui/dialog";
+  import { Trash } from "@lucide/svelte";
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -15,13 +17,14 @@
     passwdRepeat: string;
   };
 
-  let editMode = false;
-  let session: ProfilePageData = {
+  let editMode = $state(false);
+
+  let session: ProfilePageData = $state({
     auth: client.auth!,
     user: client.user!,
     passwd: '',
     passwdRepeat: ''
-  };
+  });
 
   client.onChange(() => {
     console.log('notifying profile form');
@@ -44,15 +47,52 @@
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
+    console.log(session);
     await client.updateUserInfo(session.user, session.avatarFile)
   };
 
+  let deleteDialogOpen = $state(false);
+  let deleteState = $state('none');
+
+  const handleDelete = async () => {
+    deleteState = 'running';
+    setTimeout(async () => {
+      await client.delete();
+      setTimeout(() => deleteState = 'done', 1000);
+    }, 1000)
+  }
+
 </script>
+
+<Dialog.Root open={deleteDialogOpen}>
+  <Dialog.Content>
+    <Dialog.Header>
+      <Dialog.Title>Delete Account</Dialog.Title>
+    </Dialog.Header>
+    <div class="flex flex-col gap-4">
+      {#if deleteState === 'none'}
+      <p>Are you sure you want to delete you account?</p>
+      <div class="flex gap-4 w-full">
+        <Button onclick={async () => { await handleDelete(); deleteDialogOpen = false } }>
+          Yes
+        </Button>
+        <Button onclick={() => deleteDialogOpen = false}>
+          Cancel
+        </Button>
+      </div>
+      {:else if deleteState === 'running' }
+        <p>Deleting, please wait...</p>
+      {:else}
+        <p>Done! Redirecting...</p>
+      {/if}
+    </div>
+  </Dialog.Content>
+</Dialog.Root>
 
 <Card.Root class="size-full mx-auto">
   <Card.Header>
     <Card.Title class="text-3xl">Profile</Card.Title>
-    <Card.Action>
+    <Card.Action class="flex gap-4">
       <Button
         type="button"
         variant={editMode ? "secondary" : "outline"}
@@ -60,6 +100,13 @@
         onclick={toggleEditMode}
       >
         {editMode ? "Cancel" : "Edit"}
+      </Button>
+      <Button
+        variant={editMode ? "secondary" : "outline"}
+        size="sm"
+        onclick={() => deleteDialogOpen = true }
+      >
+        <Trash size='sm'/>
       </Button>
     </Card.Action>
   </Card.Header>

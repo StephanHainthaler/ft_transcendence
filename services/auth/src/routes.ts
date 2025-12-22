@@ -1,11 +1,12 @@
 import { FastifyInstance } from "fastify";
-import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient } from "./dbHandlers";
-import { updateUser } from "@ft_transcendence/user/src/api";
+import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession } from "./dbHandlers";
+import { deleteUser, updateUser } from "@ft_transcendence/user/src/api";
 import { AuthUserClient, } from "@shared/user";
-import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody } from "@shared/api";
+import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody, OAuthCallBackBody } from "@shared/api";
 import { AuthUser } from "./db";
 import { generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
+import { ApiError } from "@server/error/apiError";
 
 type AuthReply = {
   200: AuthResponseSuccess,
@@ -133,6 +134,108 @@ export function authRoutes(fastify: FastifyInstance) {
   });
 
   fastify.post<{
+    Body: OAuthCallBackBody,
+    Reply: AuthReply,
+  }>('/github-oauth', async (request, reply) => { // needs to return the access_token
+  try {
+    const { code } = request.body as { code?: string }; // stating receiving structure to be able to extract the value of code
+
+    if (!code) {
+      return reply.status(400).send({ success: false, message: "Error: Missing OAuth code" });
+    }
+
+    // Exchange code for access_token with GitHub
+    const response = await fetch(`https://github.com/login/oauth/access_token`, {
+      method: "POST",
+      headers: { "Accept": "application/json" }, // define response type
+      body: new URLSearchParams({
+        client_id: process.env.GITHUB_APP_CLIENT_ID!, // stored in /env/.env.auth
+        client_secret: process.env.GITHUB_APP_CLIENT_SECRET!, // stored in /env/.env.auth 
+        code,
+        redirect_uri: `http://localhost:8080/`,
+      }),
+    });
+
+    const response_data = await response.json();
+    if (!response_data.access_token) {
+      return reply.status(401).send({ success: false, message: 'Invalid OAuth code' });
+    }
+
+    console.log("response_data.access_token")
+    console.log(response_data.access_token); // OK - terminal
+
+    // Now I can get user information from GitHub
+    const user_response = await fetch("https://api.github.com/user", {
+      headers: { Authorization: `Bearer ${response_data.access_token}`}, //, 'X-GitHub-Api-Version': '2022-11-28'},
+    });
+    const github_user = await user_response.json();
+
+    console.log("github_user");
+    console.log(github_user); // OK - terminal
+
+    if (!github_user.email) { // try to retrieve email from different endpoint
+      const user_email_response = await fetch("https://api.github.com/user/emails", {
+        headers: { Authorization: `Bearer ${response_data.access_token}`}, //, 'X-GitHub-Api-Version': '2022-11-28'},
+      });
+      const github_user_email = await user_email_response.json();
+      github_user.email = github_user_email.email;
+    }
+    if (!github_user.email) { 
+      github_user.email = `${github_user.login}@users.noreply.github.com`;
+    }
+
+    // console.log("response_data.scope");
+    // console.log(response_data.scope);
+
+    console.log("github_user.email");
+    console.log(github_user.email); // = null or undefined for me -- what to do?
+
+    if (!github_user.login || !github_user.email) {
+      return reply.status(401).send({ success: false, message: 'Error fetching user credentials from GitHub.' });
+    }
+
+    // Add github_user.id into user table in new column
+    // Check if user with this pauth_id exists in auth_users table
+    let authUser = getAuthUser({ oauthId: github_user.id });
+
+    // Now process the user creds in our backend - compare to sign-up process
+    if (!authUser) {
+      const tempAuthUser: Partial<AuthUser> = { user_name: github_user.login, email: github_user.email, oauth_id: github_user.id };
+      const { user, authUser: newAuthUser } = await createAuthUser({ ...tempAuthUser, passwd: 'oauth' });
+      authUser = newAuthUser;
+    }
+
+    console.log("authUser");
+    console.log(authUser);
+
+    //_______________________________________________________________
+
+    try {
+      const session = createSession(authUser, secret);
+      const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken)
+      const authUserClient: AuthUserClient = {
+        username: authUser.user_name,
+        email: authUser.email,
+      }
+
+      return reply.header('set-cookie', refreshTokenCookie).code(200).send({
+        success: true,
+        //user: user,
+        auth: authUserClient,
+        access_token: session.accessToken.raw, // is this correct?
+      } as any);
+    } catch (e: any) {
+      console.error(e);
+      return reply.code(e.code || 500).send({ success: false, message: e.message || e });
+    }
+
+  } catch (e) {
+    console.error(e);
+     return reply.code(500).send({ success: false, message: `OAuth Login Error` });
+  }
+});
+
+  fastify.post<{
     Body: SignupRequestBody,
     Reply: AuthReply,
   }>('/sign-up', async (request, reply) => {
@@ -151,7 +254,7 @@ export function authRoutes(fastify: FastifyInstance) {
           const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken)
           const authUserClient: AuthUserClient = {
             email: newAuthUser.email,
-            username: newAuthUser.email,
+            username: newAuthUser.user_name,
           }
 
           return reply.header('set-cookie', refreshTokenCookie).code(200).send({
@@ -195,7 +298,29 @@ export function authRoutes(fastify: FastifyInstance) {
           email: newUser.email, username: newUser.user_name }
         });
       } catch (e: any) {
-        reply.status(500).send({ success: false, message: `${e.message || e}` })
+        reply.status(e.code || e.status | 400).send({ success: false, message: `${e.message || e}` })
       }
+  })
+
+  fastify.delete<{
+    Reply: {
+      200: { success: true },
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string }
+    }
+  }>('/delete', async (req, repl) => {
+    try {
+      const token = extractJWTFromHeader(req.headers.authorization);
+      const authUser = getAuthUser({ userId: token.payload.sub });
+      if (!authUser) throw new ApiError({ code: 404, message: 'No such User' });
+
+      await deleteUser(token);
+      await deleteAuthUser(authUser);
+
+      return repl.header('set-cookie', `refresh_token=0; Max-Age=0; Path=/`).code(200).send({ success: true })
+    } catch (e: any) {
+      console.log(e);
+      return repl.code(e.code || 500).send({ success: false, message: e.message || 'Internal Server Error' });
+    }
   })
 }

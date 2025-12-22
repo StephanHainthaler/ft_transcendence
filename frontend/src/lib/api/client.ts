@@ -1,13 +1,13 @@
 import { Writable } from "@lib/types/writable";
 import type { AuthUserClient, Avatar, Friendship, User } from "@shared/user";
-import { getAuth, loginRequest, logoutRequest, signupRequest, updateRequest } from "./auth";
+import { deleteRequest, getAuth, loginRequest, logoutRequest, oauthRequest, signupRequest, updateRequest } from "./auth";
 import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authRequest";
-import type { JWT } from "@shared/api";
+import type { JWT, OAuthCallBackBody } from "@shared/api";
 import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
-import { io, type Socket } from "socket.io-client"
+// import { io, type Socket } from "socket.io-client"
 
 export type ApiError = {
   code: number,
@@ -25,7 +25,7 @@ export class ApiClient {
   private readonly accessToken: Writable<JWT | null> = new Writable('token');
   private listeners: Set<Function> = new Set();
   private avatarUrl?: string;
-  private socket: Socket | null = null;
+  // private socket: Socket | null = null;
 
   constructor() {}
 
@@ -114,7 +114,7 @@ export class ApiClient {
     const avatar = response.avatar;
     console.log(avatar);
     if (avatar)
-      this.avatarUrl = `/api/user/avatar/${response.avatar.location}`;
+      this.avatarUrl = response.avatar.location;
     return response;
   }
 
@@ -154,7 +154,7 @@ export class ApiClient {
         const response = await getUser(this.accessToken)
         this.userStore.set(response.user);
         this.notify();
-        this.connectsocket();
+        // this.connectsocket();
       }
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
@@ -163,27 +163,48 @@ export class ApiClient {
     }
   }
 
-  getSocket(): Socket | null {
-    return this.socket;
-  }
+  // getSocket(): Socket | null {
+  //   return this.socket;
+  // }
+  //
+  // disconnect(): void {
+  //   if (this.socket) {
+  //     this.socket.disconnect();
+  //     this.socket = null;
+  //   }
+  // }
+  //
+  // private connectsocket() {
+  //   this.socket = io('http://localhost:8080/api/user/ws');
+  //
+  //   this.socket.on('connect', () => {
+  //     console.log('Socket connected:', this.socket?.id);
+  //   });
+  //
+  //   this.socket.on('disconnect', () => {
+  //     console.log('Socket disconnected');
+  //   });
+  // }
+  //
+  async oauth(code: OAuthCallBackBody) {
+    try {
+      const authResponse = await oauthRequest(code); // this contains the access_token
 
-  disconnect(): void {
-    if (this.socket) {
-      this.socket.disconnect();
-      this.socket = null;
+      this.auth = authResponse.auth;
+
+      this.authStore.set(authResponse.auth)
+      if (authResponse.access_token) {
+        const jwt = parseJWT(authResponse.access_token);
+        this.accessToken.set(jwt);
+        const response = await getUser(this.accessToken)
+        this.userStore.set(response.user);
+        this.notify();
+      }
+    } catch (e: any) {
+      const error = new Error(`OAuth Failed: ${e.message || e}`)
+      console.error(error);
+      throw error;
     }
-  }
-
-  private connectsocket() {
-    this.socket = io('http://localhost:8080/api/user/ws');
-
-    this.socket.on('connect', () => {
-      console.log('Socket connected:', this.socket?.id);
-    });
-
-    this.socket.on('disconnect', () => {
-      console.log('Socket disconnected');
-    });
   }
 
   async logout() {
@@ -217,6 +238,12 @@ export class ApiClient {
     document.cookie = '';
   }
 
+  async delete() {
+    await deleteRequest(this.accessToken);
+    this.clearSession();
+    goto('/auth');
+  }
+
   async updateCredentials({
     email, username, passwd
   }: {
@@ -241,7 +268,7 @@ export class ApiClient {
     const data = await updateUser(this.accessToken, newUser, avatar);
 
     if (data.avatar) {
-      this.avatarUrl = `/api/user/avatar/${data.avatar.location}`;
+      this.avatarUrl = data.avatar.location;
     }
     this.userStore.set(data.user);
     return data.user;

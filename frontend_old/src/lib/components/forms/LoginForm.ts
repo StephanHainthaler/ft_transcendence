@@ -60,6 +60,7 @@ export const LoginForm = (update: () => void): VNode => {
       div({ class: 'px-8 mt-auto' },
         button({ id: 'sign-in-button', onclick: handleLoginFormSubmit, class: 'btn w-full mb-8' }, 'Sign in')
       ),
+      //button({ id: 'sign-in-button', onclick: handleLoginFormSubmit, class: 'btn w-full mb-8' }, 'GitHub')
     )
   )
 }

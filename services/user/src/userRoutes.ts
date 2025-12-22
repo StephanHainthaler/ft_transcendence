@@ -2,13 +2,12 @@ import { FastifyInstance } from "fastify";
 import { db } from "./db";
 import { Avatar, User } from "@shared/user"
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { IN } from "@server/orm";
+import { eq, IN } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
-import { createUser, getAllUsers, getUser, updateUser } from "./dbHandlers";
+import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "./dbHandlers";
 import { MultipartFile } from "@fastify/multipart";
 
 export function userRoutes(fastify: FastifyInstance) {
-
   fastify.get<{
     Reply: {
       200: { success: true, user: User, avatar: Avatar | null },
@@ -56,26 +55,24 @@ export function userRoutes(fastify: FastifyInstance) {
     } catch (e: any) {
       repl.code(e.code || 500).send({ success: false, message: e.message || `Internal server Error ${e}` });
     }
-  })
+  });
 
   fastify.post<{
     Reply: {
-      200: { success: true, user: User },
+      200: { success: true, user: Partial<User>, avatar: Avatar | null },
       '4xx': { success: false, message: string },
       500: { success: false, message: string }
     },
     Body: {
       user: User,
+      oauthAvatarUrl: string,
     }
-  }>
-    ('/new', (request, reply) => {
+  }>('/new', async (request, reply) => {
     try {
-      const { user } = request.body;
+      const { user, oauthAvatarUrl } = request.body;
+      const { user: newUser, avatar } = await createUser(user, oauthAvatarUrl);
 
-      const data = createUser(user);
-
-      if (!data) throw new ApiError({ message: "Failed to insert User", code: 400 });
-      reply.status(200).send({ success: true, user: data.user });
+      reply.status(200).send({ success: true, user: newUser, avatar });
     } catch (e: any) {
       reply.status(e.code || e.status || 500).send({ success: false, message: e.message || e })
     }
@@ -98,10 +95,16 @@ export function userRoutes(fastify: FastifyInstance) {
   })
 
   fastify.post<{
+    Body: {
+      user: User,
+    },
+    Params: {
+      userId: number,
+    }
     Reply: {
       200: { success: true, user: User, avatar: Avatar | null },
-      '4xx': Error,
-      500: Error,
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string },
     }
   }>('/update', async (request, reply) => {
     try {
@@ -129,11 +132,38 @@ export function userRoutes(fastify: FastifyInstance) {
       const data = await updateUser(token.payload.sub, user, avatar);
 
       if (!data)
+        throw new ApiError({ code: 404, message: 'User not found' });
+
+      const response = db
+        .from('users')
+        .update(user)
+        .where(eq('id', user.id))
+        .select('*')
+        .single();
+
+      if (!response)
         throw new Error('User update Failed');
 
       reply.status(200).send({ success: true, user: data.user, avatar: data.avatar });
     } catch(e: any) {
-      reply.status(e.code || e.statuscode || 400).send(new Error(`Error ${e.message || e}`))
+      reply.status(e.code || e.statuscode || 400).send({ success: false, message: e.message || 'Bad Request' })
     }
+  });
+
+  fastify.delete<{
+    Reply: {
+      200: { success: true },
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string },
+    }
+  }>('/delete', async (req, repl) => {
+      try {
+        console.log('got delete request');
+        const token = extractJWTFromHeader(req.headers.authorization);
+        await deleteUser(token.payload.sub);
+        repl.code(200).send({ success: true });
+      } catch (e: any) {
+        repl.code(e.code || 400).send({ success: false, message: e.message || 'Bad Request' });
+      }
   })
 }

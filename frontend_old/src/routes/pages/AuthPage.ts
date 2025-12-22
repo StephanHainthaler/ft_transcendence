@@ -1,10 +1,11 @@
-import { LoginForm, SignupForm } from "@lib/components/forms";
+import { LoginForm, SignupForm, OAuthForm } from "@lib/components/forms";
 import { Layout } from "@lib/components/layout";
 import type { Route } from "@lib/types/route";
 import { div, button, updateId } from "@lib/vdom";
 
 const LOGIN = 0;
 const REGISTER = 1;
+const OAUTH = 2;
 let selectedTab: number = LOGIN;
 
 const tabClassSelected = 'flex-1 py-3 px-4 bg-tan text-teal-dark hover:bg-tan-border transition-colors'
@@ -20,11 +21,28 @@ const setRegisterForm = () => {
   updateId(PageContent());
 }
 
+const setOAuthForm = () => {
+  selectedTab = OAUTH;
+  updateId(PageContent());
+}
+
 const updatePage = () => {
   updateId(PageContent());
 }
 
+
 const PageContent = () => {
+  let method;
+  switch (selectedTab) {
+    case LOGIN:
+      method = LoginForm(updatePage);
+      break;
+    case REGISTER:
+      method = SignupForm(updatePage);
+      break;
+    case OAUTH:
+      method = OAuthForm(updatePage);
+  }
   return (
     div({ id: 'dyn-auth-page', class: 'size-full flex flex-col items-center justify-start background' },
       div({
@@ -39,9 +57,13 @@ const PageContent = () => {
           button({
             class: selectedTab === REGISTER ? tabClassSelected : tabClass,
             onclick: setRegisterForm
-          }, 'Register')
+          }, 'Register'),
+          button({
+            class: selectedTab === OAUTH ? tabClassSelected : tabClass,
+            onclick: setOAuthForm
+          }, 'OAUTH')
         ),
-        selectedTab === LOGIN ? LoginForm(updatePage) : SignupForm(updatePage)
+        method
       )
     )
   )

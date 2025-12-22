@@ -15,8 +15,8 @@
     title: string,
     desc?: string,
     buttonDesc?: string,
-    extraBtn?: Snippet,
     avatarUrl?: string,
+    extraBtn?: Snippet,
     callback: () => void
   } = $props();
 

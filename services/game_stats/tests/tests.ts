@@ -9,8 +9,14 @@ import { DB } from '@server/orm';
 const USER_A = 101;
 const USER_B = 102;
 const USER_C = 103;
-// const TEST_DB_PATH = './db/test_game_stats.db';
-// dbModule.initDB(TEST_DB_PATH);
+
+const isDebug = process.env.NODE_ENV !== 'production';
+
+export function debugLog(message: any, ...optionalParams: any[]) {
+    if (isDebug) {
+        console.log(`[DEBUG] ${message}`, ...optionalParams);
+    }
+}
 
 interface Schema {
 	user_stats: UserStats;
@@ -129,24 +135,15 @@ describe('Game Stats Logic Tests', () => {
 		assert.strictEqual(statsA.highest_score, 100, 'A: Highest score updated to 100');
 		assert.strictEqual(statsA.total_points, 100, 'A: Total points updated');
 	});
-
+	
 	test('4. Should not allow rank to drop below 0', () => {
-		recordMatch(MATCH_DATA_HIGH_SCORE); // Ранг C = 995
+		recordMatch(MATCH_DATA_HIGH_SCORE);
 		const statsC1 = getUserStats(USER_C) as UserStats;
 		console.log(`Starting Rank for User C: ${statsC1.rank}`);
 		assert.strictEqual(statsC1.rank, 995, 'Rank should be 995 from the start');
-
-		for (let i = 0; i < 200; i++) {
-			updateStatsForUser(USER_C, false, 0);}
-		// await updateStatsForUser(USER_C, false, 0);
-		// await updateStatsForUser(USER_C, false, 0);
-		// await updateStatsForUser(USER_C, false, 0);
-
-		//simulateLosses(198, USER_C);
-
+		simulateLosses(201, USER_C);
 		const statsC2 = getUserStats(USER_C) as UserStats;
 		console.log(`Final Rank for User C: ${statsC2.rank}`);
-		// assert.strictEqual(statsC2.rank, 980, 'Rank should not be negative');
 		assert.strictEqual(statsC2.rank, 0, 'Rank should not be negative');
 	});
 });
