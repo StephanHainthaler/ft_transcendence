@@ -1,0 +1,27 @@
+{
+	"/": [
+		"src/routes/+layout.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/auth": [
+		"src/routes/+layout.server.ts"
+	],
+	"/error": [
+		"src/routes/+layout.server.ts"
+	],
+	"/friends": [
+		"src/routes/+layout.server.ts"
+	],
+	"/game": [
+		"src/routes/+layout.server.ts"
+	],
+	"/health": [
+		"src/routes/+layout.server.ts"
+	],
+	"/profile": [
+		"src/routes/+layout.server.ts"
+	],
+	"/tournament": [
+		"src/routes/+layout.server.ts"
+	]
+}
