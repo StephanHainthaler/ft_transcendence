@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { Alert, AlertDescription } from "$lib/components/ui/alert";
+  import * as Alert from "$lib/components/ui/alert";
   import Button from "$lib/components/ui/button/button.svelte";
+  import { CircleAlertIcon } from "@lucide/svelte";
 
   // see https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
   // https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
 
-  let errorMessage = $state("");
+  let errorMessage: Error | null = $state(null);
 
   function generateState() {
     return crypto.randomUUID();
@@ -24,9 +25,8 @@
 
       window.location.href = oauthUrl;
     } catch (e: any) {
-      const error = new Error(`OAuth Failed: ${e.message || e}`)
-      console.error(error);
-      throw error;
+      errorMessage = new Error(`OAuth Failed: ${e.message || e}`)
+      console.error(errorMessage);
     }
   }
 
@@ -52,53 +52,24 @@
     try {
       await GithubRedirect(info);
     } catch (e: any) {
-      const error = new Error(`GH Redirect Failed: ${e.message || e}`)
-      console.error(error);
-      throw error;
+      errorMessage = new Error(`GH Redirect Failed: ${e.message || e}`)
+      console.error(errorMessage);
     }
 
   };
 </script>
 
-<script module lang="ts">
-  import { goto } from "$app/navigation";
-  import { client } from "$lib/api";
-
-  // (3) function will be called /oauth-callback
-  // It will extract the code and state out of redirect_uri
-  export async function handleOAuthCallback() {
-    try {
-    const params = new URLSearchParams(window.location.search); // url looks like this after redirect_uri: http://localhost:8080/oauth-callback/?code=secretcode&state=abc
-
-    const code = params.get("code");
-    const state_ret = params.get("state");
-    const state = sessionStorage.getItem("oauth_state");
-
-    if (!state_ret || state_ret !== state) {
-      throw new Error("Error. CSRF validation failed. A third party might have created the request. Please try again.");
-    }
-
-    if (!code) { // check if code was sent back - need to exchange this code for an access_token 
-      throw new Error("Error. OAuth code was not returned.");
-    }
-
-    sessionStorage.removeItem("oauth_state");
-
-    // (4) send to backend to make POST request to endpoint, which then exchanges the GH code for an access_token `https://github.com/login/oauth/access_token`;
-      await client.oauth({ code: code });
-    } catch (e: any) {
-      const error = new Error(`OAuth Failed: ${e.message || e}`)
-      console.error(error);
-      //client.logout();
-      throw error;
-    }
-    goto("/"); 
-  }
-
-</script>
-
 <form onsubmit={handleOAuthRequest}>
-  <button type="submit" class="w-full bg-blue-500 text-white py-2">
+  <Button type="submit" class="w-full bg-blue-500 text-white py-2">
     OAuth with GitHub
-  </button>
+  </Button>
+  {#if errorMessage}
+  <Alert.Root variant='destructive'>
+    <CircleAlertIcon />
+    <Alert.Title>Something went wrong</Alert.Title>
+    <Alert.Description>
+      <p>{errorMessage.message}</p>
+    </Alert.Description>
+  </Alert.Root>
+  {/if}
 </form>
