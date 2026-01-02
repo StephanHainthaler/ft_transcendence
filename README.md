@@ -38,6 +38,9 @@ Full-stack development but also team organization, project management and establ
 | `-`                  | Backend Framework         | Svelte          | everyone       | Minor | 1        | 🚧     |
 | `-`                  | Frontend Framework        | Fastify         | everyone       | Minor | 1        | 🚧     |
 | `-`                  | User Interaction          |                 | ?              | Major | 2        | 🚧     |
+| **Accessibility**    |                           |                 |                |       |          |        |
+| `-`                  | Language Support          |                 | khuk           | Minor |  1       | 🚧     |
+| `-`                  | Browser compatility       |                 | -              | Minor |  1       | 🚧     |
 | **User Management**  |                           |                 |                | _2_   | _4_      |        |
 | `-`                  | Standard user management  |                 | vvobis         | Major |  2       | 🚧     |
 | `-`                  | Remote authentication     |                 | pgober         | Major | 2        | 🚧     |
@@ -48,10 +51,6 @@ Full-stack development but also team organization, project management and establ
 | `-`                  | JWT and 2FA               |                 | vvobis & juitz | Major |  2       | 🚧     |
 | **DevOps**           |                           |                 |                | _1_   | _2_      |        |
 | `-`                  | Micro services            |                 | everyone       | Major |  _2_     | 🚧     |
-| **Accessibility**    |                           |                 |                | _1_   | _2.5_    |        |
-| `-`                  | Language Support          |                 | khuk           | Minor |  1       | 🚧     |
-| `-`                  | Accessibility visual      |                 | khuk           | Minor |  1       | 🚧     |
-| `-`                  | Exp. browser comp.        |                 | -              | Minor |  1       | 🚧     |
 | **Server-Side Pong** |                           |                 |                | _1_   | _2_      |        |
 | `-`                  | Run on server             |                 | vvobis         | Major |  2       | 🚧     |
 | **TOTAL**            |                           |                 |                | _9.5_ | _20?_    |        |
