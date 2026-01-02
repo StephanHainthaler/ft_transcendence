@@ -32,28 +32,28 @@ Full-stack development but also team organization, project management and establ
 |  ❌     | Cancelled                      |
 
 
-| Module               | Sub Module                | Framework       | Assignee       | Type  | Points   | Status |
-| :---                 | :---                      |  :---           | :---           | :---  | :---     | :---   |
-| **Web**              |                           |                 |                |       | _4_      |        |
-| `-`                  | Backend Framework         | Svelte          | everyone       | Minor | 1        | 🚧     |
-| `-`                  | Frontend Framework        | Fastify         | everyone       | Minor | 1        | 🚧     |
-| `-`                  | User Interaction          |                 |                | Major | 2        | 🚧     |
-| **Accessibility**    |                           |                 |                |       |          |        |
-| `-`                  | Language Support          |                 | khuk           | Minor |  1       | 🚧     |
-| `-`                  | Browser compatility       |                 | -              | Minor |  1       | 🚧     |
-| **User Management**  |                           |                 |                | _2_   | _4_      |        |
-| `-`                  | Standard user management  |                 | vvobis         | Major |  2       | 🚧     |
-| `-`                  | Remote authentication     |                 | pgober         | Major | 2        | 🚧     |
-| **AI-Algo**          |                           |                 |                | _1.5_ | _2 + 1?_ |        |
-| `-`                  | AI Opponent               |                 | pgober         | Major |  2       | ✅     |
-| `-`                  |  Game stats               |                 | khuk           | Minor |  1       | 🚧     |
-| **Cybersecurity**    |                           |                 |                | _1_   | _2_      |        |
-| `-`                  | JWT and 2FA               |                 | vvobis & juitz | Major |  2       | 🚧     |
-| **DevOps**           |                           |                 |                | _1_   | _2_      |        |
-| `-`                  | Micro services            |                 | everyone       | Major |  _2_     | 🚧     |
-| **Server-Side Pong** |                           |                 |                | _1_   | _2_      |        |
-| `-`                  | Run on server             |                 | vvobis         | Major |  2       | 🚧     |
-| **TOTAL**            |                           |                 |                | _9.5_ | _20?_    |        |
+| Module               | Sub Module                | Framework          | Assignee       | Type  | Points   | Status  |
+| :---                 | :---                      |  :---              | :---           | :---  | :---     | :---    |
+| **Web**              |                           |                    |                |       | _4_      |         |
+| `-`                  | Backend Framework         | Svelte             | everyone       | Minor | 1        | 🚧     |
+| `-`                  | Frontend Framework        | Fastify            | everyone       | Minor | 1        | 🚧     |
+| `-`                  | User Interaction          |                    |                | Major | 2        | 🚧     |
+| **Accessibility**    |                           |                    |                |       |          |         |
+| `-`                  | Language Support          |                    | khuk           | Minor |  1       | 🚧     |
+| `-`                  | Browser compatility       |                    | -              | Minor |  1       | 🚧     |
+| **User Management**  |                           |                    |                | _2_   | _4_      |         |
+| `-`                  | Standard user management  |                    | vvobis         | Major |  2       | 🚧     |
+| `-`                  | Game stats                |                    | khuk           | Minor |  1       | 🚧     |
+| `-`                  | Remote authentication     | OAuth 2.0 (GitHub) | pgober         | Minor |  1       | ✅     |
+| `-`                  | JWT and 2FA               |                    | vvobis & juitz | Major |  2       | 🚧     |
+| **AI-Algo**          |                           |                    |                | _1.5_ | _2 + 1?_ |         |
+| `-`                  | AI Opponent               |                    | pgober         | Major |  2       | 🚧     |
+| **Gaming **          |                           |                    |                | _1_   | _2_      |         |
+| **DevOps**           |                           |                    |                | _1_   | _2_      |         |
+| `-`                  | Micro services            |                    | everyone       | Major |  _2_     | 🚧     |
+| **Server-Side Pong** |                           |                    |                | _1_   | _2_      |         |
+| `-`                  | Run on server             |                    | vvobis         | Major |  2       | 🚧     |
+| **TOTAL**            |                           |                    |                | _9.5_ | _20?_    |         |
 
 #### Reasoning
 
