@@ -20,67 +20,64 @@ Full-stack development but also team organization, project management and establ
 | pgober     | Developer                                   |
 | juitz      | Developer                                   |
 
-### Modules and key features
+## Modules and key features
 
-#### Legend
+| **Abbreviation**     | **Meaning**                  |
+|:----------           |:------------------           |
+| everyone             | developed by all members     |
+|  ✅                 | Done                         |
+|  🚧                 | In progress                  |
+|  ❌                 | Cancelled                    |
 
-| **Abbreviation**     | **Meaning**       |
-|:----------|:-----------------------------|
-| everyone  | developed by all members     |
-|  ✅     | Done                           |
-|  🚧     | In progress                    |
-|  ❌     | Cancelled                      |
+| **Module**           | **Sub Module**            |**Framework / Info**| **Assignee**    | **Type**| **Points** | **Status** |
+| :---                 | :---                      |  :---              | :---            | :---    | :---       | :---       |
+| **Web**              |                           |                    |                 |         |            |            |
+| `-`                  | Backend Framework         | Svelte             | everyone        | Minor   | 1          | 🚧        |
+| `-`                  | Frontend Framework        | Fastify            | everyone        | Minor   | 1          | 🚧        |
+| `-`                  | User Interaction          |                    |                 | Major   | 2          | 🚧        |
+| **Accessibility**    |                           |                    |                 |         |            |            |
+| `-`                  | Language Support          |                    | khuk            | Minor   | 1          | 🚧        |
+| `-`                  | Browser compatility       |                    | -               | Minor   | 1          | 🚧        |
+| **User Management**  |                           |                    |                 |         |            |            |
+| `-`                  | Standard user management  |                    | vvobis          | Major   | 2          | 🚧        |
+| `-`                  | Game stats                |                    | khuk            | Minor   | 1          | 🚧        |
+| `-`                  | Remote authentication     | OAuth 2.0 (GitHub) | pgober          | Minor   | 1          | ✅        |
+| `-`                  | JWT and 2FA               |                    | vvobis & juitz  | Major   | 2          | 🚧        |
+|**AI-Algorithm**      |                           |                    |                 |         |            |            |
+| `-`                  | AI Opponent               |                    | pgober          | Major   | 2          | 🚧        |
+| **Gaming**           |                           |                    |                 |         |            |            |
+| `-`                  | Web-based game            | Pong               | shainth & juitz | Major   | 2          | 🚧        |
+| `-`                  | Tournament system         |                    |                 | Minor   | 1          | 🚧        |
+| **DevOps**           |                           |                    |                 |         |            |            |
+| `-`                  | Backend as microservices  |                    | everyone        | Major   | 2          | 🚧        |
+| **Modules of Choice**|                           |                    |                 |         |            |            |
+| `-`                  | Run on server             |                    | vvobis          | Major   | 2          | 🚧        |
+| **TOTAL**            |                           |                    |                 |         | _20_       |            |
 
+### Module Reasoning
 
-| Module               | Sub Module                | Framework          | Assignee       | Type  | Points   | Status  |
-| :---                 | :---                      |  :---              | :---           | :---  | :---     | :---    |
-| **Web**              |                           |                    |                |       | _4_      |         |
-| `-`                  | Backend Framework         | Svelte             | everyone       | Minor | 1        | 🚧     |
-| `-`                  | Frontend Framework        | Fastify            | everyone       | Minor | 1        | 🚧     |
-| `-`                  | User Interaction          |                    |                | Major | 2        | 🚧     |
-| **Accessibility**    |                           |                    |                |       |          |         |
-| `-`                  | Language Support          |                    | khuk           | Minor |  1       | 🚧     |
-| `-`                  | Browser compatility       |                    | -              | Minor |  1       | 🚧     |
-| **User Management**  |                           |                    |                | _2_   | _4_      |         |
-| `-`                  | Standard user management  |                    | vvobis         | Major |  2       | 🚧     |
-| `-`                  | Game stats                |                    | khuk           | Minor |  1       | 🚧     |
-| `-`                  | Remote authentication     | OAuth 2.0 (GitHub) | pgober         | Minor |  1       | ✅     |
-| `-`                  | JWT and 2FA               |                    | vvobis & juitz | Major |  2       | 🚧     |
-| **AI-Algo**          |                           |                    |                | _1.5_ | _2 + 1?_ |         |
-| `-`                  | AI Opponent               |                    | pgober         | Major |  2       | 🚧     |
-| **Gaming **          |                           |                    |                | _1_   | _2_      |         |
-| **DevOps**           |                           |                    |                | _1_   | _2_      |         |
-| `-`                  | Micro services            |                    | everyone       | Major |  _2_     | 🚧     |
-| **Server-Side Pong** |                           |                    |                | _1_   | _2_      |         |
-| `-`                  | Run on server             |                    | vvobis         | Major |  2       | 🚧     |
-| **TOTAL**            |                           |                    |                | _9.5_ | _20?_    |         |
-
-#### Reasoning
-
-- web
+#### Web
     - Front and backend module just makes our lives easier
     - Database is basically mandatory
     - Blockchain too much of a hastle to learn (i think)
-- user
+#### Accesibility
+    - We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :)
+    - Visually imparies access. could be not too complicated, seems like simple frontend stuff, might be much though for 1 point
+#### User Management
     - Both auth and user management work well with database and backend module, and also cover some of securtiy part from mandatory
-- game
+    - JWT and 2FA again work well with mandatory auth, user management and remote auth
+#### AI Algorithm
+    - Ai Opponent maybe interesting and could be combined well with the general game dev
+    - Gamestats seems not too complicated but mayeb to much for 1 point
+#### Gaming
     - Remote players works well with server side pong
     - Customization could be fairly easy, but maybe annoying as well
     - Live chat seems very complicated, but also very interesting
     - NOTE: Game might be best to be done by one person, except live chat maybe
-- ai
-    - Ai Opponent maybe interesting and could be combined well with the general game dev
-    - Gamestats seems not too complicated but mayeb to much for 1 point
-- security
-    - JWT and 2FA again work well with mandatory auth, user management and remote auth
-    - Other modules too much i think
-- devops
+#### DevOps
     - Microservices seems like a natural way to work, especially as a team (work on one module in one service)
-    - Other modules too much i think
-- accesibility
-    - We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :)
-    - Visually imparies access. could be not too complicated, seems like simple frontend stuff, might be much though for 1 point
-- server side
+    - Other modules too much
+#### Modules of Choice - Server side
     - Running on server can protect from cheating/hacks, makes remote playing easier, seems natural
 
 
