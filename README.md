@@ -107,6 +107,12 @@ make install
 
 to sync installed dependencies, in case anybody added new ones.
 
+#### Dependencies
+- vite
+- tailwindcss
+- fastify
+- etc...
+
 ### Compilation and Execution
 
 While developing, the command
@@ -158,18 +164,6 @@ Workflow:
 - everybody pulls from main to sync new feature
 - start from top
 
-
-
-
-
-
-#### Dependencies
-Full list of our dependencies to keep track (we probably dont want to lose ueberblick)
-
-- vite
-- tailwindcss
-- fastify
-- etc...
 
 ### Structure
 
