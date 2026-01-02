@@ -1,10 +1,91 @@
-# ft_transcendence
+_This project has been created as part
+of the 42 curriculum by vvobis, shaintha, khuk, pgober, juitz._
 
 ## Description
 
-ft_transcendence ecole42 final project
+This project is called ft_transcendence and is the final projectof Coding School 42. 
 
-## Usage
+The goal of this project is to create a real-world web application as a team that can move in many directions, depending on the modules you choose and the choices you make.
+
+We decided on a web-application where you can play Pong. For further information on the modules we implemented, see section "Modules" below.
+
+But the project is also about team organization, project management and establishing of roles within the team.
+
+For our team, the roles were distributed as follows:
+
+- vvobis: Product Owner / Technical Lead / Developer
+- shaintha Scrum Master / Developer
+- khuk, pgober, juitz: Developers
+
+
+### Modules and key features
+
+#### Legend
+
+| Short     | Meaning                                   |
+|:----------|:------------------------------------------|
+| everyone  | used by all members, can be dev by one    |
+|   ?       | maybe                                     |
+| **Status:** |
+|  - ✅     | Done                                      |
+|  - 🚧     | In progress                               |
+|  - ❌     | Cancelled                                 |
+
+
+| Module| Sub Module | Assignee | Type | Points |  Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Web** | | | _2_ | _4_ | |
+| `-` | Backend Framework | everyone | Major | 2 | 🚧 |
+| `-` | Frontend Framework | everyone | Minor | 2 | 🚧 |
+| `-` | Database | everyone | Minor | 2 | 🚧 |
+| **User Management** |  |  | _2_ | _4_ |  |
+| `-` | Standard user management | Victor | Major |  2 |  🚧 |
+| `-` | Remote authentication | Pia |  Major | 2 | 🚧 |
+| **AI-Algo** | | | _1.5_ | _2 + 1?_ | |
+| `-` | AI Opponent | Pia | Major |  2 | ✅ |
+| `-` | Game stats | Katya | Minor |  1 | 🚧 |
+| **Cybersecurity** | | | _1_ | _2_ | |
+| `-` | JWT and 2FA | Victor and Julian| Major |  2 |🚧 |
+| **DevOps** | | | _1_ | _2_ | |
+| `-` | Micro services | everyone | Major | 2 | 🚧 |
+| **Accessibility** | | | _1_ | _2.5_ | |
+| `-` | Language Support | Katya | Minor |  1 | 🚧 |
+| `-` | Accessibility visual | Katya | Minor |  1 | 🚧 |
+| `-` | Exp. browser comp. | - | Minor |  1 | 🚧 |
+| **Server-Side Pong** | | | _1_ | _2_ | |
+| `-` | Run on server | Victor | Major |  2 | 🚧 |
+| **TOTAL** | | | _9.5_ | _20?_ | |
+
+#### Reasoning
+
+- web
+    - Front and backend module just makes our lives easier
+    - Database is basically mandatory
+    - Blockchain too much of a hastle to learn (i think)
+- user
+    - Both auth and user management work well with database and backend module, and also cover some of securtiy part from mandatory
+- game
+    - Remote players works well with server side pong
+    - Customization could be fairly easy, but maybe annoying as well
+    - Live chat seems very complicated, but also very interesting
+    - NOTE: Game might be best to be done by one person, except live chat maybe
+- ai
+    - Ai Opponent maybe interesting and could be combined well with the general game dev
+    - Gamestats seems not too complicated but mayeb to much for 1 point
+- security
+    - JWT and 2FA again work well with mandatory auth, user management and remote auth
+    - Other modules too much i think
+- devops
+    - Microservices seems like a natural way to work, especially as a team (work on one module in one service)
+    - Other modules too much i think
+- accesibility
+    - We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :)
+    - Visually imparies access. could be not too complicated, seems like simple frontend stuff, might be much though for 1 point
+- server side
+    - Running on server can protect from cheating/hacks, makes remote playing easier, seems natural
+
+
+## Instructions
 
 ### Setup
 
@@ -36,9 +117,9 @@ make install
 
 to sync installed dependencies, in case anybody added new ones.
 
-### Developpment
+### Development
 
-While developping, the command
+While developing, the command
 
 ```sh
 make dev
@@ -87,97 +168,9 @@ Possible Workflow:
 - everybody pulls from main to sync new feature
 - start from top
 
-### Modules
-
-#### Mandatory
-
-- Basic Web Prerequisites 
-    - Typescript
-    - Docker
-    - Firefox
-    - SPA
-    - no errors, warnings etc.
-- Game
-    - Pong 1v1
-    - Tournament
-    - registration (for tournament)
-    - matchmaking system
-    - same rules for all
-- Security
-    - passwords hashed
-    - SQL injections / XSS attacks
-    - https / wss
-    - input validation
-    - protected api (JWT or similar)
-    - .env not stored in repo
-
-#### Module List
-
-NEEDED: 14pts mandatory + min 5 bonus
-
-##### Legend
-
-| Short     | Meaning                                   |
-|:----------|:------------------------------------------|
-| everyone  | used by all members, can be dev by one    |
-|   ?       | maybe                                     |
-| **Status:** |
-|  - ✅     | Done                                      |
-|  - 🚧     | In progress                               |
-|  - ❌     | Cancelled                                 |
 
 
-| Module| Sub Module | Assignee | Type | Points |  Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Web** | | | _2_ | _4_ | |
-| `-` | Backend Framework | everyone | Major | 2 | 🚧 |
-| `-` | Frontend Framework | everyone | Minor | 2 | 🚧 |
-| `-` | Database | everyone | Minor | 2 | 🚧 |
-| **User Management** |  |  | _2_ | _4_ |  |
-| `-` | Standard user management | Victor | Major |  2 |  🚧 |
-| `-` | Remote authentication | Victor and Pia |  Major | 2 | 🚧 |
-| **AI-Algo** | | | _1.5_ | _2 + 1?_ | |
-| `-` | AI Opponent | Pia | Major |  2 | ✅ |
-| `-` | Game stats | Katya | Minor |  1 | 🚧 |
-| **Cybersecurity** | | | _1_ | _2_ | |
-| `-` | JWT and 2FA | Victor and Julian| Major |  2 |🚧 |
-| **DevOps** | | | _1_ | _2_ | |
-| `-` | Micro services | everyone | Major | 2 | 🚧 |
-| **Accessibility** | | | _1_ | _2.5_ | |
-| `-` | Language Support | Katya | Minor |  1 | 🚧 |
-| `-` | Accessibility visual | Katya | Minor |  1 | 🚧 |
-| `-` | Exp. browser comp. | - | Minor |  1 | 🚧 |
-| **Server-Side Pong** | | | _1_ | _2_ | |
-| `-` | Run on server | Victor | Major |  2 | 🚧 |
-| **TOTAL** | | | _9.5_ | _20?_ | |
 
-#### Reasoning
-
-- web
-    - Front and backend module just makes our lives easier
-    - Database is basically mandatory
-    - Blockchain too much of a hastle to learn (i think)
-- user
-    - Both auth and user management work well with database and backend module, and also cover some of securtiy part from mandatory
-- game
-    - Remote players works well with server side pong
-    - Customization could be fairly easy, but maybe annoying as well
-    - Live chat seems very complicated, but also very interesting
-    - NOTE: Game might be best to be done by one person, except live chat maybe
-- ai
-    - Ai Opponent maybe interesting and could be combined well with the general game dev
-    - Gamestats seems not too complicated but mayeb to much for 1 point
-- security
-    - JWT and 2FA again work well with mandatory auth, user management and remote auth
-    - Other modules too much i think
-- devops
-    - Microservices seems like a natural way to work, especially as a team (work on one module in one service)
-    - Other modules too much i think
-- accesibility
-    - We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :)
-    - Visually imparies access. could be not too complicated, seems like simple frontend stuff, might be much though for 1 point
-- server side
-    - Running on server can protect from cheating/hacks, makes remote playing easier, seems natural
 
 
 #### Dependencies
@@ -232,3 +225,6 @@ ft_transcendence/
 - separated client and server code
 - services grouped in one dir, frontend separate
 - shared types/interfaces between server and client modules
+
+
+## Resources
