@@ -5,56 +5,56 @@ of the 42 curriculum by vvobis, shaintha, khuk, pgober, juitz._
 
 This project is called ft_transcendence and is the final projectof Coding School 42. 
 
-The goal of this project is to create a real-world web application as a team that can move in many directions, depending on the modules you choose and the choices you make.
+The goal of this project is to create a real-world web application as a team that can move in many directions, depending on the modules the team chooses.
 
 We decided on a web-application where you can play Pong. For further information on the modules we implemented, see section "Modules" below.
+Full-stack development but also team organization, project management and establishing of roles within the team are some of the key objectives of this project.
 
-But the project is also about team organization, project management and establishing of roles within the team.
-
-For our team, the roles were distributed as follows:
-
-- vvobis: Product Owner / Technical Lead / Developer
-- shaintha Scrum Master / Developer
-- khuk, pgober, juitz: Developers
-
+### Roles
+  
+| **Person** | **Role**                                    |
+|:-----------|:--------------------------------------------|
+| vvobis     | Product Owner / Technical Lead / Developer  |
+| shaintha   | Scrum Master / Developer                    |
+| khuk       | Developer                                   |
+| pgober     | Developer                                   |
+| juitz      | Developer                                   |
 
 ### Modules and key features
 
 #### Legend
 
-| Short     | Meaning                                   |
-|:----------|:------------------------------------------|
-| everyone  | used by all members, can be dev by one    |
-|   ?       | maybe                                     |
-| **Status:** |
-|  - ✅     | Done                                      |
-|  - 🚧     | In progress                               |
-|  - ❌     | Cancelled                                 |
+| **Abbreviation**     | **Meaning**       |
+|:----------|:-----------------------------|
+| everyone  | developed by all members     |
+|  ✅     | Done                           |
+|  🚧     | In progress                    |
+|  ❌     | Cancelled                      |
 
 
-| Module| Sub Module | Assignee | Type | Points |  Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Web** | | | _2_ | _4_ | |
-| `-` | Backend Framework | everyone | Major | 2 | 🚧 |
-| `-` | Frontend Framework | everyone | Minor | 2 | 🚧 |
-| `-` | Database | everyone | Minor | 2 | 🚧 |
-| **User Management** |  |  | _2_ | _4_ |  |
-| `-` | Standard user management | Victor | Major |  2 |  🚧 |
-| `-` | Remote authentication | Pia |  Major | 2 | 🚧 |
-| **AI-Algo** | | | _1.5_ | _2 + 1?_ | |
-| `-` | AI Opponent | Pia | Major |  2 | ✅ |
-| `-` | Game stats | Katya | Minor |  1 | 🚧 |
-| **Cybersecurity** | | | _1_ | _2_ | |
-| `-` | JWT and 2FA | Victor and Julian| Major |  2 |🚧 |
-| **DevOps** | | | _1_ | _2_ | |
-| `-` | Micro services | everyone | Major | 2 | 🚧 |
-| **Accessibility** | | | _1_ | _2.5_ | |
-| `-` | Language Support | Katya | Minor |  1 | 🚧 |
-| `-` | Accessibility visual | Katya | Minor |  1 | 🚧 |
-| `-` | Exp. browser comp. | - | Minor |  1 | 🚧 |
-| **Server-Side Pong** | | | _1_ | _2_ | |
-| `-` | Run on server | Victor | Major |  2 | 🚧 |
-| **TOTAL** | | | _9.5_ | _20?_ | |
+| Module               | Sub Module                | Assignee       | Type  | Points   | Status |
+| :---                 | :---                      | :---           | :---  | :---     | :---   |
+| **Web**              |                           |                | _2_      | _4_   |        |
+| `-`                  | Backend Framework         | everyone       | Major | 2        | 🚧     |
+| `-`                  | Frontend Framework        | everyone       | Minor | 2        | 🚧     |
+| `-`                  | Database                  | everyone       | Minor | 2        | 🚧     |
+| **User Management**  |                           |                | _2_   | _4_      |        |
+| `-`                  | Standard user management  | vvobis         | Major |  2       | 🚧     |
+| `-`                  | Remote authentication     | pgober         | Major | 2        | 🚧     |
+| **AI-Algo**          |                           |                | _1.5_ | _2 + 1?_ |        |
+| `-`                  | AI Opponent               | pgober         | Major |  2       | ✅     |
+| `-`                  |  Game stats               | khuk           | Minor |  1       | 🚧     |
+| **Cybersecurity**    |                           |                | _1_   | _2_      |        |
+| `-`                  | JWT and 2FA               | vvobis & juitz | Major |  2       | 🚧     |
+| **DevOps**           |                           |                | _1_   | _2_      |        |
+| `-`                  | Micro services            | everyone       | Major |  _2_     | 🚧     |
+| **Accessibility**    |                           |                | _1_   | _2.5_    |        |
+| `-`                  | Language Support          | khuk           | Minor |  1       | 🚧     |
+| `-`                  | Accessibility visual      | khuk           | Minor |  1       | 🚧     |
+| `-`                  | Exp. browser comp.        | -              | Minor |  1       | 🚧     |
+| **Server-Side Pong** |                           |                | _1_   | _2_      |        |
+| `-`                  | Run on server             | vvobis         | Major |  2       | 🚧     |
+| **TOTAL**            |                           |                | _9.5_ | _20?_    |        |
 
 #### Reasoning
 
