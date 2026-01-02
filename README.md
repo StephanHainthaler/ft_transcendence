@@ -33,11 +33,11 @@ Full-stack development but also team organization, project management and establ
 
 
 | Module               | Sub Module                | Framework       | Assignee       | Type  | Points   | Status |
-| :---                 | :---                      |                 | :---           | :---  | :---     | :---   |
+| :---                 | :---                      |  :---           | :---           | :---  | :---     | :---   |
 | **Web**              |                           |                 |                |       | _4_      |        |
 | `-`                  | Backend Framework         | Svelte          | everyone       | Minor | 1        | 🚧     |
 | `-`                  | Frontend Framework        | Fastify         | everyone       | Minor | 1        | 🚧     |
-| `-`                  | User Interaction          |                 | ?              | Major | 2        | 🚧     |
+| `-`                  | User Interaction          |                 |                | Major | 2        | 🚧     |
 | **Accessibility**    |                           |                 |                |       |          |        |
 | `-`                  | Language Support          |                 | khuk           | Minor |  1       | 🚧     |
 | `-`                  | Browser compatility       |                 | -              | Minor |  1       | 🚧     |
