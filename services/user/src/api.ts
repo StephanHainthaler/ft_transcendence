@@ -2,7 +2,7 @@ import { User } from "@shared/user";
 
 const USER_API = process.env.USER_API_URL!;
 
-export async function createUser(user: User | Partial<User>): Promise<{ user: User}> {
+export async function createUser(user: User | Partial<User>): Promise<{ user: User }> {
   const response = await fetch(`${USER_API}/new`, {
     method: 'post',
     headers: {

@@ -72,7 +72,7 @@ export function userRoutes(fastify: FastifyInstance) {
       const result = db
         .from('users')
         .insert(user)
-        .select('id')
+        .select('*')
         .single();
 
       if (!result) throw new ApiError({ message: "Failed to insert User", code: 400 });
