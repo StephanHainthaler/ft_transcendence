@@ -1,5 +1,4 @@
 *node_modules
 *.nfs*
 dist
-*.db
 *package-lock.json

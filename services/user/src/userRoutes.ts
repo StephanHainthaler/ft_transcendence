@@ -58,7 +58,7 @@ export function userRoutes(fastify: FastifyInstance) {
 
   fastify.post<{
     Reply: {
-      200: { success: true, user: User },
+      200: { success: true, user: Partial<User> },
       '4xx': { success: false, message: string },
       500: { success: false, message: string }
     },

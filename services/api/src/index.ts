@@ -13,7 +13,8 @@ const publicRoutes = [
   '/auth/login',
   '/auth/refresh',
   '/auth/sign-up',
-  '/game',
+  '/auth/github-oauth',
+  '/game'
 ];
 
 async function startApiGateway() {
