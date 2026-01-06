@@ -85,10 +85,8 @@ export async function verifyUserCredentials({
   if (!passwd) throw new Error("Missing password");
 
   const user = getAuthUser({ username, email });
-  console.log('PASSWD IN VERIFY', passwd);
 
   if (!user) throw new Error("Invalid credentials");
-  console.log("user: ", user);
   if (!await argon2.verify(user.passwd, passwd)) throw new Error("Invalid user password");
 
   return user;
@@ -106,7 +104,6 @@ export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ use
   const { user: newUser } = await createUser(user);
   authUser.user_id = newUser.id;
 
-  console.log(newUser)
 
   if (!authUser.passwd) throw new Error("Auth user is missing password");
   authUser.passwd = await hashPassword(authUser.passwd);
@@ -137,15 +134,11 @@ export function createSession(user: AuthUser, secret: string): { accessToken: JW
     .select('*')
     .where(eq('auth_id', user.id))
     .single();
-  console.log("CURRENT_SESSION", currentSession);
 
   if (currentSession) {
-    console.log('updating current sesstion', session);
-    console.log('for token: ', refreshToken);
     db.from('sessions').update(session).where(eq('auth_id', user.id)).run();
   } else {
     const query = db.from('sessions').insert(session);
-    console.log(`QUERY: ${query.stringify().sql}`)
     const result = query.run();
     if (result.changes <= 0) {
       throw new Error('Database: token storage failed');
@@ -173,14 +166,9 @@ export function getSession({
 
     return session;
   } else if (token) {
-    console.log('send token: ', token);
     const tokenHash = hashRefreshToken(token);
-    console.log('tokenhash:', tokenHash);
     const sessionQuery = db.from('sessions').select('*').where(eq('token', tokenHash));
-    console.log(sessionQuery.stringify());
     const session = sessionQuery.single();
-    const allSession = db.from('sessions').select('*').all();
-    console.log('currentSessions: ', allSession);
     if (!session)
       throw new Error('No session for that user');
 

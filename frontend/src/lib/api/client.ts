@@ -184,7 +184,7 @@ export class ApiClient {
   async oauth(code: OAuthCallBackBody) {
     try {
       const authResponse = await oauthRequest(code); // this contains the access_token
-      
+
       this.auth = authResponse.auth;
 
       this.authStore.set(authResponse.auth)

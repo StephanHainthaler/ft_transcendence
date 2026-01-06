@@ -83,35 +83,34 @@ export async function loginRequest(
 export async function oauthRequest(
   info: OAuthCallBackBody,
 ): Promise<AuthResponseSuccess> {
+  if ((!info.code))
+    throw new Error("Missing OAuth Code!");
 
-    if ((!info.code))
-      throw new Error("Missing OAuth Code!");
+  const oauth: Request = new Request('/api/auth/github-oauth', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(info),
+  });
 
-    const oauth: Request = new Request('/api/auth/github-oauth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(info),
-    });
+  console.log("Code:");
+  console.log(info.code); // OK
 
-    console.log("Code:");
-    console.log(info.code); // OK
+  const response = await fetch(oauth);
 
-    const response = await fetch(oauth);
+  if (!response.ok) {
+    throw new Error("OAuth token exchange failed");
+  }
 
-    if (!response.ok) {
-      throw new Error("OAuth token exchange failed");
-    }
+  const data: AuthResponseSuccess = await response.json();
 
-    const data: AuthResponseSuccess = await response.json();
+  console.log("Access token:");
+  console.log(data);
 
-    console.log("Access token:");
-    console.log(data);
+  if (!response.ok || !data.access_token) throw data;
 
-    if (!response.ok || !data.access_token) throw data;
-    
-    return data; // this contains the access_token
+  return data; // this contains the access_token
 }
 
 export async function logoutRequest(token: Writable<JWT | null>) {
