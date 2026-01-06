@@ -81,9 +81,10 @@ Then in the root of the project, run
 make install
 ```
 
-This will install all the dependencies we added to the project, which are described in the package.json file
+This will install all the dependencies we added to the project, which are described in the package.json file.
 
 npm is the Node.js Package Manager, and is the main utility to install and use javascript modules.
+
 When adding a package with
 
 ```sh
@@ -91,7 +92,8 @@ npm add package-xzy
 ```
 
 npm will modify the package.json and add the new dependency.
-This means, that after you pull from main branch after somebody merged a PR, you should rerun
+
+This means, that after you pull from the main branch after somebody merged a PR, you should rerun
 
 ```sh
 make install
@@ -117,10 +119,9 @@ or just
 make
 ```
 
-will run [vite](https://vite.dev/guide/), and serves files at **http://localhost:8080**;
-Vite is a utility that bundles and translates our TypeScript files into JavaScript files and serves them.
+will run [vite](https://vite.dev/guide/), which is a utility that bundles and translates our TypeScript files into JavaScript files and serves them. 
 
-This will also start the backend services in dev mode.
+It will serves files at **http://localhost:8080** and will also start the backend services in dev mode.
 
 For production builds, we will use
 
@@ -134,34 +135,34 @@ There is also a test feature
 ```sh
 make test
 ```
-which doesnt work perfectly right now and will need to be maintained/extendend as new services get added.
+which will need to be maintained/extendend as new services get added.
 
 ## Project Management & Team Collaboration
 
-Before a PR to main, test should have been written for the change. A change doesnt have to be a full module, might be just a part of a module or feature.
-Also, if a new module was started / submitted, it should have a corresponding service entry in the docker compose and docker file in the service dir.
-For env, maybe we just keep one the in this repo, and just dont put it into the intra repo when submitting.
+Before a PR to main, a test should have been written for the change. A change does not have to be a full module, might be just a part of a module or feature.
+Also, if a new module was started / submitted, it should have a corresponding service entry in the docker compose and docker file in the service directory.
 
 Workflow:
 - pull changes from main into current working branch after every commit/merge to main
-- run ```make install``` to sync deps
+- run ```make install``` to sync dependencies
 - run ```make test``` to check if all tests work after commit to main
-- run ```make prod``` to check the docker setup runs ( maybe we add some ```make prod-test``` with tests for the docker setup also)
-- work, work, work && write tests for changes
+- run ```make prod``` to check the docker setup runs
+- work & write tests for changes
 - when ready for PR, first run ```make test``` to run old and new tests
-- if all goes well, run ```make prod``` to see that all builds as expected (evtl. ```make prod-test``` if available)
-- push branch, create PR and describe changes
-- some other group member reviews the PR (can be requested with github feature)
-- PR gets merged, group is notified
+- if all goes well, run ```make prod``` to see that all builds as expected
+- push to the remote branch and create a PR with a description of the changes
+- some other group member reviews the PR (can be requested with GitHub feature)
+- the PR gets merged and the group is notified
 - everybody pulls from main to sync new feature
 - start from top
 
 
-### Structure
+## Structure
 
 Possible project structure:
 
 ```
+
 ft_transcendence/
 ├── env                             # env files
 │   └── ...
@@ -195,7 +196,7 @@ ft_transcendence/
 └── ...
 ```
 
-#### Pro's
+#### Reasoning:
 
 - simple
 - separated client and server code
@@ -204,3 +205,4 @@ ft_transcendence/
 
 
 ## Resources
+
