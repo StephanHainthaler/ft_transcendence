@@ -159,7 +159,7 @@ Workflow:
 
 ## Structure
 
-Possible project structure:
+Project structure:
 
 ```
 
@@ -168,30 +168,59 @@ ft_transcendence/
 │   └── ...
 ├── frontend                        # client / public code
 │   ├── src
-│   │   ├── routes
-│   │   │   └── ...
 │   │   ├── lib                     # client modules
-│   │   │   └── user                # user client module
-│   │   │       └── userClient.ts   # user api client
-│   │   └── ...
-│   ├── Dockerfile
-│   └── index.html
-├── scripts                         # scripts for tests usw.
-│   └── ...
+│   │   │   ├── api
+│   │   │   ├── assets
+│   │   │   ├── components
+│   │   │   |   ├── custom
+│   │   │   |   ├── error
+│   │   │   |   ├── forms
+│   │   │   |   ├── layout
+│   │   │   |   └── ui
+│   │   │   ├── game
+│   │   │   ├── hooks
+│   │   │   ├── tournament
+│   │   │   ├── types 
+│   │   │   ├── validation
+│   │   │   └── vdom
+│   │   ├── routes
+│   │   │   ├── auth
+│   │   │   |   └── oauth-callback
+│   │   │   ├── error
+│   │   │   ├── friends
+│   │   │   ├── game
+│   │   │   ├── health
+│   │   │   ├── pages
+│   │   │   ├── profile
+│   │   │   └── tournament
+│   └── static
+├── scripts                         # scripts for tests
 ├── services                        # server / private code
-│   ├── api                         # api service module
+│   ├── api                         # api service module with service-level docker file
 │   │   ├── src
-│   │   │   ├── user                # user server module
-│   │   │   │   └── userService.ts  # user service
-│   │   │   └── index.ts
-│   │   └── Dockerfile              # service-level docker file
+│   │   │   └── healthcheck
+│   ├── auth
+│   │   └── src
 │   ├── database                    # database module
-│   │   └── ...
-│   └── nginx                       # webserver
-│       └── ...
+│   ├── game
+│   │   └── src
+│   ├── game_stats
+│   │   ├── db
+│   │   ├── src
+│   │   └── tests
+│   ├── nginx                       # webserver
+│   ├── shared-server
+│   │   ├── error
+│   │   ├── jwt
+│   │   └── orm
+│   ├── user
+│   │   ├── src
+│   │   └── tests
 ├── shared                          # interfaces used in client and server modules
+│   ├── api
+│   ├── game
+│   ├── game_stats
 │   └── user
-│       └── interfaces.ts
 ├── docker-compose.yml              # compose starts the app in production mode
 └── ...
 ```
