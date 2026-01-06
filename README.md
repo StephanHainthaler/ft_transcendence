@@ -58,13 +58,7 @@ Full-stack development but also team organization, project management and establ
 
 #### Web
     - Blockchain too much of a hastle to learn (i think)
-
-#### Accesibility
-
-#### User Management
-
-#### AI Algorithm
-
+    
 #### Gaming
     - Remote players works well with server side pong
     - Customization could be fairly easy, but maybe annoying as well
@@ -74,8 +68,6 @@ Full-stack development but also team organization, project management and establ
 #### DevOps
     - Other modules too much
     
-#### Modules of Choice - Run on Server
-
 
 ## Instructions
 
