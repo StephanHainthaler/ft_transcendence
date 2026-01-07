@@ -2,6 +2,8 @@ import { Writable } from "@lib/types/writable";
 import type { AuthUserClient, Friendship, User } from "@shared/user";
 import { getAuth, loginRequest, logoutRequest, signupRequest, updateRequest } from "./auth";
 import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authRequest";
+import { fetchUserStats, fetchMatchHistory } from "@lib/api/gameStats";
+import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";
 import type { JWT } from "@shared/api";
 import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest } from "./user";
@@ -142,6 +144,14 @@ export class ApiClient {
   async getUsers(): Promise<User[]> {
     const response = await getUsers(this.accessToken);
     return response.users;
+  }
+
+  async getUserStats(userId: number, page: number = 1): Promise<UserStats | null> {
+    return await fetchUserStats(this.accessToken, userId);
+  }
+
+  async getMatchHistory(userId: number, page: number = 1): Promise<MatchHistoryEntry[] | []> {
+    return await fetchMatchHistory(this.accessToken, userId);
   }
 
   async getFriends(): Promise<{ friends: User[], friendships: Friendship[] }> {
