@@ -1,9 +1,8 @@
-_This project has been created as part
-of the 42 curriculum by vvobis, shaintha, khuk, pgober, juitz._
+_This project has been created as part of the 42 curriculum by vvobis, shaintha, khuk, pgober, juitz._
 
 ## Description
 
-This project is called ft_transcendence and is the final projectof Coding School 42. 
+This project is called ft_transcendence and is the final project of Coding School 42. 
 
 The goal of this project is to create a real-world web application as a team that can move in many directions, depending on the modules the team chooses.
 
@@ -73,7 +72,47 @@ Full-stack development but also team organization, project management and establ
 
 ### Setup & Installation
 
-First you need to install [nvm, node and npm](https://nodejs.org/en/download) for you OS.
+#### Setup
+
+First, you need to create an folder called "env" at the root of the repository. It must contain the following files (containing the following variables):
+
+##### .env.api
+- PORT
+- API_URL
+- USER_SERVICE_URL
+- AUTH_SERVICE_URL
+- GAME_STATS_SERVICE_URL
+- SERVER_PONG_URL
+
+##### .env.auth
+- DB_FILE_PATH
+- USER_API_URL
+- GITHUB_APP_CLIENT_ID
+- GITHUB_APP_CLIENT_SECRET 
+
+##### .env.development
+- VITE_API_URL
+- USER_API_URL
+- GAME_STATS_SERVICE_URL
+- VITE_SERVER_GAME_WS_URL
+
+##### .env.game
+- USER_URL
+
+##### .env.game_stats
+- HOST
+- PORT
+
+##### .env.user
+- DB_FILE_PATH
+- PORT
+- DATA_DIR
+- AVATAR_DIR
+
+
+
+#### Installation
+Then you need to install [nvm, node and npm](https://nodejs.org/en/download) for you OS.
 
 Then in the root of the project, run
 
@@ -183,20 +222,20 @@ ft_transcendence/
 │   │   │   ├── types 
 │   │   │   ├── validation
 │   │   │   └── vdom
-│   │   ├── routes
-│   │   │   ├── auth
-│   │   │   |   └── oauth-callback
-│   │   │   ├── error
-│   │   │   ├── friends
-│   │   │   ├── game
-│   │   │   ├── health
-│   │   │   ├── pages
-│   │   │   ├── profile
-│   │   │   └── tournament
+│   │   └── routes
+│   │       ├── auth
+│   │       |   └── oauth-callback
+│   │       ├── error
+│   │       ├── friends
+│   │       ├── game
+│   │       ├── health
+│   │       ├── pages
+│   │       ├── profile
+│   │       └── tournament
 │   └── static
 ├── scripts                         # scripts for tests
 ├── services                        # server / private code
-│   ├── api                         # api service module with service-level docker file
+│   └── api                         # api service module with service-level docker file
 │   │   ├── src
 │   │   │   └── healthcheck
 │   ├── auth
@@ -213,9 +252,9 @@ ft_transcendence/
 │   │   ├── error
 │   │   ├── jwt
 │   │   └── orm
-│   ├── user
-│   │   ├── src
-│   │   └── tests
+│   └── user
+│       ├── src
+│       └── tests
 ├── shared                          # interfaces used in client and server modules
 │   ├── api
 │   ├── game
