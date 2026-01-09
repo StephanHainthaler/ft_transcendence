@@ -11,8 +11,6 @@ export interface Game extends Record<string, string | number | undefined> {
   player2: number,
   score1: number,
   score2: number
-  date: string,
-  duration: number,
 }
 
 /* Junction table between users and played games */
@@ -31,4 +29,10 @@ export interface Friendship {
   user_from_id: number,
   user_to_id: number,
   status: 'pending' | 'accepted' | 'rejected',
+}
+
+export interface Avatar {
+  id: number,
+  user_id: number,
+  location: string
 }

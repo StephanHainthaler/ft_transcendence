@@ -27,16 +27,16 @@ function setupInMemoryDb() {
     const newDbInstance = new DB<Schema>();
     newDbInstance.open(':memory:');
 	newDbInstance.create([user_stats_table, match_history_table]);
-    
+
 	setDb(newDbInstance);
-    
-    newDbInstance.from('user_stats').insert({ 
-		user_id: USER_A, 
-		wins: 0, 
-		losses: 0, 
-		streak: 0, 
-		total_points: 0, 
-		highest_score: 0, 
+
+    newDbInstance.from('user_stats').insert({
+		user_id: USER_A,
+		wins: 0,
+		losses: 0,
+		streak: 0,
+		total_points: 0,
+		highest_score: 0,
 		rank: 1000 }).run();
     newDbInstance.from('user_stats').insert({ user_id: USER_B, wins: 0, losses: 0, streak: 0, total_points: 0, highest_score: 0, rank: 1000 }).run();
     newDbInstance.from('user_stats').insert({ user_id: USER_C, wins: 0, losses: 0, streak: 0, total_points: 0, highest_score: 0, rank: 1000 }).run();
@@ -58,7 +58,7 @@ describe('Game Stats Logic Tests', () => {
 	const matchData: MatchSubmissionData = {
 		player_one_id: USER_A,
 		player_two_id: USER_B,
-		winner_id: USER_A, 
+		winner_id: USER_A,
 		p1_score: 5,
 		p2_score: 3,
 		duration: 120,
@@ -89,7 +89,7 @@ describe('Game Stats Logic Tests', () => {
         const statsA = getUserStats(USER_A) as UserStats;
         const statsB = getUserStats(USER_B) as UserStats;
 		const history_A = getUserMatchHistory(USER_A, 1);
-		
+
 		// A: Winner (A)
 			assert.strictEqual(statsA.wins, 1, 'A: Wins should be 1');
             assert.strictEqual(statsA.losses, 0, 'A: Losses should be 0');
@@ -97,39 +97,39 @@ describe('Game Stats Logic Tests', () => {
             assert.strictEqual(statsA.rank, 1000 + 10, 'A: Rank should be 1010');
             assert.strictEqual(statsA.total_points, 5, 'A: Total points should match score');
             assert.strictEqual(statsA.highest_score, 5, 'A: Highest score should match score');
-			
+
 			// B: Looser (B)
             assert.strictEqual(statsB.wins, 0, 'B: Wins should be 0');
             assert.strictEqual(statsB.losses, 1, 'B: Losses should be 1');
             assert.strictEqual(statsB.streak, 0, 'B: Streak should be 0');
             assert.strictEqual(statsB.rank, 1000 - 5, 'B: Rank should be 995');
-			
+
 			// Match history A
 			assert.strictEqual(history_A.length, 1, 'History count should be 1');
             assert.strictEqual(history_A[0].winner_id, USER_A, 'History should record correct winner');
         });
-        
+
 		test('2. Should correctly update stats after a win followed by a loss', () => {
 			recordMatch(matchData);
-            recordMatch(MATCH_DATA_B_WINS); 
-            
+            recordMatch(MATCH_DATA_B_WINS);
+
             const statsA = getUserStats(USER_A) as UserStats;
             const statsB = getUserStats(USER_B) as UserStats;
-			
+
             assert.strictEqual(statsA.wins, 1, 'A: Total wins');
             assert.strictEqual(statsA.losses, 1, 'A: Total losses');
             assert.strictEqual(statsA.streak, 0, 'A: Streak must reset after loss');
             assert.strictEqual(statsA.rank, 1005, 'A: Rank should be 1005');
-			
+
             assert.strictEqual(statsB.wins, 1, 'B: Total wins');
             assert.strictEqual(statsB.losses, 1, 'B: Total losses');
             assert.strictEqual(statsB.streak, 1, 'B: Streak should be 1');
             assert.strictEqual(statsB.rank, 1005, 'B: Rank should be 1005');
 		});
-		
+
 		test('3. Should handle large scores and update highest_score', () => {
 			recordMatch(MATCH_DATA_HIGH_SCORE);
-			
+
 		const statsA = getUserStats(USER_A) as UserStats;
 
 		assert.strictEqual(statsA.highest_score, 100, 'A: Highest score updated to 100');
@@ -152,7 +152,7 @@ describe('Game Stats Logic Tests', () => {
 // 	const MATCH_DATA_A_WINS: MatchSubmissionData = {
 // 		player_one_id: 101,
 // 		player_two_id: 102,
-// 		winner_id: 101, 
+// 		winner_id: 101,
 // 		p1_score: 5,
 // 		p2_score: 3,
 // 		duration: 120,
@@ -170,7 +170,7 @@ describe('Game Stats Logic Tests', () => {
 // 	const MATCH_DATA_C_WINS: MatchSubmissionData = {
 // 		player_one_id: USER_C,
 // 		player_two_id: USER_B,
-// 		winner_id: USER_C, 
+// 		winner_id: USER_C,
 // 		p1_score: 5,
 // 		p2_score: 2,
 // 		duration: 120,
@@ -199,7 +199,7 @@ describe('Game Stats Logic Tests', () => {
 //             }
 //             // Round 7: A vs B (This match should be on page 2 for B)
 // 			const MATCH_A_ID_2 = recordMatch(MATCH_DATA_A_WINS);
-			
+
 // 			const historyPage1B = getUserMatchHistory(USER_B, 1);
 //             const historyPage2B = getUserMatchHistory(USER_B, 2);
 
@@ -211,19 +211,19 @@ describe('Game Stats Logic Tests', () => {
 
 //         test('6. getLeaderboard should sort by rank and paginate', () => {
 //             // USER_A: 1010 Rank (win)
-//             recordMatch(MATCH_DATA_A_WINS); 
+//             recordMatch(MATCH_DATA_A_WINS);
 //             // USER_C: 995 Rank (loss)
 //             recordMatch(MATCH_DATA_HIGH_SCORE);
 
 //             // USER_A (1010 + 10 = 1020 Rank)
 //             // USER_B (995 Rank)
 //             // USER_C (995 Rank, but more points)
-            
+
 //             const leaderboard = getLeaderboard(1);
 
 //             // Assume that USERS_PER_PAGE = 5
 //             assert.strictEqual(leaderboard.length, 3, 'Leaderboard should contain 3 users');
-            
+
 //             // Check sorting: A should be first (highest rank)
 //             assert.strictEqual(leaderboard[0].user_id, USER_A, 'User A should be ranked #1');
 
@@ -233,7 +233,7 @@ describe('Game Stats Logic Tests', () => {
 
 //         test('7. getMatchStats should retrieve single match details', () => {
 //             recordMatch(MATCH_DATA_A_WINS);
-            
+
 //             const matchHistory = getUserMatchHistory(USER_A, 1);
 //             const matchId = matchHistory[0].match_id;
 
@@ -242,4 +242,4 @@ describe('Game Stats Logic Tests', () => {
 //             assert.ok(matchDetails !== null, 'Match details should be found');
 //             assert.strictEqual(matchDetails?.winner_id, USER_A, 'Retrieved winner ID must be correct');
 //         });
-//     }); 
+//     });

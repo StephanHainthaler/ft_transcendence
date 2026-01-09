@@ -1,9 +1,10 @@
-import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [tailwindcss()],
+	plugins: [tailwindcss(), sveltekit()],
   envDir: '../',
   resolve: {
     alias: {
@@ -24,7 +25,8 @@ export default defineConfig({
         target: 'http://localhost:3000/',
         rewrite: (path) => path.replace(/^\/api/, ''),
         changeOrigin: true,
-      }
+        ws: true,
+      },
     }
   },
   build: {

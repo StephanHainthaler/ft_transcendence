@@ -7,7 +7,7 @@ import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";
 import type { JWT } from "@shared/api";
 import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest } from "./user";
-import { goto } from "..";
+import { goto } from "$app/navigation";
 
 export type ApiError = {
   code: number,
@@ -191,6 +191,27 @@ export class ApiClient {
     }
   }
 
+  async oauth(code: OAuthCallBackBody) {
+    try {
+      const authResponse = await oauthRequest(code); // this contains the access_token
+
+      this.auth = authResponse.auth;
+
+      this.authStore.set(authResponse.auth)
+      if (authResponse.access_token) {
+        const jwt = parseJWT(authResponse.access_token);
+        this.accessToken.set(jwt);
+        const response = await getUser(this.accessToken)
+        this.userStore.set(response.user);
+        this.notify();
+      }
+    } catch (e: any) {
+      const error = new Error(`OAuth Failed: ${e.message || e}`)
+      console.error(error);
+      throw error;
+    }
+  }
+
   async logout() {
     try {
       await logoutRequest(this.accessToken);
@@ -218,6 +239,8 @@ export class ApiClient {
     this.userStore.set(null);
     this.authStore.set(null);
     this.accessToken.set(null);
+    this.accessToken.delete();
+    document.cookie = '';
   }
 
   async updateCredentials({
