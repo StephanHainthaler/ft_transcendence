@@ -76,39 +76,14 @@ Full-stack development but also team organization, project management and establ
 
 First, you need to create an folder called "env" at the root of the repository. It must contain the following files (containing the following variables):
 
-##### .env.api
-- PORT
-- API_URL
-- USER_SERVICE_URL
-- AUTH_SERVICE_URL
-- GAME_STATS_SERVICE_URL
-- SERVER_PONG_URL
-
-##### .env.auth
-- DB_FILE_PATH
-- USER_API_URL
-- GITHUB_APP_CLIENT_ID
-- GITHUB_APP_CLIENT_SECRET 
-
-##### .env.development
-- VITE_API_URL
-- USER_API_URL
-- GAME_STATS_SERVICE_URL
-- VITE_SERVER_GAME_WS_URL
-
-##### .env.game
-- USER_URL
-
-##### .env.game_stats
-- HOST
-- PORT
-
-##### .env.user
-- DB_FILE_PATH
-- PORT
-- DATA_DIR
-- AVATAR_DIR
-
+| filename   | variables |
+|:-----------|:----------|
+| .env.api | <ul><li>PORT</li><li>API_URL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li><li>SERVER_PONG_URL</li></ul> |
+| .env.auth | <ul><li>DB_FILE_PATH</li><li>USER_API_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
+| .env.development | <ul><li>VITE_API_URL</li><li>USER_API_URL</li><li>GAME_STATS_SERVICE_URL</li><li>VITE_SERVER_GAME_WS_URL</li></ul> |
+| .env.game | <ul><li>USER_URL</li></ul> |
+| .env.game_stats | <ul><li>HOST</li><li>PORT</li></ul> |
+| .env.user | <ul><li>DB_FILE_PATH</li><li>PORT</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
 
 
 #### Installation
