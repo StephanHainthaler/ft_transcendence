@@ -1,10 +1,10 @@
 import { Writable } from "@lib/types/writable";
 import type { AuthUserClient, Friendship, User } from "@shared/user";
-import { getAuth, loginRequest, logoutRequest, signupRequest, updateRequest } from "./auth";
+import { getAuth, loginRequest, logoutRequest, oauthRequest, signupRequest, updateRequest } from "./auth";
 import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authRequest";
 import { fetchUserStats, fetchMatchHistory } from "@lib/api/gameStats";
 import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";
-import type { JWT } from "@shared/api";
+import type { JWT, OAuthCallBackBody } from "@shared/api";
 import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest } from "./user";
 import { goto } from "$app/navigation";
