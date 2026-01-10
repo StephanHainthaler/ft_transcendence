@@ -6,6 +6,7 @@ import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRe
 import { AuthUser } from "./db";
 import { generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
+import { setupTotp, enableTotp, verifyTotp, is2FAEnabled } from "./totpHandlers";
 
 type AuthReply = {
   200: AuthResponseSuccess,
@@ -52,10 +53,10 @@ export function authRoutes(fastify: FastifyInstance) {
       const refresh_token = cookies.refresh_token;
       try {
         const session = getSession({ token: refresh_token });
-        validateRefreshToken({ id: session.user_id }, refresh_token);
+        validateRefreshToken({ id: session.auth_id }, refresh_token);
         const token = generateJWT({ id: session.user_id }, secret);
 
-        const auth = getAuthUserClient({ authId: session.user_id });
+        const auth = getAuthUserClient({ authId: session.auth_id });
         if (!auth) return reply.code(401).send({ success: false, message: 'Invalid User information' });
 
         return reply.status(200).send({ success: true, auth, access_token: token.raw })
@@ -85,15 +86,33 @@ export function authRoutes(fastify: FastifyInstance) {
   });
 
   fastify.post <{
-    Body: LoginRequestBody,
-    Reply: AuthReply,
+    Body: LoginRequestBody & { totp_token?: string },
+    Reply: AuthReply & { 202: { success: boolean, requires_2fa: boolean, message: string } },
   }>
   ('/login', async (request, reply) => {
       try {
-        const { passwd, username, email } = request.body;
+        const { passwd, username, email, totp_token } = request.body;
 
         const requestAuthUser = { passwd, username, email };
         const verifiedAuthUser = await verifyUserCredentials(requestAuthUser);
+
+        // Check if 2FA is enabled
+        if (is2FAEnabled(verifiedAuthUser)) {
+          if (!totp_token) {
+            return reply.status(202).send({
+              success: true,
+              requires_2fa: true,
+              message: '2FA verification required',
+            });
+          }
+
+          if (!verifyTotp(verifiedAuthUser, totp_token)) {
+            return reply.status(401).send({
+              success: false,
+              message: 'Invalid 2FA token',
+            });
+          }
+        }
 
         const authUserClient: AuthUserClient = {
           username: verifiedAuthUser.user_name,
@@ -198,4 +217,53 @@ export function authRoutes(fastify: FastifyInstance) {
         reply.status(500).send({ success: false, message: `${e.message || e}` })
       }
   })
+
+  // 2FA routes
+
+  // setup 2FA - generates secret and QR code
+  fastify.post<{
+    Reply: {
+      200: { success: boolean, secret: string, qrCodeUrl: string },
+      '4xx': ErrorResponse,
+      500: ErrorResponse
+    }
+  }>('/2fa/setup', async (request, reply) => {
+    try {
+      const token = extractJWTFromHeader(request.headers.authorization);
+      const authUser = getAuthUser({ userId: token.payload.sub });
+      if (!authUser) return reply.status(401).send({ success: false, message: 'User not found' });
+      if (is2FAEnabled(authUser)) return reply.status(400).send({ success: false, message: '2FA already enabled' });
+
+      const setup = await setupTotp(authUser);
+      return reply.status(200).send({ success: true, ...setup });
+    } catch (e: any) {
+      return reply.status(500).send({ success: false, message: e.message || 'Internal server error' });
+    }
+  });
+
+  // verify and enable 2FA
+  fastify.post<{
+    Body: { token: string },
+    Reply: {
+      200: { success: boolean, message: string },
+      '4xx': ErrorResponse,
+      500: ErrorResponse
+    }
+  }>('/2fa/enable', async (request, reply) => {
+    try {
+      const jwtToken = extractJWTFromHeader(request.headers.authorization);
+      const authUser = getAuthUser({ userId: jwtToken.payload.sub });
+      if (!authUser) return reply.status(401).send({ success: false, message: 'User not found' });
+
+      const { token } = request.body;
+      if (!token) return reply.status(400).send({ success: false, message: 'TOTP token required' });
+
+      if (!enableTotp(authUser, token)) {
+        return reply.status(400).send({ success: false, message: 'Invalid TOTP token' });
+      }
+      return reply.status(200).send({ success: true, message: '2FA enabled successfully' });
+    } catch (e: any) {
+      return reply.status(500).send({ success: false, message: e.message || 'Internal server error' });
+    }
+  });
 }

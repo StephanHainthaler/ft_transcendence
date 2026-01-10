@@ -163,9 +163,14 @@ export class ApiClient {
     await removeFriendship(this.accessToken, friendshipId);
   }
 
-  async login(info: LoginRequestBody) {
+  async login(info: LoginRequestBody & { totp_token?: string }) {
     try {
       const authResponse = await loginRequest(info);
+      
+      // If 2FA is required, return early with the flag
+      if (authResponse.requires_2fa)
+        return { requires_2fa: true };
+
       this.authStore.set(authResponse.auth)
       if (authResponse.access_token) {
         const jwt = parseJWT(authResponse.access_token);
@@ -174,6 +179,7 @@ export class ApiClient {
         this.userStore.set(response.user);
         this.notify();
       }
+      return { requires_2fa: false };
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
       console.error(error);

@@ -56,8 +56,8 @@ export async function signupRequest(
 }
 
 export async function loginRequest(
-  info: LoginRequestBody,
-): Promise<AuthResponseSuccess> {
+  info: LoginRequestBody & { totp_token?: string },
+): Promise<AuthResponseSuccess & { requires_2fa?: boolean }> {
   if ((!info.username && !info.email))
     throw new Error("Missing Email of Username!");
   if (!info.passwd) throw new Error("Missing Password!");
@@ -72,9 +72,14 @@ export async function loginRequest(
   });
 
   const response = await fetch(login);
-  const data: AuthResponseSuccess = await response.json();
+  const data = await response.json();
 
   console.log(data);
+
+  // 202 means 2FA is required
+  if (response.status === 202 && data.requires_2fa) {
+    return { ...data, requires_2fa: true };
+  }
 
   if (!response.ok || !data.access_token) throw data;
   return data;
@@ -108,5 +113,37 @@ export async function getAuth(token: Writable<JWT | null>) {
   if (!response.ok) {
     throw data;
   }
+  return data;
+}
+
+// 2FA Functions
+
+export async function setup2FA(token: Writable<JWT | null>): Promise<{ secret: string; qrCodeUrl: string }> {
+  const req = new Request('/api/auth/2fa/setup', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token.get()?.raw}`,
+    },
+  });
+
+  const response = await request(req, token);
+  const data = await response.json();
+  if (!response.ok) throw data;
+  return data;
+}
+
+export async function enable2FA(token: Writable<JWT | null>, totpToken: string): Promise<{ success: boolean; message: string }> {
+  const req = new Request('/api/auth/2fa/enable', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token.get()?.raw}`,
+    },
+    body: JSON.stringify({ token: totpToken }),
+  });
+
+  const response = await request(req, token);
+  const data = await response.json();
+  if (!response.ok) throw data;
   return data;
 }

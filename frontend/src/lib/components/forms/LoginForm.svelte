@@ -7,54 +7,95 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import { goto } from "$app/navigation";
 
+  let usernameBuffer = $state("");
+  let userPasswordBuffer = $state("");
+  let totpToken = $state("");
+  let errorMessage = $state("");
+  let requires2FA = $state(false);
+
   const handleLoginFormSubmit = async (e: Event) => {
     e.preventDefault();
     e.stopPropagation();
     try {
       const email = validateInput(usernameBuffer, { type: 'email' }).input;
       const username = validateInput(usernameBuffer, { type: 'username' }).input;
-      await client.login({
+      
+      const result = await client.login({
         username,
         email,
         passwd: userPasswordBuffer,
+        totp_token: requires2FA ? totpToken : undefined,
       });
+
+      // Check if 2FA is required
+      if (result.requires_2fa) {
+        requires2FA = true;
+        errorMessage = "";
+        return;
+      }
+
       goto('/');
     } catch (e: any) {
       errorMessage = e.message || e.toString();
     }
   }
-
-  let usernameBuffer = $state("");
-  let userPasswordBuffer = $state("");
-  let errorMessage = $state("");
-
 </script>
 
 <form class="space-y-6" onsubmit={handleLoginFormSubmit}>
   <div class="space-y-4">
-    <h2 class="text-2xl font-bold text-center">Sign in</h2>
+    <h2 class="text-2xl font-bold text-center">
+      {requires2FA ? 'Enter 2FA Code' : 'Sign in'}
+    </h2>
 
-    <div class="space-y-2">
-      <Label for="username">Email or Username</Label>
-      <Input 
-        id="username"
-        type="text"
-        bind:value={usernameBuffer}
-        placeholder="Enter your email or username"
-        required
-      />
-    </div>
+    {#if !requires2FA}
+      <div class="space-y-2">
+        <Label for="username">Email or Username</Label>
+        <Input 
+          id="username"
+          type="text"
+          bind:value={usernameBuffer}
+          placeholder="Enter your email or username"
+          required
+        />
+      </div>
 
-    <div class="space-y-2">
-      <Label for="password">Password</Label>
-      <Input 
-        id="password"
-        type="password"
-        bind:value={userPasswordBuffer}
-        placeholder="Enter your password"
-        required
-      />
-    </div>
+      <div class="space-y-2">
+        <Label for="password">Password</Label>
+        <Input 
+          id="password"
+          type="password"
+          bind:value={userPasswordBuffer}
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+    {:else}
+      <p class="text-sm text-center text-muted-foreground">
+        Enter the 6-digit code from your authenticator app
+      </p>
+      <div class="space-y-2">
+        <Label for="totp">Authentication Code</Label>
+        <Input 
+          id="totp"
+          type="text"
+          bind:value={totpToken}
+          placeholder="000000"
+          maxlength={6}
+          pattern="[0-9]*"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          required
+        />
+      </div>
+      <Button 
+        type="button" 
+        variant="ghost" 
+        class="w-full"
+        onclick={() => { requires2FA = false; totpToken = ''; }}
+      >
+        ← Back to login
+      </Button>
+    {/if}
   </div>
 
   {#if errorMessage}
@@ -64,6 +105,6 @@
   {/if}
 
   <Button type="submit" class="w-full">
-    Sign In
+    {requires2FA ? 'Verify' : 'Sign In'}
   </Button>
 </form>

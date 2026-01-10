@@ -6,6 +6,7 @@
   import Label from "@lib/components/ui/label/label.svelte";
   import * as Card from "@lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
+  import TwoFactorSetup from "@lib/components/TwoFactorSetup.svelte";
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -125,5 +126,11 @@
         </div>
       {/if}
     </form>
+
+    <!-- 2FA Section -->
+    <div class="mt-8">
+      <Separator class="mb-6" />
+      <TwoFactorSetup />
+    </div>
   </Card.Content>
 </Card.Root>
