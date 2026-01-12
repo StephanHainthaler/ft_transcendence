@@ -8,7 +8,6 @@
     client.logout();
   };
 
-
   client?.onChange(() => {
     isLoggedIn = client.isLoggedIn;
   });
@@ -31,16 +30,23 @@
               <a class="px-4 w-full" href="/profile">Profile</a>
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
+
+          <Sidebar.MenuItem> <Sidebar.MenuButton>
+              <a class="px-4 w-full" href="/stats">Statistics</a>
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+
           <Sidebar.MenuItem>
             <Sidebar.MenuButton>
               <a class="px-4 w-full" href="/game">Game</a>
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
-          <Sidebar.MenuItem>
-            <Sidebar.MenuButton>
+
+          <Sidebar.MenuItem> <Sidebar.MenuButton>
               <a class="px-4 w-full" href="/tournament">Tournament</a>
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
+
           <Sidebar.MenuItem>
             <Sidebar.MenuButton>
               <a class="px-4 w-full" href="/friends">Friends</a>
@@ -51,6 +57,7 @@
     </Sidebar.Group>
     <Sidebar.Separator />
     {/if}
+
     <Sidebar.Group>
       <Sidebar.GroupLabel>Account</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
