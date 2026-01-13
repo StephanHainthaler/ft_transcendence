@@ -20,14 +20,17 @@
 
   const sessionPromise = client.getSession();
 
-  let editMode = $state(false);
-
   let session: ProfilePageData = $state({
     auth: client.auth!,
     user: client.user!,
     passwd: '',
     passwdRepeat: ''
   });
+
+  let avatarSrc = $derived(session.avatarFile 
+    ? URL.createObjectURL(session.avatarFile) 
+    : client.avatar);
+    let editMode = $state(false);
 
   const toggleEditMode = () => {
     if (editMode === true) {
@@ -139,7 +142,7 @@
           {#if client.avatar}
             <img
               bind:this={currentAvatarEl}
-              src={client.avatar}
+              src={avatarSrc}
               alt={sess.user?.name || 'user avatar'}
               class="size-20 rounded-full object-cover text-center"
             />
