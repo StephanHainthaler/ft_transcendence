@@ -26,4 +26,5 @@ export interface MatchSubmissionData {
     p2_score: number;
     winner_id: number;
     duration: number;
+	timestamp: number;
 }
