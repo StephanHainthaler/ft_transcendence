@@ -1,8 +1,12 @@
 import { Player } from "./player";
 import { Ball } from "./ball";
 
+const TARGET_FPS = 60;
+const TARGET_FRAME_TIME = 1000 / TARGET_FPS; // ~16.67ms
+
 export class Pong
 {
+	private _lastFrameTime: number = 0;
 	private _canvas: HTMLCanvasElement;
 	private _context: CanvasRenderingContext2D;
 	private _player1: Player;
@@ -65,17 +69,25 @@ export class Pong
 		return (this._canvas.width / this._baseWidth);
 	}
 
-	public updatePong = () => {
+	public updatePong = (currentTime: number = 0) => {
+		// calculate delta: how many "60fps frames" worth of time passed
+		if (this._lastFrameTime === 0) 
+			this._lastFrameTime = currentTime;
+		const elapsed = currentTime - this._lastFrameTime;
+		this._lastFrameTime = currentTime;
 
-	this.getBall().move(this.getPlayer(1), this.getPlayer(2));
-	this.getPlayer(1).move();
-	const p2 = this.getPlayer(2);
-	//if (2 player mode)
-		//p2.move();
-	//else
-		p2.moveByAI(this.getBall());
-	this.draw_arena();
-	window.requestAnimationFrame(() => this.updatePong());
+		// clamp to max 3 to prevent huge jumps after tab switch
+		const delta = Math.min(elapsed / TARGET_FRAME_TIME, 3);
+
+		this.getBall().move(this.getPlayer(1), this.getPlayer(2), delta);
+		this.getPlayer(1).move(delta);
+		const p2 = this.getPlayer(2);
+		//if (2 player mode)
+			//p2.move(delta);
+		//else
+			p2.moveByAI(this.getBall(), delta);
+		this.draw_arena();
+		window.requestAnimationFrame((time) => this.updatePong(time));
 	};
 
 	public draw_arena()

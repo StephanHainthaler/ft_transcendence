@@ -23,7 +23,7 @@ export class Player
 		this._origin = {x, y};
     	this._name = name;
 		this._playerNumber = playerNumber;
-		this._velocity = 3;
+		this._velocity = 5;
 		this._width = canvas.width * 0.01;
 		this._height = canvas.height * 0.12;
 		this._score = 0;
@@ -33,11 +33,11 @@ export class Player
         this._game = game;
 	}
 
-	public move(): void
+	public move(delta: number): void
 	{
 		const canvas = this._game.getCanvas();
 		const scale = this._game.getScale();
-		const scaledVelocity = this._velocity * scale;
+		const scaledVelocity = this._velocity * scale * delta;
 
 		if (this._movingUp && !this._movingDown)
 		{
@@ -66,10 +66,10 @@ export class Player
 	public stopMoveUp(): void { this._movingUp = false; }
 	public stopMoveDown(): void { this._movingDown = false; }
 
-	public moveByAI(ball: Ball): void
+	public moveByAI(ball: Ball, delta: number): void
 	{
 		const scale = this._game.getScale();
-		const scaledVelocity = this._velocity * scale;
+		const scaledVelocity = this._velocity * scale * delta;
 
 		// if the ball is in opponents field, go to the middle
 		if (ball.getOrigin().x < (this._game.getCanvas().width / 2))
