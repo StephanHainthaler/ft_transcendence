@@ -1,21 +1,24 @@
 <script lang="ts">
-  import { GameClient } from "@lib/api/gameClient";
   import { client } from "@lib/api/index";
   import GridCard from "@lib/components/custom/GridCard.svelte";
-  import type { User } from "@shared/user";
   import * as Card from "$lib/components/ui/card";
   import { tick } from 'svelte';
   import Grid from "@lib/components/custom/Grid.svelte";
+  import type { AppUser } from "@lib/api/appUser";
+  import { toast } from "svelte-sonner";
 
-  let users: User[] = $state([])
-  let gameClient: GameClient = $state(new GameClient());
+  let users: AppUser[] = $state([])
 
   const loadPageData = async () => {
     await tick();
     await tick();
-    const data = await client.getFriends();
-    console.log(data);
-    users = data.friends;
+    try {
+      const data = await client.getUsers();
+      console.log(data);
+      users = data;
+    } catch (e: any) {
+      toast.error(`Failed to load Page Data: ${e.message || e}`)
+    }
   }
 
   loadPageData();
@@ -23,14 +26,10 @@
   let running = $state(false);
   let canvas: HTMLCanvasElement | null = $state(null);
 
-  const challengeUser = async (u: User) => {
+  const challengeUser = async (u: AppUser) => {
     running = true;
     await tick();
-    console.log(canvas)
-    const challengeUserId = u.id;
-    gameClient.canvasElement = canvas as HTMLCanvasElement;
-    gameClient.init();
-    gameClient.startGame(client.user?.id!, challengeUserId);
+    console.log(u);
   }
 
 </script>
@@ -44,7 +43,7 @@
       {#if !running}
         <Grid title={'Challenge'}>
           {#each users as user}
-            <GridCard title={user.name} desc={user.username} callback={() => challengeUser(user)} buttonDesc={'Challenge'} />
+            <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={'Challenge'} />
           {/each}
         </Grid>
       {:else}

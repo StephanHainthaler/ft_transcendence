@@ -1,11 +1,12 @@
 import { FastifyInstance } from "fastify";
-import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient } from "./dbHandlers";
-import { updateUser } from "@ft_transcendence/user/src/api";
+import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession } from "./dbHandlers";
+import { deleteUser, updateUser } from "@ft_transcendence/user/src/api";
 import { AuthUserClient, } from "@shared/user";
 import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody, OAuthCallBackBody } from "@shared/api";
 import { AuthUser } from "./db";
 import { generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
+import { ApiError } from "@server/error/apiError";
 
 type AuthReply = {
   200: AuthResponseSuccess,
@@ -297,7 +298,29 @@ export function authRoutes(fastify: FastifyInstance) {
           email: newUser.email, username: newUser.user_name }
         });
       } catch (e: any) {
-        reply.status(500).send({ success: false, message: `${e.message || e}` })
+        reply.status(e.code || e.status | 400).send({ success: false, message: `${e.message || e}` })
       }
+  })
+
+  fastify.delete<{
+    Reply: {
+      200: { success: true },
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string }
+    }
+  }>('/delete', async (req, repl) => {
+    try {
+      const token = extractJWTFromHeader(req.headers.authorization);
+      const authUser = getAuthUser({ userId: token.payload.sub });
+      if (!authUser) throw new ApiError({ code: 404, message: 'No such User' });
+
+      await deleteUser(token);
+      await deleteAuthUser(authUser);
+
+      return repl.header('set-cookie', `refresh_token=0; Max-Age=0; Path=/`).code(200).send({ success: true })
+    } catch (e: any) {
+      console.log(e);
+      return repl.code(e.code || 500).send({ success: false, message: e.message || 'Internal Server Error' });
+    }
   })
 }

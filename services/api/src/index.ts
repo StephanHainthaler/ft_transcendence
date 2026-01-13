@@ -13,8 +13,10 @@ const publicRoutes = [
   '/auth/login',
   '/auth/refresh',
   '/auth/sign-up',
+  '/user/avatar',
+  '/game',
+  '/game',
   '/auth/github-oauth',
-  '/game'
 ];
 
 async function startApiGateway() {
@@ -26,7 +28,6 @@ async function startApiGateway() {
 
   const fastify = Fastify({
     logger: {
-      level: 'info',
       transport: {
         target: 'pino-pretty'
       },

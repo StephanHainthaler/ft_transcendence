@@ -2,3 +2,5 @@
 *.nfs*
 dist
 *package-lock.json
+data/
+*.db
