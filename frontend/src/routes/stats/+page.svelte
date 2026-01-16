@@ -19,65 +19,66 @@
     return (`${mins}:${secs.toString().padStart(2, '0')}`);
   }
 
-  // async function loadData(page: number = 1)
-  // {
-  //   try
-  //   {
-  //     isLoading = true;
-  //     const userId = client.user?.id;
-  //     if (!userId)
-  //       return;
-
-  //     const [s, h] = await Promise.all([
-  //       client.getUserStats(userId),
-  //       client.getMatchHistory(userId, page)
-  //     ]);
-
-  //     stats = s;
-  //     history = h;
-  //     currentPage = page;
-  //   } catch (error)
-  //   {
-  //     console.error("Failed to load stats:", error);
-  //   }finally
-  //   {
-  //     isLoading = false;
-  //   }
-  // }
-
-  //Something for testing without backend
-  async function loadData(page: number = 1) {
-    try {
+  async function loadData(page: number = 1)
+  {
+    try
+    {
       isLoading = true;
-      const userId = client.user?.id || 1; 
+      const userId = client.user?.id;
+      if (!userId)
+        return;
 
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const [s, h] = await Promise.all([
+        client.getUserStats(userId),
+        client.getMatchHistory(userId, page)
+      ]);
 
-      stats = {
-        user_id: userId,
-        rank: 12,
-        wins: 42,
-        losses: 10,
-        total_points: 1540,
-        streak: 5,
-        highest_score: 11
-      };
-
-      history = [
-        { match_id: 1, player_one_id: userId, player_two_id: 99, p1_score: 11, p2_score: 5, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789},
-        { match_id: 2, player_one_id: 88, player_two_id: userId, p1_score: 8, p2_score: 11, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789},
-        { match_id: 3, player_one_id: userId, player_two_id: 77, p1_score: 2, p2_score: 11, winner_id: 77, match_duration: Math.random() * 8000, timestamp: 123456789},
-        { match_id: 4, player_one_id: 66, player_two_id: userId, p1_score: 11, p2_score: 0, winner_id: 66, match_duration: Math.random() * 8000, timestamp: 123456789},
-        { match_id: 5, player_one_id: userId, player_two_id: 55, p1_score: 10, p2_score: 10, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789}
-      ];
-
+      stats = s;
+      history = h;
       currentPage = page;
-    } catch (error) {
+    } catch (error)
+    {
       console.error("Failed to load stats:", error);
-    } finally {
+    }finally
+    {
       isLoading = false;
     }
   }
+
+  //Something for testing without backend
+  
+  // async function loadData(page: number = 1) {
+  //   try {
+  //     isLoading = true;
+  //     const userId = client.user?.id || 1; 
+
+  //     await new Promise(resolve => setTimeout(resolve, 500));
+
+  //     stats = {
+  //       user_id: userId,
+  //       rank: 12,
+  //       wins: 42,
+  //       losses: 10,
+  //       total_points: 1540,
+  //       streak: 5,
+  //       highest_score: 11
+  //     };
+
+  //     history = [
+  //       { match_id: 1, player_one_id: userId, player_two_id: 99, p1_score: 11, p2_score: 5, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789},
+  //       { match_id: 2, player_one_id: 88, player_two_id: userId, p1_score: 8, p2_score: 11, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789},
+  //       { match_id: 3, player_one_id: userId, player_two_id: 77, p1_score: 2, p2_score: 11, winner_id: 77, match_duration: Math.random() * 8000, timestamp: 123456789},
+  //       { match_id: 4, player_one_id: 66, player_two_id: userId, p1_score: 11, p2_score: 0, winner_id: 66, match_duration: Math.random() * 8000, timestamp: 123456789},
+  //       { match_id: 5, player_one_id: userId, player_two_id: 55, p1_score: 10, p2_score: 10, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789}
+  //     ];
+
+  //     currentPage = page;
+  //   } catch (error) {
+  //     console.error("Failed to load stats:", error);
+  //   } finally {
+  //     isLoading = false;
+  //   }
+  // }
 
   onMount(() => loadData());
 </script>
@@ -154,7 +155,7 @@
               </td>
 
               <td class="p-3 text-center text-xs opacity-80 font-mono hidden md:table-cell">
-                {formatDuration(match.match_duration)}
+                {formatDuration(match.match_duration ?? 0)}
               </td>
 
               <td class="p-3 pr-5 text-right w-32">
@@ -163,6 +164,15 @@
                   isDraw ? 'bg-slate-500/10 text-slate-400' : 'bg-red-500/10 text-red-500'}">
                   {isWin ? 'Victory' : isDraw ? 'Draw' : 'Defeat'}
                 </span>
+              </td>
+            </tr>
+          {:else}
+            <tr>
+              <td colspan="5" class="p-12 text-center text-slate-500 italic text-sm tracking-wide bg-slate-900/20">
+                <div class="flex flex-col items-center gap-2">
+                  <span class="text-2xl opacity-20">🎮</span>
+                  No matches found in your history
+                </div>
               </td>
             </tr>
           {/each}
