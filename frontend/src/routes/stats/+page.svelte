@@ -8,6 +8,8 @@
   // Page state
   let stats = $state<UserStats | null>(null);
   let history = $state<MatchHistoryEntry[]>([]);
+  let leaderboard = $state<UserStats[]>([]);
+  let activeTab = $state('stats');
   let isLoading = $state(true);
   let currentPage = $state(1);
 
@@ -72,6 +74,14 @@
   //       { match_id: 5, player_one_id: userId, player_two_id: 55, p1_score: 10, p2_score: 10, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789}
   //     ];
 
+  //       leaderboard = [
+  //         { user_id: 10, rank: 1, wins: 100, losses: 5, total_points: 5000, streak: 10, highest_score: 11 },
+  //         { user_id: 2, rank: 2, wins: 85, losses: 12, total_points: 4200, streak: 3, highest_score: 11 },
+  //         { user_id: 42, rank: 3, wins: 70, losses: 20, total_points: 3500, streak: 0, highest_score: 11 },
+  //         { user_id: 5, rank: 4, wins: 50, losses: 15, total_points: 2800, streak: 1, highest_score: 11 },
+  //         { user_id: 1, rank: 5, wins: 42, losses: 10, total_points: 1540, streak: 5, highest_score: 11 }
+  //       ];
+
   //     currentPage = page;
   //   } catch (error) {
   //     console.error("Failed to load stats:", error);
@@ -82,6 +92,26 @@
 
   onMount(() => loadData());
 </script>
+
+<div class="flex items-center gap-4 mb-6 justify-center lg:justify-center">
+  <Button 
+    variant="outline" 
+    onclick={() => activeTab = 'stats'}
+    class="px-6 py-2 rounded-md text-sm font-medium transition-colors 
+    {activeTab === 'stats' ? 'bg-slate-700 text-white' : 'bg-slate-900/50 text-slate-400 hover:text-white border border-slate-800'}"
+  >
+    My Statistics
+  </Button>
+
+  <Button 
+    variant="outline" 
+    onclick={() => activeTab = 'leaderboard'}
+    class="px-6 py-2 rounded-md text-sm font-medium transition-colors 
+    {activeTab === 'leaderboard' ? 'bg-slate-700 text-white' : 'bg-slate-900/50 text-slate-400 hover:text-white border border-slate-800'}"
+  >
+    Leaderboard
+  </Button>
+</div>
 
 <div class="px-4 py-4 sm:p-4 lg:px-6 max-w-6xl mx-auto"> <h1 class="text-3xl font-bold mb-6 text-white">Player Statistics</h1>
 
