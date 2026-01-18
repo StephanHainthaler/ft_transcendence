@@ -34,4 +34,18 @@ async function fetchMatchHistory(token: Writable <JWT | null>, userId: number) :
 	return (data as MatchHistoryEntry[]);
 }
 
-export { fetchUserStats, fetchMatchHistory };
+async function fetchLeaderboard(token: Writable<JWT | null>, page: number = 1): Promise<UserStats[] | []> {
+	const req = new Request(`/api/leaderboard?page=${page}`,
+		{
+			method: "GET",
+			headers: {'authorization': `Bearer ${ token.get()?.raw }`}
+		}
+	);
+	const response = await request(req, token);
+	const data = await response.json();
+	if (!response.ok) 
+		throw (data);
+	return (data as UserStats[]);
+}
+
+export { fetchUserStats, fetchMatchHistory, fetchLeaderboard };

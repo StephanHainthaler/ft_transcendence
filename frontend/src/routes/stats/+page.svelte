@@ -29,19 +29,26 @@
       const userId = client.user?.id;
       if (!userId)
         return;
-
-      const [s, h] = await Promise.all([
-        client.getUserStats(userId),
-        client.getMatchHistory(userId, page)
-      ]);
-
-      stats = s;
-      history = h;
-      currentPage = page;
+      if (activeTab === 'leaderboard')
+      {
+        const l = await client.getLeaderboard(page);
+        leaderboard = l;
+        currentPage = page;
+      }
+      else 
+      {
+        const [s, h] = await Promise.all([
+          client.getUserStats(userId),
+          client.getMatchHistory(userId, page)
+        ]);
+        history = h;
+        stats = s;
+        currentPage = page;
+      }
     } catch (error)
     {
       console.error("Failed to load stats:", error);
-    }finally
+    } finally
     {
       isLoading = false;
     }
@@ -93,138 +100,206 @@
   onMount(() => loadData());
 </script>
 
-<div class="flex items-center gap-4 mb-6 justify-center lg:justify-center">
+<div class="flex items-center gap-4 mb-8 justify-center">
   <Button 
     variant="outline" 
-    onclick={() => activeTab = 'stats'}
-    class="px-6 py-2 rounded-md text-sm font-medium transition-colors 
-    {activeTab === 'stats' ? 'bg-slate-700 text-white' : 'bg-slate-900/50 text-slate-400 hover:text-white border border-slate-800'}"
+    onclick={() => { activeTab = 'stats'; loadData(1); }}
+    class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 
+    {activeTab === 'stats' 
+      ? 'bg-slate-700 text-white border-slate-600 shadow-md' 
+      : 'bg-slate-900/50 text-slate-400 hover:text-white border-slate-800'}"
   >
     My Statistics
   </Button>
 
   <Button 
     variant="outline" 
-    onclick={() => activeTab = 'leaderboard'}
-    class="px-6 py-2 rounded-md text-sm font-medium transition-colors 
-    {activeTab === 'leaderboard' ? 'bg-slate-700 text-white' : 'bg-slate-900/50 text-slate-400 hover:text-white border border-slate-800'}"
+    onclick={() => { activeTab = 'leaderboard'; loadData(1); }}
+    class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 
+    {activeTab === 'leaderboard' 
+      ? 'bg-slate-700 text-white border-slate-600 shadow-md' 
+      : 'bg-slate-900/50 text-slate-400 hover:text-white border-slate-800'}"
   >
     Leaderboard
   </Button>
 </div>
 
-<div class="px-4 py-4 sm:p-4 lg:px-6 max-w-6xl mx-auto"> <h1 class="text-3xl font-bold mb-6 text-white">Player Statistics</h1>
+<div class="px-4 py-4 sm:p-4 lg:px-6 max-w-6xl mx-auto"> 
+  <h1 class="text-3xl font-bold mb-6 text-white">
+    {activeTab === 'stats' ? 'Player Statistics' : 'Global Leaderboard'}
+  </h1>
 
   {#if isLoading}
     <div class="text-center py-10">Loading...</div>
   {:else}
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
-      
-      {#each [
-        { label: 'Your Rank', value: stats?.rank },
-        { label: 'Wins', value: stats?.wins },
-        { label: 'Losses', value: stats?.losses },
-        { label: 'Total Points', value: stats?.total_points },
-        { label: 'Streak', value: stats?.streak },
-        { label: 'Highest Score', value: stats?.highest_score }
-      ] as item}
-        <Card.Root class="overflow-hidden border-slate-800 bg-slate-900/50">
-          <Card.Header class="p-3 pb-0"> 
-            <Card.Title class="text-[10px] sm:text-xs opacity-70 uppercase tracking-wider text-slate-400">
-              {item.label}
-            </Card.Title>
-          </Card.Header>
-          <Card.Content class="p-3 pt-1">
-            <span class="text-xl sm:text-2xl font-black font-mono text-white">
-              {item.value ?? 0}
-            </span>
-          </Card.Content>
-        </Card.Root>
-      {/each}
-      
-    </div>
 
+    {#if activeTab === 'stats'}
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">        
+        {#each [
+          { label: 'Your Rank', value: stats?.rank },
+          { label: 'Wins', value: stats?.wins },
+          { label: 'Losses', value: stats?.losses },
+          { label: 'Total Points', value: stats?.total_points },
+          { label: 'Streak', value: stats?.streak },
+          { label: 'Highest Score', value: stats?.highest_score }
+        ] as item}
+          <Card.Root class="overflow-hidden border-slate-800 bg-slate-900/50">
+            <Card.Header class="p-3 pb-0"> 
+              <Card.Title class="text-[10px] sm:text-xs opacity-70 uppercase tracking-wider text-slate-400">
+                {item.label}
+              </Card.Title>
+            </Card.Header>
+            <Card.Content class="p-3 pt-1">
+              <span class="text-xl sm:text-2xl font-black font-mono text-white">
+                {item.value ?? 0}
+              </span>
+            </Card.Content>
+          </Card.Root>
+        {/each}
+      </div>
 
-
-    <h2 class="text-3xl font-bold mb-6 text-white">Match History</h2>
-    <div class="rounded-md border border-slate-800 overflow-hidden bg-[#0a0f1a]">
-      <table class="w-full text-left border-collapse">
-        <thead class="bg-teal-700 text-white text-[12px] uppercase tracking-widest">
-          <tr>
-            <th class="p-3 w-16 hidden md:table-cell text-center">ID</th>
-            
-            <th class="p-3 w-32">Opponent</th>
-            <th class="p-3 text-center w-32">Score</th>
-            
-            <th class="p-3 text-center w-32 hidden md:table-cell">Duration</th>
-            
-            <th class="p-3 pr-6 text-right w-32">Result</th>
-          </tr>
-        </thead>
-        <tbody class="text-slate-300">
-          {#each history as match}
-            {@const userId = client.user?.id || 1}
-            {@const isPlayerOne = match.player_one_id === userId}
-            {@const opponentId = isPlayerOne ? match.player_two_id : match.player_one_id}
-            {@const isWin = match.winner_id === userId}
-            {@const isDraw = match.winner_id === null}
-
-            <tr class="border-b border-slate-800 hover:bg-slate-800/40 transition-colors">
-              <td class="p-3 text-center font-mono text-[11px] opacity-80 hidden md:table-cell">
-                #{match.match_id}
-              </td>
-              
-              <td class="p-3">
-                <span class="font-bold text-[11px] uppercase">Player #{opponentId}</span>
-              </td>
-              
-              <td class="p-3 text-center font-mono tracking-tighter">
-                <span class={isWin ? 'text-green-400 font-bold' : ''}>{match.p1_score}</span>
-                <span class="mx-1 opacity-20">:</span>
-                <span class={!isWin && !isDraw ? 'text-red-400 font-bold' : ''}>{match.p2_score}</span>
-              </td>
-
-              <td class="p-3 text-center text-xs opacity-80 font-mono hidden md:table-cell">
-                {formatDuration(match.match_duration ?? 0)}
-              </td>
-
-              <td class="p-3 pr-5 text-right w-32">
-                <span class="inline-block px-2 py-1 rounded text-[11px] font-black uppercase tracking-tighter
-                  {isWin ? 'bg-green-500/10 text-green-500' : 
-                  isDraw ? 'bg-slate-500/10 text-slate-400' : 'bg-red-500/10 text-red-500'}">
-                  {isWin ? 'Victory' : isDraw ? 'Draw' : 'Defeat'}
-                </span>
-              </td>
-            </tr>
-          {:else}
+      <h2 class="text-3xl font-bold mb-6 text-white">Match History</h2>
+      <div class="rounded-md border border-slate-800 overflow-hidden bg-[#0a0f1a]">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-teal-700 text-white text-[12px] uppercase tracking-widest">
             <tr>
-              <td colspan="5" class="p-12 text-center text-slate-500 italic text-sm tracking-wide bg-slate-900/20">
-                <div class="flex flex-col items-center gap-2">
-                  <span class="text-2xl opacity-20">🎮</span>
-                  No matches found in your history
-                </div>
-              </td>
+              <th class="p-3 w-16 hidden md:table-cell text-center">ID</th>
+              
+              <th class="p-3 w-32">Opponent</th>
+              <th class="p-3 text-center w-32">Score</th>
+              
+              <th class="p-3 text-center w-32 hidden md:table-cell">Duration</th>
+              
+              <th class="p-3 pr-6 text-right w-32">Result</th>
             </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody class="text-slate-300">
+            {#each history as match}
+              {@const userId = client.user?.id || 1}
+              {@const isPlayerOne = match.player_one_id === userId}
+              {@const opponentId = isPlayerOne ? match.player_two_id : match.player_one_id}
+              {@const isWin = match.winner_id === userId}
+              {@const isDraw = match.winner_id === null}
 
-    <div class="flex justify-center items-center mt-6 gap-4">
-      <Button 
-        variant="outline" 
-        disabled={currentPage <= 1} 
-        onclick={() => loadData(currentPage - 1)}>
-        ← Previous
-      </Button>
-      
-      <span class="font-mono border border-slate-600 bg-gray-700 px-3 py-1 rounded">Page {currentPage}</span>
-      
-      <Button 
-        variant="outline" 
-        onclick={() => loadData(currentPage + 1)}>
-        Next →
-      </Button>
-    </div>
+              <tr class="border-b border-slate-800 hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono text-[11px] opacity-80 hidden md:table-cell">
+                  #{match.match_id}
+                </td>
+                
+                <td class="p-3">
+                  <span class="font-bold text-[11px] uppercase">Player #{opponentId}</span>
+                </td>
+                
+                <td class="p-3 text-center font-mono tracking-tighter">
+                  <span class={isWin ? 'text-green-400 font-bold' : ''}>{match.p1_score}</span>
+                  <span class="mx-1 opacity-20">:</span>
+                  <span class={!isWin && !isDraw ? 'text-red-400 font-bold' : ''}>{match.p2_score}</span>
+                </td>
+
+                <td class="p-3 text-center text-xs opacity-80 font-mono hidden md:table-cell">
+                  {formatDuration(match.match_duration ?? 0)}
+                </td>
+
+                <td class="p-3 pr-5 text-right w-32">
+                  <span class="inline-block px-2 py-1 rounded text-[11px] font-black uppercase tracking-tighter
+                    {isWin ? 'bg-green-500/10 text-green-500' : 
+                    isDraw ? 'bg-slate-500/10 text-slate-400' : 'bg-red-500/10 text-red-500'}">
+                    {isWin ? 'Victory' : isDraw ? 'Draw' : 'Defeat'}
+                  </span>
+                </td>
+              </tr>
+            {:else}
+              <tr>
+                <td colspan="5" class="p-12 text-center text-slate-500 italic text-sm tracking-wide bg-slate-900/20">
+                  <div class="flex flex-col items-center gap-2">
+                    <span class="text-2xl opacity-20">🎮</span>
+                    No matches found in your history
+                  </div>
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex justify-center items-center mt-6 gap-4">
+        <Button 
+          variant="outline" 
+          disabled={currentPage <= 1} 
+          onclick={() => loadData(currentPage - 1)}>
+          ← Previous
+        </Button>
+        
+        <span class="font-mono border border-slate-600 bg-gray-700 px-3 py-1 rounded">Page {currentPage}</span>
+        
+        <Button 
+          variant="outline" 
+          onclick={() => loadData(currentPage + 1)}>
+          Next →
+        </Button>
+      </div>
+    {:else if activeTab === 'leaderboard'}
+      <div class="rounded-md border border-slate-800 overflow-hidden bg-[#0a0f1a]">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-teal-700 text-white text-[12px] uppercase tracking-widest">
+            <tr>
+              <th class="p-3 w-16 text-center">Rank</th>
+              <th class="p-3 w-32">Player ID</th>
+              <th class="p-3 text-center w-32">Wins</th>
+              <th class="p-3 text-center w-32">Losses</th>
+              <th class="p-3 text-center w-32">Total Points</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-300">
+            {#each leaderboard as player}
+              <tr class="border-b border-slate-800 hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono text-[11px] opacity-80">
+                  #{player.rank}
+                </td>
+                <td class="p-3">
+                  <span class="font-bold text-[11px] uppercase">Player #{player.user_id}</span>
+                </td>
+                <td class="p-3 text-center font-mono">
+                  {player.wins}
+                </td>
+                <td class="p-3 text-center font-mono">
+                  {player.losses}
+                </td>
+                <td class="p-3 text-center font-mono">
+                  {player.total_points}
+                </td>
+              </tr>
+            {:else}
+              <tr>
+                <td colspan="5" class="p-12 text-center text-slate-500 italic text-sm tracking-wide bg-slate-900/20">
+                  <div class="flex flex-col items-center gap-2">
+                    <span class="text-2xl opacity-20">🏆</span>
+                    No players found in the leaderboard
+                  </div>
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex justify-center items-center mt-6 gap-4">
+        <Button 
+          variant="outline" 
+          disabled={currentPage <= 1} 
+          onclick={() => loadData(currentPage - 1)}>
+          ← Previous
+        </Button>
+        
+        <span class="font-mono border border-slate-600 bg-gray-700 px-3 py-1 rounded">Page {currentPage}</span>
+        
+        <Button 
+          variant="outline" 
+          onclick={() => loadData(currentPage + 1)}>
+          Next →
+        </Button>
+      </div>
+
+     {/if}
   {/if}
 </div>
