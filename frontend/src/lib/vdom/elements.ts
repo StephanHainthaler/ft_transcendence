@@ -64,3 +64,31 @@ export const svg = (props?: Props, ...children: Child[]): VNode => {
 export const nav = (props?: Props, ...children: Child[]): VNode => {
   return el('nav', props, ...children);
 }
+
+export const span = (props?: Props, ...children: Child[]): VNode => {
+  return el('span', props, ...children);
+}
+
+export const table = (props?: Props, ...children: Child[]): VNode => {
+  return el('table', props, ...children);
+}
+
+export const thead = (props?: Props, ...children: Child[]): VNode => {
+  return el('thead', props, ...children);
+}
+
+export const tbody = (props?: Props, ...children: Child[]): VNode => {
+  return el('tbody', props, ...children);
+}
+
+export const tr = (props?: Props, ...children: Child[]): VNode => {
+  return el('tr', props, ...children);
+}
+
+export const th = (props?: Props, ...children: Child[]): VNode => {
+  return el('th', props, ...children);
+}
+
+export const td = (props?: Props, ...children: Child[]): VNode => {
+  return el('td', props, ...children);
+}

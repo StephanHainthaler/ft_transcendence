@@ -14,7 +14,9 @@
     console.log(client.isLoggedIn);
     const target = nav.to;
     console.log(target);
-    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
+    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')
+      && !target?.route.id?.includes('stats')//tempopary
+      ) {
       if (!client.isLoggedIn) {
         console.log('cancel redirect')
         goto('/auth', { replaceState: true });

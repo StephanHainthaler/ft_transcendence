@@ -19,7 +19,10 @@
     "test:backend:api": "npm run test -w @ft_transcendence/api",
     "test:backend:database": "npm run test -w @ft_transcendence/database",
     "test:backend:user": "npm run test -w @ft_transcendence/user",
-    "test:backend": "npm-run-all --continue-on-error test:backend:*"
+    "test:backend": "npm-run-all --continue-on-error test:backend:*",
+    "clean:workspaces": "npm run clean --workspaces --if-present",
+    "clean:root": "rm -rf node_modules",
+    "clean": "npm run clean:workspaces && npm run clean:root"
   },
   "devDependencies": {
     "@internationalized/date": "^3.10.0",
