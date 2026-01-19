@@ -1,16 +1,93 @@
-# ft_transcendence
+_This project has been created as part of the 42 curriculum by vvobis, shaintha, khuk, pgober, juitz._
 
 ## Description
 
-ft_transcendence ecole42 final project
+This project is called ft_transcendence and is the final project of Coding School 42. 
 
-## Usage
+The goal of this project is to create a real-world web application as a team that can move in many directions, depending on the modules the team chooses.
 
-### Setup
+We decided on a web-application where you can play Pong. For further information on the modules we implemented, see section "Modules" below.
+Full-stack development but also team organization, project management and establishing of roles within the team are some of the key objectives of this project.
 
-testing
+### Roles and Team Information
+  
+| **Person** | **Role**                                    | **Responsibilities**                        |
+|:-----------|:--------------------------------------------|:--------------------------------------------|
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   |
+| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  |
+| khuk       | Developer                                   | Write code for assigned features, Testing  |
+| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  |
+| juitz      | Developer                                   | Write code for assigned features, Testing  |
 
-First you need to install [nvm, node and npm](https://nodejs.org/en/download) for you OS.
+## Modules and key features
+
+| **Abbreviation**     | **Meaning**                  |
+|:----------           |:------------------           |
+|  ✅                 | Done                         |
+|  🚧                 | In progress                  |
+|  ❌                 | Cancelled                    |
+
+| **Module**           | **Sub Module**            |**Framework / Info**| **Assignee**    | **Type**| **Points** | **Status** |  **Reasoning**            |
+| :---                 | :---                      |  :---              | :---            | :---    | :---       | :---       |   :---                    |
+| **Web**              |                           |                    |                 |         |            |            |                           |
+| `-`                  | Backend Framework         | Svelte             | everyone        | Minor   | 1          | 🚧        | Frontend and Backend module just makes our lives easier |
+| `-`                  | Frontend Framework        | Fastify            | everyone        | Minor   | 1          | 🚧        | Frontend and Backend module just makes our lives easier |
+| `-`                  | User Interaction          |                    |                 | Major   | 2          | 🚧        |                           |
+| **Accessibility**    |                           |                    |                 |         |            |            |                           |
+| `-`                  | Language Support          |                    | khuk            | Minor   | 1          | 🚧        | We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :) |
+| `-`                  | Browser compatility       |                    | -               | Minor   | 1          | 🚧        | Different users use prefer different browsers    |
+| **User Management**  |                           |                    |                 |         |            |            |                           |
+| `-`                  | Standard user management  |                    | vvobis          | Major   | 2          | 🚧        | Works well with database and backend module |
+| `-`                  | Game stats                |                    | khuk            | Minor   | 1          | 🚧        | Seems not too complicated |
+| `-`                  | Remote authentication     | OAuth 2.0 (GitHub) | pgober          | Minor   | 1          | ✅        | Works well with database and backend module |
+| `-`                  | JWT and 2FA               |                    | vvobis & juitz  | Major   | 2          | 🚧        | Works well with mandatory auth, user management and remote auth |
+|**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
+| `-`                  | AI Opponent               |                    | pgober          | Major   | 2          | 🚧        | Interesting and could be combined well with the general game dev |
+| **Gaming**           |                           |                    |                 |         |            |            |                           |
+| `-`                  | Web-based game            | Pong               | shaintha & juitz| Major   | 2          | 🚧        |                           |
+| `-`                  | Tournament system         |                    |                 | Minor   | 1          | 🚧        |                           |
+| **DevOps**           |                           |                    |                 |         |            |            |                           |
+| `-`                  | Backend as microservices  |                    | everyone        | Major   | 2          | 🚧        | Seems like a natural way to work, especially as a team (work on one module in one service) |
+| **Modules of Choice**|                           |                    |                 |         |            |            |                           |
+| `-`                  | Run on Server             |                    | vvobis          | Major   | 2          | 🚧        | Running on server can protect from cheating/hacks, makes remote playing easier, seems natural |
+| `-`                  | Visually imparies access   |                   | vvobis          | Major   | 2          | 🚧        | Not too complicated, seems like simple frontend stuff, too much though for 1 point |
+| **TOTAL**            |                           |                    |                 |         | _20_       |            |                           |
+
+### Decision against Modules
+
+#### Web
+    - Blockchain too much of a hastle to learn (i think)
+    
+#### Gaming
+    - Remote players works well with server side pong
+    - Customization could be fairly easy, but maybe annoying as well
+    - Live chat seems very complicated, but also very interesting
+    - NOTE: Game might be best to be done by one person, except live chat maybe
+  
+#### DevOps
+    - Other modules too much
+    
+
+## Instructions
+
+### Setup & Installation
+
+#### Setup
+
+First, you need to create an folder called "env" at the root of the repository. It must contain the following files (containing the following variables):
+
+| filename   | variables |
+|:-----------|:----------|
+| .env.api | <ul><li>PORT</li><li>API_URL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li><li>SERVER_PONG_URL</li></ul> |
+| .env.auth | <ul><li>DB_FILE_PATH</li><li>USER_API_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
+| .env.development | <ul><li>VITE_API_URL</li><li>USER_API_URL</li><li>GAME_STATS_SERVICE_URL</li><li>VITE_SERVER_GAME_WS_URL</li></ul> |
+| .env.game | <ul><li>USER_URL</li></ul> |
+| .env.game_stats | <ul><li>HOST</li><li>PORT</li></ul> |
+| .env.user | <ul><li>DB_FILE_PATH</li><li>PORT</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
+
+
+#### Installation
+Then you need to install [nvm, node and npm](https://nodejs.org/en/download) for you OS.
 
 Then in the root of the project, run
 
@@ -18,9 +95,10 @@ Then in the root of the project, run
 make install
 ```
 
-this will install all the dependencies we added to the project, which are described in the package.json file
+This will install all the dependencies we added to the project, which are described in the package.json file.
 
 npm is the Node.js Package Manager, and is the main utility to install and use javascript modules.
+
 When adding a package with
 
 ```sh
@@ -28,7 +106,8 @@ npm add package-xzy
 ```
 
 npm will modify the package.json and add the new dependency.
-This means, that after you pull from main branch after somebody merged a PR, you should rerun
+
+This means, that after you pull from the main branch after somebody merged a PR, you should rerun
 
 ```sh
 make install
@@ -36,9 +115,15 @@ make install
 
 to sync installed dependencies, in case anybody added new ones.
 
-### Developpment
+#### Dependencies
+- vite
+- tailwindcss
+- fastify
+- etc...
 
-While developping, the command
+### Compilation and Execution
+
+While developing, the command
 
 ```sh
 make dev
@@ -48,10 +133,9 @@ or just
 make
 ```
 
-will run [vite](https://vite.dev/guide/), and serves files at **http://localhost:8080**;
-Vite is a utility that bundles and translates our TypeScript files into JavaScript files and serves them.
+will run [vite](https://vite.dev/guide/), which is a utility that bundles and translates our TypeScript files into JavaScript files and serves them. 
 
-This will also start the backend services in dev mode.
+It will serves files at **http://localhost:8080** and will also start the backend services in dev mode.
 
 For production builds, we will use
 
@@ -65,170 +149,103 @@ There is also a test feature
 ```sh
 make test
 ```
-which doesnt work perfectly right now and will need to be maintained/extendend as new services get added.
+which will need to be maintained/extendend as new services get added.
 
-### Submission
+## Project Management & Team Collaboration
 
-I think before a PR to main, test should have been written for the change. A change doesnt have to be a full module, might be just a part of a module or feature.
-Also, if a new module was started / submitted, it should have a corresponding service entry in the docker compose and docker file in the service dir.
-For env, maybe we just keep one the in this repo, and just dont put it into the intra repo when submitting.
+Before a PR to main, a test should have been written for the change. A change does not have to be a full module, might be just a part of a module or feature.
+Also, if a new module was started / submitted, it should have a corresponding service entry in the docker compose and docker file in the service directory.
 
-Possible Workflow:
+Workflow:
 - pull changes from main into current working branch after every commit/merge to main
-- run ```make install``` to sync deps
+- run ```make install``` to sync dependencies
 - run ```make test``` to check if all tests work after commit to main
-- run ```make prod``` to check the docker setup runs ( maybe we add some ```make prod-test``` with tests for the docker setup also)
-- work, work, work && write tests for changes
+- run ```make prod``` to check the docker setup runs
+- work & write tests for changes
 - when ready for PR, first run ```make test``` to run old and new tests
-- if all goes well, run ```make prod``` to see that all builds as expected (evtl. ```make prod-test``` if available)
-- push branch, create PR and describe changes
-- some other group member reviews the PR (can be requested with github feature)
-- PR gets merged, group is notified
+- if all goes well, run ```make prod``` to see that all builds as expected
+- push to the remote branch and create a PR with a description of the changes
+- some other group member reviews the PR (can be requested with GitHub feature)
+- the PR gets merged and the group is notified
 - everybody pulls from main to sync new feature
 - start from top
 
-### Modules
 
-#### Mandatory
+## Structure
 
-- Basic Web Prerequisites 
-    - Typescript
-    - Docker
-    - Firefox
-    - SPA
-    - no errors, warnings etc.
-- Game
-    - Pong 1v1
-    - Tournament
-    - registration (for tournament)
-    - matchmaking system
-    - same rules for all
-- Security
-    - passwords hashed
-    - SQL injections / XSS attacks
-    - https / wss
-    - input validation
-    - protected api (JWT or similar)
-    - .env not stored in repo
-
-#### Module List
-
-NEEDED: 14pts mandatory + min 5 bonus
-
-##### Legend
-
-| Short     | Meaning                                   |
-|:----------|:------------------------------------------|
-| everyone  | used by all members, can be dev by one    |
-|   ?       | maybe                                     |
-| **Status:** |
-|  - ✅     | Done                                      |
-|  - 🚧     | In progress                               |
-|  - ❌     | Cancelled                                 |
-
-
-| Module| Sub Module | Assignee | Type | Points |  Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Web** | | | _2_ | _4_ | |
-| `-` | Backend Framework | everyone | Major | 2 | 🚧 |
-| `-` | Frontend Framework | everyone | Minor | 2 | 🚧 |
-| `-` | Database | everyone | Minor | 2 | 🚧 |
-| **User Management** |  |  | _2_ | _4_ |  |
-| `-` | Standard user management | Victor | Major |  2 |  🚧 |
-| `-` | Remote authentication | Victor and Pia |  Major | 2 | 🚧 |
-| **AI-Algo** | | | _1.5_ | _2 + 1?_ | |
-| `-` | AI Opponent | Pia | Major |  2 | ✅ |
-| `-` | Game stats | Katya | Minor |  1 | 🚧 |
-| **Cybersecurity** | | | _1_ | _2_ | |
-| `-` | JWT and 2FA | Victor and Julian| Major |  2 |🚧 |
-| **DevOps** | | | _1_ | _2_ | |
-| `-` | Micro services | everyone | Major | 2 | 🚧 |
-| **Accessibility** | | | _1_ | _2.5_ | |
-| `-` | Language Support | Katya | Minor |  1 | 🚧 |
-| `-` | Accessibility visual | Katya | Minor |  1 | 🚧 |
-| `-` | Exp. browser comp. | - | Minor |  1 | 🚧 |
-| **Server-Side Pong** | | | _1_ | _2_ | |
-| `-` | Run on server | Victor | Major |  2 | 🚧 |
-| **TOTAL** | | | _9.5_ | _20?_ | |
-
-#### Reasoning
-
-- web
-    - Front and backend module just makes our lives easier
-    - Database is basically mandatory
-    - Blockchain too much of a hastle to learn (i think)
-- user
-    - Both auth and user management work well with database and backend module, and also cover some of securtiy part from mandatory
-- game
-    - Remote players works well with server side pong
-    - Customization could be fairly easy, but maybe annoying as well
-    - Live chat seems very complicated, but also very interesting
-    - NOTE: Game might be best to be done by one person, except live chat maybe
-- ai
-    - Ai Opponent maybe interesting and could be combined well with the general game dev
-    - Gamestats seems not too complicated but mayeb to much for 1 point
-- security
-    - JWT and 2FA again work well with mandatory auth, user management and remote auth
-    - Other modules too much i think
-- devops
-    - Microservices seems like a natural way to work, especially as a team (work on one module in one service)
-    - Other modules too much i think
-- accesibility
-    - We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :)
-    - Visually imparies access. could be not too complicated, seems like simple frontend stuff, might be much though for 1 point
-- server side
-    - Running on server can protect from cheating/hacks, makes remote playing easier, seems natural
-
-
-#### Dependencies
-Full list of our dependencies to keep track (we probably dont want to lose ueberblick)
-
-- vite
-- tailwindcss
-- fastify
-- etc...
-
-### Structure
-
-Possible project structure:
+Project structure:
 
 ```
+
 ft_transcendence/
 ├── env                             # env files
 │   └── ...
 ├── frontend                        # client / public code
 │   ├── src
-│   │   ├── routes
-│   │   │   └── ...
 │   │   ├── lib                     # client modules
-│   │   │   └── user                # user client module
-│   │   │       └── userClient.ts   # user api client
-│   │   └── ...
-│   ├── Dockerfile
-│   └── index.html
-├── scripts                         # scripts for tests usw.
-│   └── ...
+│   │   │   ├── api
+│   │   │   ├── assets
+│   │   │   ├── components
+│   │   │   |   ├── custom
+│   │   │   |   ├── error
+│   │   │   |   ├── forms
+│   │   │   |   ├── layout
+│   │   │   |   └── ui
+│   │   │   ├── game
+│   │   │   ├── hooks
+│   │   │   ├── tournament
+│   │   │   ├── types 
+│   │   │   ├── validation
+│   │   │   └── vdom
+│   │   └── routes
+│   │       ├── auth
+│   │       |   └── oauth-callback
+│   │       ├── error
+│   │       ├── friends
+│   │       ├── game
+│   │       ├── health
+│   │       ├── pages
+│   │       ├── profile
+│   │       └── tournament
+│   └── static
+├── scripts                         # scripts for tests
 ├── services                        # server / private code
-│   ├── api                         # api service module
+│   └── api                         # api service module with service-level docker file
 │   │   ├── src
-│   │   │   ├── user                # user server module
-│   │   │   │   └── userService.ts  # user service
-│   │   │   └── index.ts
-│   │   └── Dockerfile              # service-level docker file
+│   │   │   └── healthcheck
+│   ├── auth
+│   │   └── src
 │   ├── database                    # database module
-│   │   └── ...
-│   └── nginx                       # webserver
-│       └── ...
-├── shared                          # interfaces used in client and server modules
+│   ├── game
+│   │   └── src
+│   ├── game_stats
+│   │   ├── db
+│   │   ├── src
+│   │   └── tests
+│   ├── nginx                       # webserver
+│   ├── shared-server
+│   │   ├── error
+│   │   ├── jwt
+│   │   └── orm
 │   └── user
-│       └── interfaces.ts
+│       ├── src
+│       └── tests
+├── shared                          # interfaces used in client and server modules
+│   ├── api
+│   ├── game
+│   ├── game_stats
+│   └── user
 ├── docker-compose.yml              # compose starts the app in production mode
 └── ...
 ```
 
-#### Pro's
+#### Reasoning:
 
 - simple
 - separated client and server code
 - services grouped in one dir, frontend separate
 - shared types/interfaces between server and client modules
+
+
+## Resources
+

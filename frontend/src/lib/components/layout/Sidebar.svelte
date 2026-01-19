@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import * as Sidebar from "$lib/components/ui/sidebar";
   import { client } from "@lib/api";
 
@@ -8,9 +9,6 @@
     client.logout();
   };
 
-  client?.onChange(() => {
-    isLoggedIn = client.isLoggedIn;
-  });
 </script>
 
 <Sidebar.Root>
@@ -19,6 +17,7 @@
       <a href="/">Transcendence</a>
     </h1>
   </Sidebar.Header>
+
   <Sidebar.Content>
     {#if isLoggedIn}
     <Sidebar.Group>
@@ -26,30 +25,32 @@
       <Sidebar.GroupContent>
         <Sidebar.Menu>
           <Sidebar.MenuItem>
-            <Sidebar.MenuButton>
-              <a class="px-4 w-full" href="/profile">Profile</a>
-            </Sidebar.MenuButton>
-          </Sidebar.MenuItem>
-
-          <Sidebar.MenuItem> <Sidebar.MenuButton>
-              <a class="px-4 w-full" href="/stats">Statistics</a>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/profile')}>
+              Profile
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
 
           <Sidebar.MenuItem>
-            <Sidebar.MenuButton>
-              <a class="px-4 w-full" href="/game">Game</a>
-            </Sidebar.MenuButton>
-          </Sidebar.MenuItem>
-
-          <Sidebar.MenuItem> <Sidebar.MenuButton>
-              <a class="px-4 w-full" href="/tournament">Tournament</a>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/stats')}>
+              Statistics
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
 
           <Sidebar.MenuItem>
-            <Sidebar.MenuButton>
-              <a class="px-4 w-full" href="/friends">Friends</a>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/game')}>
+              Game
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/tournament')}>
+              Tournament
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/friends')}>
+              Friends
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
         </Sidebar.Menu>
@@ -64,14 +65,14 @@
         <Sidebar.Menu>
           {#if isLoggedIn}
             <Sidebar.MenuItem>
-              <Sidebar.MenuButton onclick={handleLogout}>
-                <span class="px-4 w-full">Logout</span>
+              <Sidebar.MenuButton class="px-4" onclick={handleLogout}>
+                Logout
               </Sidebar.MenuButton>
             </Sidebar.MenuItem>
           {:else}
             <Sidebar.MenuItem>
-              <Sidebar.MenuButton>
-                <a class="px-4 w-full" href="/auth">Login</a>
+              <Sidebar.MenuButton class="px-4" onclick={() => goto('auth')}>
+                Login
               </Sidebar.MenuButton>
             </Sidebar.MenuItem>
           {/if}

@@ -2,6 +2,7 @@ import type { SignupRequestBody, LoginRequestBody, AuthResponseSuccess, OAuthCal
 import { request } from './utils';
 import { parseJWT, type JWT } from "@shared/api";
 import type { Writable } from "@lib/types/writable";
+import { toast } from "svelte-sonner";
 
 export async function updateRequest(token: Writable<JWT | null>, {
   email, username, passwd
@@ -33,8 +34,8 @@ export async function signupRequest(
   token: Writable<JWT | null>,
   info: SignupRequestBody,
 ): Promise<AuthResponseSuccess> {
-  if ((!info.username && !info.email))
-    throw new Error("Missing Email of Username!");
+  if (!info.username && !info.email)
+    throw new Error("Missing Email or Username!");
   if (!info.passwd) throw new Error("Missing Password!");
 
   const signupReq = new Request('/api/auth/sign-up', {
@@ -45,10 +46,12 @@ export async function signupRequest(
     body: JSON.stringify(info),
   });
 
-  const response = await request(signupReq, token);
+  const response = await fetch(signupReq);
 
   const data: AuthResponseSuccess = await response.json();
-  if (!response.ok || !data.access_token) throw data;
+  if (!response.ok || !data.access_token)
+    throw data;
+
   const jwt = parseJWT(data.access_token);
   token.set(jwt);
 
@@ -56,13 +59,13 @@ export async function signupRequest(
 }
 
 export async function loginRequest(
+  token: Writable<JWT | null>,
   info: LoginRequestBody,
 ): Promise<AuthResponseSuccess> {
   if ((!info.username && !info.email))
     throw new Error("Missing Email of Username!");
   if (!info.passwd) throw new Error("Missing Password!");
 
-  console.log(info);
   const login: Request = new Request('/api/auth/login', {
     method: 'POST',
     headers: {
@@ -74,16 +77,20 @@ export async function loginRequest(
   const response = await fetch(login);
   const data: AuthResponseSuccess = await response.json();
 
-  console.log(data);
+  if (!response.ok || !data.access_token)
+    throw data;
 
-  if (!response.ok || !data.access_token) throw data;
+  const jwt = parseJWT(data.access_token);
+  token.set(jwt);
+
   return data;
 }
 
 export async function oauthRequest(
+  token: Writable<JWT | null>,
   info: OAuthCallBackBody,
 ): Promise<AuthResponseSuccess> {
-  if ((!info.code))
+  if (!info.code)
     throw new Error("Missing OAuth Code!");
 
   const oauth: Request = new Request('/api/auth/github-oauth', {
@@ -94,9 +101,6 @@ export async function oauthRequest(
     body: JSON.stringify(info),
   });
 
-  console.log("Code:");
-  console.log(info.code); // OK
-
   const response = await fetch(oauth);
 
   if (!response.ok) {
@@ -105,12 +109,29 @@ export async function oauthRequest(
 
   const data: AuthResponseSuccess = await response.json();
 
-  console.log("Access token:");
-  console.log(data);
+  if (!data.access_token) throw data;
 
-  if (!response.ok || !data.access_token) throw data;
+  const jwt = parseJWT(data.access_token);
+  token.set(jwt);
 
-  return data; // this contains the access_token
+  return data;
+}
+
+export async function deleteRequest(token: Writable<JWT | null>) {
+  const req = new Request('/api/auth/delete', {
+    method: 'delete',
+    headers: {
+      'Authorization': `Bearer ${token.get()?.raw}`,
+    }
+  });
+
+  try {
+    await request(req, token);
+  } catch (e: any) {
+    toast.error('Failed to Delete Account');
+  } finally {
+    token.set(null);
+  }
 }
 
 export async function logoutRequest(token: Writable<JWT | null>) {
@@ -124,7 +145,9 @@ export async function logoutRequest(token: Writable<JWT | null>) {
   try {
     await request(req, token);
   } catch {
-    throw new Error('Failed to log out');
+    toast.error('Failed to log out');
+  } finally {
+    token.set(null);
   }
 }
 

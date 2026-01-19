@@ -1,12 +1,13 @@
 import { db } from "./db";
 import { AuthUser, Session } from "./db";
 import { AuthUserClient, User } from "@shared/user"
-import { createUser } from "@ft_transcendence/user/src/api"
+import { createUser, getUser } from "@ft_transcendence/user/src/api"
 import argon2 from "argon2";
 import { generateJWT } from "./jwt";
 import crypto from "crypto";
 import { JWT } from "@shared/api";
 import { eq } from "@server/orm";
+import { sqliteErrorToApiError } from "@server/orm/error";
 
 async function hashPassword(passwd: string): Promise<string> {
   const hash = await argon2.hash(passwd)
@@ -56,6 +57,21 @@ export function getAuthUser({
   }
 
   return null;
+}
+
+export async function deleteAuthUser(authUser: AuthUser){
+  try {
+    console.log('deleting session');
+    deleteSession({ authId: authUser.id });
+    console.log('deleted session');
+    db.from('auth_users')
+      .where(eq('id', authUser.id))
+      .delete()
+      .run();
+    console.log('deleted user');
+  } catch (e: any) {
+    throw sqliteErrorToApiError(e);
+  }
 }
 
 export function getAuthUserClient({
@@ -179,25 +195,25 @@ export function getSession({
 }
 
 export function deleteSession({
-  authId, userId,  token,
+  authId, userId, token,
 }: {
   authId?: number, userId?: number, token?: string
 }) {
   if (userId) {
-    const session = db.from('sessions').delete().where(eq('user_id', userId)).single();
+    const session = db.from('sessions').delete().where(eq('user_id', userId)).run();
     if (!session)
       throw new Error('No session for that user');
 
     return session;
   } else if (authId) {
-    const session = db.from('sessions').delete().where(eq('auth_id', authId)).single();
+    const session = db.from('sessions').delete().where(eq('auth_id', authId)).run();
     if (!session)
       throw new Error('No session for that user');
 
     return session;
   } else if (token) {
     const tokenHash = hashRefreshToken(token);
-    const session = db.from('sessions').delete().where(eq('token', tokenHash)).single();
+    const session = db.from('sessions').delete().where(eq('token', tokenHash)).run();
     if (!session)
       throw new Error('No session for that user');
 
