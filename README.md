@@ -30,28 +30,27 @@ Full-stack development but also team organization, project management and establ
 | **Module**           | **Sub Module**            |**Framework / Info**| **Assignee**    | **Type**| **Points** | **Status** |  **Reasoning**            |
 | :---                 | :---                      |  :---              | :---            | :---    | :---       | :---       |   :---                    |
 | **Web**              |                           |                    |                 |         |            |            |                           |
-| `-`                  | Backend Framework         | Svelte             | everyone        | Minor   | 1          | 🚧        | Frontend and Backend module just makes our lives easier |
-| `-`                  | Frontend Framework        | Fastify            | everyone        | Minor   | 1          | 🚧        | Frontend and Backend module just makes our lives easier |
-| `-`                  | User Interaction          |                    |                 | Major   | 2          | 🚧        |                           |
+| `-`                  | Backend Framework         | Svelte             | everyone        | Minor   | 1          | ✅        | Frontend and Backend module just makes our lives easier |
+| `-`                  | Frontend Framework        | Fastify            | everyone        | Minor   | 1          | ✅        | Frontend and Backend module just makes our lives easier |
+| `-`                  | ORM Database              |                    |                 | Minor   | 1          | ✅        |                           |
 | **Accessibility**    |                           |                    |                 |         |            |            |                           |
-| `-`                  | Language Support          |                    | khuk            | Minor   | 1          | 🚧        | We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :) |
-| `-`                  | Browser compatility       |                    | -               | Minor   | 1          | 🚧        | Different users use prefer different browsers    |
+| `-`                  | Language Support          |                    | khuk            | Minor   | 1          | ✅        | We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :) |
+| `-`                  | Browser compatility       |                    | -               | Minor   | 1          | ✅        | Different users use prefer different browsers    |
 | **User Management**  |                           |                    |                 |         |            |            |                           |
-| `-`                  | Standard user management  |                    | vvobis          | Major   | 2          | 🚧        | Works well with database and backend module |
-| `-`                  | Game stats                |                    | khuk            | Minor   | 1          | 🚧        | Seems not too complicated |
+| `-`                  | Standard user management  |                    | vvobis          | Major   | 2          | ✅        | Works well with database and backend module |
+| `-`                  | Game stats                |                    | khuk            | Minor   | 1          | ✅        | Seems not too complicated |
 | `-`                  | Remote authentication     | OAuth 2.0 (GitHub) | pgober          | Minor   | 1          | ✅        | Works well with database and backend module |
-| `-`                  | JWT and 2FA               |                    | vvobis & juitz  | Major   | 2          | 🚧        | Works well with mandatory auth, user management and remote auth |
+| `-`                  | JWT and 2FA               |                    | vvobis & juitz  | Major   | 2          | ✅        | Works well with mandatory auth, user management and remote auth |
 |**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
-| `-`                  | AI Opponent               |                    | pgober          | Major   | 2          | 🚧        | Interesting and could be combined well with the general game dev |
+| `-`                  | AI Opponent               |                    | pgober          | Major   | 2          | ✅        | Interesting and could be combined well with the general game dev |
 | **Gaming**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Web-based game            | Pong               | shaintha & juitz| Major   | 2          | 🚧        |                           |
-| `-`                  | Tournament system         |                    |                 | Minor   | 1          | 🚧        |                           |
+| `-`                  | Web-based game            | Pong               | shaintha & juitz| Major   | 2          | ✅        |                           |
+| `-`                  | Tournament system         |                    |                 | Minor   | 1          | ✅        |                           |
 | **DevOps**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Backend as microservices  |                    | everyone        | Major   | 2          | 🚧        | Seems like a natural way to work, especially as a team (work on one module in one service) |
+| `-`                  | Backend as microservices  |                    | everyone        | Major   | 2          | ✅        | Seems like a natural way to work, especially as a team (work on one module in one service) |
 | **Modules of Choice**|                           |                    |                 |         |            |            |                           |
-| `-`                  | Run on Server             |                    | vvobis          | Major   | 2          | 🚧        | Running on server can protect from cheating/hacks, makes remote playing easier, seems natural |
-| `-`                  | Visually imparies access   |                   | vvobis          | Major   | 2          | 🚧        | Not too complicated, seems like simple frontend stuff, too much though for 1 point |
-| **TOTAL**            |                           |                    |                 |         | _20_       |            |                           |
+| `-`                  | Custom ORM                |                    | vvobis          | Minor   | 1          | ✅        |                           |
+| **TOTAL**            |                           |                    |                 |         | _19_       |            |                           |
 
 ### Decision against Modules
 
