@@ -8,7 +8,7 @@
   import Button from "@lib/components/ui/button/button.svelte";
   import * as Dialog from "$lib/components/ui/dialog";
   import { Trash } from "@lucide/svelte";
-    import { toast } from "svelte-sonner";
+  import { toast } from "svelte-sonner";
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -27,8 +27,8 @@
     passwdRepeat: ''
   });
 
-  let avatarSrc = $derived(session.avatarFile 
-    ? URL.createObjectURL(session.avatarFile) 
+  let avatarSrc = $derived(session.avatarFile
+    ? URL.createObjectURL(session.avatarFile)
     : client.avatar);
     let editMode = $state(false);
 

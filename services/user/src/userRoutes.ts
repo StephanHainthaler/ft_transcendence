@@ -114,6 +114,7 @@ export function userRoutes(fastify: FastifyInstance) {
       let user: Partial<User> | undefined;
       let avatar: MultipartFile | undefined;
 
+
       for await (const part of parts) {
         console.log('Part:', part.fieldname, part.type);
 

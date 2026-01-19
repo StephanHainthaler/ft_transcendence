@@ -7,9 +7,9 @@ export const getUser = async (token: Writable<JWT | null>) => {
   const req = new Request(`/api/user`, {
     method: "GET",
     headers: {
-      'authorization': `Bearer ${ token.get()?.raw }`
+      'authorization': `Bearer ${token.get()?.raw}`
     },
-  })
+  });
 
   const response = await request(req, token);
   const data = await response.json();
@@ -41,6 +41,8 @@ export const updateUser = async (token: Writable<JWT | null>, user: Partial<User
   if (avatar)
     userForm.append('avatar', avatar)
   userForm.append('user', JSON.stringify(user));
+
+  console.log(userForm);
 
   const req = new Request('/api/user/update', {
     method: 'post',
