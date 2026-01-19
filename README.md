@@ -32,10 +32,10 @@ Full-stack development but also team organization, project management and establ
 | **Web**              |                           |                    |                 |         |            |            |                           |
 | `-`                  | Backend Framework         | Svelte             | everyone        | Minor   | 1          | ✅        | Frontend and Backend module just makes our lives easier |
 | `-`                  | Frontend Framework        | Fastify            | everyone        | Minor   | 1          | ✅        | Frontend and Backend module just makes our lives easier |
-| `-`                  | ORM Database              |                    |                 | Minor   | 1          | ✅        |                           |
+| `-`                  | ORM Database              |                    | vvobis          | Minor   | 1          | ✅        |                           |
 | **Accessibility**    |                           |                    |                 |         |            |            |                           |
 | `-`                  | Language Support          |                    | khuk            | Minor   | 1          | ✅        | We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :) |
-| `-`                  | Browser compatility       |                    | -               | Minor   | 1          | ✅        | Different users use prefer different browsers    |
+| `-`                  | Browser compatility       |                    | everyone        | Minor   | 1          | ✅        | Different users use prefer different browsers    |
 | **User Management**  |                           |                    |                 |         |            |            |                           |
 | `-`                  | Standard user management  |                    | vvobis          | Major   | 2          | ✅        | Works well with database and backend module |
 | `-`                  | Game stats                |                    | khuk            | Minor   | 1          | ✅        | Seems not too complicated |
