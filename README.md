@@ -248,3 +248,12 @@ ft_transcendence/
 
 ## Resources
 
+#### Svelte
+- https://svelte.dev/
+- https://www.shadcn-svelte.com/
+
+#### OAuth
+- https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
+- https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
+- https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28
+- https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
