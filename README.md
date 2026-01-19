@@ -40,17 +40,17 @@ Full-stack development but also team organization, project management and establ
 | `-`                  | Standard user management  |                    | vvobis          | Major   | 2          | ✅        | Works well with database and backend module |
 | `-`                  | Game stats                |                    | khuk            | Minor   | 1          | ✅        | Seems not too complicated |
 | `-`                  | Remote authentication     | OAuth 2.0 (GitHub) | pgober          | Minor   | 1          | ✅        | Works well with database and backend module |
-| `-`                  | JWT and 2FA               |                    | vvobis & juitz  | Major   | 2          | ✅        | Works well with mandatory auth, user management and remote auth |
+| `-`                  | JWT and 2FA               |                    | vvobis & juitz  | Minor   | 1          | ✅        | Works well with mandatory auth, user management and remote auth |
 |**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
 | `-`                  | AI Opponent               |                    | pgober          | Major   | 2          | ✅        | Interesting and could be combined well with the general game dev |
 | **Gaming**           |                           |                    |                 |         |            |            |                           |
 | `-`                  | Web-based game            | Pong               | shaintha & juitz| Major   | 2          | ✅        |                           |
-| `-`                  | Tournament system         |                    |                 | Minor   | 1          | ✅        |                           |
+| `-`                  | Tournament system         |                    | vvobis          | Minor   | 1          | ✅        |                           |
 | **DevOps**           |                           |                    |                 |         |            |            |                           |
 | `-`                  | Backend as microservices  |                    | everyone        | Major   | 2          | ✅        | Seems like a natural way to work, especially as a team (work on one module in one service) |
 | **Modules of Choice**|                           |                    |                 |         |            |            |                           |
 | `-`                  | Custom ORM                |                    | vvobis          | Minor   | 1          | ✅        |                           |
-| **TOTAL**            |                           |                    |                 |         | _19_       |            |                           |
+| **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
 ### Decision against Modules
 
