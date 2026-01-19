@@ -1,57 +1,42 @@
 <script lang="ts">
   import { client } from "@lib/api";
-  import type { Friendship, User } from "@shared/user";
+  import type { Friendship } from "@shared/user";
   import Grid from "@lib/components/custom/Grid.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";
   import Button from "@lib/components/ui/button/button.svelte";
   import { onMount } from "svelte";
   import * as Card from "@lib/components/ui/card";
-
-  let requestMade = false;
-  let sending = false;
-  let success = false;
+  import type { AppUser } from "@lib/api/appUser";
+    import { toast } from "svelte-sonner";
 
   let errorMessage = '';
 
   const removeFriendship = async (friendShipId: number) => {
-    sending = true;
-    requestMade = true;
     try {
       await client.removeFriendship(friendShipId);
-      success = true;
     } catch (e: any) {
-      errorMessage = e.message || String(e);
-      success = false;
+      toast.error(`Failed to remove friendship`, {
+        description: e.message || String(e)
+      });
     } finally {
       await loadPageData();
-      requestMade = false;
-      sending = false;
     }
   }
 
   const acceptFriendRequest = async (friendShipId: number) => {
-    sending = true;
-    requestMade = true;
     try {
       await client.acceptFriendRequest(friendShipId);
       accepted = [...accepted, pendingRec.find(p => p.id === friendShipId)!];
       pendingRec = pendingRec.filter(p => p.id !== friendShipId);
-      success = true;
     } catch(e: any) {
-      errorMessage = e.message || String(e);
-      sending = false;
-      success = false;
-    } finally {
-      requestMade = false;
-      sending = false;
+      toast.error(`Failed to accept friendship`, {
+        description: e.message || String(e)
+      });
     }
   }
 
   const sendFriendRequest = async (friendId: number) => {
-    requestMade = true;
-    sending = true;
     try {
-      console.log('looking for id', friendId);
       const friend = users.find(f => f.id === friendId);
       if (!friend) throw new Error('Person doenst exist');
       const friendship = await client.sendFriendRequest(friendId);
@@ -59,31 +44,18 @@
       friends.push(friend);
       users = users.filter(u => u.id !== friendId);
       pendingSend.push(friendship);
-      success = true;
     } catch (e: any) {
-      errorMessage = e.message || String(e);
-      sending = false;
-      success = false;
-    } finally {
-      logState();
-      requestMade = false;
-      sending = false;
+      toast.error(`Failed to send friendship request`, {
+        description: e.message || String(e)
+      });
     }
   }
 
-  let users: User[] = $state([])
+  let users: AppUser[] = $state([])
   let accepted: Friendship[] = $state([])
   let pendingSend: Friendship[] = $state([])
   let pendingRec: Friendship[] = $state([])
-  let { friends, friendships }: { friends: User[], friendships: Friendship[]} = $state({friends: [], friendships: []});
-
-  const logState = () => {
-    console.log('userid: ', client.user);
-    console.log('users: ', users);
-    console.log('friends', friends);
-    console.log('friendships', friendships);
-    console.log('accepted: ', accepted, '\npendingSend: ', pendingSend, '\npendingRec: ', pendingRec);
-  }
+  let { friends, friendships }: { friends: AppUser[], friendships: Friendship[] } = $state({friends: [], friendships: []});
 
   const loadPageData = async () => {
     const data = await client.getFriends();
@@ -93,7 +65,6 @@
     accepted = friendships.filter(f => f.status === 'accepted');
     pendingSend = friendships.filter(f => f.status === 'pending' && f.user_from_id === client.user?.id);
     pendingRec = friendships.filter(f => f.status === 'pending' && f.user_to_id === client.user?.id);
-    logState();
   }
 
   onMount(async () => {
@@ -101,44 +72,41 @@
   })
 </script>
 
-<div class='size-full page-container'>
-  <Card.Root>
-    <Card.Header>
-      <Card.Title>Friends</Card.Title>
-    </Card.Header>
-    <Card.Content>
-      <div class='size-full card flex flex-col md:grid md:grid-cols-2 justify-evenly bg-tan gap-2 p-2 md:p-8 overflow-y-scroll'>
-        <Grid title={'Send'}>
-          {#each users as u}
-            {#if !friends.find(fr => fr.id === u.id)}
-              <GridCard title={u.name} buttonDesc={'Add'} callback={async () => await sendFriendRequest(u.id)}/>
-            {/if}
-          {/each}
-        </Grid>
+<Card.Root class="flex-1 min-h-0 flex flex-col h-full">
+  <Card.Header>
+    <Card.Title>Friends</Card.Title>
+  </Card.Header>
+  <Card.Content class="flex-1 min-h-0 overflow-hidden">
+    <div class='h-full grid grid-cols-1 grid-rows-4 md:grid-rows-2 md:grid-cols-2 gap-2 p-2 md:p-8'>
+      <Grid title='Send'>
+        {#each users as u}
+          {#if !friends.find(fr => fr.id === u.id)}
+            <GridCard title={u.name} buttonDesc={'Add'} callback={async () => await sendFriendRequest(u.id)}/>
+          {/if}
+        {/each}
+      </Grid>
 
-        <Grid title={'Friends'}>
-          {#each accepted as a}
-            <GridCard title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)!.name} buttonDesc={'Remove'} callback={async () => await removeFriendship(a.id)}/>
-          {/each}
-        </Grid>
+      <Grid title='Friends'>
+        {#each accepted as a}
+          <GridCard title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)!.name} buttonDesc={'Remove'} callback={async () => await removeFriendship(a.id)}/>
+        {/each}
+      </Grid>
 
-        <Grid title={'Cancel'}>
-          {#each pendingSend as p}
-            <GridCard title={friends.find(u => u.id === p.user_to_id)!.name} buttonDesc={'Cancel'} callback={async () => await removeFriendship(p.id)}/>
-          {/each}
-        </Grid>
+      <Grid title='Cancel'>
+        {#each pendingSend as p}
+          <GridCard title={friends.find(u => u.id === p.user_to_id)!.name} buttonDesc={'Cancel'} callback={async () => await removeFriendship(p.id)}/>
+        {/each}
+      </Grid>
 
-        <Grid title={'Accept'}>
-          {#each pendingRec as u}
-            <GridCard title={friends.find(fr => fr.id === u.user_from_id)!?.name} buttonDesc={'Reject'} callback={async () => await removeFriendship(u.id)}>
-              {#snippet extraBtn()}
-                <Button class='btn primary sm' onclick={async () => await acceptFriendRequest(u.id)}>Accept</Button>
-              {/snippet}
-            </GridCard>
-          {/each}
-        </Grid>
-      </div>
-    </Card.Content>
-  </Card.Root>
-</div>
-
+      <Grid title='Accept'>
+        {#each pendingRec as u}
+          <GridCard title={friends.find(fr => fr.id === u.user_from_id)!?.name} buttonDesc={'Reject'} callback={async () => await removeFriendship(u.id)}>
+            {#snippet extraBtn()}
+              <Button class='btn primary sm' onclick={async () => await acceptFriendRequest(u.id)}>Accept</Button>
+            {/snippet}
+          </GridCard>
+        {/each}
+      </Grid>
+    </div>
+  </Card.Content>
+</Card.Root>

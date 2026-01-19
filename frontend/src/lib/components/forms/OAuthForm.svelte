@@ -21,8 +21,6 @@
       const params = new URLSearchParams(info);
       const oauthUrl = `https://github.com/login/oauth/authorize?${params.toString()}`;
 
-      console.log(oauthUrl); // OK
-
       window.location.href = oauthUrl;
     } catch (e: any) {
       errorMessage = new Error(`OAuth Failed: ${e.message || e}`)
@@ -41,12 +39,12 @@
     sessionStorage.setItem("oauth_state", state); // safe it in session
 
     const info = {
-    client_id: 'Ov23likjrNVolqMyu8L5',
-    redirect_uri: "http://localhost:8080/auth/oauth-callback", // frontend route for redirection
-    // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
-    state, // create a CSRF token
-    allow_signup: 'true',
-    scope: 'read:user user:email' // https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
+      client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
+      redirect_uri: "http://localhost:8080/auth/oauth-callback", // frontend route for redirection
+      // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
+      state, // create a CSRF token
+      allow_signup: 'true',
+      scope: 'read:user user:email' // https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
     };
 
     try {

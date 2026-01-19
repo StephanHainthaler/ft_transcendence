@@ -10,14 +10,17 @@
   const handleLoginFormSubmit = async (e: Event) => {
     e.preventDefault();
     e.stopPropagation();
+
     try {
       const email = validateInput(usernameBuffer, { type: 'email' }).input;
       const username = validateInput(usernameBuffer, { type: 'username' }).input;
+
       await client.login({
         username,
         email,
         passwd: userPasswordBuffer,
       });
+
       goto('/');
     } catch (e: any) {
       errorMessage = e.message || e.toString();
