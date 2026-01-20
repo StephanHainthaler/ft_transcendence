@@ -9,9 +9,9 @@ function safeParseInt(value: any, name: string, min: number = 0): number
 	const nb = parseInt(value);
 	if (isNaN(nb) || nb < min)
 	{
-		throw new ApiError({ 
-			message: `Invalid or missing parameter: ${name}. Must be an integer >= ${min}.`, 
-			code: 400 
+		throw new ApiError({
+			message: `Invalid or missing parameter: ${name}. Must be an integer >= ${min}.`,
+			code: 400
 		});
 	}
 	return (nb);
@@ -46,26 +46,26 @@ export const GameStatsControllers = {
 			return handleControllerError(e, reply, request);
 		}
 	},
-	
+
 	getUserMatchHistoryHandler: async (request: FastifyRequest, reply: FastifyReply) =>
 	{
 		try {
 			const params = request.params as { userId: string };
 			const query = request.query as { page: string };
 			const userId = safeParseInt(params.userId, 'userId', 1);
-			const page = safeParseInt(query.page || '1', 'page', 1); 
+			const page = safeParseInt(query.page || '1', 'page', 1);
 			const history = logic.getUserMatchHistory(userId, page);
 			return reply.status(200).send(history || []);
 		} catch (e: any) {
 			return handleControllerError(e, reply, request);
 		}
 	},
-	
+
 	getLeaderboardHandler: async (request: FastifyRequest, reply: FastifyReply) =>
 	{
 		try {
 			const query = request.query as { page: string };
-			const page = safeParseInt(query.page || '1', 'page', 1); 
+			const page = safeParseInt(query.page || '1', 'page', 1);
 			const leaderboard = logic.getLeaderboard(page);
 			return reply.status(200).send(leaderboard || []);
 		} catch (e: any) {
@@ -77,14 +77,15 @@ export const GameStatsControllers = {
 	{
 		try {
 			const body = request.body as any;
-			const data: MatchSubmissionData = {
-				player_one_id: safeParseInt(body.player_one_id, 'player_one_id', 1),
-				player_two_id: safeParseInt(body.player_two_id, 'player_two_id', 1),
-				winner_id: safeParseInt(body.winner_id, 'winner_id', 1),
-				p1_score: safeParseInt(body.p1_score, 'p1_score', 0),
-				p2_score: safeParseInt(body.p2_score, 'p2_score', 0),
-				duration: safeParseInt(body.duration || 0, 'duration', 0),
-			};
+			// const data: MatchSubmissionData = {
+			// 	player_one_id: safeParseInt(body.player_one_id, 'player_one_id', 1),
+			// 	player_two_id: safeParseInt(body.player_two_id, 'player_two_id', 1),
+			// 	winner_id: safeParseInt(body.winner_id, 'winner_id', 1),
+			// 	p1_score: safeParseInt(body.p1_score, 'p1_score', 0),
+			// 	p2_score: safeParseInt(body.p2_score, 'p2_score', 0),
+			// 	duration: safeParseInt(body.duration || 0, 'duration', 0),
+			// };
+      const data: MatchSubmissionData = JSON.parse(body);
 			if (data.player_one_id === data.player_two_id)
 				throw new ApiError({ message: 'Players must be different.', code: 400 });
 			if (data.winner_id !== data.player_one_id && data.winner_id !== data.player_two_id)

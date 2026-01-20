@@ -1,11 +1,10 @@
-import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";
+import type { UserStats, MatchHistoryEntry, MatchSubmissionData } from "@shared/game_stats";
 import { request } from "./utils";
 import type { Writable } from "@lib/types/writable";
 import type { JWT } from "@shared/api";
 
 async function fetchUserStats(token: Writable<JWT | null>, userId: number):  Promise<UserStats | null>
 {
-
 	const req = new Request(`/api/stats/v1/user/${userId}`,
 		{
 			method: "GET",
@@ -19,9 +18,9 @@ async function fetchUserStats(token: Writable<JWT | null>, userId: number):  Pro
 	return (data as UserStats);
 }
 
-async function fetchMatchHistory(token: Writable <JWT | null>, userId: number) : Promise<MatchHistoryEntry[]>
+async function fetchMatchHistory(token: Writable <JWT | null>, userId: number, page: number = 1) : Promise<MatchHistoryEntry[]>
 {
-	const req = new Request(`/api/stats/v1/history/${userId}`,
+	const req = new Request(`/api/stats/v1/history/${userId}?page=${page}`,
 		{
 			method: "GET",
 			headers: {'authorization': `Bearer ${ token.get()?.raw }`}
@@ -29,7 +28,7 @@ async function fetchMatchHistory(token: Writable <JWT | null>, userId: number) :
 	);
 	const response = await request(req, token);
 	const data = await response.json();
-	if (!response.ok) 
+	if (!response.ok)
 		throw (data);
 	return (data as MatchHistoryEntry[]);
 }
@@ -43,9 +42,24 @@ async function fetchLeaderboard(token: Writable<JWT | null>, page: number = 1): 
 	);
 	const response = await request(req, token);
 	const data = await response.json();
-	if (!response.ok) 
+	if (!response.ok)
 		throw (data);
 	return (data as UserStats[]);
 }
 
-export { fetchUserStats, fetchMatchHistory, fetchLeaderboard };
+async function uploadMatchData(token: Writable<JWT | null>, matchData: MatchSubmissionData) {
+  const req = new Request(`/api/stats/v1/match`,
+		{
+			method: "POST",
+			headers: {'authorization': `Bearer ${ token.get()?.raw }`},
+			body: JSON.stringify(matchData),
+    }
+	);
+	const response = await request(req, token);
+	const data = await response.json();
+	if (!response.ok)
+		throw (data);
+	return (data as MatchHistoryEntry[]);
+}
+
+export { fetchUserStats, fetchMatchHistory, fetchLeaderboard, uploadMatchData };

@@ -24,9 +24,9 @@ export function getUserStats(userId: number): UserStats | null
 		.select('*')
 		.where(eq('user_id', userId))
 		.single();
-		if (! user_stats)
+		if (!user_stats)
 		{
-			const default_stats = 
+			const default_stats =
 			{
 				user_id: userId,
 				wins: 0,
@@ -161,6 +161,14 @@ export function recordMatch(data: MatchSubmissionData) : number | bigint | null
 	{
 		const timestamp = Math.floor(Date.now() / 1000);
 
+		if (data.winner_id == data.player_one_id) {
+			updateStatsForUser(data.player_one_id, true, data.p1_score);
+			updateStatsForUser(data.player_two_id, false, data.p2_score);
+		} else {
+			updateStatsForUser(data.player_one_id, false, data.p1_score);
+			updateStatsForUser(data.player_two_id, true, data.p2_score);
+		}
+
 		const insertResult = getDb().from('match_history').insert({
 			timestamp: timestamp,
 			player_one_id: data.player_one_id,
@@ -171,13 +179,6 @@ export function recordMatch(data: MatchSubmissionData) : number | bigint | null
 			p2_score: data.p2_score,
 		}).run();
 
-		if (data.winner_id == data.player_one_id) {
-			updateStatsForUser(data.player_one_id, true, data.p1_score);
-			updateStatsForUser(data.player_two_id, false, data.p2_score);
-		} else {
-			updateStatsForUser(data.player_one_id, false, data.p1_score);
-			updateStatsForUser(data.player_two_id, true, data.p2_score);
-		}
 		const resultWithId = insertResult as { lastInsertRowid: number | bigint };//any;
 		return resultWithId.lastInsertRowid;
 	}

@@ -21,6 +21,23 @@
     return (`${mins}:${secs.toString().padStart(2, '0')}`);
   }
 
+  async function uploadDummyData() {
+    let userId = 1;
+    let history = [
+          { match_id: 1, player_one_id: userId, player_two_id: 2, p1_score: 11, p2_score: 5, winner_id: userId, duration: Math.random() * 8000, timestamp: 123456789},
+          { match_id: 2, player_one_id: 2, player_two_id: userId, p1_score: 8, p2_score: 11, winner_id: userId, duration: Math.random() * 8000, timestamp: 123456789},
+          { match_id: 3, player_one_id: userId, player_two_id: 2, p1_score: 2, p2_score: 11, winner_id: 2, duration: Math.random() * 8000, timestamp: 123456789},
+          { match_id: 4, player_one_id: 2, player_two_id: userId, p1_score: 11, p2_score: 0, winner_id: 2, duration: Math.random() * 8000, timestamp: 123456789},
+          { match_id: 5, player_one_id: userId, player_two_id: 2, p1_score: 10, p2_score: 10, winner_id: userId, duration: Math.random() * 8000, timestamp: 123456789}
+        ];
+    let promises: Promise<void>[] = [];
+    for (let i = 0; i < 1; i++) {
+      promises.push(client.uploadMatch(history[i % history.length]));
+    }
+
+    await Promise.all(promises);
+  }
+
   async function loadData(page: number = 1)
   {
     try
@@ -35,7 +52,7 @@
         leaderboard = l;
         currentPage = page;
       }
-      else 
+      else
       {
         const [s, h] = await Promise.all([
           client.getUserStats(userId),
@@ -50,16 +67,16 @@
       console.error("Failed to load stats:", error);
     } finally
     {
-      isLoading = false;
+      setTimeout(() => isLoading = false, 300);
     }
   }
 
   //Something for testing without backend
-  
+
   // async function loadData(page: number = 1) {
   //   try {
   //     isLoading = true;
-  //     const userId = client.user?.id || 1; 
+  //     const userId = client.user?.id || 1;
 
   //     await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -101,30 +118,32 @@
 </script>
 
 <div class="flex items-center gap-4 mb-8 justify-center">
-  <Button 
-    variant="outline" 
+  <Button
+    variant="outline"
     onclick={() => { activeTab = 'stats'; loadData(1); }}
-    class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 
-    {activeTab === 'stats' 
-      ? 'bg-slate-700 text-white border-slate-600 shadow-md' 
+    class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200
+    {activeTab === 'stats'
+      ? 'bg-slate-700 text-white border-slate-600 shadow-md'
       : 'bg-slate-900/50 text-slate-400 hover:text-white border-slate-800'}"
   >
     My Statistics
   </Button>
 
-  <Button 
-    variant="outline" 
+  <Button
+    variant="outline"
     onclick={() => { activeTab = 'leaderboard'; loadData(1); }}
-    class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 
-    {activeTab === 'leaderboard' 
-      ? 'bg-slate-700 text-white border-slate-600 shadow-md' 
+    class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200
+    {activeTab === 'leaderboard'
+      ? 'bg-slate-700 text-white border-slate-600 shadow-md'
       : 'bg-slate-900/50 text-slate-400 hover:text-white border-slate-800'}"
   >
     Leaderboard
   </Button>
 </div>
 
-<div class="px-4 py-4 sm:p-4 lg:px-6 max-w-6xl mx-auto"> 
+<Button onclick={uploadDummyData}>Dummy</Button>
+
+<div class="px-4 py-4 sm:p-4 lg:px-6 max-w-6xl mx-auto">
   <h1 class="text-3xl font-bold mb-6 text-white">
     {activeTab === 'stats' ? 'Player Statistics' : 'Global Leaderboard'}
   </h1>
@@ -134,7 +153,8 @@
   {:else}
 
     {#if activeTab === 'stats'}
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">        
+      {@const curPageIndex = (currentPage - 1 ) * 10 }
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
         {#each [
           { label: 'Your Rank', value: stats?.rank },
           { label: 'Wins', value: stats?.wins },
@@ -144,7 +164,7 @@
           { label: 'Highest Score', value: stats?.highest_score }
         ] as item}
           <Card.Root class="overflow-hidden border-slate-800 bg-slate-900/50">
-            <Card.Header class="p-3 pb-0"> 
+            <Card.Header class="p-3 pb-0">
               <Card.Title class="text-[10px] sm:text-xs opacity-70 uppercase tracking-wider text-slate-400">
                 {item.label}
               </Card.Title>
@@ -164,12 +184,12 @@
           <thead class="bg-teal-700 text-white text-[12px] uppercase tracking-widest">
             <tr>
               <th class="p-3 w-16 hidden md:table-cell text-center">ID</th>
-              
+
               <th class="p-3 w-32">Opponent</th>
               <th class="p-3 text-center w-32">Score</th>
-              
+
               <th class="p-3 text-center w-32 hidden md:table-cell">Duration</th>
-              
+
               <th class="p-3 pr-6 text-right w-32">Result</th>
             </tr>
           </thead>
@@ -185,11 +205,11 @@
                 <td class="p-3 text-center font-mono text-[11px] opacity-80 hidden md:table-cell">
                   #{match.match_id}
                 </td>
-                
+
                 <td class="p-3">
                   <span class="font-bold text-[11px] uppercase">Player #{opponentId}</span>
                 </td>
-                
+
                 <td class="p-3 text-center font-mono tracking-tighter">
                   <span class={isWin ? 'text-green-400 font-bold' : ''}>{match.p1_score}</span>
                   <span class="mx-1 opacity-20">:</span>
@@ -202,7 +222,7 @@
 
                 <td class="p-3 pr-5 text-right w-32">
                   <span class="inline-block px-2 py-1 rounded text-[11px] font-black uppercase tracking-tighter
-                    {isWin ? 'bg-green-500/10 text-green-500' : 
+                    {isWin ? 'bg-green-500/10 text-green-500' :
                     isDraw ? 'bg-slate-500/10 text-slate-400' : 'bg-red-500/10 text-red-500'}">
                     {isWin ? 'Victory' : isDraw ? 'Draw' : 'Defeat'}
                   </span>
@@ -223,17 +243,17 @@
       </div>
 
       <div class="flex justify-center items-center mt-6 gap-4">
-        <Button 
-          variant="outline" 
-          disabled={currentPage <= 1} 
+        <Button
+          variant="outline"
+          disabled={currentPage <= 1}
           onclick={() => loadData(currentPage - 1)}>
           ← Previous
         </Button>
-        
+
         <span class="font-mono border border-slate-600 bg-gray-700 px-3 py-1 rounded">Page {currentPage}</span>
-        
-        <Button 
-          variant="outline" 
+
+        <Button
+          variant="outline"
           onclick={() => loadData(currentPage + 1)}>
           Next →
         </Button>
@@ -284,17 +304,17 @@
       </div>
 
       <div class="flex justify-center items-center mt-6 gap-4">
-        <Button 
-          variant="outline" 
-          disabled={currentPage <= 1} 
+        <Button
+          variant="outline"
+          disabled={currentPage <= 1}
           onclick={() => loadData(currentPage - 1)}>
           ← Previous
         </Button>
-        
+
         <span class="font-mono border border-slate-600 bg-gray-700 px-3 py-1 rounded">Page {currentPage}</span>
-        
-        <Button 
-          variant="outline" 
+
+        <Button
+          variant="outline"
           onclick={() => loadData(currentPage + 1)}>
           Next →
         </Button>

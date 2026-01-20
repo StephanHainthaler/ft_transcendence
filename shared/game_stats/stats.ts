@@ -20,11 +20,11 @@ export interface MatchHistoryEntry {
 }
 
 export interface MatchSubmissionData {
-    player_one_id: number;
-    player_two_id: number;
-    p1_score: number;
-    p2_score: number;
-    winner_id: number;
-    duration: number;
-	timestamp: number;
+  player_one_id: number;
+  player_two_id: number;
+  p1_score: number;
+  p2_score: number;
+  winner_id: number;
+  duration: number;
+  timestamp: number;
 }
