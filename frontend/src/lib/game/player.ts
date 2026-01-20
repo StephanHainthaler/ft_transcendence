@@ -1,11 +1,12 @@
 import { Pong } from "./pong";
 import { Ball } from "./ball";
+import { AppUser} from "../api/appUser";
 
 type vector = {x: number; y: number};
 
 export class Player
 {
-	private _name: string;
+	private _data: AppUser
 	private _playerNumber: number;
 	private	_velocity: number;
 	private	_width: number;
@@ -18,10 +19,10 @@ export class Player
     private	_game: Pong;
 
 
-	public constructor(name: string, x: number, y: number, canvas: HTMLCanvasElement, playerNumber: number, game: Pong)
+	public constructor(data: AppUser, x: number, y: number, canvas: HTMLCanvasElement, playerNumber: number, game: Pong)
 	{
 		this._origin = {x, y};
-    	this._name = name;
+    	this._data = data;
 		this._playerNumber = playerNumber;
 		this._velocity = 5;
 		this._width = canvas.width * 0.01;
@@ -85,9 +86,9 @@ export class Player
 			this._origin.y -= scaledVelocity;
 	}
 
-	public setName(name: string): void
+	public getData(): AppUser
 	{
-    	this._name = name;
+    	return (this._data);
 	}
 
 	public setScore(score: number)
