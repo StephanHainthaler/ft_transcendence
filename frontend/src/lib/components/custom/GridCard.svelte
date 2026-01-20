@@ -1,7 +1,8 @@
 <script lang="ts">
   import * as Item from "$lib/components/ui/item";
-    import type { Snippet } from "svelte";
+  import type { Snippet } from "svelte";
   import Button from "../ui/button/button.svelte";
+  import { t } from "@lib/i18n/i18n";
 
   const {
     title,
@@ -38,7 +39,7 @@
       onclick={callback}
       class="min-w-24 transition-colors"
     >
-      {buttonDesc || 'Choose'}
+      {buttonDesc || $t('tournament.choose')}
     </Button>
     {@render extraBtn?.()}
   </Item.Actions>

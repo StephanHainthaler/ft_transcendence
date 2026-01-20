@@ -6,6 +6,7 @@
   import { goto } from "$app/navigation";
   import { client } from "$lib/api";
   import { buttonVariants } from "@lib/components/ui/button";
+  import { t } from "@lib/i18n/i18n";
 
   let message = $state('');
   let success = $state(false);
@@ -58,18 +59,18 @@
 <div class="w-full flex items-center justify-center p-4">
   <Card.Root class="w-full max-w-md shadow-xl">
     <Card.Header>
-      <Card.Title>OAuth Redirect</Card.Title>
+      <Card.Title>{$t('OAuth.redirect')}</Card.Title>
     </Card.Header>
     <Card.Content class="pt-6 w-full flex flex-col gap-4">
       {#if !success}
         <Alert.Root variant='destructive'>
           <CircleAlertIcon />
-          <Alert.Title>Something went wrong...</Alert.Title>
+          <Alert.Title>{$t('OAuth.error2')}</Alert.Title>
           <Alert.Description>
             {error}
           </Alert.Description>
         </Alert.Root>
-        <a class={`pr-4 ${buttonVariants({ variant: 'link' })}`} href="/auth">Go back...</a>
+        <a class={`pr-4 ${buttonVariants({ variant: 'link' })}`} href="/auth">{$t('OAuth.error2')}</a>
       {:else}
         <div class='p-4 bg-gray-700'>
           {message}

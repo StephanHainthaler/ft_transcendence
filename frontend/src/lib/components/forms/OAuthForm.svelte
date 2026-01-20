@@ -2,6 +2,7 @@
   import * as Alert from "$lib/components/ui/alert";
   import Button from "$lib/components/ui/button/button.svelte";
   import { CircleAlertIcon } from "@lucide/svelte";
+  import {t, currentLocale} from "@lib/i18n/i18n";
 
   // see https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
   // https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
@@ -61,12 +62,12 @@
 
 <form onsubmit={handleOAuthRequest}>
   <Button type="submit" class="w-full bg-blue-500 text-white py-2">
-    OAuth with GitHub
+    {$t('OAuth.oauth_gh')}
   </Button>
   {#if errorMessage}
   <Alert.Root variant='destructive'>
     <CircleAlertIcon />
-    <Alert.Title>Something went wrong</Alert.Title>
+    <Alert.Title>{$t('OAuth.error')}</Alert.Title>
     <Alert.Description>
       <p>{errorMessage.message}</p>
     </Alert.Description>

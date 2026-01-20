@@ -1,12 +1,113 @@
 {
+  "main_name": "Transcendence",
+  "menu": "Меню",
+  "login": {
+    "login": "Вхід",
+    "username": "Email або ім'я користувача",
+    "username_ph": "Введіть email або ім'я користувача",
+    "password": "Пароль",
+    "password_ph": "Введіть пароль",
+    "singin": "Увійти"
+  },
+  "signup": {
+    "signup": "Реєстрація",
+    "register": "Реєстрація",
+    "username": "Ім'я користувача",
+    "username_ph": "Виберіть ім'я користувача",
+    "email": "Email",
+    "email_ph": "Введіть ваш email",
+    "password": "Пароль",
+    "password_ph": "Створіть пароль",
+    "pass_repeat": "Введіть ваш пароль",
+    "pass_confirm": "Підтвердіть пароль",
+    "loading": "Реєстрація...",
+    "pass_no_match": "Паролі не збігаються"
+  },
+  "OAuth": {
+    "oauth": "OAuth",
+    "oauth_gh": "OAuth через GitHub",
+    "error": "Щось пішло не так",
+    "error2": "Щось пішло не так...",
+    "redirect": "Перенаправлення OAuth",
+    "go_back": "Повернутися назад...",
+    "loading": "Завершення авторизації через GitHub…"
+  },
+  "sidebar": {
+    "login": "Вхід",
+    "routes": "Навігація",
+    "profile": "Профіль",
+    "game": "Гра",
+    "tournament": "Турнір",
+    "friends": "Друзі",
+    "statistics": "Статистика",
+    "account": "Акаунт",
+    "logout": "Вийти",
+    "language": "Мова"
+  },
   "stats": {
     "title": "Статистика гравця",
-    "rank": "Твій ранг",
+    "my_statistics": "Моя статистика",
+    "leaderboard": "Таблиця лідерів",
+    "your_rank": "Ваш ранг",
     "wins": "Перемоги",
-    "history": "Історія матчів"
+    "losses": "Поразки",
+    "total_points": "Всього очок",
+    "streak": "Серія перемог",
+    "highest_score": "Найкращий результат",
+    "match_history": "Історія матчів",
+    "no_matches": "В історії матчів нічого не знайдено",
+    "opponent": "Супротивник",
+    "score": "Рахунок",
+    "duration": "Тривалість",
+    "result": "Результат",
+    "victory": "Перемога",
+    "defeat": "Поразка",
+    "draw": "Нічия",
+    "page": "Сторінка"
   },
   "leaderboard": {
-    "title": "Таблиця лідерів",
-    "player": "Гравець"
+    "title": "Глобальна таблиця лідерів",
+    "player_id": "ID гравця",
+    "no_players": "Гравців у таблиці лідерів не знайдено"
+  },
+  "buttons": {
+    "next": "Далі",
+    "previous": "Назад"
+  },
+  "friends": {
+    "card_title": "Друзі",
+    "send": "Надіслати",
+    "add": "Додати",
+    "remove": "Видалити",
+    "cancel": "Скасувати",
+    "accept": "Прийняти",
+    "reject": "Відхилити"
+  },
+  "game": {
+    "game": "Гра",
+    "challenge": "Викликати"
+  },
+  "profile": {
+    "profile": "Профіль",
+    "pers_info": "Особиста інформація",
+    "disp_name": "Ім'я, що відображається",
+    "credentials": "Облікові дані",
+    "username": "Ім'я користувача",
+    "email": "Email",
+    "password": "Пароль",
+    "pass_repeat": "Повторіть пароль",
+    "save": "Зберегти зміни",
+    "cancel": "Скасувати",
+    "edit": "Редагувати"
+  },
+  "tournament": {
+    "tournament": "Турнір",
+    "selected": "Вибрані гравці",
+    "available": "Доступні гравці",
+    "choose": "Обрати",
+    "start": "Старт"
+  },
+  "error": {
+    "404": "404 не знайдено"
   }
 }

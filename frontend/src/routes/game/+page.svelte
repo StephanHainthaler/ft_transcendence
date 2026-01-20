@@ -6,6 +6,7 @@
   import * as Card from "$lib/components/ui/card";
   import { tick } from 'svelte';
   import Grid from "@lib/components/custom/Grid.svelte";
+  import {t} from "@lib/i18n/i18n";
 
   let users: User[] = $state([])
   let gameClient: GameClient = $state(new GameClient());
@@ -38,11 +39,11 @@
 <div class='size-full flex flex-col justify-center items-center'>
   <Card.Root class='size-full'>
     <Card.Header>
-      <Card.Title>Game</Card.Title>
+      <Card.Title>{$t('game.game')}</Card.Title>
     </Card.Header>
     <Card.Content class='size-full'>
       {#if !running}
-        <Grid title={'Challenge'}>
+        <Grid title={$t('game.challenge')}>
           {#each users as user}
             <GridCard title={user.name} desc={user.username} callback={() => challengeUser(user)} buttonDesc={'Challenge'} />
           {/each}
