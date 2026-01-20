@@ -63,7 +63,6 @@ export class DB<Schema extends Record<string, any>> {
     const tx = this.db.transaction(() => {
       for (const table of tables) {
         const query = table.stringify();
-        console.log(query);
         this.db?.prepare(query).run();
         this.tables.push(table);
       }

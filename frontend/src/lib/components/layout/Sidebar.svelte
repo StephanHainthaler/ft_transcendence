@@ -1,12 +1,12 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import * as Sidebar from "$lib/components/ui/sidebar";
-  import { client } from "@lib/api";
-
-  let isLoggedIn = $state(client?.isLoggedIn || false);
+  import { client } from "@lib/api/index.svelte";
+  import { toast } from "svelte-sonner";
 
   const handleLogout = () => {
     client.logout();
+    toast.success("Successfully logged out");
   };
 
 </script>
@@ -19,7 +19,7 @@
   </Sidebar.Header>
 
   <Sidebar.Content>
-    {#if isLoggedIn}
+    {#if client.isLoggedIn}
     <Sidebar.Group>
       <Sidebar.GroupLabel>Routes</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
@@ -54,7 +54,7 @@
       <Sidebar.GroupLabel>Account</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
         <Sidebar.Menu>
-          {#if isLoggedIn}
+          {#if client.isLoggedIn}
             <Sidebar.MenuItem>
               <Sidebar.MenuButton class="px-4" onclick={handleLogout}>
                 Logout

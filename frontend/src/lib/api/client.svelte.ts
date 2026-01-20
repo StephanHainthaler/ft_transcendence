@@ -7,6 +7,7 @@ import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
+import { toast } from "svelte-sonner";
 
 export type ApiError = {
   code: number,
@@ -22,7 +23,8 @@ export class ApiClient {
   private readonly userStore: Writable<User | null> = new Writable('user');
   private readonly authStore: Writable<AuthUserClient | null> = new Writable('auth');
   private readonly accessToken: Writable<JWT | null> = new Writable('token');
-  private avatarUrl?: string;
+  private avatarUrl?: string = $state(undefined);
+  loggedIn: boolean = $state(false);
 
   constructor() {}
 
@@ -34,8 +36,9 @@ export class ApiClient {
       ])
       this.userStore.set(userResponse.user);
       this.authStore.set(authResponse.auth);
+      this.loggedIn = true;
     } catch (e: any) {
-      console.error(e);
+      toast.error(e);
     }
     return this;
   }
@@ -63,7 +66,9 @@ export class ApiClient {
   }
 
   get isLoggedIn(): boolean {
-    return !!(this.user && this.auth);
+    const auth_user = !!(this.user && this.auth)
+    const logStatus = auth_user && this.loggedIn;
+    return logStatus;
   }
 
   get session(): Session | null {
@@ -80,6 +85,7 @@ export class ApiClient {
     const data = await this.getAuth();
     let auth = data.auth as AuthUserClient;
     this.authStore.set(auth);
+    this.loggedIn = true;
     return { auth, user }
   }
 
@@ -133,10 +139,10 @@ export class ApiClient {
       this.auth = response.auth;
       const userResponse = await this.getUser();
       this.user = userResponse.user;
+      this.loggedIn = true;
     } catch (e: any) {
       const error = new Error(`Signup Failed: ${e.message || e}`)
-      console.error(error);
-      throw error;
+      toast.error(error.message);
     }
   }
 
@@ -151,10 +157,10 @@ export class ApiClient {
         const response = await getUser(this.accessToken)
         this.userStore.set(response.user);
       }
+      this.loggedIn = true;
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
-      console.error(error);
-      throw error;
+      toast.error(error.message);
     }
   }
 
@@ -168,9 +174,9 @@ export class ApiClient {
         const response = await getUser(this.accessToken)
         this.userStore.set(response.user);
       }
+      this.loggedIn = true;
     } catch (e: any) {
       const error = new Error(`OAuth Failed: ${e.message || e}`)
-      console.error(error);
       throw error;
     }
   }
@@ -181,7 +187,7 @@ export class ApiClient {
       this.clearSession();
       goto('/auth');
     } catch (e: any) {
-      console.error(e);
+      throw e;
     }
   }
 
@@ -193,7 +199,7 @@ export class ApiClient {
     this.userStore.set(null);
     this.authStore.set(null);
     this.accessToken.set(null);
-    document.cookie = '';
+    this.loggedIn = false;
   }
 
   async delete() {
@@ -205,21 +211,20 @@ export class ApiClient {
   /* PERSONAL INFO */
 
   async updateCredentials({
-    email, username, passwd
+    email, user_name, passwd
   }: {
-    email?: string, username?: string, passwd?: string
+    email?: string, user_name?: string, passwd?: string
   }) {
-    if (!email && !username && !passwd) {
+    if (!email && !user_name && !passwd) {
       throw new Error("No Credentials to update!");
     }
     try {
       const authResponse = await updateRequest(this.accessToken, {
-        email, username, passwd
+        email, user_name, passwd
       });
       this.authStore.set(authResponse.auth)
     } catch (e: any) {
-      const error = new Error(`Update Failed: ${e.message || e}`)
-      console.error(error);
+      const error = new Error(`${e.message || e}`)
       throw error;
     }
   }

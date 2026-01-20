@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession } from "./dbHandlers";
-import { deleteUser, updateUser } from "@ft_transcendence/user/src/api";
+import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser } from "./dbHandlers";
+import { deleteUser } from "@ft_transcendence/user/src/api";
 import { AuthUserClient, } from "@shared/user";
 import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody, OAuthCallBackBody } from "@shared/api";
 import { AuthUser } from "./db";
@@ -28,7 +28,7 @@ export function authRoutes(fastify: FastifyInstance) {
 
         const authUserClient: AuthUserClient = {
           email: authUser.email,
-          username: authUser.user_name
+          user_name: authUser.user_name
         };
         return repl.status(200).send({ success: true, auth: authUserClient });
       } catch (e: any) {
@@ -91,13 +91,13 @@ export function authRoutes(fastify: FastifyInstance) {
   }>
   ('/login', async (request, reply) => {
       try {
-        const { passwd, username, email } = request.body;
+        const { passwd, user_name, email } = request.body;
 
-        const requestAuthUser = { passwd, username, email };
+        const requestAuthUser = { passwd, user_name, email };
         const verifiedAuthUser = await verifyUserCredentials(requestAuthUser);
 
         const authUserClient: AuthUserClient = {
-          username: verifiedAuthUser.user_name,
+          user_name: verifiedAuthUser.user_name,
           email: verifiedAuthUser.email,
         };
 
@@ -214,7 +214,7 @@ export function authRoutes(fastify: FastifyInstance) {
         const session = createSession(authUser, secret);
         const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken)
         const authUserClient: AuthUserClient = {
-          username: authUser.user_name,
+          user_name: authUser.user_name,
           email: authUser.email,
         }
 
@@ -240,13 +240,13 @@ export function authRoutes(fastify: FastifyInstance) {
     Reply: AuthReply,
   }>('/sign-up', async (request, reply) => {
       try {
-        const { passwd, username, email } = request.body;
+        const { passwd, user_name, email } = request.body;
 
-        const authUser = getAuthUser({ username, email });
+        const authUser = getAuthUser({ user_name, email });
         if (authUser)
           return reply.status(400).send({ success: false, message: "Username or Email already taken" });
 
-        const tempAuthUser: Partial<AuthUser> = { user_name: username, email };
+        const tempAuthUser: Partial<AuthUser> = { user_name: user_name, email };
         const { user, authUser: newAuthUser } = await createAuthUser({ ...tempAuthUser, passwd });
 
         try {
@@ -254,7 +254,7 @@ export function authRoutes(fastify: FastifyInstance) {
           const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken)
           const authUserClient: AuthUserClient = {
             email: newAuthUser.email,
-            username: newAuthUser.user_name,
+            user_name: newAuthUser.user_name,
           }
 
           return reply.header('set-cookie', refreshTokenCookie).code(200).send({
@@ -277,25 +277,25 @@ export function authRoutes(fastify: FastifyInstance) {
     Body: UpdateCredsRequestBody,
     Reply: AuthReply,
   }>('/update', async (request, reply) => {
-      const { email, username, passwd } = request.body;
+      const { email, user_name, passwd } = request.body;
 
       try {
-        const authUser = getAuthUser({ email, username });
+        const authUser = getAuthUser({ email, user_name });
         if (!authUser) return reply.status(401).send({ success: false, message: "No such User" });
 
         const newAuth = {
           id: authUser.id,
           passwd,
           email,
-          username,
+          user_name,
         }
 
-        const newUser = updateUserCredentials(newAuth);
-        await updateUser({ email, id: authUser.user_id });
+        const newUser = await updateUserCredentials(newAuth);
         if (!newUser)
-          throw new Error("Failed to update database");
+          throw new ApiError({ message: "Failed to update database", code: 400 });
+
         reply.code(200).send({ success: true, auth: {
-          email: newUser.email, username: newUser.user_name }
+          email: newUser.email, user_name: newUser.user_name }
         });
       } catch (e: any) {
         reply.status(e.code || e.status | 400).send({ success: false, message: `${e.message || e}` })
