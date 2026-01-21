@@ -6,7 +6,7 @@ import type { JWT } from "@shared/api";
 async function fetchUserStats(token: Writable<JWT | null>, userId: number):  Promise<UserStats | null>
 {
 
-	const req = new Request(`/api/users/${userId}/stats`,
+	const req = new Request(`/api/stats/v1/user/${userId}`,
 		{
 			method: "GET",
 			headers: {'authorization': `Bearer ${ token.get()?.raw }`},
@@ -21,7 +21,7 @@ async function fetchUserStats(token: Writable<JWT | null>, userId: number):  Pro
 
 async function fetchMatchHistory(token: Writable <JWT | null>, userId: number) : Promise<MatchHistoryEntry[]>
 {
-	const req = new Request(`/api/users/${userId}/history`,
+	const req = new Request(`/api/stats/v1/history/${userId}`,
 		{
 			method: "GET",
 			headers: {'authorization': `Bearer ${ token.get()?.raw }`}
@@ -35,7 +35,7 @@ async function fetchMatchHistory(token: Writable <JWT | null>, userId: number) :
 }
 
 async function fetchLeaderboard(token: Writable<JWT | null>, page: number = 1): Promise<UserStats[] | []> {
-	const req = new Request(`/api/leaderboard?page=${page}`,
+	const req = new Request(`/api/stats/v1/leaderboard?page=${page}`,
 		{
 			method: "GET",
 			headers: {'authorization': `Bearer ${ token.get()?.raw }`}

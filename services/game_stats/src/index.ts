@@ -48,7 +48,7 @@ async function start()
 		// Register Health Check
 		server.register(registerHealthRoute);
 
-		server.register(gameStatsRoutes, { prefix: '/api/v1/stats' });
+		server.register(gameStatsRoutes, { prefix: '/v1' });
 
 		// Start the server
 		await server.listen({ port: PORT, host: HOST });
