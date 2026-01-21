@@ -25,7 +25,6 @@
     {
       toast.error(`Failed to load Page Data: ${e.message || e}`)
     }
-
   }
 
   let running = $state(false);
@@ -36,7 +35,8 @@
   const onGameEnd = (Data: MatchSubmissionData) => {
     console.log(Data);
 
-    //send Data to database
+      //send Data to database
+      
   
   };
 
