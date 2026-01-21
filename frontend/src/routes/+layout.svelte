@@ -26,7 +26,9 @@
       await client.getSession();
     } catch (e: any) {
     }
-    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
+    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')
+      && !target?.route.id?.includes('stats')//tempopary
+      ) {
       if (!client.isLoggedIn) {
         goto('/auth', { replaceState: true });
       }

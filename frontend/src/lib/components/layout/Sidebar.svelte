@@ -29,16 +29,25 @@
               Profile
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
+
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/stats')}>
+              Statistics
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+
           <Sidebar.MenuItem>
             <Sidebar.MenuButton class="px-4" onclick={() => goto('/game')}>
               Game
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
+
           <Sidebar.MenuItem>
             <Sidebar.MenuButton class="px-4" onclick={() => goto('/tournament')}>
               Tournament
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
+
           <Sidebar.MenuItem>
             <Sidebar.MenuButton class="px-4" onclick={() => goto('/friends')}>
               Friends
