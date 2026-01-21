@@ -161,12 +161,16 @@
   <Card.Content>
     <form class="space-y-6" onsubmit={handleSubmit}>
       <div class="flex items-center gap-6">
-        {#await sessionPromise then sess}
+        {#await sessionPromise}
+          <div class="size-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-semibold">
+            {client.user?.name.slice(0, 1).toUpperCase()}
+          </div>
+        {:then}
           {#if avatarSrc}
             <img
               bind:this={currentAvatarEl}
               src={avatarSrc}
-              alt={sess.user?.name || 'user avatar'}
+              alt={'user avatar'}
               class="size-20 rounded-full object-cover text-center"
             />
           {:else}

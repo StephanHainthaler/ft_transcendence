@@ -14,7 +14,7 @@ export interface MatchHistoryEntry {
 	player_one_id: number;
 	player_two_id: number;
 	winner_id: number;
-	match_duration?: number;
+	match_duration: number;
 	p1_score: number;
 	p2_score: number;
 }
@@ -26,4 +26,5 @@ export interface MatchSubmissionData {
     p2_score: number;
     winner_id: number;
     duration: number;
+	timestamp: number;
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
   import './layout.css';
-  import favicon from '$lib/assets/favicon.svg';
+  import favicon from '$lib/assets/favicon.ico';
   import * as SB from "$lib/components/ui/sidebar";
   import Sidebar from '@lib/components/layout/Sidebar.svelte';
   import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
@@ -12,20 +12,12 @@
   let sidebarOpen = $state(false);
 
   onMount(async () =>{
-    try {
-      await client.getSession();
-    } catch (e: any) {
-      console.error(e);
+    if (!client.isLoggedIn)
       goto('/auth');
-    }
   })
 
-  beforeNavigate(async (nav) => {
+  beforeNavigate((nav) => {
     const target = nav.to;
-    try {
-      await client.getSession();
-    } catch (e: any) {
-    }
     if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
       if (!client.isLoggedIn) {
         goto('/auth', { replaceState: true });
@@ -40,7 +32,6 @@
         goto('/auth');
       }
     }
-    sidebarOpen = false;
   })
 </script>
 

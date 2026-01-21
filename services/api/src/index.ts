@@ -16,7 +16,7 @@ const publicRoutes = [
   '/auth/sign-up',
   '/user/avatar',
   '/game',
-  '/game',
+  '/stats',
   '/auth/github-oauth',
 ];
 

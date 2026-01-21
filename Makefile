@@ -18,8 +18,7 @@ install:
 	@npm install
 
 clean:
-	@rm -rf frontend/node_modules
-	@rm -rf node_modules
+	@npm run clean
 
 test:
 	npm run test:backend

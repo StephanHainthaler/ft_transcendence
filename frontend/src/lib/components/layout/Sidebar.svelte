@@ -4,6 +4,8 @@
   import { client } from "@lib/api/index.svelte";
   import { toast } from "svelte-sonner";
 
+  const isLoggedIn = $derived(client.loggedIn);
+
   const handleLogout = () => {
     client.logout();
     toast.success("Successfully logged out");
@@ -19,7 +21,7 @@
   </Sidebar.Header>
 
   <Sidebar.Content>
-    {#if client.isLoggedIn}
+    {#if isLoggedIn}
     <Sidebar.Group>
       <Sidebar.GroupLabel>Routes</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
@@ -29,16 +31,25 @@
               Profile
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
+
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/stats')}>
+              Statistics
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+
           <Sidebar.MenuItem>
             <Sidebar.MenuButton class="px-4" onclick={() => goto('/game')}>
               Game
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
+
           <Sidebar.MenuItem>
             <Sidebar.MenuButton class="px-4" onclick={() => goto('/tournament')}>
               Tournament
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
+
           <Sidebar.MenuItem>
             <Sidebar.MenuButton class="px-4" onclick={() => goto('/friends')}>
               Friends
@@ -54,7 +65,7 @@
       <Sidebar.GroupLabel>Account</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
         <Sidebar.Menu>
-          {#if client.isLoggedIn}
+          {#if isLoggedIn}
             <Sidebar.MenuItem>
               <Sidebar.MenuButton class="px-4" onclick={handleLogout}>
                 Logout
