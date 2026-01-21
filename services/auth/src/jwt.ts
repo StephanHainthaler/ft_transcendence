@@ -33,7 +33,7 @@ export function generateJWT(user: Partial<User>, secret: string): JWT {
 }
 
 export function generateRefreshTokenCookie(token: string): string {
-  return `refresh_token=${token}; HttpOnly; Max-Age=${refreshTokenLifetime / 1000}; path=/; SameSite=true`;
+  return `refresh_token=${token}; HttpOnly; Max-Age=${refreshTokenLifetime / 1000}; path=/; SameSite=strict`;
 }
 
 export function validateRefreshToken(user: Partial<AuthUser>, refreshToken: string) {

@@ -4,6 +4,7 @@
     "build": "tsc",
     "predev": "mkdir db || true",
     "dev": "tsx watch --env-file=../../env/.env.auth src/index.ts",
+    "predev": "mkdir -p db",
     "test": "tsx --test --test-reporter=spec ./tests/*.test.ts"
   },
   "dependencies": {

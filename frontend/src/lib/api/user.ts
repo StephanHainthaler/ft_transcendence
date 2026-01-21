@@ -1,8 +1,9 @@
 import { request } from "./utils";
 import type { Writable } from "@lib/types/writable";
 import type { JWT } from "@shared/api";
+import type { User } from "@shared/user";
 
-export async function getUser(token: Writable<JWT | null>) {
+export const getUser = async (token: Writable<JWT | null>) => {
   const req = new Request(`/api/user`, {
     method: "GET",
     headers: {
@@ -15,6 +16,7 @@ export async function getUser(token: Writable<JWT | null>) {
   if (!response.ok) {
     throw data;
   }
+
   return data;
 }
 
@@ -25,6 +27,28 @@ export const getUsers = async (token: Writable<JWT | null>) => {
       'authorization': `Bearer ${ token.get()?.raw }`
     }
   })
+
+  const response = await request(req, token);
+  const data = await response.json();
+  if (!response.ok) throw data;
+
+  return data;
+}
+
+export const updateUser = async (token: Writable<JWT | null>, user: Partial<User>, avatar?: File) => {
+  const userForm = new FormData();
+
+  if (avatar)
+    userForm.append('avatar', avatar)
+  userForm.append('user', JSON.stringify(user));
+
+  const req = new Request('/api/user/update', {
+    method: 'post',
+    headers: {
+      'Authorization': `Bearer ${token.get()?.raw}`
+    },
+    body: userForm
+  });
 
   const response = await request(req, token);
   const data = await response.json();
@@ -81,8 +105,8 @@ export const sendFriendRequest = async (token: Writable<JWT | null>, friendId: n
   return data;
 }
 
-export const removeFriendship = async (token: Writable<JWT | null>, friendshipID: number) => {
-  const req = new Request(`/api/user/friend/remove/${friendshipID}`, {
+export const removeFriendship = async (token: Writable<JWT | null>, friendshipId: number) => {
+  const req = new Request(`/api/user/friend/remove/${friendshipId}`, {
     method: 'delete',
     headers: {
       'authorization': `Bearer ${ token.get()?.raw }`

@@ -6,20 +6,31 @@
   import Sidebar from '@lib/components/layout/Sidebar.svelte';
   import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
   import { client } from '@lib/api';
-  import { useSidebar } from '$lib/components/ui/sidebar';
+  import { Toaster } from '@lib/components/ui/sonner';
+  import { onMount } from 'svelte';
 
   let { children } = $props();
   let sidebarOpen = $state(false);
 
-  beforeNavigate((nav) => {
-    console.log(client.isLoggedIn);
+  onMount(async () =>{
+    try {
+      await client.getSession();
+    } catch (e: any) {
+      console.error(e);
+      goto('/auth');
+    }
+  })
+
+  beforeNavigate(async (nav) => {
     const target = nav.to;
-    console.log(target);
+    try {
+      await client.getSession();
+    } catch (e: any) {
+    }
     if (target?.route.id !== '/' && !target?.route.id?.includes('auth')
       && !target?.route.id?.includes('stats')//tempopary
       ) {
       if (!client.isLoggedIn) {
-        console.log('cancel redirect')
         goto('/auth', { replaceState: true });
       }
     }
@@ -29,7 +40,6 @@
     const target = nav.to;
     if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
       if (!client.isLoggedIn) {
-        console.log('redirecting')
         goto('/auth');
       }
     }
@@ -41,11 +51,13 @@
   <link rel="icon" href={favicon} />
 </svelte:head>
 
-<SB.Provider bind:open={sidebarOpen} class="size-full">
+<Toaster richColors position='top-center'/>
+
+<SB.Provider bind:open={sidebarOpen} class="h-screen">
   <Sidebar />
-  <main class='flex flex-col flex-1 min-h-screen box-border w-full bg-background '>
+  <main class='flex flex-col flex-1 box-border bg-background '>
     <SB.Trigger />
-    <div class="py-[2%] size-full px-[5%] md:px-[10%]">
+    <div class="flex-1 min-h-0 py-[2%] px-[5%] md:px-[10%]">
       {@render children()}
     </div>
   </main>

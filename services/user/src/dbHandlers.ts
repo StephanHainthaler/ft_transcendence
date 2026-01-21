@@ -4,9 +4,10 @@ import { eq, IN } from "@server/orm";
 import { sqliteErrorToApiError } from "@server/orm/error"
 import { writeFile, unlink } from "node:fs/promises";
 import { join } from "node:path";
+import { MultipartFile } from "@fastify/multipart";
 
-const UPLOAD_DIR = process.env.AVATAR_DIR!;
-if (!UPLOAD_DIR) throw new Error('AVATAR_DIR env is missing');
+const AVATAR_DIR = process.env.AVATAR_DIR!;
+if (!AVATAR_DIR) throw new Error('AVATAR_DIR env is missing');
 
 export function getUser(id: number): { user: User | null, avatar: Avatar | null } {
   try {
@@ -68,44 +69,56 @@ export function getAllUsers(): { user: User, avatar: Avatar | null }[] {
   }
 }
 
-async function storeAvatar(userId: number, avatar: File): Promise<Avatar> {
+async function storeAvatar(userId: number, avatar: MultipartFile | string): Promise<Avatar> {
   try {
-    const currentAvatar = db
-      .from('avatars')
-      .select('*')
-      .where(eq('user_id', userId))
-      .single();
+    if (typeof avatar !== 'string') {
+      const currentAvatar = db
+        .from('avatars')
+        .select('*')
+        .where(eq('user_id', userId))
+        .single();
 
-    if (currentAvatar) {
-      try {
-        await unlink(currentAvatar.location);
-      } catch (e) {
+      if (currentAvatar) {
+        try {
+          const currentAvatarLocation = `${AVATAR_DIR}/${currentAvatar.location}`;
+          await unlink(currentAvatarLocation);
+        } catch (e) {
+          console.error(e);
+        }
+        db.from('avatars').delete().where(eq('id', currentAvatar.id)).run();
       }
-      db.from('avatars').delete().where(eq('id', currentAvatar.id)).run();
+
+      const extensionIdx = avatar.filename.lastIndexOf('.');
+      const filename = avatar.filename.slice(0, extensionIdx);
+      const extension = avatar.filename.slice(extensionIdx);
+      const newFileName = `${filename}-${Date.now()}${extension}`;
+      const filePath = join(AVATAR_DIR, newFileName);
+      const newLocation = join('/api/user/avatar', newFileName);
+
+      const buffer = Buffer.from(await avatar.toBuffer());
+      await writeFile(filePath, buffer);
+
+      const newAvatar = db
+        .from('avatars')
+        .insert({ user_id: userId, location: newLocation })
+        .select('*')
+        .single()!;
+
+      return newAvatar;
+    } else {
+      const newLocation: string = avatar;
+      const newAvatar = db.from('avatars')
+        .insert({ user_id: userId, location: newLocation })
+        .select('*')
+        .single()!;
+      return newAvatar;
     }
-
-    const extensionIdx = avatar.name.lastIndexOf('.');
-    const filename = avatar.name.slice(0, extensionIdx);
-    const extension = avatar.name.slice(extensionIdx);
-    const newFileName = `${filename}-${Date.now()}${extension}`;
-    const filePath = join(UPLOAD_DIR, newFileName);
-
-    const buffer = Buffer.from(await avatar.arrayBuffer());
-    await writeFile(filePath, buffer);
-
-    const newAvatar = db
-      .from('avatars')
-      .insert({ user_id: userId, location: filePath })
-      .select('*')
-      .single()!;
-
-    return newAvatar;
   } catch (e: any) {
     throw sqliteErrorToApiError(e);
   }
 }
 
-export async function createUser(user: User, avatar: File | null): Promise<{ user: User, avatar: Avatar | null }> {
+export async function createUser(user: User, oauthAvatarUrl?: string): Promise<{ user: User, avatar: Avatar | null }> {
   try {
     const newUser = db
       .from('users')
@@ -113,9 +126,9 @@ export async function createUser(user: User, avatar: File | null): Promise<{ use
       .select('*')
       .single()!;
 
-    let newAvatar = null;
-    if (avatar) {
-      newAvatar = await storeAvatar(newUser.id, avatar);
+    let newAvatar: Avatar | null = null;
+    if (oauthAvatarUrl) {
+      newAvatar = await storeAvatar(newUser.id, oauthAvatarUrl)
     }
 
     return { user: newUser, avatar: newAvatar };
@@ -124,7 +137,47 @@ export async function createUser(user: User, avatar: File | null): Promise<{ use
   }
 }
 
-export async function updateUser(user: User, avatar: File | null | undefined): Promise<{ user: User, avatar: Avatar | null }> {
+export async function deleteUser(userId: number) {
+  try {
+    const avatars = db
+      .from('avatars')
+      .where(eq('user_id', userId))
+      .select('*')
+      .all();
+
+    console.log(`deleteing avatars: ${JSON.stringify(avatars)}`);
+
+    await Promise.all(avatars.map(async (a) => {
+      try {
+        if (!a.location.startsWith('https://')) {
+          const filepathSplit = a.location.split('/');
+          if (filepathSplit.length > 0) {
+            const filename = filepathSplit[filepathSplit.length - 1];
+            const filelocation = `${AVATAR_DIR}/${filename}`;
+            await unlink(filelocation);
+          }
+        }
+      } catch (e: any) {
+        console.error(e);
+      }
+    }));
+
+    db
+      .from('avatars')
+      .where(eq('user_id', userId))
+      .delete()
+      .run();
+    db
+      .from('users')
+      .where(eq('id', userId))
+      .delete()
+      .run();
+  } catch (e: any) {
+    throw sqliteErrorToApiError(e);
+  }
+}
+
+export async function updateUser(id: number, user: Partial<User>, avatar: MultipartFile | null | undefined): Promise<{ user: User, avatar: Avatar | null }> {
   try {
     const updatedUser = db
       .from('users')
@@ -135,7 +188,7 @@ export async function updateUser(user: User, avatar: File | null | undefined): P
 
     let updatedAvatar = null;
     if (avatar) {
-      updatedAvatar = await storeAvatar(user.id, avatar);
+      updatedAvatar = await storeAvatar(id, avatar);
     } else {
       updatedAvatar = db
         .from('avatars')

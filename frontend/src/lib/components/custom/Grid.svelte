@@ -1,15 +1,16 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
 
+  import * as Card from "$lib/components/ui/card";
   const { title, children }: { title: string, children: Snippet } = $props();
 
 </script>
 
-<div class='size-full flex flex-col gap-2 card p-2 bg-cream'>
-  <div class='w-full card p-2 bg-teal'>
-    <h1 class='text-lg text-cream font-bold'>{title}</h1>
-  </div>
-  <div class='size-full flex flex-col gap-2 card p-2 bg-sage'>
+<Card.Root>
+  <Card.Header>
+  <Card.Title>{title}</Card.Title>
+  </Card.Header>
+  <Card.Content class="size-full flex flex-col gap-2">
     {@render children()}
-  </div>
-</div>
+  </Card.Content>
+</Card.Root>

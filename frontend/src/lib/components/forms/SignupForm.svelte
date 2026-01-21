@@ -36,7 +36,6 @@
 
       await goto('/');
     } catch (e: any) {
-      console.error(e);
       errorMessage = e.message || e.error || JSON.stringify(e);
     } finally {
       isLoading = false;

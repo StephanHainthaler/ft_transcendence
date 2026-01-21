@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import * as Card from "$lib/components/ui/card";
   import * as Alert from "$lib/components/ui/alert";
-  import { CircleAlertIcon } from "@lucide/svelte";
+  import { CircleAlertIcon, CircleIcon } from "@lucide/svelte";
   import { goto } from "$app/navigation";
   import { client } from "$lib/api";
   import { buttonVariants } from "@lib/components/ui/button";
@@ -72,9 +72,13 @@
         </Alert.Root>
         <a class={`pr-4 ${buttonVariants({ variant: 'link' })}`} href="/auth">{$t('OAuth.error2')}</a>
       {:else}
-        <div class='p-4 bg-gray-700'>
-          {message}
-        </div>
+        <Alert.Root variant='default'>
+          <CircleIcon />
+          <Alert.Title>Please wait.</Alert.Title>
+          <Alert.Description>
+            {message}
+          </Alert.Description>
+        </Alert.Root>
       {/if}
     </Card.Content>
   </Card.Root>

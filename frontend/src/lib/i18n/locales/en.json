@@ -96,9 +96,19 @@
     "email": "Email",
     "password": "Password",
     "pass_repeat": "Repeat Password",
-    "save": "Save CHanges",
+    "save": "Save Changes",
     "cancel": "Cancel",
-    "edit": "Edit"
+    "edit": "Edit",
+    "undated": "Updated successfully",
+    "update_err": "Error updating profile",
+    "loading": "Saving changes...",
+    "delete_account": "Delete Account, please wait...",
+    "delete_confirm": "Are you sure you want to delete your account? This action cannot be undone.",
+    "deleting": "Deleting account...",
+    "delete_success": "Account deleted successfully! Redirecting...",
+    "yes": "Yes",
+    "no": "No",
+    "delete_err": "Error deleting account"
   },
   "tournament": {
     "tournament": "Tournament",

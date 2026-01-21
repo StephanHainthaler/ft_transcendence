@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import * as Sidebar from "$lib/components/ui/sidebar";
   import { client } from "@lib/api";
   import {t, currentLocale} from "@lib/i18n/i18n";
@@ -8,15 +9,6 @@
   const handleLogout = () => {
     client.logout();
   };
-
-  client?.onChange(() => {
-  isLoggedIn = client.isLoggedIn;
-
-  const changeLang = async (lang: string) => {
-    await t.changeLanguage(lang);
-    currentLocale.set(lang);
-  };
-});
 
  </script>
 
@@ -28,44 +20,45 @@
   </Sidebar.Header>
 
   <Sidebar.Content>
-      {#if isLoggedIn}
-      <Sidebar.Group>
-        <Sidebar.GroupLabel>{$t('sidebar.routes')}</Sidebar.GroupLabel>
-        <Sidebar.GroupContent>
-          <Sidebar.Menu>
-            <Sidebar.MenuItem>
-              <Sidebar.MenuButton>
-                <a class="px-4 w-full" href="/profile">{$t('sidebar.profile')}</a>
-              </Sidebar.MenuButton>
-            </Sidebar.MenuItem>
-            
-            <Sidebar.MenuItem>
-              <Sidebar.MenuButton>
-                <a class="px-4 w-full" href="/game">{$t('sidebar.game')}</a>
-              </Sidebar.MenuButton>
-            </Sidebar.MenuItem>
-            
-            <Sidebar.MenuItem> <Sidebar.MenuButton>
-              <a class="px-4 w-full" href="/tournament">{$t('sidebar.tournament')}</a>
+    {#if isLoggedIn}
+    <Sidebar.Group>
+      <Sidebar.GroupLabel>{$t('sidebar.routes')}</Sidebar.GroupLabel>
+      <Sidebar.GroupContent>
+        <Sidebar.Menu>
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/profile')}>
+              {$t('sidebar.profile')}
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
           
-            <Sidebar.MenuItem>
-              <Sidebar.MenuButton>
-                <a class="px-4 w-full" href="/friends">{$t('sidebar.friends')}</a>
-              </Sidebar.MenuButton>
-            </Sidebar.MenuItem>
-
-            <Sidebar.MenuItem> <Sidebar.MenuButton>
-                <a class="px-4 w-full" href="/stats">{$t('sidebar.statistics')}</a>
-              </Sidebar.MenuButton>
-            </Sidebar.MenuItem>
-
-          </Sidebar.Menu>
-        </Sidebar.GroupContent>
-      </Sidebar.Group>
-      <Sidebar.Separator />
-      {/if}
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/game')}>
+              {$t('sidebar.game')}
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+          
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/tournament')}>
+              {$t('sidebar.tournament')}
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+          
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/friends')}>
+              {$t('sidebar.friends')}
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+          
+          <Sidebar.MenuItem>
+            <Sidebar.MenuButton class="px-4" onclick={() => goto('/stats')}>
+              {$t('sidebar.statistics')}
+            </Sidebar.MenuButton>
+          </Sidebar.MenuItem>
+        </Sidebar.Menu>
+      </Sidebar.GroupContent>
+    </Sidebar.Group>
+    <Sidebar.Separator />
+    {/if}
 
       <Sidebar.Group>
         <Sidebar.GroupLabel>{$t('sidebar.account')}</Sidebar.GroupLabel>
@@ -73,14 +66,14 @@
           <Sidebar.Menu>
             {#if isLoggedIn}
               <Sidebar.MenuItem>
-                <Sidebar.MenuButton onclick={handleLogout}>
-                  <span class="px-4 w-full">{$t('sidebar.logout')}</span>
+                <Sidebar.MenuButton class="px-4" onclick={handleLogout}>
+                  {$t('sidebar.logout')}
                 </Sidebar.MenuButton>
               </Sidebar.MenuItem>
             {:else}
               <Sidebar.MenuItem>
-                <Sidebar.MenuButton>
-                  <a class="px-4 w-full" href="/auth">{$t('sidebar.login')}</a>
+                <Sidebar.MenuButton class="px-4" onclick={() => goto('auth')}>
+                  {$t('sidebar.login')}
                 </Sidebar.MenuButton>
               </Sidebar.MenuItem>
             {/if}
