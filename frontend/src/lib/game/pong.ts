@@ -102,7 +102,7 @@ export class Pong
 		// clamp to max 3 to prevent huge jumps after tab switch
 		const delta = Math.min(elapsed / TARGET_FRAME_TIME, 3);
 
-		this.moveBall(); 
+		this.moveBall(delta); 
 		this.movePlayer(this._player1, delta);
 		this.movePlayer(this._player2, delta);
 		this.drawArena();
@@ -255,11 +255,11 @@ export class Pong
 		this._isPaused = !this._isPaused;
 	}
 
-	public moveBall(): void
+	public moveBall(delta: number): void
 	{
 		if (this._isPaused == true)
 			return ;
-		this._ball.move(this._player1, this._player2);
+		this._ball.move(this._player1, this._player2, delta);
 	}
 
 	public movePlayer(player: Player, delta: number)

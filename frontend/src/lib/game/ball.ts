@@ -14,7 +14,7 @@ export class Ball
 	private	_height: number;
 	private	_origin!: vector;
 	private _direction!: vector;
-	private	_velocity: number = 2.5;
+	private	_velocity: number = 6;
 	private _hasStartingSpeed!: boolean;
 
 	public constructor(game: Pong, player1: Player, player2: Player)
@@ -29,7 +29,7 @@ export class Ball
 	{
 		this._origin = this.getRandomStartingPoint(spawnAreaX, spawnAreaY);
 		this._direction = this.getRandomStartingDirection();
-		this._velocity = 2.5;
+		this._velocity = 6;
 		this._hasStartingSpeed = true;
 		if (this._direction.x < 0)
 		{
@@ -69,50 +69,7 @@ export class Ball
 		return ({x, y});
 	}
 
-	public move(player1: Player, player2: Player): void
-	{
-		const scale = this._game.getScale();
-		const moveX = this._direction.x * scale;
-		const moveY = this._direction.y * scale;
-
-		//ball hits left screen end
-		if (this._origin.x + moveX < 0)
-		{
-			player2.setScore(player2.getScore() + 1);
-			this.spawnBall(this._game.getCanvas().width * 0.5, this._game.getCanvas().height * 0.5, player1, player2);
-			return;
-		}
-
-		//ball hits right screen end
-		if (this._origin.x + moveX > (this._game.getCanvas().width))
-		{
-			player1.setScore(player1.getScore() + 1);
-			this.spawnBall(this._game.getCanvas().width * 0.5, this._game.getCanvas().height * 0.5, player1, player2);
-			return;
-		}
-
-		//ball hits left or right player paddle
-		if (this.isHittingPlayer1(player1) == true || this.isHittingPlayer2(player2) == true)
-		{
-			if (this._hasStartingSpeed == true)
-			{
-				this._direction.x *= 2.5;
-				this._direction.y *= 2.5;
-				this._hasStartingSpeed = false;
-			}
-			player1.setHitCooldownState(!player1.getHitCooldownState());
-			player2.setHitCooldownState(!player2.getHitCooldownState());
-			this._direction.x = -this._direction.x;
-		}
-		this._origin.x += this._direction.x * scale;
-
-		//ball hits upper or lower wall
-		if ((this._origin.y + this._height) + this._direction.y > (this._game.getCanvas().height * 0.9) || this._origin.y + this._direction.y < this._game.getCanvas().height * 0.1)
-			this._direction.y = -this._direction.y;
-		this._origin.y += this._direction.y * scale;
-	}
-
-	public mov3(player1: Player, player2: Player, delta: number): void
+	public move(player1: Player, player2: Player, delta: number): void
     {
         const scale = this._game.getScale();
         const moveX = this._direction.x * scale * delta;
