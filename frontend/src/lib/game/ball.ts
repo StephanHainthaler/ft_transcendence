@@ -9,27 +9,27 @@ const getRandomNumber = (min: number, max: number) => {
 
 export class Ball
 {
+	private _game: Pong;
 	private	_width: number;
 	private	_height: number;
-	private	_velocity: number;
 	private	_origin!: vector;
 	private _direction!: vector;
+	private	_velocity: number = 2.5;
 	private _hasStartingSpeed!: boolean;
-    private _game: Pong;
 
-	public constructor(canvas: HTMLCanvasElement, game: Pong, player1: Player, player2: Player)
+	public constructor(game: Pong, player1: Player, player2: Player)
 	{
-		this._width = canvas.width * 0.01;
+		this._game = game;
+		this._width = game.getCanvas().width * 0.01;
 		this._height = this._width;
-		this.spawnBall(canvas.width * 0.5, canvas.height * 0.5, player1, player2);
-        this._game = game;
+		this.spawnBall(game.getCanvas().width * 0.5, game.getCanvas().height * 0.5, player1, player2);
 	}
 
-	public spawnBall(spawnArea_x: number, spawnArea_y: number, player1: Player, player2: Player) : void
+	public spawnBall(spawnAreaX: number, spawnAreaY: number, player1: Player, player2: Player) : void
 	{
-		this._velocity = 2.5;
-		this._origin = this.getRandomStartingPoint(spawnArea_x, spawnArea_y);
+		this._origin = this.getRandomStartingPoint(spawnAreaX, spawnAreaY);
 		this._direction = this.getRandomStartingDirection();
+		this._velocity = 2.5;
 		this._hasStartingSpeed = true;
 		if (this._direction.x < 0)
 		{
@@ -104,7 +104,7 @@ export class Ball
 			player2.setHitCooldownState(!player2.getHitCooldownState());
 			this._direction.x = -this._direction.x;
 		}
-		this._origin.x += this._direction.x  * scale;
+		this._origin.x += this._direction.x * scale;
 
 		//ball hits upper or lower wall
 		if ((this._origin.y + this._height) + this._direction.y > (this._game.getCanvas().height * 0.9) || this._origin.y + this._direction.y < this._game.getCanvas().height * 0.1)
@@ -112,13 +112,48 @@ export class Ball
 		this._origin.y += this._direction.y * scale;
 	}
 
-	public updateForResize(canvas: HTMLCanvasElement, relativeX: number, relativeY: number): void
-	{
-		this._origin.x = relativeX * canvas.width;
-		this._origin.y = relativeY * canvas.height;
-		this._width = canvas.width * 0.01;
-		this._height = this._width;
-	}
+	public mov3(player1: Player, player2: Player, delta: number): void
+    {
+        const scale = this._game.getScale();
+        const moveX = this._direction.x * scale * delta;
+        const moveY = this._direction.y * scale * delta;
+
+        //ball hits left screen end
+        if (this._origin.x + moveX < 0)
+        {
+            player2.setScore(player2.getScore() + 1);
+            this.spawnBall(this._game.getCanvas().width * 0.5, this._game.getCanvas().height * 0.5, player1, player2);
+            return;
+        }
+
+        //ball hits right screen end
+        if (this._origin.x + moveX > (this._game.getCanvas().width))
+        {
+            player1.setScore(player1.getScore() + 1);
+            this.spawnBall(this._game.getCanvas().width * 0.5, this._game.getCanvas().height * 0.5, player1, player2);
+            return;
+        }
+
+        //ball hits left or right player paddle
+        if (this.isHittingPlayer1(player1) == true || this.isHittingPlayer2(player2) == true)
+        {
+            if (this._hasStartingSpeed == true)
+            {
+                this._direction.x *= 2.5;
+                this._direction.y *= 2.5;
+                this._hasStartingSpeed = false;
+            }
+            player1.setHitCooldownState(!player1.getHitCooldownState());
+            player2.setHitCooldownState(!player2.getHitCooldownState());
+            this._direction.x = -this._direction.x;
+        }
+        this._origin.x += this._direction.x * scale * delta;
+
+        //ball hits upper or lower wall
+        if ((this._origin.y + this._height) + moveY > (this._game.getCanvas().height * 0.9) || this._origin.y + moveY < this._game.getCanvas().height * 0.1)
+            this._direction.y = -this._direction.y;
+        this._origin.y += this._direction.y * scale * delta;
+    }
 
 	public isHittingPlayer1(player1: Player): boolean
 	{
@@ -172,6 +207,14 @@ export class Ball
 				newDirectionY *= 0.10
 		}
 		this._direction.y = newDirectionY * this._velocity;
+	}
+
+	public updateForResize(canvas: HTMLCanvasElement, relativeX: number, relativeY: number): void
+	{
+		this._origin.x = relativeX * canvas.width;
+		this._origin.y = relativeY * canvas.height;
+		this._width = canvas.width * 0.01;
+		this._height = this._width;
 	}
 
 	public getWidth(): number

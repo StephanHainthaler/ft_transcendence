@@ -1,6 +1,6 @@
+import { AppUser} from "../api/appUser";
 import { Player } from "./player";
 import { Ball } from "./ball";
-import { AppUser} from "../api/appUser";
 import type { MatchSubmissionData } from '@shared/game_stats';
 
 const TARGET_FPS = 60;
@@ -10,93 +10,88 @@ export class Pong
 {
 	private _canvas: HTMLCanvasElement;
 	private _context: CanvasRenderingContext2D;
+	private _baseWidth: number = 1280;
+	private _baseHeight: number = 720;
 	private _player1: Player;
 	private _player2: Player;
 	private _ball: Ball;
-	private _baseWidth: number = 1280;
-	private _baseHeight: number = 720;
-	private _isPaused: boolean = true;
-	private _startTime: number;
-	private	_matchDuration: number;
-	private _durationOffset: number = 0;
-	private _lastFrameTime: number = 0;
 	private _onGameEnd: (Data: MatchSubmissionData) => void;
+	private _matchStartTime: number = 0;
+	private _pauseStartTime: number = 0;
+	private _pauseDuration: number = 0;
+	private _isPaused: boolean = true;
+	private _lastFrameTime: number = 0;
 
 	public constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, _onGameEnd:(Data: MatchSubmissionData) => void)
 	{
 		this._canvas = canvas;
-		this._onGameEnd = _onGameEnd;
-
-		this.resizeCanvas();
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
+		this.resizeCanvas();
 
-		this._player1 = new Player(player1, this._canvas.width * 0.1, this._canvas.height * 0.5, this._canvas, 1, this);
-		this._player2 = new Player(player2, this._canvas.width * 0.9, this._canvas.height * 0.5, this._canvas, 2, this);
-		this._ball = new Ball(this._canvas, this, this._player1, this._player2);
-
-		// handle window resize
-		window.addEventListener('resize', () => this.handleResize());
-
+		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.5, false);
+		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.5, true);
+		this._ball = new Ball(this, this._player1, this._player2);
+		this._onGameEnd = _onGameEnd;
+	
+		this.setupEvents();
+		this._matchStartTime = new Date().getTime();
 		this._isPaused = false;
-		this._startTime = new Date().getTime();
-		this._matchDuration = this._startTime;
-
-		this.setupPong();
 	}
 
-	public setupPong() : void
+	public setupEvents() : void
 	{
-		this._canvas.tabIndex = 0;
+		//this._canvas.tabIndex = 0; // <-- should already been done in svelte.page (game)
 		this._canvas.addEventListener('mousedown', () => this._canvas.focus());
 
 		// Keyboard listeners: W/S for player 1, ArrowUp/ArrowDown for player 2
 		this._canvas.addEventListener('keydown', (e: KeyboardEvent) =>
 		{
 			if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
-				const k = e.key;
-			if (k === 'Escape')
-			{
-				this.changeGameState();
-				return ;
-			}
-			else if (k.toLowerCase() === 'w') this.getPlayer(1).startMoveUp();
-			else if (k.toLowerCase() === 's') this.getPlayer(1).startMoveDown();
-			else if (k === 'ArrowUp') this.getPlayer(2).startMoveUp();
-			else if (k === 'ArrowDown') this.getPlayer(2).startMoveDown();
+			
+			const k = e.key;
+			if (k === 'Escape') this.changeGameState();
+			else if (this._isPaused == true) return ;
+			else if (k.toLowerCase() === 'w') this._player1.startMoveUp();
+			else if (k.toLowerCase() === 's') this._player1.startMoveDown();
+			else if (k === 'ArrowUp') this._player2.startMoveUp();
+			else if (k === 'ArrowDown') this._player2.startMoveDown();
 		});
 
 		this._canvas.addEventListener('keyup', (e: KeyboardEvent) =>
 		{
 			const k = e.key;
-			if (k.toLowerCase() === 'w') this.getPlayer(1).stopMoveUp();
-			else if (k.toLowerCase() === 's') this.getPlayer(1).stopMoveDown();
-			else if (k === 'ArrowUp') this.getPlayer(2).stopMoveUp();
-			else if (k === 'ArrowDown') this.getPlayer(2).stopMoveDown();
+			if (this._isPaused == true) return ;
+			else if (k.toLowerCase() === 'w') this._player1.stopMoveUp();
+			else if (k.toLowerCase() === 's') this._player1.stopMoveDown();
+			else if (k === 'ArrowUp') this._player2.stopMoveUp();
+			else if (k === 'ArrowDown') this._player2.stopMoveDown();
 		});
 
 		// prevents movement from getting stuck when losing this._canvas focus
 		this._canvas.addEventListener('blur', () =>
 		{
-			this.getPlayer(1).stopMoveUp();
-			this.getPlayer(1).stopMoveDown();
-			this.getPlayer(2).stopMoveUp();
-			this.getPlayer(2).stopMoveDown();
+			if (this._isPaused == true) return ;
+			this._player1.stopMoveUp();
+			this._player1.stopMoveDown();
+			this._player2.stopMoveUp();
+			this._player2.stopMoveDown();
 		});
+
+		// handle window resize
+		window.addEventListener('resize', () => this.handleResize());
 
 		window.requestAnimationFrame((time) => this.updatePong(time));
 	}
 
 	public updatePong = (currentTime: number = 0) => {
 
-		//check time/score
-		if (this.getPlayer(1).getScore() > 0 || this.getPlayer(2).getScore() > 0)
+		//check time/score END CONDITIONS
+		if (this._player1.getScore() > 9 || this._player2.getScore() > 9)
 		{
 			const data = this.submitMatchData();
 			this._onGameEnd(data);
 			return ;
 		}
-			
-
 
 		// calculate delta: how many "60fps frames" worth of time passed
 		if (this._lastFrameTime === 0) 
@@ -107,15 +102,11 @@ export class Pong
 		// clamp to max 3 to prevent huge jumps after tab switch
 		const delta = Math.min(elapsed / TARGET_FRAME_TIME, 3);
 
-		this.getBall().move(this.getPlayer(1), this.getPlayer(2));
-		//this.getBall().move(this.getPlayer(1), this.getPlayer(2), delta);
-		this.getPlayer(1).move(delta);
-		const p2 = this.getPlayer(2);
-		//if (2 player mode)
-			//p2.move(delta);
-		//else
-			p2.moveByAI(this.getBall(), delta);
+		this.moveBall(); 
+		this.movePlayer(this._player1, delta);
+		this.movePlayer(this._player2, delta);
 		this.drawArena();
+
 		window.requestAnimationFrame((time) => this.updatePong(time));
 	};
 
@@ -255,52 +246,52 @@ export class Pong
 		}
 	}
 
-	public changeGameState()
+	public changeGameState() : void
 	{
-		if (this._isPaused = false)
-			this._durationOffset = new Date().getTime();
+		if (this._isPaused == false)
+			this._pauseStartTime = new Date().getTime();
 		else
-			this._matchDuration = this._matchDuration - this._durationOffset;
+			this._pauseDuration = new Date().getTime() - this._pauseStartTime + this._pauseDuration;
 		this._isPaused = !this._isPaused;
+	}
+
+	public moveBall(): void
+	{
+		if (this._isPaused == true)
+			return ;
+		this._ball.move(this._player1, this._player2);
+	}
+
+	public movePlayer(player: Player, delta: number)
+	{
+		if (this._isPaused == true)
+			return ;
+		if (player.isAI() == false)
+			player.move(delta);
+		else
+			player.moveByAI(this._ball, delta);
 	}
 
 	public submitMatchData(): MatchSubmissionData
 	{
-
 		const matchData = {} as MatchSubmissionData;
 
 		matchData.player_one_id = this._player1.getData().id;
 		matchData.player_two_id = this._player2.getData().id;
 		matchData.p1_score = this._player1.getScore();
 		matchData.p2_score = this._player2.getScore();
-
 		if (this._player1.getScore() > this._player2.getScore())
 			matchData.winner_id = matchData.player_one_id;
 		else
 			matchData.winner_id = matchData.player_two_id;
-
-		matchData.duration = this._matchDuration;
-		//matchData.startTime = this._startTime;
-
+		matchData.duration = new Date().getTime() - this._matchStartTime - this._pauseDuration;
+		//matchData.matchStartTime = this._matchStartTime;
 		return (matchData);
 	}
 
 	public getCanvas() : HTMLCanvasElement
 	{
 		return (this._canvas);
-	}
-
-	public getPlayer(player_number: number) : Player
-	{
-		if (player_number == 1)
-			return (this._player1);
-		else
-			return (this._player2);
-	}
-
-	public getBall() : Ball
-	{
-		return (this._ball);
 	}
 
 	public getScale(): number
