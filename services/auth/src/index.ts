@@ -1,9 +1,11 @@
-import Fastify from "fastify";
+import Fastify, { FastifyServerOptions } from "fastify";
 import { healthRoute } from "./health";
 import { authRoutes } from "./routes";
 import { initDB } from "./db";
 
-export function buildAuth() {
+export function buildAuth(dbPath?: string, options?: FastifyServerOptions) {
+  initDB(dbPath || process.env.DB_FILE_PATH!);
+
   const fastify = Fastify({
     logger: {
       level: 'info',
@@ -11,13 +13,12 @@ export function buildAuth() {
         target: 'pino-pretty'
       },
     },
-    disableRequestLogging: true
+    disableRequestLogging: true,
+    ...options
   });
 
   fastify.register(healthRoute);
   fastify.register(authRoutes);
-
-  initDB(process.env.DB_FILE_PATH!);
 
   return fastify
 }

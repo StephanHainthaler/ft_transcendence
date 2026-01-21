@@ -5,11 +5,11 @@ import type { Writable } from "@lib/types/writable";
 import { toast } from "svelte-sonner";
 
 export async function updateRequest(token: Writable<JWT | null>, {
-  email, username, passwd
+  email, user_name, passwd
 }: {
-  email?: string, username?: string, passwd?: string
+  email?: string, user_name?: string, passwd?: string
 }) {
-  if (!email && !username && !passwd) {
+  if (!email && !user_name && !passwd) {
     throw new Error("No Credentials to update!");
   }
   const req = new Request('/api/auth/update', {
@@ -18,7 +18,7 @@ export async function updateRequest(token: Writable<JWT | null>, {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token.get()?.raw}`,
     },
-    body: JSON.stringify({ email, username, passwd }),
+    body: JSON.stringify({ email, user_name, passwd }),
   });
 
   const response = await request(req, token);
@@ -34,7 +34,7 @@ export async function signupRequest(
   token: Writable<JWT | null>,
   info: SignupRequestBody,
 ): Promise<AuthResponseSuccess> {
-  if (!info.username && !info.email)
+  if (!info.user_name || !info.email)
     throw new Error("Missing Email or Username!");
   if (!info.passwd) throw new Error("Missing Password!");
 
@@ -62,7 +62,7 @@ export async function loginRequest(
   token: Writable<JWT | null>,
   info: LoginRequestBody,
 ): Promise<AuthResponseSuccess> {
-  if ((!info.username && !info.email))
+  if ((!info.user_name && !info.email))
     throw new Error("Missing Email of Username!");
   if (!info.passwd) throw new Error("Missing Password!");
 

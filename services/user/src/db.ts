@@ -15,8 +15,7 @@ export interface Schema {
 const users = defineTable('users', {
   id: int().primarykey().autoIncrement().notNull(),
   name: text().notNull(),
-  username: text().unique(),
-  email: text().unique(),
+  user_name: text().unique(),
 });
 
 const avatars = defineTable('avatars', {

@@ -1,14 +1,15 @@
 <script lang="ts">
   import { Input } from "@lib/components/ui/input";
   import { Separator } from "@lib/components/ui/separator";
-  import { client } from "@lib/api/index";
+  import { client } from "@lib/api/index.svelte";
   import type { AuthUserClient, User } from "@shared/user";
   import Label from "@lib/components/ui/label/label.svelte";
   import * as Card from "@lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
   import * as Dialog from "$lib/components/ui/dialog";
   import { Trash } from "@lucide/svelte";
-    import { toast } from "svelte-sonner";
+  import { toast } from "svelte-sonner";
+  import { validateInputThrow } from "@lib/validation/inputValidation";
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -27,20 +28,19 @@
     passwdRepeat: ''
   });
 
-  let avatarSrc = $derived(session.avatarFile 
-    ? URL.createObjectURL(session.avatarFile) 
+  let avatarSrc = $derived(session.avatarFile
+    ? URL.createObjectURL(session.avatarFile)
     : client.avatar);
-    let editMode = $state(false);
+  let editMode = $state(false);
 
   const toggleEditMode = () => {
     if (editMode === true) {
-      if (currentAvatarEl && prevAvatarValue.length > 0) currentAvatarEl.src = prevAvatarValue;
+      avatarSrc = prevAvatarValue;
     }
     editMode = !editMode;
   };
 
-  let prevAvatarValue: string = $state('');
-
+  let prevAvatarValue: string | undefined = $derived(client.avatar);
   let currentAvatarEl: HTMLImageElement | undefined = $state();
 
   const handleFileChange = (event: Event) => {
@@ -49,11 +49,8 @@
     if (file) {
       session.avatarFile = file;
       if (currentAvatarEl && input.files?.[0]) {
-        if (prevAvatarValue.length === 0) {
-          prevAvatarValue = currentAvatarEl.src;
-        }
         const url = URL.createObjectURL(file);
-        currentAvatarEl.src = url;
+        avatarSrc = url;
 
         return () => URL.revokeObjectURL(url);
       }
@@ -65,10 +62,37 @@
     console.log(session);
     const updatePromise = client.updateUserInfo(session.user, session.avatarFile);
     toast.promise(updatePromise, {
-      success: () => { return 'Updated successfully!' },
+      success: () => {
+        editMode = false;
+        return 'Updated successfully!'
+      },
       loading: 'Loading...',
       error: (e) => `Failed to update Account: ${e}`,
     });
+    try {
+      const user_name = validateInputThrow(session.auth.user_name, { type: 'username' });
+      const email = validateInputThrow(session.auth.email, { type: 'email' });
+
+      let passwd;
+      if (session.passwd.length > 0) {
+        if (session.passwd !== session.passwdRepeat) {
+          throw new Error("Passwords don't match");
+        } else {
+          passwd = session.passwd;
+        }
+      }
+      const updateAuthPromise = client.updateCredentials({ email, user_name, passwd });
+      toast.promise(updateAuthPromise, {
+        success: () => {
+          editMode = false;
+          return 'Updated successfully!'
+        },
+        loading: 'Loading...',
+        error: (e) => `Failed to update Account: ${e}`,
+      });
+    } catch (e: any) {
+      toast.error(e.message || e);
+    }
   };
 
   let deleteDialogOpen = $state(false);
@@ -99,7 +123,6 @@
           Yes
         </Button>
         <Button onclick={() => {
-          if (currentAvatarEl) currentAvatarEl.src = prevAvatarValue;
           deleteDialogOpen = false;
         }}>
           Cancel
@@ -139,7 +162,7 @@
     <form class="space-y-6" onsubmit={handleSubmit}>
       <div class="flex items-center gap-6">
         {#await sessionPromise then sess}
-          {#if client.avatar}
+          {#if avatarSrc}
             <img
               bind:this={currentAvatarEl}
               src={avatarSrc}
@@ -192,7 +215,7 @@
             <Label for="username">Username</Label>
             <Input
               id="username"
-              bind:value={session.auth.username}
+              bind:value={session.auth.user_name}
               disabled={!editMode}
             />
           </div>

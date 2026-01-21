@@ -1,5 +1,5 @@
 <script>
-  import { client } from "@lib/api/index";
+  import { client } from "@lib/api/index.svelte";
 
   let shouldExpandMenu = false;
 

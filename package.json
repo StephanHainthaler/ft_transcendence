@@ -18,6 +18,7 @@
     "build:docker:frontend": "vite build",
     "test:backend:api": "npm run test -w @ft_transcendence/api",
     "test:backend:database": "npm run test -w @ft_transcendence/database",
+    "test:backend:game_stats": "npm run test -w @ft_transcendence/game_stats",
     "test:backend:user": "npm run test -w @ft_transcendence/user",
     "test:backend": "npm-run-all --continue-on-error test:backend:*"
   },
@@ -48,6 +49,7 @@
     "better-sqlite3": "^12.6.2",
     "concurrently": "^9.2.1",
     "fastify": "^5.6.2",
+    "mkdirp": "^3.0.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "svelte": "^5.45.8",

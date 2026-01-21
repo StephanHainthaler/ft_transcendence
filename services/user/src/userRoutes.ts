@@ -5,7 +5,6 @@ import { extractJWTFromHeader } from "@server/jwt/validate";
 import { eq, IN } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
 import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "./dbHandlers";
-import { MultipartFile } from "@fastify/multipart";
 
 export function userRoutes(fastify: FastifyInstance) {
   fastify.get<{
@@ -112,24 +111,28 @@ export function userRoutes(fastify: FastifyInstance) {
 
       const parts = request.parts();
       let user: Partial<User> | undefined;
-      let avatar: MultipartFile | undefined;
+      let avatarBuffer: Buffer | undefined;
+      let avatarMimetype: string | undefined;
 
       for await (const part of parts) {
         console.log('Part:', part.fieldname, part.type);
 
         if (part.type === 'file' && part.fieldname === 'avatar') {
-          avatar = part;
+          avatarBuffer = await part.toBuffer();
+          avatarMimetype = part.mimetype;
         } else if (part.type === 'field' && part.fieldname === 'user') {
           user = JSON.parse(part.value as string);
+          console.log(user);
         }
       }
 
       console.log('Final user:', user);
-      console.log('Final avatar:', avatar);
+      console.log('Final avatar:', avatarBuffer);
 
       if (!user) throw new ApiError({ code: 400, message: 'Missing user form data' });
 
-      const data = await updateUser(token.payload.sub, user, avatar);
+      const avatarData = avatarBuffer && avatarMimetype ? { buffer: avatarBuffer, mimetype: avatarMimetype } : null;
+      const data = await updateUser(token.payload.sub, user, avatarData);
 
       if (!data)
         throw new ApiError({ code: 404, message: 'User not found' });
