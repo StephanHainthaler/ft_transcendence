@@ -6,6 +6,7 @@
   import Grid from "@lib/components/custom/Grid.svelte";
   import type { AppUser } from "@lib/api/appUser";
   import { toast } from "svelte-sonner";
+  import {t} from "@lib/i18n/i18n";
 
   let users: AppUser[] = $state([])
 
@@ -37,13 +38,13 @@
 <div class='size-full flex flex-col justify-center items-center'>
   <Card.Root class='size-full'>
     <Card.Header>
-      <Card.Title>Game</Card.Title>
+      <Card.Title>{$t('game.game')}</Card.Title>
     </Card.Header>
     <Card.Content class='size-full'>
       {#if !running}
-        <Grid title={'Challenge'}>
+        <Grid title={$t('game.challenge')}>
           {#each users as user}
-            <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={'Challenge'} />
+            <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.challenge')} />
           {/each}
         </Grid>
       {:else}

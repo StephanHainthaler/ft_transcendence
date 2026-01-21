@@ -10,6 +10,7 @@
   import Alert from "@lib/components/ui/alert/alert.svelte";
   import AlertDescription from "@lib/components/ui/alert/alert-description.svelte";
   import { toast } from 'svelte-sonner';
+  import {t} from "@lib/i18n/i18n";
 
   let availableUsers: AppUser[] = $state([]);
   let selectedUsers: AppUser[] = $state([]);
@@ -51,17 +52,17 @@
 
 <Card.Root class="h-full">
   <Card.Header>
-    <Card.Title>Tournament</Card.Title>
+    <Card.Title>{$t('tournament.tournament')}</Card.Title>
   </Card.Header>
   <Card.Content class="flex flex-col gap-4 h-full">
     {#if !running}
       <div class='flex flex-col justify-evenly overflow-y-scroll md:grid md:grid-cols-2 gap-4 h-full'>
-        <Grid title="Available Players">
+        <Grid title={$t('tournament.available')}>
           {#each availableUsers as u}
             <GridCard title={u.name} avatarUrl={u.avatarUrl ?? undefined} callback={() => toggleUserSelected(u)}/>
           {/each}
         </Grid>
-        <Grid title="Selected Players">
+        <Grid title={$t('tournament.selected')}>
           {#each selectedUsers as u}
             <GridCard title={u.name} callback={() => toggleUserSelected(u)} buttonDesc='Remove'/>
           {/each}
@@ -78,7 +79,7 @@
       </div>
       <Separator />
       <div class='flex w-full justify-end'>
-        <Button size='lg' onclick={startTournament}>Start!</Button>
+        <Button size='lg' onclick={startTournament}>{$t('tournament.start')}</Button>
       </div>
     {:else}
       <Tournament players={selectedUsers} />

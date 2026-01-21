@@ -1,0 +1,123 @@
+{
+  "main_name": "Transcendence",
+  "menu": "Menu",
+  "login": {
+    "login": "Login",
+    "username": "Email or Username",
+    "username_ph": "Enter your email or username",
+    "password": "Password",
+    "password_ph": "Enter your password",
+    "singin": "Sign In"
+  },
+  "signup": {
+    "signup": "Sign up",
+    "register": "Register",
+    "username": "Username",
+    "username_ph": "Choose a username",
+    "email": "Email",
+    "email_ph": "Enter your email",
+    "password": "Password",
+    "password_ph": "Create a password",
+    "pass_repeat": "Enter your password",
+    "pass_confirm": "Confirm your password",
+    "loading": "Signing up...",
+    "pass_no_match": "Passwords don't match"
+  },
+  "OAuth": {
+    "oauth": "OAuth",
+    "oauth_gh": "OAuth with GitHup",
+    "error": "Something went wrong",
+    "error2": "Something went wrong...",
+    "redirect": "OAuth Redirect",
+    "go_back": "Go back...",
+    "loading": "Completing GitHub OAuth…"
+  },
+  "sidebar": {
+    "login": "Login",
+    "routes": "Navigation",
+    "profile": "Profile",
+    "game": "Game",
+    "tournament": "Tournament",
+    "friends": "Friends",
+    "statistics": "Statistics",
+    "account": "Account",
+    "logout": "Logout",
+    "language": "Language"
+  },
+  "stats": {
+    "title": "Player Statistics",
+    "my_statistics": "My Statistics",
+    "leaderboard": "Leaderboard",
+    "your_rank": "Your Rank",
+    "wins": "Wins",
+    "losses": "Losses",
+    "total_points": "Total Points",
+    "streak": "Streak",
+    "highest_score": "Highest Score",
+    "match_history": "Match History",
+    "no_matches": "No matches found in your history",
+    "opponent": "Opponent",
+    "score": "Score",
+    "duration": "Duration",
+    "result": "Result",
+    "victory": "Victory",
+    "defeat": "Defeat",
+    "draw": "Draw",
+    "page": "Page"
+  },
+  "leaderboard": {
+    "title": "Global Leaderboard",
+    "player_id": "Player ID",
+    "no_players": "No players found in the leaderboard"
+  },
+  "buttons": {
+    "next": "Next",
+    "previous": "Previous"
+  }, 
+  "friends": {
+    "card_title": "Friends",
+    "send": "Send",
+    "add": "Add",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "accept": "Accept",
+    "reject": "Reject"
+  },
+  "game": {
+    "game": "Game",
+    "challenge": "Challenge"
+  },
+  "profile": {
+    "profile": "Profile",
+    "pers_info": "Personal Info",
+    "disp_name": "Display Name",
+    "credentials": "Credentials",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "pass_repeat": "Repeat Password",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "undated": "Updated successfully",
+    "update_err": "Error updating profile",
+    "loading": "Saving changes...",
+    "delete_account": "Delete Account, please wait...",
+    "delete_confirm": "Are you sure you want to delete your account? This action cannot be undone.",
+    "deleting": "Deleting account...",
+    "delete_success": "Account deleted successfully! Redirecting...",
+    "yes": "Yes",
+    "no": "No",
+    "delete_err": "Error deleting account"
+  },
+  "tournament": {
+    "tournament": "Tournament",
+    "available": "Available Players",
+    "selected": "Selected Players",
+    "choose": "Choose",
+    "start": "Start"
+  },
+  "error": {
+    "404": "404 not found"
+  }
+}

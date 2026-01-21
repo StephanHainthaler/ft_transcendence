@@ -6,8 +6,9 @@
   import Button from "@lib/components/ui/button/button.svelte";
   import { onMount } from "svelte";
   import * as Card from "@lib/components/ui/card";
+  import {t} from "@lib/i18n/i18n";
   import type { AppUser } from "@lib/api/appUser";
-    import { toast } from "svelte-sonner";
+  import { toast } from "svelte-sonner";
 
   let errorMessage = '';
 
@@ -45,9 +46,9 @@
       users = users.filter(u => u.id !== friendId);
       pendingSend.push(friendship);
     } catch (e: any) {
-      toast.error(`Failed to send friendship request`, {
+        toast.error(`Failed to send friendship request`, {
         description: e.message || String(e)
-      });
+        });
     }
   }
 
@@ -74,35 +75,35 @@
 
 <Card.Root class="flex-1 min-h-0 flex flex-col h-full">
   <Card.Header>
-    <Card.Title>Friends</Card.Title>
+    <Card.Title>{$t('friends.card_title')}</Card.Title>
   </Card.Header>
   <Card.Content class="flex-1 min-h-0 overflow-hidden">
     <div class='h-full grid grid-cols-1 grid-rows-4 md:grid-rows-2 md:grid-cols-2 gap-2 p-2 md:p-8'>
-      <Grid title='Send'>
+      <Grid title={$t('friends.send')}>
         {#each users as u}
           {#if !friends.find(fr => fr.id === u.id)}
-            <GridCard title={u.name} buttonDesc={'Add'} callback={async () => await sendFriendRequest(u.id)}/>
+            <GridCard title={u.name} buttonDesc={$t('friends.add')} callback={async () => await sendFriendRequest(u.id)}/>
           {/if}
         {/each}
       </Grid>
 
-      <Grid title='Friends'>
+      <Grid title={$t('friends.card_title')}>
         {#each accepted as a}
-          <GridCard title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)!.name} buttonDesc={'Remove'} callback={async () => await removeFriendship(a.id)}/>
+          <GridCard title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)!.name} buttonDesc={$t('friends.remove')} callback={async () => await removeFriendship(a.id)}/>
         {/each}
       </Grid>
 
-      <Grid title='Cancel'>
+      <Grid title={$t('friends.cancel')}>
         {#each pendingSend as p}
           <GridCard title={friends.find(u => u.id === p.user_to_id)!.name} buttonDesc={'Cancel'} callback={async () => await removeFriendship(p.id)}/>
         {/each}
       </Grid>
 
-      <Grid title='Accept'>
+      <Grid title={$t('friends.accept')}>
         {#each pendingRec as u}
-          <GridCard title={friends.find(fr => fr.id === u.user_from_id)!?.name} buttonDesc={'Reject'} callback={async () => await removeFriendship(u.id)}>
+          <GridCard title={friends.find(fr => fr.id === u.user_from_id)!?.name} buttonDesc={$t('friends.reject')} callback={async () => await removeFriendship(u.id)}>
             {#snippet extraBtn()}
-              <Button class='btn primary sm' onclick={async () => await acceptFriendRequest(u.id)}>Accept</Button>
+              <Button class='btn primary sm' onclick={async () => await acceptFriendRequest(u.id)}>{$t('friends.accept')}</Button>
             {/snippet}
           </GridCard>
         {/each}

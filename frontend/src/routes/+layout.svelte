@@ -1,4 +1,5 @@
 <script lang="ts">
+  import '$lib/i18n';
   import './layout.css';
   import favicon from '$lib/assets/favicon.svg';
   import * as SB from "$lib/components/ui/sidebar";

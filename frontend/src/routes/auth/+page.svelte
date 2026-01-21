@@ -4,15 +4,16 @@
   import LoginForm from "@lib/components/forms/LoginForm.svelte";
   import SignupForm from "@lib/components/forms/SignupForm.svelte";
   import OAuthForm from "@lib/components/forms/OAuthForm.svelte";
+  import {t} from "@lib/i18n/i18n";
 
 </script>
 
 <div class="w-full flex items-center justify-center p-4">
   <Tabs.Root value="login" class="w-full max-w-md">
     <Tabs.List class="grid w-full grid-cols-3">
-      <Tabs.Trigger value="login">Login</Tabs.Trigger>
-      <Tabs.Trigger value="register">Register</Tabs.Trigger>
-      <Tabs.Trigger value="oauth">OAuth</Tabs.Trigger>
+      <Tabs.Trigger value="login">{$t('login.login')}</Tabs.Trigger>
+      <Tabs.Trigger value="register">{$t('signup.register')}</Tabs.Trigger>
+      <Tabs.Trigger value="oauth">{$t('OAuth.oauth')}</Tabs.Trigger>
   </Tabs.List>
     <Card.Root class="w-full max-w-md shadow-xl">
       <Card.Content class="pt-6 w-full">
