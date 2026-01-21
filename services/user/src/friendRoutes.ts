@@ -51,7 +51,7 @@ export function friendRoutes(fastify: FastifyInstance) {
     }
   }>('/', (req, repl) => {
     try {
-      const jwt = extractJWTFromHeader(req.headers.authorization);
+      const jwt = extractJWTFromHeader(req.cookies.access_token);
       const { friends, friendships } = getFriendships(jwt.payload.sub);
       repl.code(200).send({ success: true, friends, friendships });
     } catch (e: any) {
@@ -77,7 +77,7 @@ export function friendRoutes(fastify: FastifyInstance) {
     }
   }>('/request/:toId', (req, repl) => {
     try {
-      const jwt = extractJWTFromHeader(req.headers.authorization);
+      const jwt = extractJWTFromHeader(req.cookies.access_token);
       const toId = req.params.toId;
       const friendship = registerFriendRequest(jwt.payload.sub, toId);
       if (!friendship) throw new ApiError({ code: 500, message: 'Failed to create friendship' });
@@ -103,7 +103,7 @@ export function friendRoutes(fastify: FastifyInstance) {
     }
   }>('/accept/:reqId', (req, repl) => {
     try {
-      const jwt = extractJWTFromHeader(req.headers.authorization);
+      const jwt = extractJWTFromHeader(req.cookies.access_token);
       const reqId = req.params.reqId;
       acceptFriendRequestFromReqId(jwt.payload.sub, reqId);
       repl.code(200).send({ success: true })
@@ -128,7 +128,7 @@ export function friendRoutes(fastify: FastifyInstance) {
     }
   }>('/remove/:reqId', (req, repl) => {
     try {
-      const jwt = extractJWTFromHeader(req.headers.authorization);
+      const jwt = extractJWTFromHeader(req.cookies.access_token);
       const reqId = req.params.reqId;
       console.log(jwt, reqId);
       removeFriendship(reqId);

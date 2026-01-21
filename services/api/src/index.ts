@@ -1,4 +1,5 @@
 import Fastify from 'fastify'
+import fastifyCookie from '@fastify/cookie';
 import { healthRoutes } from './healthcheck/healthcheck';
 
 const AUTH_URL = process.env.AUTH_SERVICE_URL;
@@ -35,6 +36,8 @@ async function startApiGateway() {
     disableRequestLogging: true
  });
 
+  fastify.register(fastifyCookie);
+
   const proxy = await import ('@fastify/http-proxy');
 
   console.log(`API_URL: ${process.env.API_URL}`);
@@ -47,14 +50,28 @@ async function startApiGateway() {
     }
 
     if (!publicRoutes.some(r => request.url.includes(r))) {
-      const authHeader = request.headers.authorization;
-      if (!authHeader) {
-        return reply.code(401).send({ success: false, message: 'Missing auth header' });
-      } else if (!authHeader.startsWith('Bearer ')) {
-        return reply.code(401).send({ success: false, message: 'Invalid auth header' });
-      }
+      try {
+        const access_token = request.cookies.access_token;
+        const refresh_token = request.cookies.refresh_token;
+        if (!access_token) {
+          if (refresh_token) {
+            const response = await fetch(`${AUTH_URL}/refresh`, {
+              method: 'POST',
+            });
 
-      const token = authHeader.replace('Bearer ', '');
+            if (!response.ok) {
+              throw new Error("Unauthenticated");
+            }
+
+            const data = await response.json();
+
+          } else {
+            throw new Error('Unauthenticated');
+          }
+        }
+      } catch (e: any) {
+        return reply.code(401).send({ success: false, message: e.message || 'Unauthenticated' });
+      }
 
       try {
         const response = await fetch(`${AUTH_URL}/validate`, {

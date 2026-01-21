@@ -39,18 +39,7 @@ export function authRoutes(fastify: FastifyInstance) {
   fastify.post<{
     Reply: AuthReply
   }>('/refresh', async (request, reply) => {
-      const cookieHeader = request.headers.cookie;
-      if (!cookieHeader) return reply.code(401).send({ success: false, message: 'Missing Cookie' });
-
-      let cookies;
-      try {
-        const cookiesRaw = cookieHeader.split('; ').map(c => c.split('='));
-        cookies = Object.fromEntries(cookiesRaw);
-      } catch (e: any) {
-        return reply.code(400).send({ success: false, message: 'Invalid cookie format' });
-      }
-
-      const refresh_token = cookies.refresh_token;
+      const refresh_token = (request as any).cookies?.refresh_token as any;
       try {
         const session = getSession({ token: refresh_token });
         validateRefreshToken({ id: session.user_id }, refresh_token);
@@ -62,7 +51,7 @@ export function authRoutes(fastify: FastifyInstance) {
         return reply.status(200).send({ success: true, auth, access_token: token.raw })
       } catch (e: any) {
         console.error('Error in refresh:', e);
-        return reply.status(401).send({ success: false, message: 'Invalid Token' });
+        return reply.status(401).send({ success: false, message: 'Unauthenticated' });
       }
   })
 
@@ -78,7 +67,7 @@ export function authRoutes(fastify: FastifyInstance) {
         validateJWT(token, secret);
       } catch (e: any) {
         console.error(e);
-        reply.code(401).send({ success: false, message: e.message || 'Invalid Token' });
+        reply.code(401).send({ success: false, message: e.message || 'Unauthenticated' });
         return ;
       }
       reply.code(200).send({ success: true })

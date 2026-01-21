@@ -5,6 +5,7 @@ import { healthRoute } from './health';
 import { friendRoutes } from './friendRoutes';
 import multipart from "@fastify/multipart";
 import { avatarRoutes } from './avatarRoutes';
+import fastifyCookie from '@fastify/cookie';
 
 const DB_PATH = process.env.DB_FILE_PATH;
 console.log(process.env.DB_FILE_PATH);
@@ -25,6 +26,7 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
     ...options
   });
 
+  fastify.register(fastifyCookie);
   fastify.register(multipart);
   fastify.register(avatarRoutes);
   fastify.register(userRoutes);
@@ -32,8 +34,6 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
   fastify.register(friendRoutes, {
     prefix: '/friend/',
   });
-
-  console.log(fastify.printRoutes());
 
   fastify.addHook('onResponse', async (request, reply) => {
     if (reply.statusCode >= 400) {

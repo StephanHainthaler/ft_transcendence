@@ -4,7 +4,7 @@ import { parseJWT, type JWT } from "@shared/api";
 import type { Writable } from "@lib/types/writable";
 import { toast } from "svelte-sonner";
 
-export async function updateRequest(token: Writable<JWT | null>, {
+export async function updateRequest( {
   email, user_name, passwd
 }: {
   email?: string, user_name?: string, passwd?: string
@@ -16,12 +16,11 @@ export async function updateRequest(token: Writable<JWT | null>, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token.get()?.raw}`,
     },
     body: JSON.stringify({ email, user_name, passwd }),
   });
 
-  const response = await request(req, token);
+  const response = await request(req);
 
   const data: AuthResponseSuccess = await response.json();
   if (!response.ok) {
@@ -31,7 +30,7 @@ export async function updateRequest(token: Writable<JWT | null>, {
 }
 
 export async function signupRequest(
-  token: Writable<JWT | null>,
+  
   info: SignupRequestBody,
 ): Promise<AuthResponseSuccess> {
   if (!info.user_name || !info.email)
@@ -52,14 +51,11 @@ export async function signupRequest(
   if (!response.ok || !data.access_token)
     throw data;
 
-  const jwt = parseJWT(data.access_token);
-  token.set(jwt);
-
   return data;
 }
 
 export async function loginRequest(
-  token: Writable<JWT | null>,
+  
   info: LoginRequestBody,
 ): Promise<AuthResponseSuccess> {
   if ((!info.user_name && !info.email))
@@ -80,14 +76,10 @@ export async function loginRequest(
   if (!response.ok || !data.access_token)
     throw data;
 
-  const jwt = parseJWT(data.access_token);
-  token.set(jwt);
-
   return data;
 }
 
 export async function oauthRequest(
-  token: Writable<JWT | null>,
   info: OAuthCallBackBody,
 ): Promise<AuthResponseSuccess> {
   if (!info.code)

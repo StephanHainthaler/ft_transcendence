@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
     "@libsql/client": "^0.15.15",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.10.0",

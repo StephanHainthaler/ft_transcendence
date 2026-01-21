@@ -18,7 +18,7 @@ export function userRoutes(fastify: FastifyInstance) {
     }
   }>('/:userId?', (request, reply) => {
     try {
-      const token = extractJWTFromHeader(request.headers.authorization);
+      const token = extractJWTFromHeader(request.cookies.access_token);
       try {
         const { user, avatar } = getUser(token.payload.sub);
         if (!user) {
@@ -30,7 +30,7 @@ export function userRoutes(fastify: FastifyInstance) {
         throw new ApiError({ message: `Database Error: ${e.message || e}`, code: 409 })
       }
     } catch (e: any) {
-      reply.code(e.code || 500).send({ success: false, message: e.message || 'Unauthorized'})
+      reply.code(e.code || 400).send({ success: false, message: e.message || 'Missing Auth Token'})
     }
   });
 
@@ -107,7 +107,7 @@ export function userRoutes(fastify: FastifyInstance) {
     }
   }>('/update', async (request, reply) => {
     try {
-      const token = extractJWTFromHeader(request.headers.authorization);
+      const token = extractJWTFromHeader(request.cookies.access_token);
 
       const parts = request.parts();
       let user: Partial<User> | undefined;
@@ -162,7 +162,7 @@ export function userRoutes(fastify: FastifyInstance) {
   }>('/delete', async (req, repl) => {
       try {
         console.log('got delete request');
-        const token = extractJWTFromHeader(req.headers.authorization);
+        const token = extractJWTFromHeader(req.cookies.access_token);
         await deleteUser(token.payload.sub);
         repl.code(200).send({ success: true });
       } catch (e: any) {
