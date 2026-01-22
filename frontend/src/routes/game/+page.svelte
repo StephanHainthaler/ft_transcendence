@@ -8,6 +8,7 @@
   import { toast } from "svelte-sonner";
   import {t} from "@lib/i18n/i18n";
 
+
   import { Pong } from "@lib/game/pong";
   import type { MatchSubmissionData } from "@shared/game_stats";
 
@@ -29,16 +30,24 @@
   }
 
   let running = $state(false);
+  let showingResults = $state(false);
   let canvas: HTMLCanvasElement | null = $state(null);
   let pong: Pong;
 
 
-  const onGameEnd = (Data: MatchSubmissionData) => {
-    console.log(Data);
+  const onGameEnd = (data: MatchSubmissionData, runningGame: boolean, showingGameResults: boolean) => {
+    console.log(data);
 
-      //send Data to database
-      
-  
+    running = runningGame;
+    showingResults = showingGameResults;
+
+    console.log(running);
+    console.log(showingResults);
+
+    ////send Data to database
+    // import { recordMatch } from "../../../../services/game_stats/src/logic";
+    // recordMatch(data);
+
   };
 
   let testUser1 = {} as AppUser;
@@ -48,6 +57,7 @@
 
   const challengeUser = async (u: AppUser) => {
     running = true;
+    showingResults = false;
     await tick();
     console.log(u);
     testUser1 = u;
@@ -73,6 +83,12 @@
             <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.challenge')} />
           {/each}
         </Grid>
+      <!-- {:else if !running && showingResults}
+        <Grid title={$t('game.results')}>
+          {#each users as user}
+            <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.results')} />
+          {/each}
+        </Grid> -->
       {:else}
         <div class="size-full flex flex-col">
           <canvas bind:this={canvas} class='bg-black size-full' tabindex='0'></canvas>
