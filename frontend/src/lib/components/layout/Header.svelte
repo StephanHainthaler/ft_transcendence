@@ -1,5 +1,5 @@
 <script>
-  import { client } from "@lib/api/index";
+  import { client } from "@lib/api/index.svelte";
   import {t, currentLocale} from "@lib/i18n/i18n";
 
   let shouldExpandMenu = false;

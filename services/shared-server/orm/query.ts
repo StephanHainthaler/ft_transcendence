@@ -90,6 +90,8 @@ export class Query<Row, SelectedRow = Row> {
    * query.update({ name: 'Jane' }).eq('id', 1).run();
    */
   update(tableFields: Record<string, Argument>): Query<Row, SelectedRow> {
+    let filteredValues = Object.entries(tableFields).filter(([_, v]) => v !== undefined )
+    tableFields = Object.fromEntries(filteredValues);
     let fields: string[] = Object.keys(tableFields);
     if (this.table.has(fields)) {
       this.insertValues = tableFields;
@@ -315,7 +317,6 @@ DELETE FROM "${this.table.name}"
   all(): SelectedRow[] {
   //  this.limitCount = undefined;//it broke the limit functionality together with offset
     const { sql, params } = this.stringify();
-    console.log(sql);
 
     const rows = this.db.prepare<Argument[], SelectedRow>(sql).all(...params);
     

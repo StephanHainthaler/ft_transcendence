@@ -98,7 +98,8 @@
     "pass_repeat": "Passwort wiederholen",
     "save": "Änderungen speichern",
     "cancel": "Abbrechen",
-    "edit": "Bearbeiten"
+    "edit": "Bearbeiten",
+    "avatar_btn": "Avatar hochladen"
   },
   "tournament": {
     "tournament": "Turnier",

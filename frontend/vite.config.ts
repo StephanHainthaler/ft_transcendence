@@ -32,5 +32,6 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     target: 'esnext',
-  }
+  },
+  logLevel: 'error',
 });

@@ -40,12 +40,12 @@ export async function createUser(user: User | Partial<User>, opts?: {
 }
 
 export async function updateUser(user: User | Partial<User>): Promise<User> {
+  const form = new FormData();
+
+  form.append('user', JSON.stringify(user));
   const response = await fetch(`${USER_API}/update`, {
-    method: 'patch',
-    headers: {
-      "content-type": 'application/json',
-    },
-    body: JSON.stringify({ user })
+    method: 'post',
+    body: form
   });
 
   const result = await response.json();

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { client } from "@lib/api";
+  import { client } from "@lib/api/index.svelte";
   import * as Card from "$lib/components/ui/card";
   import Separator from "@lib/components/ui/separator/separator.svelte";
   import Grid from "@lib/components/custom/Grid.svelte";

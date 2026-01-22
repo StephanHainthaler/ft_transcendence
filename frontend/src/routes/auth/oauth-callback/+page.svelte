@@ -4,7 +4,7 @@
   import * as Alert from "$lib/components/ui/alert";
   import { CircleAlertIcon, CircleIcon } from "@lucide/svelte";
   import { goto } from "$app/navigation";
-  import { client } from "$lib/api";
+  import { client } from "$lib/api/index.svelte";
   import { buttonVariants } from "@lib/components/ui/button";
   import { t } from "@lib/i18n/i18n";
 

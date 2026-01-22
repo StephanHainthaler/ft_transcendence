@@ -108,7 +108,8 @@
     "delete_success": "Account deleted successfully! Redirecting...",
     "yes": "Yes",
     "no": "No",
-    "delete_err": "Error deleting account"
+    "delete_err": "Error deleting account",
+    "avatar_btn": "Upload Avatar"
   },
   "tournament": {
     "tournament": "Tournament",

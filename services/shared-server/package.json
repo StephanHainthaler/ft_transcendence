@@ -1,0 +1,16 @@
+{
+  "name": "@ft_transcendence/shared-server",
+  "description": "Shared server utilities including ORM and JWT validation",
+  "scripts": {
+    "test": "tsx --test --test-reporter=spec ./tests/*.test.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.4.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "tsx": "^4.16.2",
+    "@types/node": "^24.10.0",
+    "@types/better-sqlite3": "^7.6.13"
+  }
+}

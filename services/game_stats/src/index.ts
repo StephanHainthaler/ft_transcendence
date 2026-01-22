@@ -1,6 +1,5 @@
 import Fastify from "fastify";
 import { initDB } from './database'; 
-import { ApiError } from '@server/error/apiError';
 import { registerHealthRoute } from './health';
 import { gameStatsRoutes } from './routes';
 
@@ -31,9 +30,9 @@ async function start()
 			{
 				request.log.error(error, `GLOBAL SERVER ERROR: ${errorMessage}`);
 				return reply.code(500).send({
-                    success: false,
-                    message: 'Internal Server Error', // 👈 Виправлення: завжди загальне повідомлення
-                });
+          success: false,
+          message: 'Internal Server Error', // 👈 Виправлення: завжди загальне повідомлення
+        });
 			}
 			else
 			{

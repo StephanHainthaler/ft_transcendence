@@ -1,13 +1,15 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import * as Sidebar from "$lib/components/ui/sidebar";
-  import { client } from "@lib/api";
+  import { client } from "@lib/api/index.svelte";
   import {t, currentLocale} from "@lib/i18n/i18n";
+  import { toast } from "svelte-sonner";
 
-  let isLoggedIn = $state(client?.isLoggedIn || false);
+  const isLoggedIn = $derived(client.loggedIn);
 
   const handleLogout = () => {
     client.logout();
+    toast.success("Successfully logged out");
   };
 
  </script>

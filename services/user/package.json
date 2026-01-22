@@ -4,12 +4,13 @@
   "description": "user service",
   "scripts": {
     "dev": "tsx watch --env-file=../../env/.env.user ./src/index.ts",
-    "predev": "mkdir db data data/avatar || true",
+    "predev": "mkdirp db data data/avatar",
     "test": "tsx --tsconfig=./tsconfig.json --env-file=../../env/.env.user --test ./tests/*.test.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
     "@libsql/client": "^0.15.15",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.10.0",
