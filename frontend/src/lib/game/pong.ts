@@ -150,6 +150,7 @@ export class Pong
 		//clear canvas
 		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
+
 		//set color to white
 		this._context.fillStyle = "#ffffffff";
 
@@ -172,6 +173,9 @@ export class Pong
 		//draw ball
 		this._context.fillStyle = "#ff0000ff";
 		this._context.fillRect(this._ball.getOrigin().x, this._ball.getOrigin().y, this._ball.getWidth(), this._ball.getHeight());
+
+		if (new Date().getTime() - this._matchStartTime >= 290000)
+			this.drawCountDown();
 
 	}
 
@@ -244,6 +248,95 @@ export class Pong
 			default:
 				return ;
 		}
+	}
+
+	public	drawDigit(digit: number, originX: number, originY: number)
+	{
+		let number_width = this._canvas.width * 0.02;
+		let number_height = this._canvas.height * 0.065;
+		
+		switch (digit)
+		{
+			case 0:
+				this._context.fillRect(originX, originY, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX + number_width, originY, this._canvas.height * 0.005, number_height);
+				this._context.fillRect(originX, originY, this._canvas.height * 0.005, number_height);
+				this._context.fillRect(originX, originY + number_height, number_width, this._canvas.height * 0.005);
+				break;
+			case 1:
+				this._context.fillRect(originX + number_width, originY, this._canvas.height * 0.005, number_height);
+				break;
+			case 2:
+				this._context.fillRect(originX, originY, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX + number_width, originY, this._canvas.height * 0.005, number_height * 0.5);
+				this._context.fillRect(originX, originY + number_height * 0.5, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX, originY + number_height * 0.5, this._canvas.height * 0.005, number_height * 0.5);
+				this._context.fillRect(originX, originY + number_height, number_width, this._canvas.height * 0.005);
+				break;
+			case 3:
+				this._context.fillRect(originX, originY, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX, originY + number_height * 0.5, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX, originY + number_height, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX + number_width, originY, this._canvas.height * 0.005, number_height);
+				break;
+			case 4:
+				this._context.fillRect(originX, originY, this._canvas.height * 0.005, number_height * 0.5);
+				this._context.fillRect(originX, originY + number_height * 0.5, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX + number_width, originY, this._canvas.height * 0.005, number_height);
+				break;
+			case 5:
+				this._context.fillRect(originX, originY, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX, originY, this._canvas.height * 0.005, number_height * 0.5);
+				this._context.fillRect(originX, originY + number_height * 0.5, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX + number_width, originY + number_height * 0.5, this._canvas.height * 0.005, number_height * 0.5);
+				this._context.fillRect(originX, originY + number_height, number_width, this._canvas.height * 0.005);
+				break;
+			case 6:
+				this._context.fillRect(originX, originY, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX, originY, this._canvas.height * 0.005, number_height);
+				this._context.fillRect(originX, originY + number_height, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX + number_width, originY + number_height * 0.5, this._canvas.height * 0.005, number_height * 0.5);
+				this._context.fillRect(originX, originY + number_height * 0.5, number_width, this._canvas.height * 0.005);
+				break;
+			case 7:
+				this._context.fillRect(originX, originY, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX + number_width, originY, this._canvas.height * 0.005, number_height);
+				break;
+			case 8:
+				this._context.fillRect(originX, originY, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX + number_width, originY, this._canvas.height * 0.005, number_height);
+				this._context.fillRect(originX, originY, this._canvas.height * 0.005, number_height);
+				this._context.fillRect(originX, originY + number_height, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX, originY + number_height * 0.5, number_width, this._canvas.height * 0.005);
+				break;
+			case 9:
+				this._context.fillRect(originX, originY, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX + number_width, originY, this._canvas.height * 0.005, number_height);
+				this._context.fillRect(originX, originY, this._canvas.height * 0.005, number_height * 0.5);
+				this._context.fillRect(originX, originY + number_height, number_width, this._canvas.height * 0.005);
+				this._context.fillRect(originX, originY + number_height * 0.5, number_width, this._canvas.height * 0.005);
+				break;
+			default:
+				return ;
+		}
+	}
+
+	public	drawCountDown(): void
+	{
+		let currentDuration: number = new Date().getTime() - this._matchStartTime;
+		let currentDigit: number = 0;
+
+		if (currentDuration >= 290000 && currentDuration < 291000) currentDigit = 9;
+		else if (currentDuration >= 291000 && currentDuration < 292000) currentDigit = 8;
+		else if (currentDuration >= 292000 && currentDuration < 293000) currentDigit = 7;
+		else if (currentDuration >= 293000 && currentDuration < 294000) currentDigit = 6;
+		else if (currentDuration >= 294000 && currentDuration < 295000) currentDigit = 5;
+		else if (currentDuration >= 295000 && currentDuration < 296000) currentDigit = 4;
+		else if (currentDuration >= 296000 && currentDuration < 297000) currentDigit = 3;
+		else if (currentDuration >= 297000 && currentDuration < 298000) currentDigit = 2;
+		else if (currentDuration >= 298000 && currentDuration < 299000) currentDigit = 1;
+		else if (currentDuration >= 299000 && currentDuration < 300000) currentDigit = 0;
+		this.drawDigit(currentDigit, this._canvas.width * 0.5, this._canvas.height * 0.95);
 	}
 
 	public changeGameState() : void
