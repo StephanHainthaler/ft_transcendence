@@ -17,7 +17,7 @@ export class Pong
 	private _ball: Ball;
 	private _maxPlayerScore: number = 10;
 	private _currentMatchDuration: number = 0;
-	private _maxMatchduration: number = 300000; // 5 min in ms
+	private _maxMatchduration: number = 500; // 5 min in ms
 	private _matchStartTime: number = 0;
 	private _pauseStartTime: number = 0;
 	private _pauseDuration: number = 0;
@@ -29,9 +29,9 @@ export class Pong
 	private _keyupEventListener!: EventListener;
 	private _blurEventListener!: EventListener;
 	private _resizeEventListener!: EventListener;
-	private _onGameEnd: (Data: MatchSubmissionData, runningGame: boolean, showingGameResults: boolean) => void;
+	private _onGameEnd: (Data: MatchSubmissionData) => void;
 
-	public	constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, _onGameEnd:(Data: MatchSubmissionData, runningGame: boolean, showingGameResults: boolean) => void)
+	public	constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, _onGameEnd:(Data: MatchSubmissionData) => void)
 	{
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -123,11 +123,13 @@ export class Pong
 			|| this._player1.getScore() >= this._maxPlayerScore
 			|| this._player2.getScore() >= this._maxPlayerScore)
 		{
-			if (this._player1.getScore() == this._player2.getScore())
-				return ;
+			// if (this._player1.getScore() == this._player2.getScore())
+			// 	return ;
+
+			this.removeEvents();
 
 			const data = this.submitMatchData();
-			this._onGameEnd(data, false, true);
+			this._onGameEnd(data);
 			return ;
 		}
 
@@ -352,12 +354,18 @@ export class Pong
 	public	resetMatch() : void
 	{
 		this._isPaused = true;
+		this.resizeCanvas();
+		this.setupEvents();
 		this._player1.setScore(0);
 		this._player2.setScore(0);
-		//this._ball.
+		this._ball.spawnBall(this._canvas.width * 0.5, this._canvas.height * 0.5, this._player1, this._player2);
+		this._currentMatchDuration = 0;
 		this._pauseDuration = 0;
+		this._pauseStartTime = 0;
 		this._matchStartTime = new Date().getTime();
 		this._isPaused = false;
+		this._lastFrameTime = 0;
+		window.requestAnimationFrame((time) => this.updatePong(time));
 	}
 
 	public	getCanvas() : HTMLCanvasElement
