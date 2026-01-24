@@ -289,7 +289,7 @@ make test
 | pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure → env variables<br> - AI fairness → mathematical algorithm vs ML complexity |
 | juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation → algorithm without external libs<br> - Real-time sync → WebSocket frame throttling |
 
-For more information on the individual contributions, you can also check the table [here](------------------------)
+For more information on the individual contributions, you can also check the Modules table above.
 
 ## Project Management & Team Collaboration
 
