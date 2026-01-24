@@ -174,7 +174,7 @@ git clone https://github.com/StephanHainthaler/ft_transcendence.git
 cd ft_transcendence
 ```
 
-#### Step 2: Create Environment Files
+#### Step 2: Create .env Files
 
 Create a folder called `env` at the root of the repository:
 
@@ -183,72 +183,19 @@ mkdir env
 ```
 
 Create the following environment files with the specified variables:
+| Filename   | Description | Variables |
+|:-----------| :---------- |:----------|
+| .env.api | API Gateway service | <ul><li>PORT</li><li>API_URL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li><li>SERVER_PONG_URL</li></ul> |
+| .env.auth | Authentication | <ul><li>DB_FILE_PATH</li><li>USER_API_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
+| .env.development | Frontend development | <ul><li>VITE_API_URL</li><li>USER_API_URL</li><li>GAME_STATS_SERVICE_URL</li><li>VITE_SERVER_GAME_WS_URL</li><li>VITE_GITHUB_CLIENT_ID</li></ul> |
+| .env.game | Game | <ul><li>USER_URL</li></ul> |
+| .env.game_stats | Game Stats | <ul><li>HOST</li><li>PORT</li></ul> |
+| .env.user | User | <ul><li>DB_FILE_PATH</li><li>PORT</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
 
-**`env/.env.development`** (Frontend development)
-```
-VITE_API_URL=http://localhost:3000/api
-USER_API_URL=http://localhost:3001
-GAME_STATS_SERVICE_URL=http://localhost:3004
-VITE_SERVER_GAME_WS_URL=ws://localhost:3003
-```
 
-**`env/.env.api`** (API Gateway service)
-```
-PORT=3000
-API_URL=http://localhost:3000
-USER_SERVICE_URL=http://localhost:3001
-AUTH_SERVICE_URL=http://localhost:3002
-GAME_STATS_SERVICE_URL=http://localhost:3004
-SERVER_PONG_URL=http://localhost:3003
-```
+#### Step 3: GitHub OAuth Configuration
 
-**`env/.env.auth`** (Authentication service)
-```
-PORT=3002
-DB_FILE_PATH=/app/db/auth.db
-USER_API_URL=http://user:3001
-GITHUB_APP_CLIENT_ID=<your_github_oauth_client_id>
-GITHUB_APP_CLIENT_SECRET=<your_github_oauth_client_secret>
-```
-
-**`env/.env.user`** (User service)
-```
-PORT=3001
-DB_FILE_PATH=/app/db/user.db
-DATA_DIR=/app/data
-AVATAR_DIR=/app/data/avatars
-```
-
-**`env/.env.game`** (Game service)
-```
-PORT=3003
-USER_URL=http://user:3001
-```
-
-**`env/.env.game_stats`** (Game Stats service)
-```
-PORT=3004
-DB_FILE_PATH=/app/db/stats.db
-```
-
-**`env/.env.prod`** (Production overrides, optional)
-```
-NODE_ENV=production
-VITE_API_URL=https://yourdomain.com/api
-VITE_SERVER_GAME_WS_URL=wss://yourdomain.com
-```
-
-#### Step 3: GitHub OAuth Configuration (Optional)
-
-For OAuth 2.0 authentication to work:
-
-1. Go to [GitHub OAuth Applications](https://github.com/settings/developers)
-2. Click "New OAuth App"
-3. Fill in:
-   - **Application name:** ft_transcendence
-   - **Homepage URL:** `http://localhost:8080` (development) or your production URL
-   - **Authorization callback URL:** `http://localhost:8080/auth/oauth-callback`
-4. Copy the `Client ID` and `Client Secret` into `env/.env.auth`
+For OAuth 2.0 authentication to work, follow the [instructions in the GitHub Docs](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app).
 
 ### Installation
 
@@ -297,7 +244,7 @@ npm install package-name
 
 #### Development Mode
 
-Start the development environment with automatic hot-reloading:
+Start the development environment with automatic reloading:
 
 ```sh
 make dev
@@ -316,14 +263,6 @@ This will:
 - Transpile TypeScript to JavaScript automatically
 - Compile Tailwind CSS utilities dynamically
 
-**Access the application:**
-- Frontend: http://localhost:8080
-- API Gateway: http://localhost:3000/api
-- User Service: http://localhost:3001
-- Auth Service: http://localhost:3002
-- Game Service: http://localhost:3003
-- Game Stats Service: http://localhost:3004
-
 #### Production Mode
 
 Build and run the application in Docker containers:
@@ -332,18 +271,6 @@ Build and run the application in Docker containers:
 make prod
 ```
 
-This will:
-- Use Docker Compose to orchestrate all services
-- Build Docker images for each microservice
-- Run frontend in Nginx reverse proxy
-- Run all backend services in isolated containers
-- Use production environment variables from `.env` files
-- Enable networking between containers
-
-**Access the application:**
-- Frontend: http://localhost (via Nginx)
-- All API routes proxied through Nginx
-
 #### Testing
 
 Run the full test suite:
@@ -351,71 +278,6 @@ Run the full test suite:
 ```sh
 make test
 ```
-
-This will:
-- Execute all test files in `services/*/tests/`
-- Run TypeScript checks
-- Validate type safety across the codebase
-- Generate test reports
-
-To run tests for a specific service:
-
-```sh
-cd services/<service-name>
-npm test
-```
-
-### Troubleshooting Common Issues
-
-#### Port Already in Use
-
-If a port is already in use, either:
-1. Stop the process using that port, or
-2. Modify the `PORT` variable in the corresponding `.env` file
-
-#### Node Version Mismatch
-
-Use nvm to install the correct Node version:
-
-```sh
-nvm install 18
-nvm use 18
-```
-
-#### Docker Issues (Production Mode)
-
-Ensure Docker daemon is running:
-
-```sh
-# macOS
-open /Applications/Docker.app
-
-# Linux
-sudo systemctl start docker
-
-# Windows
-# Start Docker Desktop from Start Menu
-```
-
-#### Dependencies Not Found
-
-Clear npm cache and reinstall:
-
-```sh
-npm cache clean --force
-make install
-```
-
-#### Database Initialization Errors
-
-Databases are automatically initialized on first run. If you encounter issues, delete the database files:
-
-```sh
-rm -rf services/*/db/*.db
-```
-
-Then restart the application to recreate the databases.
-
 
 ## Roles & Team Information
   
@@ -451,83 +313,6 @@ Workflow:
 - everybody pulls from main to sync new feature
 - start from top
 
-
-## Structure
-
-Project structure:
-
-```
-
-ft_transcendence/
-├── env                             # env files
-│   └── ...
-├── frontend                        # client / public code
-│   ├── src
-│   │   ├── lib                     # client modules
-│   │   │   ├── api
-│   │   │   ├── assets
-│   │   │   ├── components
-│   │   │   |   ├── custom
-│   │   │   |   ├── error
-│   │   │   |   ├── forms
-│   │   │   |   ├── layout
-│   │   │   |   └── ui
-│   │   │   ├── game
-│   │   │   ├── hooks
-│   │   │   ├── tournament
-│   │   │   ├── types 
-│   │   │   ├── validation
-│   │   │   └── vdom
-│   │   └── routes
-│   │       ├── auth
-│   │       |   └── oauth-callback
-│   │       ├── error
-│   │       ├── friends
-│   │       ├── game
-│   │       ├── health
-│   │       ├── pages
-│   │       ├── profile
-│   │       └── tournament
-│   └── static
-├── scripts                         # scripts for tests
-├── services                        # server / private code
-│   └── api                         # api service module with service-level docker file
-│   │   ├── src
-│   │   │   └── healthcheck
-│   ├── auth
-│   │   └── src
-│   ├── database                    # database module
-│   ├── game
-│   │   └── src
-│   ├── game_stats
-│   │   ├── db
-│   │   ├── src
-│   │   └── tests
-│   ├── nginx                       # webserver
-│   ├── shared-server
-│   │   ├── error
-│   │   ├── jwt
-│   │   └── orm
-│   └── user
-│       ├── src
-│       └── tests
-├── shared                          # interfaces used in client and server modules
-│   ├── api
-│   ├── game
-│   ├── game_stats
-│   └── user
-├── docker-compose.yml              # compose starts the app in production mode
-└── ...
-```
-
-#### Reasoning:
-
-- simple
-- separated client and server code
-- services grouped in one dir, frontend separate
-- shared types/interfaces between server and client modules
-
-
 ## Resources
 
 #### Svelte
@@ -536,6 +321,7 @@ ft_transcendence/
 
 #### OAuth
 - https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
+- https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app
 - https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
 - https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28
 - https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
