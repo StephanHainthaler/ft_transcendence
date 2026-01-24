@@ -44,6 +44,125 @@ We decided on a web-application where you can play Pong. In the following subsec
 | `-`                  | Custom ORM                |                    | vvobis          | Minor   | 1          | ✅        |                           |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
+### Database Schema
+
+The application uses three separate SQLite databases managed by microservices:
+
+#### 1. User Service Database (`services/user`)
+
+Manages user accounts, profiles, avatars, games, and friend relationships.
+
+**Tables:**
+
+| Table | Primary Key | Columns | Description |
+|-------|-------------|---------|-------------|
+| **users** | `id` (AUTO_INCREMENT) | `id` (INT), `name` (TEXT), `username` (TEXT, UNIQUE), `email` (TEXT, UNIQUE) | Core user account information |
+| **avatars** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT, FK→users.id), `location` (TEXT) | User profile pictures/avatars |
+| **games** | `id` (AUTO_INCREMENT) | `id` (INT), `player1` (INT), `player2` (INT), `score1` (INT), `score2` (INT), `duration` (TEXT), `date` (TEXT) | Game records (DEPRECATED) |
+| **user_games** | Composite (game_id, user_id) | `game_id` (INT, FK→games.id), `user_id` (INT, FK→users.id) | Junction table linking users to games |
+| **friendships** | `id` (AUTO_INCREMENT) | `id` (INT), `user_from_id` (INT, FK→users.id), `user_to_id` (INT, FK→users.id), `status` (TEXT) | Friend requests and relationships with status (pending/accepted/rejected) |
+
+**Key Relationships:**
+```
+users
+  ├── 1:1 → avatars (one user can have one avatar)
+  ├── 1:N → friendships (user can have many friendships)
+  └── M:N → games (via user_games junction table)
+```
+
+#### 2. Authentication Service Database (`services/auth`)
+
+Handles user authentication, sessions, and OAuth integration.
+
+**Tables:**
+
+| Table | Primary Key | Columns | Description |
+|-------|-------------|---------|-------------|
+| **auth_users** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT, FK→user_service.users.id, UNIQUE), `user_name` (TEXT, UNIQUE), `email` (TEXT, UNIQUE), `passwd` (TEXT), `oauth_id` (INT, UNIQUE) | Authentication credentials with optional OAuth ID; requires either username or email |
+| **sessions** | Composite (auth_id, user_id) | `auth_id` (INT, FK→auth_users.id), `user_id` (INT, FK→auth_users.user_id, UNIQUE), `token` (TEXT), `expires_in` (INT), `created_at` (INT) | Active user sessions with JWT tokens and expiration times |
+
+**Key Relationships:**
+```
+auth_users
+  └── 1:N → sessions (one user can have multiple active sessions)
+```
+
+**Constraints:**
+- `auth_users`: At least one of `user_name` or `email` must be NOT NULL
+- `oauth_id`: NULL for traditional signup, populated for OAuth authentication
+
+#### 3. Game Stats Service Database (`services/game_stats`)
+
+Tracks player statistics, rankings, and match history.
+
+**Tables:**
+
+| Table | Primary Key | Columns | Description |
+|-------|-------------|---------|-------------|
+| **user_stats** | `user_id` (INT) | `user_id` (INT, PK, FK→user_service.users.id), `wins` (INT, default=0), `losses` (INT, default=0), `streak` (INT, default=0), `total_points` (INT, default=0), `highest_score` (INT, default=0), `rank` (INT, default=0) | Aggregated player statistics and leaderboard rankings |
+| **match_history** | `match_id` (AUTO_INCREMENT) | `match_id` (INT, PK), `timestamp` (INT), `player_one_id` (INT, FK→user_stats.user_id), `player_two_id` (INT, FK→user_stats.user_id), `winner_id` (INT, FK→user_stats.user_id), `p1_score` (INT), `p2_score` (INT), `match_duration` (INT, default=0) | Complete match records with player scores and timestamps |
+
+**Key Relationships:**
+```
+user_stats
+  └── 1:N → match_history (one player can have many matches)
+
+match_history references three user_stats records:
+  ├── player_one_id → user_stats
+  ├── player_two_id → user_stats
+  └── winner_id → user_stats
+```
+
+#### Database Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     User Service (SQLite)                        │
+├─────────────────────────────────────────────────────────────────┤
+│ users (id, name, username, email)                               │
+│   ├─→ avatars (user_id FK, location)                            │
+│   ├─→ friendships (user_from_id, user_to_id, status)           │
+│   └─→ user_games (user_id FK, game_id FK)                       │
+│         └─→ games (id, player1, player2, scores, duration)      │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   Auth Service (SQLite)                          │
+├─────────────────────────────────────────────────────────────────┤
+│ auth_users (id, user_id FK, user_name, email, passwd, oauth_id) │
+│   └─→ sessions (auth_id FK, token, expires_in, created_at)      │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                  Game Stats Service (SQLite)                     │
+├─────────────────────────────────────────────────────────────────┤
+│ user_stats (user_id FK, wins, losses, streak, points, rank)     │
+│   └─→ match_history (player_one_id, player_two_id, winner_id,   │
+│                      scores, duration, timestamp)               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### Data Type Reference
+
+| Type | SQLite Implementation | Description |
+|------|----------------------|-------------|
+| `int()` | INTEGER | Whole numbers (primary keys, IDs, counts, scores) |
+| `text()` | TEXT | Variable-length text strings (names, emails, tokens) |
+
+#### Cross-Service References
+
+While each service maintains its own database, foreign key relationships exist across services:
+- **user_id**: Links across User Service, Auth Service, and Game Stats Service
+- **oauth_id**: Links Auth Service to OAuth provider identities (e.g., GitHub)
+
+#### Database Access Pattern
+
+The application uses a custom ORM (`shared-server/orm`) that provides:
+- Type-safe query building
+- Automatic table creation from schema definitions
+- Migration handling via `initDB()` functions
+- Support for primary keys, foreign keys, unique constraints, and default values
+
 #### Decision against Modules
 
 | Category | Notes |
