@@ -281,13 +281,13 @@ make test
 
 ## Roles, Team Information & Individual Contributions
   
-| **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** |
-|:-----------|:--------------------------------------------|:--------------------------------------------|:----------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA |
-| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics |
-| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support |
-| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm, Password hashing |
-| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), JWT signing & validation, 2FA |
+| **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
+|:-----------|:--------------------------------------------|:--------------------------------------------|:----------------------------|:--------------------------|
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | ORM type safety → TypeScript generics; JWT cross-service auth → RS256 asymmetric signing; Tournament byes → auto-advance unpaired players |
+| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics | Game sync between clients → server-authoritative loop; Canvas performance → optimized render pipeline |
+| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | Stats isolation → separate microservice; Ranking consistency → Elo-like algorithm with periodic updates |
+| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm, Password hashing | OAuth secrets exposure → environment variables; AI fairness → mathematical algorithm vs ML complexity |
+| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), JWT signing & validation, 2FA | 2FA implementation → TOTP algorithm without external libs; Real-time sync → WebSocket frame throttling |
 
 ## Project Management & Team Collaboration
 
@@ -325,3 +325,7 @@ Workflow:
 - https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
 - https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28
 - https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
+
+#### AI Usage
+
+**GitHub Copilot** for checking the understandability and completeness of the Readme documentation.
