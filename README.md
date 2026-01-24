@@ -19,29 +19,29 @@ We decided on a web-application where you can play Pong. In the following subsec
 |  🚧                 | In progress                  |
 |  ❌                 | Cancelled                    |
 
-| **Module**           | **Sub Module**            |**Framework / Info**| **Assignee**    | **Type**| **Points** | **Status** |  **Reasoning**            |
+| **Module**           | **Sub Module**            |**Technologies / Frameworks**| **Assignee**    | **Type**| **Points** | **Status** |  **Technical Justification**            |
 | :---                 | :---                      |  :---              | :---            | :---    | :---       | :---       |   :---                    |
 | **Web**              |                           |                    |                 |         |            |            |                           |
-| `-`                  | Backend Framework         | Svelte             | everyone        | Minor   | 1          | ✅        | Frontend and Backend module just makes our lives easier |
-| `-`                  | Frontend Framework        | Fastify            | everyone        | Minor   | 1          | ✅        | Frontend and Backend module just makes our lives easier |
-| `-`                  | ORM Database              |                    | vvobis          | Minor   | 1          | ✅        |                           |
+| `-`                  | Frontend Framework        | Svelte, Vite, TypeScript, Tailwind CSS, shadcn/svelte | everyone        | Minor   | 1          | ✅        | Svelte provides reactive, compiler-based UI with minimal overhead; Vite ensures fast HMR during development; TypeScript adds type safety; Tailwind CSS enables utility-first styling; shadcn/svelte provides accessible pre-built components |
+| `-`                  | Backend Framework         | Fastify, TypeScript, Node.js | everyone        | Minor   | 1          | ✅        | Fastify offers high performance and low overhead; excellent for building microservices; built-in validation and serialization; TypeScript ensures type safety across services |
+| `-`                  | ORM Database              | Custom ORM (type-safe query builder), SQLite via better-sqlite3 | vvobis          | Minor   | 1          | ✅        | Custom ORM provides full type safety and control; SQLite chosen for embedded databases in microservices for simplicity and portability; better-sqlite3 is synchronous and performant for single-threaded use |
 | **Accessibility**    |                           |                    |                 |         |            |            |                           |
-| `-`                  | Language Support          |                    | khuk            | Minor   | 1          | ✅        | We are allowed to use localization libs by the subject, might be fairly simple + multi lingual team :) |
-| `-`                  | Browser compatility       |                    | everyone        | Minor   | 1          | ✅        | Different users use prefer different browsers    |
+| `-`                  | Language Support          | i18n library (TBD), shadcn/svelte localization support | khuk            | Minor   | 1          | ✅        | Leverage component library's built-in i18n support; allows multi-language UI without major refactoring; team is multi-lingual which justifies the effort |
+| `-`                  | Browser compatibility       | ES2020+ target, Vite polyfills, cross-browser CSS | everyone        | Minor   | 1          | ✅        | Vite handles transpilation and polyfills automatically; Tailwind CSS ensures consistent styling across browsers; shadcn/svelte components tested across modern browsers |
 | **User Management**  |                           |                    |                 |         |            |            |                           |
-| `-`                  | Standard user management  |                    | vvobis          | Major   | 2          | ✅        | Works well with database and backend module |
-| `-`                  | Game stats                |                    | khuk            | Minor   | 1          | ✅        | Seems not too complicated |
-| `-`                  | Remote authentication     | OAuth 2.0 (GitHub) | pgober          | Minor   | 1          | ✅        | Works well with database and backend module |
-| `-`                  | JWT and 2FA               |                    | vvobis & juitz  | Minor   | 1          | ✅        | Works well with mandatory auth, user management and remote auth |
+| `-`                  | Standard user management  | SQLite (User Service), REST API (Fastify), TypeScript | vvobis          | Major   | 2          | ✅        | SQLite provides atomic transactions for user data integrity; Fastify REST endpoints ensure stateless, scalable architecture; TypeScript prevents runtime user data errors |
+| `-`                  | Game stats                | SQLite (Game Stats Service), Query aggregation, Leaderboard logic | khuk            | Minor   | 1          | ✅        | Separate SQLite database for stats isolation and independent scaling; custom ranking algorithm (Elo-like system with +10 wins, -5 losses); separate service allows high-frequency updates without impacting user service |
+| `-`                  | Remote authentication     | OAuth 2.0 (GitHub), JWT tokens, bcrypt password hashing | pgober          | Minor   | 1          | ✅        | GitHub OAuth reduces implementation burden and improves UX; JWT enables stateless authentication across microservices; bcrypt provides secure password hashing; decoupled in Auth Service for security and modularity |
+| `-`                  | JWT and 2FA               | JWT (RS256 signing), 2FA (TOTP, optional), Secure session storage | vvobis & juitz  | Minor   | 1          | ✅        | JWT enables microservice architecture without shared session state; RS256 asymmetric signing allows verification without sharing secrets; 2FA adds security layer for sensitive operations |
 |**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
-| `-`                  | AI Opponent               | Mathematical Algorithm  | pgober          | Major   | 2          | ✅        | Interesting and could be combined well with the general game dev |
+| `-`                  | AI Opponent               | Mathematical Algorithm (ball physics prediction, paddle positioning), WebSocket real-time updates | pgober          | Major   | 2          | ✅        | Deterministic mathematical model ensures reproducible, fair AI behavior; avoids ML complexity while still providing challenge; WebSocket integration enables real-time game updates without polling |
 | **Gaming**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Web-based game            | Pong               | shaintha & juitz| Major   | 2          | ✅        |                           |
-| `-`                  | Tournament system         |                    | vvobis          | Minor   | 1          | ✅        |                           |
+| `-`                  | Web-based game            | Canvas API, WebSocket (real-time communication), Game Loop (server-authoritative), Pong physics engine | shaintha & juitz| Major   | 2          | ✅        | Canvas provides efficient 2D rendering; WebSocket enables low-latency multiplayer; server-authoritative game loop prevents cheating and ensures consistency; custom physics engine tailored for Pong simplicity |
+| `-`                  | Tournament system         | Bracket generation algorithm, SQLite storage, REST API, Real-time WebSocket updates | vvobis          | Minor   | 1          | ✅        | Bracket algorithm handles variable player counts with byes; separate tournament state management; WebSocket keeps clients in sync during tournament progression |
 | **DevOps**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Backend as microservices  |                    | everyone        | Major   | 2          | ✅        | Seems like a natural way to work, especially as a team (work on one module in one service) |
+| `-`                  | Backend as microservices  | Docker, Docker Compose, Nginx reverse proxy, Fastify services | everyone        | Major   | 2          | ✅        | Microservices allow parallel development and independent scaling; Docker ensures consistency across environments; Nginx handles routing and load balancing; each service in its own container for isolation |
 | **Modules of Choice**|                           |                    |                 |         |            |            |                           |
-| `-`                  | Custom ORM                |                    | vvobis          | Minor   | 1          | ✅        |                           |
+| `-`                  | Custom ORM                | TypeScript generics, Query builder pattern, SQLite bindings | vvobis          | Minor   | 1          | ✅        | Custom ORM provides full type safety with TypeScript generics; Query builder pattern is more ergonomic than raw SQL; tight control over performance-critical operations; educational value for 42 curriculum |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
 
@@ -174,84 +174,285 @@ The application uses a custom ORM (`shared-server/orm`) that provides:
 
 ## Instructions
 
-### Setup
+### Prerequisites
 
-First, you need to create an folder called "env" at the root of the repository. It must contain the following files (containing the following variables):
+Before you can run this project, ensure you have the following installed on your system:
 
-| filename   | variables |
-|:-----------|:----------|
-| .env.api | <ul><li>PORT</li><li>API_URL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li><li>SERVER_PONG_URL</li></ul> |
-| .env.auth | <ul><li>DB_FILE_PATH</li><li>USER_API_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
-| .env.development | <ul><li>VITE_API_URL</li><li>USER_API_URL</li><li>GAME_STATS_SERVICE_URL</li><li>VITE_SERVER_GAME_WS_URL</li></ul> |
-| .env.game | <ul><li>USER_URL</li></ul> |
-| .env.game_stats | <ul><li>HOST</li><li>PORT</li></ul> |
-| .env.user | <ul><li>DB_FILE_PATH</li><li>PORT</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
+#### Required Software & Tools
 
+| Software | Version | Purpose | Installation |
+|----------|---------|---------|--------------|
+| **Node.js** | >= 18.x | JavaScript runtime for backend and build tools | [nodejs.org](https://nodejs.org/en/download) |
+| **npm** | >= 9.x | Node Package Manager (comes with Node.js) | Included with Node.js |
+| **nvm** (optional) | Latest | Node Version Manager for managing multiple Node versions | [nvm-sh/nvm](https://github.com/nvm-sh/nvm) |
+| **Docker** | >= 20.x | Container runtime for production builds | [docker.com](https://www.docker.com/products/docker-desktop) |
+| **Docker Compose** | >= 2.x | Container orchestration (usually bundled with Docker Desktop) | [docker.com](https://docs.docker.com/compose/install/) |
+| **Make** | >= 4.x | Build automation tool | Pre-installed on macOS/Linux; [GnuWin32](http://gnuwin32.sourceforge.net/packages/make.htm) for Windows |
+| **Git** | >= 2.x | Version control | [git-scm.com](https://git-scm.com/) |
+
+#### System Requirements
+
+- **OS:** macOS, Linux, or Windows (with WSL2 for optimal Docker support)
+- **RAM:** Minimum 4GB (8GB+ recommended for Docker containers)
+- **Disk Space:** Minimum 2GB for dependencies and databases
+- **Network:** Internet connection for npm package downloads and OAuth
+
+#### Optional Tools
+
+- **VS Code** with extensions: Svelte, TypeScript, ESLint, Prettier
+- **Postman** or **Insomnia**: API testing tools for backend endpoints
+- **SQLite Browser**: For inspecting SQLite databases during development
+
+### Setup & Configuration
+
+#### Step 1: Clone the Repository
+
+```sh
+git clone https://github.com/StephanHainthaler/ft_transcendence.git
+cd ft_transcendence
+```
+
+#### Step 2: Create Environment Files
+
+Create a folder called `env` at the root of the repository:
+
+```sh
+mkdir env
+```
+
+Create the following environment files with the specified variables:
+
+**`env/.env.development`** (Frontend development)
+```
+VITE_API_URL=http://localhost:3000/api
+USER_API_URL=http://localhost:3001
+GAME_STATS_SERVICE_URL=http://localhost:3004
+VITE_SERVER_GAME_WS_URL=ws://localhost:3003
+```
+
+**`env/.env.api`** (API Gateway service)
+```
+PORT=3000
+API_URL=http://localhost:3000
+USER_SERVICE_URL=http://localhost:3001
+AUTH_SERVICE_URL=http://localhost:3002
+GAME_STATS_SERVICE_URL=http://localhost:3004
+SERVER_PONG_URL=http://localhost:3003
+```
+
+**`env/.env.auth`** (Authentication service)
+```
+PORT=3002
+DB_FILE_PATH=/app/db/auth.db
+USER_API_URL=http://user:3001
+GITHUB_APP_CLIENT_ID=<your_github_oauth_client_id>
+GITHUB_APP_CLIENT_SECRET=<your_github_oauth_client_secret>
+```
+
+**`env/.env.user`** (User service)
+```
+PORT=3001
+DB_FILE_PATH=/app/db/user.db
+DATA_DIR=/app/data
+AVATAR_DIR=/app/data/avatars
+```
+
+**`env/.env.game`** (Game service)
+```
+PORT=3003
+USER_URL=http://user:3001
+```
+
+**`env/.env.game_stats`** (Game Stats service)
+```
+PORT=3004
+DB_FILE_PATH=/app/db/stats.db
+```
+
+**`env/.env.prod`** (Production overrides, optional)
+```
+NODE_ENV=production
+VITE_API_URL=https://yourdomain.com/api
+VITE_SERVER_GAME_WS_URL=wss://yourdomain.com
+```
+
+#### Step 3: GitHub OAuth Configuration (Optional)
+
+For OAuth 2.0 authentication to work:
+
+1. Go to [GitHub OAuth Applications](https://github.com/settings/developers)
+2. Click "New OAuth App"
+3. Fill in:
+   - **Application name:** ft_transcendence
+   - **Homepage URL:** `http://localhost:8080` (development) or your production URL
+   - **Authorization callback URL:** `http://localhost:8080/auth/oauth-callback`
+4. Copy the `Client ID` and `Client Secret` into `env/.env.auth`
 
 ### Installation
-Then you need to install [nvm, node and npm](https://nodejs.org/en/download) for you OS.
 
-Then in the root of the project, run
+#### Step 4: Install Dependencies
 
-```sh
-make install
-```
-
-This will install all the dependencies we added to the project, which are described in the package.json file.
-
-npm is the Node.js Package Manager, and is the main utility to install and use javascript modules.
-
-When adding a package with
-
-```sh
-npm add package-xzy
-```
-
-npm will modify the package.json and add the new dependency.
-
-This means, that after you pull from the main branch after somebody merged a PR, you should rerun
+Run the installation command at the root of the project:
 
 ```sh
 make install
 ```
 
-to sync installed dependencies, in case anybody added new ones.
+This command will:
+- Install all npm dependencies listed in root `package.json`
+- Install dependencies for all services (`services/*/package.json`)
+- Install frontend dependencies (`frontend/package.json`)
+- Install shared dependencies (`shared/package.json`)
 
-#### Dependencies
-- vite
-- tailwindcss
-- fastify
-- etc...
+**Note on npm:** npm is the Node Package Manager and the main utility for installing JavaScript modules. The `package.json` files specify which dependencies each service requires.
 
-### Compilation and Execution
+#### Step 5: Sync Dependencies After Pull
 
-While developing, the command
+If you pull changes from `main` that include new dependencies:
+
+```sh
+make install
+```
+
+This ensures all new dependencies are installed locally.
+
+#### Adding New Dependencies
+
+To add a new package to a service:
+
+```sh
+cd services/<service-name>
+npm install package-name
+```
+
+Or at the root for shared dependencies:
+
+```sh
+npm install package-name
+```
+
+### Running the Project
+
+#### Development Mode
+
+Start the development environment with automatic hot-reloading:
 
 ```sh
 make dev
 ```
-or just
+
+or simply:
+
 ```sh
 make
 ```
 
-will run [vite](https://vite.dev/guide/), which is a utility that bundles and translates our TypeScript files into JavaScript files and serves them. 
+This will:
+- Start **Vite** development server for the frontend at **http://localhost:8080**
+- Hot Module Replacement (HMR) enabled for instant code updates
+- Start all backend services in development mode with auto-restart on file changes
+- Transpile TypeScript to JavaScript automatically
+- Compile Tailwind CSS utilities dynamically
 
-It will serves files at **http://localhost:8080** and will also start the backend services in dev mode.
+**Access the application:**
+- Frontend: http://localhost:8080
+- API Gateway: http://localhost:3000/api
+- User Service: http://localhost:3001
+- Auth Service: http://localhost:3002
+- Game Service: http://localhost:3003
+- Game Stats Service: http://localhost:3004
 
-For production builds, we will use
+#### Production Mode
+
+Build and run the application in Docker containers:
 
 ```sh
 make prod
 ```
 
-which will start the docker compose, and run frontend and backend services in separate containers
+This will:
+- Use Docker Compose to orchestrate all services
+- Build Docker images for each microservice
+- Run frontend in Nginx reverse proxy
+- Run all backend services in isolated containers
+- Use production environment variables from `.env` files
+- Enable networking between containers
 
-There is also a test feature
+**Access the application:**
+- Frontend: http://localhost (via Nginx)
+- All API routes proxied through Nginx
+
+#### Testing
+
+Run the full test suite:
+
 ```sh
 make test
 ```
-which will need to be maintained/extendend as new services get added.
+
+This will:
+- Execute all test files in `services/*/tests/`
+- Run TypeScript checks
+- Validate type safety across the codebase
+- Generate test reports
+
+To run tests for a specific service:
+
+```sh
+cd services/<service-name>
+npm test
+```
+
+### Troubleshooting Common Issues
+
+#### Port Already in Use
+
+If a port is already in use, either:
+1. Stop the process using that port, or
+2. Modify the `PORT` variable in the corresponding `.env` file
+
+#### Node Version Mismatch
+
+Use nvm to install the correct Node version:
+
+```sh
+nvm install 18
+nvm use 18
+```
+
+#### Docker Issues (Production Mode)
+
+Ensure Docker daemon is running:
+
+```sh
+# macOS
+open /Applications/Docker.app
+
+# Linux
+sudo systemctl start docker
+
+# Windows
+# Start Docker Desktop from Start Menu
+```
+
+#### Dependencies Not Found
+
+Clear npm cache and reinstall:
+
+```sh
+npm cache clean --force
+make install
+```
+
+#### Database Initialization Errors
+
+Databases are automatically initialized on first run. If you encounter issues, delete the database files:
+
+```sh
+rm -rf services/*/db/*.db
+```
+
+Then restart the application to recreate the databases.
 
 
 ## Roles & Team Information
