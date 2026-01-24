@@ -122,16 +122,6 @@ Our application follows a **microservices architecture** with the following comp
             └──────────────┘ └──────────┘ └──────────────┘
 ```
 
-**Key Points:**
-- **Nginx** acts as a reverse proxy, routing requests to the appropriate microservice
-- **API Gateway** orchestrates requests and coordinates between services
-- **Auth Service** handles user authentication, OAuth 2.0, JWT tokens, and 2FA
-- **User Service** manages user profiles, avatars, friendships, and game records
-- **Game Service** manages real-time game logic, physics, and client synchronization via WebSocket
-- **Game Stats Service** tracks statistics, rankings, and match history independently
-- Each service has its own **SQLite database** for data isolation and independent scaling
-- Services communicate via **REST APIs** (HTTP) and **WebSockets** for real-time features
-
 ## Database Schema
 
 There are three separate SQLite databases managed by microservices:
