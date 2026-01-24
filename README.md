@@ -11,7 +11,7 @@ The goal of this project is to create a real-world web application as a team tha
 ### Pongopolis / Pongantic / Pongtastic (TBD!!!!!)
 We decided on a web-application where you can play Pong. In the following subsection you can find the Modules and key features:
 
-#### Modules & Technical Stack
+#### Modules, Features List, Technical Stack
 
 | **Abbreviation**     | **Meaning**                  |
 |:----------           |:------------------           |
@@ -288,6 +288,14 @@ make test
 | khuk       | Developer                                   | Write code for assigned features, Testing  |
 | pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  |
 | juitz      | Developer                                   | Write code for assigned features, Testing  |
+
+| **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** |
+|:-----------|:--------------------------------------------|:--------------------------------------------|:----------------------------|
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA |
+| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics |
+| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support |
+| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm, Password hashing |
+| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), JWT signing & validation, 2FA |
 
 ## Project Management & Team Collaboration
 
