@@ -241,12 +241,12 @@ mkdir env
 Create the following .env files with the specified variables:
 | Filename   | Description | Variables |
 |:-----------| :---------- |:----------|
-| .env.api | API Gateway service (Port: 3000) | <ul><li>PORT=3000</li><li>API_URL</li><li>USER_SERVICE_URL=http://localhost:3002</li><li>AUTH_SERVICE_URL=http://localhost:3001</li><li>GAME_STATS_SERVICE_URL=http://localhost:3004</li><li>SERVER_PONG_URL=http://localhost:3003</li></ul> |
-| .env.auth | Authentication (Port: 3001) | <ul><li>PORT=3001</li><li>DB_FILE_PATH</li><li>USER_API_URL=http://localhost:3002</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
-| .env.user | User Service (Port: 3002) | <ul><li>PORT=3002</li><li>DB_FILE_PATH</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
-| .env.game | Game Service (Port: 3003) | <ul><li>PORT=3003</li><li>USER_URL=http://localhost:3002</li></ul> |
-| .env.game_stats | Game Stats Service (Port: 3004) | <ul><li>PORT=3004</li><li>HOST=localhost</li></ul> |
-| .env.development | Frontend development (Vite Port: 5173) | <ul><li>VITE_API_URL=http://localhost:3000</li><li>USER_API_URL=http://localhost:3002</li><li>GAME_STATS_SERVICE_URL=http://localhost:3004</li><li>VITE_SERVER_GAME_WS_URL=ws://localhost:3003</li><li>VITE_GITHUB_CLIENT_ID</li></ul> |
+| .env.api | API Gateway service (Port: 3000) | <ul><li>PORT</li><li>API_URL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li><li>SERVER_PONG_URL</li></ul> |
+| .env.auth | Authentication (Port: 3001) | <ul><li>PORT</li><li>DB_FILE_PATH</li><li>USER_API_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
+| .env.user | User Service (Port: 3002) | <ul><li>PORT</li><li>DB_FILE_PATH</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
+| .env.game | Game Service (Port: 3003) | <ul><li>PORT</li><li>USER_URL</li></ul> |
+| .env.game_stats | Game Stats Service (Port: 3004) | <ul><li>PORT</li><li>HOST</li></ul> |
+| .env.development | Frontend development (Vite Port: 5173) | <ul><li>VITE_API_URL</li><li>USER_API_URL</li><li>GAME_STATS_SERVICE_URL</li><li>VITE_SERVER_GAME_WS_URL</li><li>VITE_GITHUB_CLIENT_ID</li></ul> |
 
 
 #### Step 3: GitHub OAuth Configuration
