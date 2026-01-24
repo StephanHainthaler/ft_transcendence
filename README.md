@@ -283,11 +283,11 @@ make test
   
 | **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
 |:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | - ORM type safety >> TypeScript generics<br> - JWT cross-service auth >> RS256 asymmetric signing<br> - Tournament byes >> auto-advance unpaired players |
-| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | - Pong Game mechanics, Canvas rendering, Game physics | - Game sync between clients >> server-authoritative loop<br> - Canvas performance >> optimized render pipeline |
-| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | - Stats isolation >> separate microservice |
-| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure >> env variables<br> - AI fairness >> mathematical algorithm vs ML complexity |
-| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation >> algorithm without external libs<br> - Real-time sync >> WebSocket frame throttling |
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | - ORM type safety<br> >> TypeScript generics<br> - JWT cross-service auth<br> >> RS256 asymmetric signing<br> - Tournament byes<br> >> auto-advance unpaired players |
+| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | - Pong Game mechanics, Canvas rendering, Game physics | - Game sync between clients<br> >> server-authoritative loop<br> - Canvas performance<br> >> optimized render pipeline |
+| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | - Stats isolation<br> >> separate microservice |
+| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure<br> >> env variables<br> - AI fairness<br> >> mathematical algorithm vs ML complexity |
+| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation<br> >> algorithm without external libs<br> - Real-time sync<br> >> WebSocket frame throttling |
 
 For more information on the individual contributions, you can also check the Modules table above.
 
