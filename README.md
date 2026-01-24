@@ -24,6 +24,7 @@ The project emphasizes full-stack development, team organization, project manage
 ## Features & Modules
 
 #### Status Legend
+| **Abbreviation**     | **Meaning**                  |
 |:----------           |:------------------           |
 |  ✅                 | Done                         |
 |  🚧                 | In progress                  |
