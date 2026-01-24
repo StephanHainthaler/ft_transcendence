@@ -131,11 +131,11 @@ Our application follows a **microservices architecture** with the following comp
 - Each service has its own **SQLite database** for data isolation and independent scaling
 - Services communicate via **REST APIs** (HTTP) and **WebSockets** for real-time features
 
-### Database Schema
+## Database Schema
 
 There are three separate SQLite databases managed by microservices:
 
-#### 1. User Service Database (`services/user`)
+### 1. User Service Database (`services/user`)
 
 Manages user accounts, profiles, avatars, games, and friend relationships.
 
@@ -157,7 +157,7 @@ users
   └── M:N → games (via user_games junction table)
 ```
 
-#### 2. Authentication Service Database (`services/auth`)
+### 2. Authentication Service Database (`services/auth`)
 
 Handles user authentication, sessions and OAuth.
 
@@ -174,7 +174,7 @@ auth_users
   └── 1:N → sessions (one user can have multiple active sessions)
 ```
 
-#### 3. Game Stats Service Database (`services/game_stats`)
+### 3. Game Stats Service Database (`services/game_stats`)
 
 Tracks player statistics, rankings, and match history.
 
@@ -196,7 +196,7 @@ match_history references three user_stats records:
   └── winner_id → user_stats
 ```
 
-#### Database Architecture Diagram
+### Database Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
