@@ -4,7 +4,7 @@ _This project has been created as part of the 42 curriculum by vvobis, shaintha,
 
 - [Description](#description)
 - [Features & Modules](#features--modules)
-  - [Modules Not Chosen](#modules-not-chosen)
+  - [Decision against certain Modules](#decision-against-certain-modules)
 - [Roles & Team Information](#roles-team-information--individual-contributions)
 - [Project Management & Team Collaboration](#project-management--team-collaboration)
 - [Architecture & Microservices](#architecture--microservices)
