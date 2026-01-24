@@ -279,16 +279,8 @@ Run the full test suite:
 make test
 ```
 
-## Roles & Team Information
+## Roles, Team Information & Individual Contributions
   
-| **Person** | **Role**                                    | **Responsibilities**                        |
-|:-----------|:--------------------------------------------|:--------------------------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   |
-| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  |
-| khuk       | Developer                                   | Write code for assigned features, Testing  |
-| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  |
-| juitz      | Developer                                   | Write code for assigned features, Testing  |
-
 | **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** |
 |:-----------|:--------------------------------------------|:--------------------------------------------|:----------------------------|
 | vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA |
