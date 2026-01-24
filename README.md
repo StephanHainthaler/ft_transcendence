@@ -4,7 +4,6 @@ _This project has been created as part of the 42 curriculum by vvobis, shaintha,
 
 - [Description](#description)
 - [Features & Modules](#features--modules)
-  - [Status Legend](#status-legend)
   - [Modules Not Chosen](#modules-not-chosen)
 - [Roles & Team Information](#roles-team-information--individual-contributions)
 - [Project Management & Team Collaboration](#project-management--team-collaboration)
@@ -60,7 +59,7 @@ The project emphasizes full-stack development, team organization, project manage
 | `-`                  | Custom ORM                | - TypeScript generics<br> - SQLite bindings | vvobis          | Minor   | 1          | ✅        |  - Custom ORM gives us type safety without being complicated |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
-#### Modules Not Chosen
+#### Decision against certain Modules
 
 | Category | Notes |
 |--------|-------|
