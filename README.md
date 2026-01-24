@@ -11,7 +11,7 @@ The goal of this project is to create a real-world web application as a team tha
 ### Pongopolis / Pongantic / Pongtastic (TBD!!!!!)
 We decided on a web-application where you can play Pong. In the following subsection you can find the Modules and key features:
 
-#### Modules and Technical Stack
+#### Modules & Technical Stack
 
 | **Abbreviation**     | **Meaning**                  |
 |:----------           |:------------------           |
@@ -22,26 +22,26 @@ We decided on a web-application where you can play Pong. In the following subsec
 | **Module**           | **Sub Module**            |**Technologies / Frameworks**| **Assignee**    | **Type**| **Points** | **Status** |  **Why we chose it**            |
 | :---                 | :---                      |  :---              | :---            | :---    | :---       | :---       |   :---                    |
 | **Web**              |                           |                    |                 |         |            |            |                           |
-| `-`                  | Frontend Framework        | Svelte, Vite, TypeScript, Tailwind CSS, shadcn/svelte | everyone        | Minor   | 1          | ✅        | Svelte is simple and fast; Vite makes development quick with instant updates; TypeScript catches bugs early; Tailwind makes styling easy; shadcn/svelte gives us ready-made components |
-| `-`                  | Backend Framework         | Fastify, TypeScript, Node.js | everyone        | Minor   | 1          | ✅        | Fastify is quick and lightweight; good for building separate services; TypeScript helps us avoid mistakes with data types |
-| `-`                  | ORM Database              | Custom ORM (type-safe query builder), SQLite via better-sqlite3 | vvobis          | Minor   | 1          | ✅        | Custom ORM keeps us in control and type-safe; SQLite is simple to use and works everywhere; easier than complex database systems |
+| `-`                  | Frontend Framework        | - Svelte<br> - Vite<br> - TypeScript<br> - Tailwind CSS<br> - shadcn/svelte | everyone        | Minor   | 1          | ✅        |  - Svelte is simple & fast<br> - Vite makes development quick with instant updates<br> - TypeScript catches bugs early<br> - Tailwind for styling<br> - shadcn/svelte provides pre-built components |
+| `-`                  | Backend Framework         | - Fastify<br> - TypeScript<br> - Node.js | everyone        | Minor   | 1          | ✅        |  - Fastify is quick & good for building separate services<br> - TypeScript helps avoid mistakes with data types |
+| `-`                  | ORM Database              | - Custom ORM<br> - SQLite via better-sqlite3 | vvobis          | Minor   | 1          | ✅        |  - Custom ORM keeps us in control & type-safe<br> - SQLite is simple to use & works everywhere |
 | **Accessibility**    |                           |                    |                 |         |            |            |                           |
-| `-`                  | Language Support          | i18n library (TBD), shadcn/svelte localization support | khuk            | Minor   | 1          | ✅        | Our team speaks different languages, so multi-language support makes sense; the component library already has translation support |
-| `-`                  | Browser compatibility       | ES2020+ target, Vite polyfills, cross-browser CSS | everyone        | Minor   | 1          | ✅        | Vite handles older browsers automatically; Tailwind CSS works the same everywhere; components are tested on modern browsers |
+| `-`                  | Language Support          | - i18n library (TBD)<br> - shadcn/svelte localization support | khuk            | Minor   | 1          | ✅        |  - Multi-lingual team |
+| `-`                  | Browser compatibility       | - cross-browser CSS | everyone        | Minor   | 1          | ✅        |  - Vite handles older browsers automatically<br> - Tailwind CSS works the same everywhere |
 | **User Management**  |                           |                    |                 |         |            |            |                           |
-| `-`                  | Standard user management  | SQLite (User Service), REST API (Fastify), TypeScript | vvobis          | Major   | 2          | ✅        | SQLite keeps data safe and consistent; REST API is simple to use; TypeScript prevents errors when handling user data |
-| `-`                  | Game stats                | SQLite (Game Stats Service), Query aggregation, Leaderboard logic | khuk            | Minor   | 1          | ✅        | Separate database for stats so the user service doesn't get slowed down; uses a ranking system (like chess ELO); can update stats without affecting other parts |
-| `-`                  | Remote authentication     | OAuth 2.0 (GitHub), JWT tokens, bcrypt password hashing | pgober          | Minor   | 1          | ✅        | GitHub OAuth makes login easier for users and less code for us; JWT tokens work across all services; bcrypt keeps passwords safe |
-| `-`                  | JWT and 2FA               | JWT (RS256 signing), 2FA (TOTP, optional), Secure session storage | vvobis & juitz  | Minor   | 1          | ✅        | JWT lets services talk to each other without a shared database; 2FA adds extra security when needed |
+| `-`                  | Standard user management  | - SQLite<br> - REST API (Fastify)<br> - TypeScript | vvobis          | Major   | 2          | ✅        |  - SQLite keeps data safe & consistent<br> - REST API is simple to use<br> - TypeScript prevents errors when handling user data |
+| `-`                  | Game stats                | - SQLite (Game Stats Service)<br>- Leaderboard logic | khuk            | Minor   | 1          | ✅        |  - Separate database for stats so the user service doesn't get slowed down |
+| `-`                  | Remote authentication     | - OAuth 2.0 (GitHub)<br> - JWT tokens<br> - bcrypt password hashing | pgober          | Minor   | 1          | ✅        |  - GitHub OAuth makes login easier for users<br> - JWT tokens work across all services<br> - bcrypt keeps passwords safe |
+| `-`                  | JWT & 2FA               | - JWT (RS256 signing)<br> - 2FA<br>-Secure session storage | vvobis & juitz  | Minor   | 1          | ✅        |  - JWT lets services talk to each other without a shared database<br> - 2FA adds extra security when needed |
 |**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
-| `-`                  | AI Opponent               | Mathematical Algorithm (ball physics prediction, paddle positioning), WebSocket real-time updates | pgober          | Major   | 2          | ✅        | Math-based AI is simple and fair; no need for complex machine learning; WebSocket makes the game feel instant |
+| `-`                  | AI Opponent               | - Mathematical Algorithm | pgober          | Major   | 2          | ✅        |  - Math-based AI is simple & fair<br> -  no need for complex ML |
 | **Gaming**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Web-based game            | Canvas API, WebSocket (real-time communication), Game Loop (server-authoritative), Pong physics engine | shaintha & juitz| Major   | 2          | ✅        | Canvas is the standard way to draw games in browsers; WebSocket keeps the game smooth for both players; server handles the game logic so nobody can cheat; custom physics just for Pong keeps it simple |
-| `-`                  | Tournament system         | Bracket generation algorithm, SQLite storage, REST API, Real-time WebSocket updates | vvobis          | Minor   | 1          | ✅        | Automatic bracket generation handles any number of players; WebSocket keeps everyone updated as the tournament progresses |
+| `-`                  | Web-based game            | - Canvas API<br> - WebSocket (real-time communication) | shaintha & juitz| Major   | 2          | ✅        |  - Canvas is the standard way to draw games in browsers<br> -  WebSocket keeps the game smooth for both players |
+| `-`                  | Tournament system         | - SQLite storage<br>-REST API<br> - Real-time WebSocket updates | vvobis          | Minor   | 1          | ✅        |  - Automatic bracket generation handles any number of players<br> - WebSocket keeps everyone updated as the tournament progresses |
 | **DevOps**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Backend as microservices  | Docker, Docker Compose, Nginx reverse proxy, Fastify services | everyone        | Major   | 2          | ✅        | Microservices let each person work on their own part without getting in the way; Docker makes sure it runs the same on everyone's computer; Nginx puts everything together |
+| `-`                  | Backend as microservices  | - Docker<br> - Docker Compose<br> - Nginx reverse proxy<br> - Fastify services | everyone        | Major   | 2          | ✅        |  - Microservices let each person work on their own part independently<br> - Docker makes sure it runs the same on everyone's computer<br> - Nginx puts everything together |
 | **Modules of Choice**|                           |                    |                 |         |            |            |                           |
-| `-`                  | Custom ORM                | TypeScript generics, Query builder pattern, SQLite bindings | vvobis          | Minor   | 1          | ✅        | Custom ORM gives us type safety without being complicated; easier to understand than big frameworks; good learning experience for school |
+| `-`                  | Custom ORM                | - TypeScript generics<br> - SQLite bindings | vvobis          | Minor   | 1          | ✅        |  - Custom ORM gives us type safety without being complicated |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
 
@@ -49,13 +49,13 @@ We decided on a web-application where you can play Pong. In the following subsec
 
 | Category | Notes |
 |--------|-------|
-| Web | Blockchain too much of a hassle to learn (I think) |
-| Gaming | Remote players works well with server-side Pong<br>Customization could be fairly easy, but maybe annoying as well<br>Live chat seems very complicated, but also very interesting<br>**NOTE:** Game might be best done by one person, except live chat maybe |
-| DevOps | Other modules too much |
+| Web | - Blockchain too much of a hassle to learn (I think) |
+| Gaming | - Remote players works well with server-side Pong<br> - Customization could be fairly easy, but maybe annoying as well<br> - Live chat seems very complicated, but also very interesting<br> - **NOTE:** Game might be best done by one person, except live chat maybe |
+| DevOps | - Other modules too much |
 
 ### Database Schema
 
-The application uses three separate SQLite databases managed by microservices:
+There are three separate SQLite databases managed by microservices:
 
 #### 1. User Service Database (`services/user`)
 
@@ -65,11 +65,11 @@ Manages user accounts, profiles, avatars, games, and friend relationships.
 
 | Table | Primary Key | Columns | Description |
 |-------|-------------|---------|-------------|
-| **users** | `id` (AUTO_INCREMENT) | `id` (INT), `name` (TEXT), `username` (TEXT, UNIQUE), `email` (TEXT, UNIQUE) | Core user account information |
-| **avatars** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT, FK→users.id), `location` (TEXT) | User profile pictures/avatars |
-| **games** | `id` (AUTO_INCREMENT) | `id` (INT), `player1` (INT), `player2` (INT), `score1` (INT), `score2` (INT), `duration` (TEXT), `date` (TEXT) | Game records (DEPRECATED) |
-| **user_games** | Composite (game_id, user_id) | `game_id` (INT, FK→games.id), `user_id` (INT, FK→users.id) | Junction table linking users to games |
-| **friendships** | `id` (AUTO_INCREMENT) | `id` (INT), `user_from_id` (INT, FK→users.id), `user_to_id` (INT, FK→users.id), `status` (TEXT) | Friend requests and relationships with status (pending/accepted/rejected) |
+| **users** | `id` (AUTO_INCREMENT) | `id` (INT), `name` (TEXT), `username` (TEXT, UNIQUE), `email` (TEXT, UNIQUE) | User account information |
+| **avatars** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT), `location` (TEXT) | User avatars |
+| **games** | `id` (AUTO_INCREMENT) | `id` (INT), `player1` (INT), `player2` (INT), `score1` (INT), `score2` (INT), `duration` (TEXT), `date` (TEXT) | Game records |
+| **user_games** | Composite (game_id, user_id) | `game_id` (INT), `user_id` (INT) | Junction table linking users to games |
+| **friendships** | `id` (AUTO_INCREMENT) | `id` (INT), `user_from_id` (INT), `user_to_id` (INT), `status` (TEXT) | Friend requests & relationships with status (pending/accepted/rejected) |
 
 **Key Relationships:**
 ```
@@ -81,7 +81,7 @@ users
 
 #### 2. Authentication Service Database (`services/auth`)
 
-Handles user authentication, sessions, and OAuth integration.
+Handles user authentication, sessions and OAuth.
 
 **Tables:**
 
@@ -95,10 +95,6 @@ Handles user authentication, sessions, and OAuth integration.
 auth_users
   └── 1:N → sessions (one user can have multiple active sessions)
 ```
-
-**Constraints:**
-- `auth_users`: At least one of `user_name` or `email` must be NOT NULL
-- `oauth_id`: NULL for traditional signup, populated for OAuth authentication
 
 #### 3. Game Stats Service Database (`services/game_stats`)
 
@@ -151,27 +147,6 @@ match_history references three user_stats records:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-#### Data Type Reference
-
-| Type | SQLite Implementation | Description |
-|------|----------------------|-------------|
-| `int()` | INTEGER | Whole numbers (primary keys, IDs, counts, scores) |
-| `text()` | TEXT | Variable-length text strings (names, emails, tokens) |
-
-#### Cross-Service References
-
-While each service maintains its own database, foreign key relationships exist across services:
-- **user_id**: Links across User Service, Auth Service, and Game Stats Service
-- **oauth_id**: Links Auth Service to OAuth provider identities (e.g., GitHub)
-
-#### Database Access Pattern
-
-The application uses a custom ORM (`shared-server/orm`) that provides:
-- Type-safe query building
-- Automatic table creation from schema definitions
-- Migration handling via `initDB()` functions
-- Support for primary keys, foreign keys, unique constraints, and default values
-
 ## Instructions
 
 ### Prerequisites
@@ -183,25 +158,12 @@ Before you can run this project, ensure you have the following installed on your
 | Software | Version | Purpose | Installation |
 |----------|---------|---------|--------------|
 | **Node.js** | >= 18.x | JavaScript runtime for backend and build tools | [nodejs.org](https://nodejs.org/en/download) |
-| **npm** | >= 9.x | Node Package Manager (comes with Node.js) | Included with Node.js |
+| **npm** | >= 9.x | Node Package Manager | Included with Node.js |
 | **nvm** (optional) | Latest | Node Version Manager for managing multiple Node versions | [nvm-sh/nvm](https://github.com/nvm-sh/nvm) |
-| **Docker** | >= 20.x | Container runtime for production builds | [docker.com](https://www.docker.com/products/docker-desktop) |
-| **Docker Compose** | >= 2.x | Container orchestration (usually bundled with Docker Desktop) | [docker.com](https://docs.docker.com/compose/install/) |
+| **Docker** | >= 20.x | Container runtime | [docker.com](https://www.docker.com/products/docker-desktop) |
+| **Docker Compose** | >= 2.x | Containerization | [docker.com](https://docs.docker.com/compose/install/) |
 | **Make** | >= 4.x | Build automation tool | Pre-installed on macOS/Linux; [GnuWin32](http://gnuwin32.sourceforge.net/packages/make.htm) for Windows |
 | **Git** | >= 2.x | Version control | [git-scm.com](https://git-scm.com/) |
-
-#### System Requirements
-
-- **OS:** macOS, Linux, or Windows (with WSL2 for optimal Docker support)
-- **RAM:** Minimum 4GB (8GB+ recommended for Docker containers)
-- **Disk Space:** Minimum 2GB for dependencies and databases
-- **Network:** Internet connection for npm package downloads and OAuth
-
-#### Optional Tools
-
-- **VS Code** with extensions: Svelte, TypeScript, ESLint, Prettier
-- **Postman** or **Insomnia**: API testing tools for backend endpoints
-- **SQLite Browser**: For inspecting SQLite databases during development
 
 ### Setup & Configuration
 
