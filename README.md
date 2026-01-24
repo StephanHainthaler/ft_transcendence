@@ -44,6 +44,15 @@ We decided on a web-application where you can play Pong. In the following subsec
 | `-`                  | Custom ORM                |                    | vvobis          | Minor   | 1          | ✅        |                           |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
+
+#### Decision against Modules
+
+| Category | Notes |
+|--------|-------|
+| Web | Blockchain too much of a hassle to learn (I think) |
+| Gaming | Remote players works well with server-side Pong<br>Customization could be fairly easy, but maybe annoying as well<br>Live chat seems very complicated, but also very interesting<br>**NOTE:** Game might be best done by one person, except live chat maybe |
+| DevOps | Other modules too much |
+
 ### Database Schema
 
 The application uses three separate SQLite databases managed by microservices:
@@ -162,15 +171,6 @@ The application uses a custom ORM (`shared-server/orm`) that provides:
 - Automatic table creation from schema definitions
 - Migration handling via `initDB()` functions
 - Support for primary keys, foreign keys, unique constraints, and default values
-
-#### Decision against Modules
-
-| Category | Notes |
-|--------|-------|
-| Web | Blockchain too much of a hassle to learn (I think) |
-| Gaming | Remote players works well with server-side Pong<br>Customization could be fairly easy, but maybe annoying as well<br>Live chat seems very complicated, but also very interesting<br>**NOTE:** Game might be best done by one person, except live chat maybe |
-| DevOps | Other modules too much |
-
 
 ## Instructions
 
