@@ -53,6 +53,62 @@ We decided on a web-application where you can play Pong. In the following subsec
 | Gaming | - Remote players works well with server-side Pong<br> - Customization could be fairly easy, but maybe annoying as well<br> - Live chat seems very complicated, but also very interesting<br> - **NOTE:** Game might be best done by one person, except live chat maybe |
 | DevOps | - Other modules too much |
 
+### Architecture & Microservices
+
+Our application follows a **microservices architecture** with the following components:
+
+```
+┌───────────────────────────────────────────────────────────────────────┐
+│                          CLIENT (Web Browser)                          │
+│                     (Svelte + Vite + Canvas/WebSocket)                │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │ HTTP/HTTPS
+                                 ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                    NGINX (Reverse Proxy / Load Balancer)               │
+│                         Port: 80 / 443                                 │
+└─┬──────────────┬──────────────┬──────────────┬──────────────┬──────────┘
+  │              │              │              │              │
+  │ HTTP/REST    │ HTTP/REST    │ HTTP/REST    │ HTTP/REST    │ WebSocket
+  │              │              │              │              │
+  ▼              ▼              ▼              ▼              ▼
+┌──────────┐  ┌────────────┐ ┌──────────┐ ┌─────────────┐ ┌────────┐
+│   API    │  │   AUTH     │ │  USER    │ │ GAME_STATS  │ │ GAME   │
+│ Gateway  │  │  Service   │ │ Service  │ │  Service    │ │Service │
+│(Fastify) │  │ (Fastify)  │ │(Fastify) │ │  (Fastify)  │ │(Fastify)
+│          │  │            │ │          │ │             │ │        │
+│ Routes:  │  │ Routes:    │ │ Routes:  │ │ Routes:     │ │ Routes:│
+│ •/api/*  │  │ •/auth/*   │ │ •/user/* │ │ •/stats/*   │ │•/game/*│
+│ •/login  │  │ •/oauth/*  │ │ •/profile│ │ •/rankings  │ │        │
+│          │  │ •/logout   │ │ •/avatar │ │ •/history   │ │ Features:
+│          │  │ •/2fa      │ │ •/friends│ │             │ │ • Game loop
+└────┬─────┘  └─────┬──────┘ └────┬─────┘ └──────┬──────┘ │ • Real-time
+     │              │             │              │        │   sync
+     │              │             │              │        │ • Physics
+     │              │             │              │        │
+     └──────────────┼─────────────┼──────────────┼────────┘
+                    │             │              │
+                    ▼             ▼              ▼
+            ┌──────────────┐ ┌──────────┐ ┌──────────────┐
+            │ SQLite DB    │ │ SQLite   │ │ SQLite DB    │
+            │ (auth.db)    │ │ DB (db)  │ │ (game_stats) │
+            │              │ │          │ │              │
+            │ •auth_users  │ │ •users   │ │ •user_stats  │
+            │ •sessions    │ │ •games   │ │ •match_hist. │
+            │              │ │ •friends │ │              │
+            └──────────────┘ └──────────┘ └──────────────┘
+```
+
+**Key Points:**
+- **Nginx** acts as a reverse proxy, routing requests to the appropriate microservice
+- **API Gateway** orchestrates requests and coordinates between services
+- **Auth Service** handles user authentication, OAuth 2.0, JWT tokens, and 2FA
+- **User Service** manages user profiles, avatars, friendships, and game records
+- **Game Service** manages real-time game logic, physics, and client synchronization via WebSocket
+- **Game Stats Service** tracks statistics, rankings, and match history independently
+- Each service has its own **SQLite database** for data isolation and independent scaling
+- Services communicate via **REST APIs** (HTTP) and **WebSockets** for real-time features
+
 ### Database Schema
 
 There are three separate SQLite databases managed by microservices:
