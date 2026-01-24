@@ -3,7 +3,9 @@ _This project has been created as part of the 42 curriculum by vvobis, shaintha,
 ## Table of Contents
 
 - [Description](#description)
-- [Modules & Technical Stack](#modules--technical-stack)
+- [Features & Modules](#features--modules)
+- [Roles & Team Information](#roles-team-information--individual-contributions)
+- [Project Management & Team Collaboration](#project-management--team-collaboration)
 - [Architecture & Microservices](#architecture--microservices)
 - [Database Schema](#database-schema)
 - [Instructions](#instructions)
@@ -11,24 +13,17 @@ _This project has been created as part of the 42 curriculum by vvobis, shaintha,
   - [Setup & Configuration](#setup--configuration)
   - [Installation](#installation)
   - [Running the Project](#running-the-project)
-- [Roles & Team Information](#roles-team-information--individual-contributions)
-- [Project Management & Team Collaboration](#project-management--team-collaboration)
 - [Resources](#resources)
 
 ## Description
 
-This project is called ft_transcendence and is the final project of Coding School 42. 
+**ft_transcendence** is the final project of Coding School 42. It is a full-stack web application where players can play Pong with features including user authentication, real-time multiplayer games, tournament systems, leaderboards, and AI opponents.
 
-Full-stack development but also team organization, project management and establishing of roles within the team are some of the key objectives of this project.
+The project emphasizes full-stack development, team organization, project management, and establishing roles within the team.
 
-The goal of this project is to create a real-world web application as a team that can move in many directions, depending on the modules the team chooses.
+## Features & Modules
 
-### Pongopolis / Pongantic / Pongtastic (TBD!!!!!)
-We decided on a web-application where you can play Pong. In the following subsection you can find the Modules and key features:
-
-#### Modules, Features List, Technical Stack
-
-| **Abbreviation**     | **Meaning**                  |
+#### Status Legend
 |:----------           |:------------------           |
 |  ✅                 | Done                         |
 |  🚧                 | In progress                  |
@@ -59,8 +54,7 @@ We decided on a web-application where you can play Pong. In the following subsec
 | `-`                  | Custom ORM                | - TypeScript generics<br> - SQLite bindings | vvobis          | Minor   | 1          | ✅        |  - Custom ORM gives us type safety without being complicated |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
-
-#### Decision against Modules
+#### Modules Not Chosen
 
 | Category | Notes |
 |--------|-------|
@@ -68,7 +62,20 @@ We decided on a web-application where you can play Pong. In the following subsec
 | Gaming | - Remote players works well with server-side Pong<br> - Customization could be fairly easy, but maybe annoying as well<br> - Live chat seems very complicated, but also very interesting<br> - **NOTE:** Game might be best done by one person, except live chat maybe |
 | DevOps | - Other modules too much |
 
-### Architecture & Microservices
+## Roles, Team Information & Individual Contributions
+  
+| **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
+|:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | - ORM type safety<br> > TypeScript generics<br> - JWT cross-service auth<br> > RS256 asymmetric signing<br> - Tournament byes<br> > auto-advance unpaired players |
+| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics | - Game sync between clients<br> > server-authoritative loop<br> - Canvas performance<br> > optimized render pipeline |
+| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | - Stats isolation<br> > separate microservice |
+| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure<br> > env variables<br> - AI fairness<br> > mathematical algorithm vs ML complexity |
+| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation<br> > algorithm without external libs<br> - Real-time sync<br> > WebSocket frame throttling |
+
+For more information on the individual contributions, you can also check the Modules table above.
+
+
+## Architecture & Microservices
 
 Our application follows a **microservices architecture** with the following components:
 
@@ -349,18 +356,6 @@ Run the full test suite:
 ```sh
 make test
 ```
-
-## Roles, Team Information & Individual Contributions
-  
-| **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
-|:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | - ORM type safety<br> > TypeScript generics<br> - JWT cross-service auth<br> > RS256 asymmetric signing<br> - Tournament byes<br> > auto-advance unpaired players |
-| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics | - Game sync between clients<br> > server-authoritative loop<br> - Canvas performance<br> > optimized render pipeline |
-| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | - Stats isolation<br> > separate microservice |
-| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure<br> > env variables<br> - AI fairness<br> > mathematical algorithm vs ML complexity |
-| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation<br> > algorithm without external libs<br> - Real-time sync<br> > WebSocket frame throttling |
-
-For more information on the individual contributions, you can also check the Modules table above.
 
 ## Project Management & Team Collaboration
 
