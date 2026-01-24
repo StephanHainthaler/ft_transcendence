@@ -1,5 +1,20 @@
 _This project has been created as part of the 42 curriculum by vvobis, shaintha, khuk, pgober, juitz._
 
+## Table of Contents
+
+- [Description](#description)
+- [Modules & Technical Stack](#modules--technical-stack)
+- [Architecture & Microservices](#architecture--microservices)
+- [Database Schema](#database-schema)
+- [Instructions](#instructions)
+  - [Prerequisites](#prerequisites)
+  - [Setup & Configuration](#setup--configuration)
+  - [Installation](#installation)
+  - [Running the Project](#running-the-project)
+- [Roles & Team Information](#roles-team-information--individual-contributions)
+- [Project Management & Team Collaboration](#project-management--team-collaboration)
+- [Resources](#resources)
+
 ## Description
 
 This project is called ft_transcendence and is the final project of Coding School 42. 
@@ -349,7 +364,7 @@ For more information on the individual contributions, you can also check the Mod
 
 ## Project Management & Team Collaboration
 
-We had regular meetings planned by shaintha as our Scrum Master. The whole communication was via Discord, where we also decided on meeting dates and schedules. During the meetings, we discussed task dstribution and assignments which will be due in the next meetings. 
+We had regular meetings planned by shaintha as our Scrum Master. The whole communication was via Discord, where we also decided on meeting dates and schedules. During the meetings, we discussed task distribution and assignments which will be due in the next meetings. 
 
 We also used GitHub Issues for this, where we created tickets and assigned them to the respective team member(s). More information on who contributed what in the end can be found in sections "Roles & Team Information" as well as in the above Module table.
 
