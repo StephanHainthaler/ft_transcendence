@@ -182,7 +182,7 @@ Create a folder called `env` at the root of the repository:
 mkdir env
 ```
 
-Create the following environment files with the specified variables:
+Create the following .env files with the specified variables:
 | Filename   | Description | Variables |
 |:-----------| :---------- |:----------|
 | .env.api | API Gateway service | <ul><li>PORT</li><li>API_URL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li><li>SERVER_PONG_URL</li></ul> |
@@ -282,12 +282,14 @@ make test
 ## Roles, Team Information & Individual Contributions
   
 | **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
-|:-----------|:--------------------------------------------|:--------------------------------------------|:----------------------------|:--------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | ORM type safety → TypeScript generics; JWT cross-service auth → RS256 asymmetric signing; Tournament byes → auto-advance unpaired players |
-| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics | Game sync between clients → server-authoritative loop; Canvas performance → optimized render pipeline |
-| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | Stats isolation → separate microservice; Ranking consistency → Elo-like algorithm with periodic updates |
-| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm, Password hashing | OAuth secrets exposure → environment variables; AI fairness → mathematical algorithm vs ML complexity |
-| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), JWT signing & validation, 2FA | 2FA implementation → TOTP algorithm without external libs; Real-time sync → WebSocket frame throttling |
+|:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | - ORM type safety → TypeScript generics<br> - JWT cross-service auth → RS256 asymmetric signing<br> - Tournament byes → auto-advance unpaired players |
+| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | - Pong Game mechanics, Canvas rendering, Game physics | - Game sync between clients → server-authoritative loop<br> - Canvas performance → optimized render pipeline |
+| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | - Stats isolation → separate microservice |
+| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure → env variables<br> - AI fairness → mathematical algorithm vs ML complexity |
+| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation → algorithm without external libs<br> - Real-time sync → WebSocket frame throttling |
+
+For more information on the individual contributions, you can also check the table [here](------------------------)
 
 ## Project Management & Team Collaboration
 
