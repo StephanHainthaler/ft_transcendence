@@ -76,7 +76,7 @@ Our application follows a **microservices architecture** with the following comp
 │   API    │  │   AUTH     │ │  USER    │ │ GAME_STATS  │ │ GAME   │
 │ Gateway  │  │  Service   │ │ Service  │ │  Service    │ │Service │
 │(Fastify) │  │ (Fastify)  │ │(Fastify) │ │  (Fastify)  │ │(Fastify)
-│          │  │            │ │          │ │             │ │        │
+│:3000     │  │ :3001      │ │ :3002    │ │  :3004      │ │:3003   │
 │ Routes:  │  │ Routes:    │ │ Routes:  │ │ Routes:     │ │ Routes:│
 │ •/api/*  │  │ •/auth/*   │ │ •/user/* │ │ •/stats/*   │ │•/game/*│
 │ •/login  │  │ •/oauth/*  │ │ •/profile│ │ •/rankings  │ │        │
@@ -239,14 +239,14 @@ mkdir env
 ```
 
 Create the following .env files with the specified variables:
-| Filename   | Description | Variables |
-|:-----------| :---------- |:----------|
-| .env.api | API Gateway service | <ul><li>PORT</li><li>API_URL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li><li>SERVER_PONG_URL</li></ul> |
-| .env.auth | Authentication | <ul><li>DB_FILE_PATH</li><li>USER_API_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
-| .env.development | Frontend development | <ul><li>VITE_API_URL</li><li>USER_API_URL</li><li>GAME_STATS_SERVICE_URL</li><li>VITE_SERVER_GAME_WS_URL</li><li>VITE_GITHUB_CLIENT_ID</li></ul> |
-| .env.game | Game | <ul><li>USER_URL</li></ul> |
-| .env.game_stats | Game Stats | <ul><li>HOST</li><li>PORT</li></ul> |
-| .env.user | User | <ul><li>DB_FILE_PATH</li><li>PORT</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
+| Filename   | Description | Suggested Port | Variables |
+|:-----------| :---------- |:-------------|:----------|
+| .env.api | API Gateway service | 3000 | <ul><li>PORT=3000</li><li>API_URL</li><li>USER_SERVICE_URL=http://localhost:3002</li><li>AUTH_SERVICE_URL=http://localhost:3001</li><li>GAME_STATS_SERVICE_URL=http://localhost:3004</li><li>SERVER_PONG_URL=http://localhost:3003</li></ul> |
+| .env.auth | Authentication | 3001 | <ul><li>PORT=3001</li><li>DB_FILE_PATH</li><li>USER_API_URL=http://localhost:3002</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
+| .env.development | Frontend development | 5173 (Vite) | <ul><li>VITE_API_URL=http://localhost:3000</li><li>USER_API_URL=http://localhost:3002</li><li>GAME_STATS_SERVICE_URL=http://localhost:3004</li><li>VITE_SERVER_GAME_WS_URL=ws://localhost:3003</li><li>VITE_GITHUB_CLIENT_ID</li></ul> |
+| .env.game | Game Service | 3003 | <ul><li>PORT=3003</li><li>USER_URL=http://localhost:3002</li></ul> |
+| .env.game_stats | Game Stats | 3004 | <ul><li>HOST=localhost</li><li>PORT=3004</li></ul> |
+| .env.user | User Service | 3002 | <ul><li>PORT=3002</li><li>DB_FILE_PATH</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
 
 
 #### Step 3: GitHub OAuth Configuration
