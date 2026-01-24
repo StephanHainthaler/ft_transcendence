@@ -4,22 +4,14 @@ _This project has been created as part of the 42 curriculum by vvobis, shaintha,
 
 This project is called ft_transcendence and is the final project of Coding School 42. 
 
-The goal of this project is to create a real-world web application as a team that can move in many directions, depending on the modules the team chooses.
-
-We decided on a web-application where you can play Pong. For further information on the modules we implemented, see section "Modules" below.
 Full-stack development but also team organization, project management and establishing of roles within the team are some of the key objectives of this project.
 
-### Roles and Team Information
-  
-| **Person** | **Role**                                    | **Responsibilities**                        |
-|:-----------|:--------------------------------------------|:--------------------------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   |
-| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  |
-| khuk       | Developer                                   | Write code for assigned features, Testing  |
-| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  |
-| juitz      | Developer                                   | Write code for assigned features, Testing  |
+The goal of this project is to create a real-world web application as a team that can move in many directions, depending on the modules the team chooses.
 
-## Modules and key features
+### Pongopolis / Pongantic / Pongtastic (TBD!!!!!)
+We decided on a web-application where you can play Pong. In the following subsection you can find the Modules and key features:
+
+#### Modules and Technical Stack
 
 | **Abbreviation**     | **Meaning**                  |
 |:----------           |:------------------           |
@@ -42,7 +34,7 @@ Full-stack development but also team organization, project management and establ
 | `-`                  | Remote authentication     | OAuth 2.0 (GitHub) | pgober          | Minor   | 1          | ✅        | Works well with database and backend module |
 | `-`                  | JWT and 2FA               |                    | vvobis & juitz  | Minor   | 1          | ✅        | Works well with mandatory auth, user management and remote auth |
 |**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
-| `-`                  | AI Opponent               |                    | pgober          | Major   | 2          | ✅        | Interesting and could be combined well with the general game dev |
+| `-`                  | AI Opponent               | Mathematical Algorithm  | pgober          | Major   | 2          | ✅        | Interesting and could be combined well with the general game dev |
 | **Gaming**           |                           |                    |                 |         |            |            |                           |
 | `-`                  | Web-based game            | Pong               | shaintha & juitz| Major   | 2          | ✅        |                           |
 | `-`                  | Tournament system         |                    | vvobis          | Minor   | 1          | ✅        |                           |
@@ -52,26 +44,18 @@ Full-stack development but also team organization, project management and establ
 | `-`                  | Custom ORM                |                    | vvobis          | Minor   | 1          | ✅        |                           |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
-### Decision against Modules
+#### Decision against Modules
 
-#### Web
-    - Blockchain too much of a hastle to learn (i think)
-    
-#### Gaming
-    - Remote players works well with server side pong
-    - Customization could be fairly easy, but maybe annoying as well
-    - Live chat seems very complicated, but also very interesting
-    - NOTE: Game might be best to be done by one person, except live chat maybe
-  
-#### DevOps
-    - Other modules too much
-    
+| Category | Notes |
+|--------|-------|
+| Web | Blockchain too much of a hassle to learn (I think) |
+| Gaming | Remote players works well with server-side Pong<br>Customization could be fairly easy, but maybe annoying as well<br>Live chat seems very complicated, but also very interesting<br>**NOTE:** Game might be best done by one person, except live chat maybe |
+| DevOps | Other modules too much |
+
 
 ## Instructions
 
-### Setup & Installation
-
-#### Setup
+### Setup
 
 First, you need to create an folder called "env" at the root of the repository. It must contain the following files (containing the following variables):
 
@@ -85,7 +69,7 @@ First, you need to create an folder called "env" at the root of the repository. 
 | .env.user | <ul><li>DB_FILE_PATH</li><li>PORT</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
 
 
-#### Installation
+### Installation
 Then you need to install [nvm, node and npm](https://nodejs.org/en/download) for you OS.
 
 Then in the root of the project, run
@@ -150,8 +134,24 @@ make test
 ```
 which will need to be maintained/extendend as new services get added.
 
+
+## Roles & Team Information
+  
+| **Person** | **Role**                                    | **Responsibilities**                        |
+|:-----------|:--------------------------------------------|:--------------------------------------------|
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   |
+| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  |
+| khuk       | Developer                                   | Write code for assigned features, Testing  |
+| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  |
+| juitz      | Developer                                   | Write code for assigned features, Testing  |
+
 ## Project Management & Team Collaboration
 
+We had regular meetings planned by shaintha as our Scrum Master. The whole communication was via Discord, where we also decided on meeting dates and schedules. During the meetings, we discussed task dstribution and assignments which will be due in the next meetings. 
+
+We also used GitHub Issues for this, where we created tickets and assigned them to the respective team member(s). More information on who contributed what in the end can be found in sections "Roles & Team Information" as well as in the above Module table.
+
+### Collaboration Agreement
 Before a PR to main, a test should have been written for the change. A change does not have to be a full module, might be just a part of a module or feature.
 Also, if a new module was started / submitted, it should have a corresponding service entry in the docker compose and docker file in the service directory.
 
