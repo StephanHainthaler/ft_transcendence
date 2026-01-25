@@ -84,6 +84,7 @@ export const GameStatsControllers = {
 				p1_score: safeParseInt(body.p1_score, 'p1_score', 0),
 				p2_score: safeParseInt(body.p2_score, 'p2_score', 0),
 				duration: safeParseInt(body.duration || 0, 'duration', 0),
+				timestamp: safeParseInt(body.timestamp || 0, 'timestamp', 0) //ADDED BY STEPHAN
 			};
 			if (data.player_one_id === data.player_two_id)
 				throw new ApiError({ message: 'Players must be different.', code: 400 });

@@ -85,7 +85,13 @@
   },
   "game": {
     "game": "Spiel",
-    "challenge": "Herausfordern"
+    "challenge": "Herausfordern",
+    "summary": "Spielzusammenfassung",
+    "win": "Gewonnen",
+    "lose": "Verloren",
+    "duration": "Spielzeit",
+    "rematch": "Revanche",
+    "return": "Zurück zur Herausforderungsseite"
   },
   "profile": {
     "profile": "Profil",

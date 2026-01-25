@@ -85,7 +85,13 @@
   },
   "game": {
     "game": "Game",
-    "challenge": "Challenge"
+    "challenge": "Challenge",
+    "summary": "Match Summary",
+    "win": "Win",
+    "lose": "Lose",
+    "duration": "Match Duration",
+    "rematch": "Rematch",
+    "return": "Return to Challenge Page"
   },
   "profile": {
     "profile": "Profile",
