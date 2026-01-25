@@ -66,11 +66,11 @@ export class Player
 		const scaledVelocity = this._velocity * scale * delta;
 
 		// if the ball is in opponents field, go to the middle
-		if (ball.getOrigin().x < (this._game.getCanvas().width / 2))
+		if (ball.getOrigin().x < this._game.getCanvas().width / 2)
 		{
-			if (this._origin.y < this._game.getCanvas().height / 2)
+			if (this._origin.y < this._game.getCanvas().height / 2 - 1)
 				this._origin.y += scaledVelocity;
-			else if (this._origin.y > this._game.getCanvas().height / 2)
+			else if (this._origin.y > this._game.getCanvas().height / 2 + 1)
 				this._origin.y -= scaledVelocity;
 		}
 		else if (ball.getOrigin().y - ball.getHeight() > this._origin.y && (this._origin.y + this._height) + scaledVelocity < (this._game.getCanvas().height * 0.9))

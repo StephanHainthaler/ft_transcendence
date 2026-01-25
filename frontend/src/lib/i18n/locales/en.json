@@ -25,7 +25,7 @@
   },
   "OAuth": {
     "oauth": "OAuth",
-    "oauth_gh": "OAuth with GitHup",
+    "oauth_gh": "OAuth with GitHub",
     "error": "Something went wrong",
     "error2": "Something went wrong...",
     "redirect": "OAuth Redirect",
