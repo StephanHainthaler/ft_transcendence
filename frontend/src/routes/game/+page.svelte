@@ -45,10 +45,10 @@
 
     await tick();
     console.log(u);
-    challengingUser = u;
+    challengedUser = u;
     if (client.user)
     {
-      challengedUser = new AppUser(client.user, null);
+      challengingUser = new AppUser(client.user, null);
       if (canvas)
         pong = new Pong(challengingUser, challengedUser, canvas, onGameEnd);
     }
@@ -60,10 +60,8 @@
     showingResultScreen = true;
 
     console.log(data);
-    console.log(running);
-    console.log(showingResultScreen);
-
     matchData = data;
+
     //// send Data to database
     //recordMatch(matchData);
   };
@@ -76,10 +74,23 @@
 
   function startRematch() : void
   {
-    pong?.resetMatch();
-		running = true;
-    showingResultScreen = false;
-	};
+    if (!pong)
+      console.error("Pong instance is null!");
+    else
+      console.log("Pong instance exists!");
+    if (!pong?.getCanvas())
+      console.error("Canvas is null!");
+    else
+      console.log("Canvas exists!");
+  
+    if (pong && pong.getCanvas())
+    {
+      running = true;
+      showingResultScreen = false;
+      pong.resetMatch(pong?.getCanvas());
+      //pong = new Pong(challengingUser, challengedUser, canvasElement, onGameEnd);
+    }
+  };
 
   loadPageData();
 
@@ -102,16 +113,22 @@
           <canvas bind:this={canvas} class='bg-black size-full' tabindex='0'></canvas>
         </div>
       {:else}
-        <h2 class="text-2xl font-bold mb-4">{$t('game.match_result')}</h2>
+        <h2 class="text-2xl font-bold mb-4">{$t('game.summary')}</h2>
         {#if matchData}
-          <p class="mb-2">{$t('game.winner')}: {matchData.p1_score} ({matchData.p2_score})</p>
-          <p class="mb-4">{$t('game.loser')}: {matchData.p2_score} ({matchData.p1_score})</p>
+          {#if matchData.winner_id === challengingUser.id}
+          <p class="mb-2">{$t('game.win')}: {challengingUser.name} ({matchData.p1_score})</p>
+          <p class="mb-4">{$t('game.lose')}: {challengedUser.name} ({matchData.p2_score})</p>
+          {:else}
+          <p class="mb-2">{$t('game.lose')}: {challengingUser.name} ({matchData.p1_score})</p>
+          <p class="mb-4">{$t('game.win')}: {challengedUser.name} ({matchData.p2_score})</p>
+          {/if}
+          <p class="mb-4">{$t('game.duration')}: {matchData.duration} </p>
         {/if}
         <button onclick={ returnToChallengePage } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          Return to Challenge Page
+          {$t('game.return')}
         </button>
         <button onclick={ startRematch } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          Play again
+          {$t('game.rematch')}
         </button>
       {/if}
     </Card.Content>

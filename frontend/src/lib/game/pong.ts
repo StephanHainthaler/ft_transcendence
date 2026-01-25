@@ -15,9 +15,9 @@ export class Pong
 	private _player1: Player;
 	private _player2: Player;
 	private _ball: Ball;
-	private _maxPlayerScore: number = 10;
+	private _maxPlayerScore: number = 1;
 	private _currentMatchDuration: number = 0;
-	private _maxMatchduration: number = 500; // 5 min in ms
+	private _maxMatchduration: number = 11000; // 5 min in ms
 	private _matchStartTime: number = 0;
 	private _pauseStartTime: number = 0;
 	private _pauseDuration: number = 0;
@@ -126,6 +126,7 @@ export class Pong
 			// if (this._player1.getScore() == this._player2.getScore())
 			// 	return ;
 
+			this._isPaused = true;
 			this.removeEvents();
 
 			const data = this.submitMatchData();
@@ -351,9 +352,14 @@ export class Pong
 		return (matchData);
 	}
 
-	public	resetMatch() : void
+	public	resetMatch(canvas: HTMLCanvasElement) : void
 	{
 		this._isPaused = true;
+		this._canvas = canvas;
+		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
+		this._baseWidth = 1280;
+		this._baseHeight = 720;
+
 		this.resizeCanvas();
 		this.setupEvents();
 		this._player1.setScore(0);
