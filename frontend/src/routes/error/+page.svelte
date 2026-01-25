@@ -1,6 +1,7 @@
 <script lang="ts">
+  import {t} from "@lib/i18n/i18n";
 </script>
 
 <div>
-  404 not found
+  {$t('error.404')}
 </div>

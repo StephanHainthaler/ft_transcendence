@@ -1,37 +1,44 @@
 import { Pong } from "./pong";
 import { Ball } from "./ball";
+import { AppUser} from "../api/appUser";
 
 type vector = {x: number; y: number};
 
 export class Player
 {
-	private _name: string;
+	private	_game: Pong;
+	private _data: AppUser
 	private _playerNumber: number;
-	private	_velocity: number;
 	private	_width: number;
 	private	_height: number;
 	private	_origin: vector;
+	private	_velocity: number;
 	private	_score: number;
+	private _isAI: boolean;
+	private _onHitCoolDown: boolean;
 	private	_movingUp: boolean;
 	private	_movingDown: boolean;
-	private _onHitCoolDown: boolean;
-    private	_game: Pong;
 
-
-	public constructor(name: string, x: number, y: number, canvas: HTMLCanvasElement, playerNumber: number, game: Pong)
+	public constructor(game: Pong, data: AppUser, playerNumber: number, x: number, y: number, isAI: boolean)
 	{
-		this._origin = {x, y};
-    	this._name = name;
+		this._game = game;
+		this._data = data;
 		this._playerNumber = playerNumber;
+		this._width = game.getCanvas().width * 0.01;
+		this._height = game.getCanvas().height * 0.12;
+		this._origin = {x, y};
 		this._velocity = 5;
-		this._width = canvas.width * 0.01;
-		this._height = canvas.height * 0.12;
 		this._score = 0;
+		this._isAI = isAI;
+		this._onHitCoolDown = false;
 		this._movingUp = false;
 		this._movingDown = false;
-		this._onHitCoolDown = false;
-        this._game = game;
 	}
+
+	public startMoveUp(): void{ this._movingUp = true; }
+	public startMoveDown(): void { this._movingDown = true; }
+	public stopMoveUp(): void { this._movingUp = false; }
+	public stopMoveDown(): void { this._movingDown = false; }
 
 	public move(delta: number): void
 	{
@@ -53,19 +60,6 @@ export class Player
 		}
 	}
 
-	public updateForResize(canvas: HTMLCanvasElement, relativeY: number): void
-	{
-		this._origin.y = relativeY * canvas.height;
-		this._width = canvas.width * 0.004;
-		this._height = canvas.height * 0.12;
-		this._origin.x = this._playerNumber === 1 ? canvas.width * 0.1 : canvas.width * 0.9;
-	}
-
-	public startMoveUp(): void { this._movingUp = true; }
-	public startMoveDown(): void { this._movingDown = true; }
-	public stopMoveUp(): void { this._movingUp = false; }
-	public stopMoveDown(): void { this._movingDown = false; }
-
 	public moveByAI(ball: Ball, delta: number): void
 	{
 		const scale = this._game.getScale();
@@ -85,16 +79,17 @@ export class Player
 			this._origin.y -= scaledVelocity;
 	}
 
-	public setName(name: string): void
+	public updateForResize(canvas: HTMLCanvasElement, relativeY: number): void
 	{
-    	this._name = name;
+		this._origin.y = relativeY * canvas.height;
+		this._width = canvas.width * 0.004;
+		this._height = canvas.height * 0.12;
+		this._origin.x = this._playerNumber === 1 ? canvas.width * 0.1 : canvas.width * 0.9;
 	}
 
-	public setScore(score: number)
+	public getData(): AppUser
 	{
-		if (score >= 10)
-			score = 0;
-		this._score = score; 
+    	return (this._data);
 	}
 
 	public getOrigin(): vector
@@ -117,6 +112,11 @@ export class Player
     	return (this._score);
 	}
 
+	public setScore(score: number)
+	{
+		this._score = score; 
+	}
+
 	public getHitCooldownState(): boolean
 	{
 		return (this._onHitCoolDown);
@@ -125,5 +125,10 @@ export class Player
 	public setHitCooldownState(newState: boolean): void
 	{
 		this._onHitCoolDown = newState;
+	}
+
+	public isAI()
+	{
+		return (this._isAI);
 	}
 }

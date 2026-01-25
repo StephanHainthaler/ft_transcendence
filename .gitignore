@@ -2,5 +2,9 @@
 *.nfs*
 dist
 *package-lock.json
-data/
+frontend/.svelte-kit/
+build/
 *.db
+services/*/db/
+.env*
+frontend/.vscode/

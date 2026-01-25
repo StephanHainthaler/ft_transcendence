@@ -6,6 +6,7 @@
   import Label from "@lib/components/ui/label/label.svelte";
   import * as Card from "@lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
+  import {t} from "@lib/i18n/i18n";
   import * as Dialog from "$lib/components/ui/dialog";
   import { Trash } from "@lucide/svelte";
     import { toast } from "svelte-sonner";
@@ -89,26 +90,26 @@
 <Dialog.Root open={deleteDialogOpen}>
   <Dialog.Content>
     <Dialog.Header>
-      <Dialog.Title>Delete Account</Dialog.Title>
+      <Dialog.Title>{$t('profile.delete_account')}</Dialog.Title>
     </Dialog.Header>
     <div class="flex flex-col gap-4">
       {#if deleteState === 'none'}
-      <p>Are you sure you want to delete you account?</p>
+      <p>{$t('profile.delete_confirm')}</p>
       <div class="flex gap-4 w-full">
         <Button onclick={async () => { await handleDelete(); deleteDialogOpen = false } }>
-          Yes
+          {$t('profile.yes')}
         </Button>
         <Button onclick={() => {
           if (currentAvatarEl) currentAvatarEl.src = prevAvatarValue;
           deleteDialogOpen = false;
         }}>
-          Cancel
+          {$t('profile.cancel')}
         </Button>
       </div>
       {:else if deleteState === 'running' }
-        <p>Deleting, please wait...</p>
+        <p>{$t('profile.deleting')}</p>
       {:else}
-        <p>Done! Redirecting...</p>
+        <p>{$t('profile.delete_success')}</p>
       {/if}
     </div>
   </Dialog.Content>
@@ -116,65 +117,25 @@
 
 <Card.Root class="size-full mx-auto">
   <Card.Header>
-    <Card.Title class="text-3xl">Profile</Card.Title>
-    <Card.Action class="flex gap-4">
-      <Button
-        type="button"
-        variant={editMode ? "secondary" : "outline"}
-        size="sm"
-        onclick={toggleEditMode}
-      >
-        {editMode ? "Cancel" : "Edit"}
-      </Button>
-      <Button
-        variant={editMode ? "secondary" : "outline"}
-        size="sm"
-        onclick={() => deleteDialogOpen = true }
-      >
-        <Trash size='sm'/>
-      </Button>
-    </Card.Action>
+    <Card.Title class="text-3xl">{$t('profile.profile')}</Card.Title>
   </Card.Header>
   <Card.Content>
-    <form class="space-y-6" onsubmit={handleSubmit}>
-      <div class="flex items-center gap-6">
-        {#await sessionPromise then sess}
-          {#if client.avatar}
-            <img
-              bind:this={currentAvatarEl}
-              src={avatarSrc}
-              alt={sess.user?.name || 'user avatar'}
-              class="size-20 rounded-full object-cover text-center"
-            />
-          {:else}
-            <div class="size-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-semibold">
-              {client.user?.name.slice(0, 1).toUpperCase()}
-            </div>
-          {/if}
-        {:catch}
-          <div></div>
-        {/await}
-
-        {#if editMode}
-          <div class="flex-1">
-            <Label for="avatar">Change Avatar</Label>
-            <Input
-              id="avatar"
-              type="file"
-              accept="image/*"
-              class="mt-2"
-              onchange={handleFileChange}
-            />
-          </div>
-        {/if}
-      </div>
-
-      <Separator />
-
+    <form class="space-y-8" on:submit={handleSubmit}>
       <div class="space-y-4">
-        <h2 class="text-lg font-semibold">Personal Information</h2>
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-semibold">{$t('profile.pers_info')}</h2>
+          <Button
+            type="button"
+            variant={editMode ? "secondary" : "outline"}
+            size="sm"
+            onclick={toggleEditMode}
+          >
+            {editMode ? $t('profile.cancel') : $t('profile.edit')}
+          </Button>
+        </div>
+        <Separator />
         <div class="space-y-2">
-          <Label for="display-name">Display Name</Label>
+          <Label for="display-name">{$t('profile.disp_name')}</Label>
           <Input
             id="display-name"
             bind:value={session.user.name}
@@ -186,10 +147,11 @@
       <Separator />
 
       <div class="space-y-4">
-        <h2 class="text-lg font-semibold">Account Credentials</h2>
-        <div class="grid gap-4 md:grid-cols-2">
+        <h2 class="text-xl font-semibold">{$t('profile.credentials')}</h2>
+        <Separator />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-2">
-            <Label for="username">Username</Label>
+            <Label for="username">{$t('profile.username')}</Label>
             <Input
               id="username"
               bind:value={session.auth.username}
@@ -197,7 +159,7 @@
             />
           </div>
           <div class="space-y-2">
-            <Label for="email">Email</Label>
+            <Label for="email">{$t('profile.email')}</Label>
             <Input
               id="email"
               type="email"
@@ -205,40 +167,34 @@
               disabled={!editMode}
             />
           </div>
+          <div class="space-y-2">
+            <Label for="password">{$t('profile.password')}</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="********"
+              bind:value={session.passwd}
+              autocomplete="new-password"
+              disabled={!editMode}
+            />
+          </div>
+          <div class="space-y-2">
+            <Label for="password-repeat">{$t('profile.pass_repeat')}</Label>
+            <Input
+              id="password-repeat"
+              type="password"
+              placeholder="********"
+              bind:value={session.passwdRepeat}
+              autocomplete="new-password"
+              disabled={!editMode}
+            />
+          </div>
         </div>
       </div>
 
       {#if editMode}
-        <Separator />
-
-        <div class="space-y-4">
-          <h2 class="text-lg font-semibold">Change Password</h2>
-          <div class="grid gap-4 md:grid-cols-2">
-            <div class="space-y-2">
-              <Label for="password">New Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter new password"
-                bind:value={session.passwd}
-                autocomplete="new-password"
-              />
-            </div>
-            <div class="space-y-2">
-              <Label for="password-repeat">Confirm Password</Label>
-              <Input
-                id="password-repeat"
-                type="password"
-                placeholder="Confirm new password"
-                bind:value={session.passwdRepeat}
-                autocomplete="new-password"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-end pt-2">
-          <Button type="submit">Save Changes</Button>
+        <div class="flex justify-end pt-4">
+          <Button type="submit">{$t('profile.save')}</Button>
         </div>
       {/if}
     </form>

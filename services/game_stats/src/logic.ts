@@ -2,6 +2,7 @@ import { getDb, setDb, user_stats_table, match_history_table } from './database'
 import { eq } from '@server/orm';
 import { UserStats, MatchHistoryEntry, MatchSubmissionData } from '@shared/game_stats';
 import { ApiError } from '@server/error/apiError';
+import { sqliteErrorToApiError } from '@server/orm/error';
 
 export const MATCHES_PER_PAGE = 5;
 export const USERS_PER_PAGE = 5;
@@ -16,11 +17,33 @@ export const USERS_PER_PAGE = 5;
  */
 export function getUserStats(userId: number): UserStats | null
 {
-	return getDb()
+	try
+	{
+		let user_stats = getDb()
 		.from<'user_stats'>('user_stats')
 		.select('*')
 		.where(eq('user_id', userId))
 		.single();
+		if (! user_stats)
+		{
+			const default_stats = 
+			{
+				user_id: userId,
+				wins: 0,
+				losses: 0,
+				streak: 0,
+				total_points: 0,
+				rank: 1000,
+				highest_score: 0
+			};
+			getDb().from('user_stats').insert(default_stats).run();
+			return default_stats as UserStats;
+		}
+		return user_stats as UserStats;
+	} catch (e)
+	{
+		throw sqliteErrorToApiError(e);
+	}
 }
 
 /**
@@ -32,11 +55,18 @@ export function getUserStats(userId: number): UserStats | null
  */
 export function getMatchStats(MatchID: number): MatchHistoryEntry | null
 {
-	return getDb()
+	try
+	{
+		let match = getDb()
 		.from<'match_history'>('match_history')
 		.select('*')
 		.where(eq('match_id', MatchID))
 		.single();
+		return match as MatchHistoryEntry;
+	} catch (e)
+	{
+		throw sqliteErrorToApiError(e);
+	}
 }
 
 /**
@@ -50,16 +80,21 @@ export function getMatchStats(MatchID: number): MatchHistoryEntry | null
  */
 export function getUserMatchHistory(userId: number, page: number): MatchHistoryEntry[] | []
 {
-	const offset = (page - 1) * MATCHES_PER_PAGE;
-	return getDb()
-		.from<'match_history'>('match_history')
-		.select('*')
-		.where(eq('player_one_id', userId))
-		.or(eq('player_two_id', userId))
-		.desc('timestamp')
-		.limit(MATCHES_PER_PAGE)
-		.offset(offset)
-		.all();
+	try
+	{
+		const offset = (page - 1) * MATCHES_PER_PAGE;
+		return getDb()
+			.from<'match_history'>('match_history')
+			.select('*')
+			.where(eq('player_one_id', userId))
+			.or(eq('player_two_id', userId))
+			.desc('timestamp')
+			.limit(MATCHES_PER_PAGE)
+			.offset(offset)
+			.all() || [];
+	} catch (e) {
+		throw sqliteErrorToApiError(e);
+	}
 }
 
 export function updateStatsForUser(userId: number, isWinner: boolean, score: number)
@@ -94,7 +129,7 @@ export function updateStatsForUser(userId: number, isWinner: boolean, score: num
 		let newRank = currentRankValue + rankDelta;
 		if (newRank < 0)
 			newRank = 0;
-    console.log(`newRank: ${newRank}`);
+	console.log(`newRank: ${newRank}`);
 		const ret = getDb().from('user_stats').update({
 			wins: newWins,
 			losses: newLosses,
@@ -106,7 +141,7 @@ export function updateStatsForUser(userId: number, isWinner: boolean, score: num
 		.where(eq('user_id', userId))
 		.run();
 
-    console.log(ret);
+	console.log(ret);
 	}
 }
 
@@ -144,7 +179,7 @@ export function recordMatch(data: MatchSubmissionData) : number | bigint | null
 			updateStatsForUser(data.player_two_id, true, data.p2_score);
 		}
 		const resultWithId = insertResult as { lastInsertRowid: number | bigint };//any;
-        return resultWithId.lastInsertRowid;
+		return resultWithId.lastInsertRowid;
 	}
 	catch (dbError)
 	{
@@ -167,12 +202,17 @@ export function recordMatch(data: MatchSubmissionData) : number | bigint | null
  */
 export function getLeaderboard(page: number) : UserStats[] | []
 {
-	const offset = (page - 1) * USERS_PER_PAGE;
-	return getDb()
-		.from<'user_stats'>('user_stats')
-		.select('*')
-		.desc('rank').desc('wins').desc('total_points')
-		.limit(USERS_PER_PAGE)
-		.offset(offset)
-		.all();
+	try
+	{
+		const offset = (page - 1) * USERS_PER_PAGE;
+		return getDb()
+			.from<'user_stats'>('user_stats')
+			.select('*')
+			.desc('rank').desc('wins').desc('total_points')
+			.limit(USERS_PER_PAGE)
+			.offset(offset)
+			.all() || [];
+	} catch (e) {
+		throw sqliteErrorToApiError(e);
+	}
 }
