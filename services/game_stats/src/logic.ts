@@ -129,7 +129,7 @@ export function updateStatsForUser(userId: number, isWinner: boolean, score: num
 		let newRank = currentRankValue + rankDelta;
 		if (newRank < 0)
 			newRank = 0;
-	console.log(`newRank: ${newRank}`);
+		console.log(`newRank: ${newRank}`);
 		const ret = getDb().from('user_stats').update({
 			wins: newWins,
 			losses: newLosses,
