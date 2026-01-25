@@ -1,4 +1,4 @@
-import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";
+import type { UserStats, MatchHistoryEntry, MatchSubmissionData } from "@shared/game_stats";
 import { request } from "./utils";
 import type { Writable } from "@lib/types/writable";
 import type { JWT } from "@shared/api";
@@ -48,4 +48,22 @@ async function fetchLeaderboard(token: Writable<JWT | null>, page: number = 1): 
 	return (data as UserStats[]);
 }
 
-export { fetchUserStats, fetchMatchHistory, fetchLeaderboard };
+const sendMatchResults = async (token: Writable<JWT | null>, matchData: MatchSubmissionData) => {
+  
+  const req = new Request('/api/stats/v1/match', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token.get()?.raw}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(matchData)
+  });
+
+  const response = await request(req, token);
+  const data = await response.json();
+  if (!response.ok) throw data;
+
+  return data;
+}
+
+export { fetchUserStats, fetchMatchHistory, fetchLeaderboard, sendMatchResults };

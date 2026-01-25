@@ -22,81 +22,81 @@
     return (`${mins}:${secs.toString().padStart(2, '0')}`);
   }
 
-  // async function loadData(page: number = 1)
-  // {
-  //   try
-  //   {
-  //     isLoading = true;
-  //     const userId = client.user?.id;
-  //     if (!userId)
-  //       return;
-  //     if (activeTab === 'leaderboard')
-  //     {
-  //       const l = await client.getLeaderboard(page);
-  //       leaderboard = l;
-  //       currentPage = page;
-  //     }
-  //     else 
-  //     {
-  //       const [s, h] = await Promise.all([
-  //         client.getUserStats(userId),
-  //         client.getMatchHistory(userId, page)
-  //       ]);
-  //       history = h;
-  //       stats = s;
-  //       currentPage = page;
-  //     }
-  //   } catch (error)
-  //   {
-  //     console.error("Failed to load stats:", error);
-  //   } finally
-  //   {
-  //     isLoading = false;
-  //   }
-  // }
-
-  //Something for testing without backend
-  
-  async function loadData(page: number = 1) {
-    try {
+  async function loadData(page: number = 1)
+  {
+    try
+    {
       isLoading = true;
-      const userId = client.user?.id || 1; 
-
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      stats = {
-        user_id: userId,
-        rank: 12,
-        wins: 42,
-        losses: 10,
-        total_points: 1540,
-        streak: 5,
-        highest_score: 11
-      };
-
-      history = [
-        { match_id: 1, player_one_id: userId, player_two_id: 99, p1_score: 11, p2_score: 5, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789},
-        { match_id: 2, player_one_id: 88, player_two_id: userId, p1_score: 8, p2_score: 11, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789},
-        { match_id: 3, player_one_id: userId, player_two_id: 77, p1_score: 2, p2_score: 11, winner_id: 77, match_duration: Math.random() * 8000, timestamp: 123456789},
-        { match_id: 4, player_one_id: 66, player_two_id: userId, p1_score: 11, p2_score: 0, winner_id: 66, match_duration: Math.random() * 8000, timestamp: 123456789},
-        { match_id: 5, player_one_id: userId, player_two_id: 55, p1_score: 10, p2_score: 10, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789}
-      ];
-
-        leaderboard = [
-          { user_id: 10, rank: 1, wins: 100, losses: 5, total_points: 5000, streak: 10, highest_score: 11 },
-          { user_id: 2, rank: 2, wins: 85, losses: 12, total_points: 4200, streak: 3, highest_score: 11 },
-          { user_id: 42, rank: 3, wins: 70, losses: 20, total_points: 3500, streak: 0, highest_score: 11 },
-          { user_id: 5, rank: 4, wins: 50, losses: 15, total_points: 2800, streak: 1, highest_score: 11 },
-          { user_id: 1, rank: 5, wins: 42, losses: 10, total_points: 1540, streak: 5, highest_score: 11 }
-        ];
-
-      currentPage = page;
-    } catch (error) {
+      const userId = client.user?.id;
+      if (!userId)
+        return;
+      if (activeTab === 'leaderboard')
+      {
+        const l = await client.getLeaderboard(page);
+        leaderboard = l;
+        currentPage = page;
+      }
+      else 
+      {
+        const [s, h] = await Promise.all([
+          client.getUserStats(userId),
+          client.getMatchHistory(userId, page)
+        ]);
+        history = h;
+        stats = s;
+        currentPage = page;
+      }
+    } catch (error)
+    {
       console.error("Failed to load stats:", error);
-    } finally {
+    } finally
+    {
       isLoading = false;
     }
   }
+
+  //Something for testing without backend
+  
+  // async function loadData(page: number = 1) {
+  //   try {
+  //     isLoading = true;
+  //     const userId = client.user?.id || 1; 
+
+  //     await new Promise(resolve => setTimeout(resolve, 500));
+
+  //     stats = {
+  //       user_id: userId,
+  //       rank: 12,
+  //       wins: 42,
+  //       losses: 10,
+  //       total_points: 1540,
+  //       streak: 5,
+  //       highest_score: 11
+  //     };
+
+  //     history = [
+  //       { match_id: 1, player_one_id: userId, player_two_id: 99, p1_score: 11, p2_score: 5, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789},
+  //       { match_id: 2, player_one_id: 88, player_two_id: userId, p1_score: 8, p2_score: 11, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789},
+  //       { match_id: 3, player_one_id: userId, player_two_id: 77, p1_score: 2, p2_score: 11, winner_id: 77, match_duration: Math.random() * 8000, timestamp: 123456789},
+  //       { match_id: 4, player_one_id: 66, player_two_id: userId, p1_score: 11, p2_score: 0, winner_id: 66, match_duration: Math.random() * 8000, timestamp: 123456789},
+  //       { match_id: 5, player_one_id: userId, player_two_id: 55, p1_score: 10, p2_score: 10, winner_id: userId, match_duration: Math.random() * 8000, timestamp: 123456789}
+  //     ];
+
+  //       leaderboard = [
+  //         { user_id: 10, rank: 1, wins: 100, losses: 5, total_points: 5000, streak: 10, highest_score: 11 },
+  //         { user_id: 2, rank: 2, wins: 85, losses: 12, total_points: 4200, streak: 3, highest_score: 11 },
+  //         { user_id: 42, rank: 3, wins: 70, losses: 20, total_points: 3500, streak: 0, highest_score: 11 },
+  //         { user_id: 5, rank: 4, wins: 50, losses: 15, total_points: 2800, streak: 1, highest_score: 11 },
+  //         { user_id: 1, rank: 5, wins: 42, losses: 10, total_points: 1540, streak: 5, highest_score: 11 }
+  //       ];
+
+  //     currentPage = page;
+  //   } catch (error) {
+  //     console.error("Failed to load stats:", error);
+  //   } finally {
+  //     isLoading = false;
+  //   }
+  // }
 
 onMount(() => loadData());
 </script>

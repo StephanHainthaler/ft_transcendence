@@ -11,8 +11,14 @@
   import { Pong } from "@lib/game/pong";
   import type { MatchSubmissionData } from "@shared/game_stats";
 
-  let users: AppUser[] = $state([])
-
+  let users: AppUser[] = $state([]);
+// Possible states: 'playing' (game), 'summary' (results)  let view = $state('lobby');
+  let view = $state('lobby');
+  let lastMatchData: MatchSubmissionData | null = $state(null); 
+  let running = $state(false);
+  let canvas: HTMLCanvasElement | null = $state(null);
+  let pong: Pong;
+  
   const loadPageData = async () => {
     await tick();
     await tick();
@@ -28,17 +34,28 @@
     }
   }
 
-  let running = $state(false);
-  let canvas: HTMLCanvasElement | null = $state(null);
-  let pong: Pong;
-
-
   const onGameEnd = (Data: MatchSubmissionData) => {
-    console.log(Data);
+    console.log("Match finished:", Data);
 
-      //send Data to database
-      
-  
+    try
+    {
+      console.log("DEBUG - Player 1 ID:", Data.player_one_id);
+      console.log("DEBUG - Player 2 ID:", Data.player_two_id);
+
+    if (Data.player_one_id === Data.player_two_id) {
+      console.error("CRITICAL: Both players have the same ID!");
+    }
+      client.sendMatchResults(Data);
+      toast.success($t('game.match_results_sent'));//for testing
+      console.log("Match finished: result sent");
+      lastMatchData = Data;
+      view = 'summary';
+      running = false;
+    } catch (e: any) {
+      console.error(e);
+      toast.error(`Failed to send match results: ${e.message || e}`);//for testing
+      console.log("Failed to send match results");
+    }
   };
 
   let testUser1 = {} as AppUser;
