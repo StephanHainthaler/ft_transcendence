@@ -12,7 +12,7 @@
   import type { MatchSubmissionData } from "@shared/game_stats";
 
   let users: AppUser[] = $state([]);
-// Possible states: 'playing' (game), 'summary' (results)  let view = $state('lobby');
+// Possible states: 'lobby'(challenge page), 'playing' (game), 'summary' (results)  let view = $state('lobby');
   let view = $state('lobby');
   let lastMatchData: MatchSubmissionData | null = $state(null); 
   let running = $state(false);
@@ -36,7 +36,7 @@
 
   const onGameEnd = (Data: MatchSubmissionData) => {
     console.log("Match finished:", Data);
-
+    /* For DEBUG */
     try
     {
       console.log("DEBUG - Player 1 ID:", Data.player_one_id);
@@ -45,6 +45,7 @@
     if (Data.player_one_id === Data.player_two_id) {
       console.error("CRITICAL: Both players have the same ID!");
     }
+    /* END */
       client.sendMatchResults(Data);
       toast.success($t('game.match_results_sent'));//for testing
       console.log("Match finished: result sent");
@@ -54,7 +55,7 @@
     } catch (e: any) {
       console.error(e);
       toast.error(`Failed to send match results: ${e.message || e}`);//for testing
-      console.log("Failed to send match results");
+      console.error("Failed to send match results:", `${e.message || e}`);
     }
   };
 
@@ -65,6 +66,7 @@
 
   const challengeUser = async (u: AppUser) => {
     running = true;
+    view = 'playing';
     await tick();
     console.log(u);
     testUser1 = u;
