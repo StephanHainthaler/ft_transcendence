@@ -161,7 +161,7 @@ Handles user authentication, sessions and OAuth.
 | Table | Primary Key | Columns | Description |
 |-------|-------------|---------|-------------|
 | **auth_users** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT, UNIQUE), `user_name` (TEXT, UNIQUE), `email` (TEXT, UNIQUE), `passwd` (TEXT), `oauth_id` (INT, UNIQUE) | Authentication credentials with optional OAuth ID; requires either username or email |
-| **sessions** | Composite (auth_id, user_id) | `auth_id` (INT, FK→auth_users.id), `user_id` (INT, UNIQUE), `token` (TEXT), `expires_in` (INT), `created_at` (INT) | Active user sessions with JWT tokens and expiration times |
+| **sessions** | Composite (auth_id, user_id) | `auth_id` (INT), `user_id` (INT, UNIQUE), `token` (TEXT), `expires_in` (INT), `created_at` (INT) | Active user sessions with JWT tokens and expiration times |
 
 **Key Relationships:**
 ```
@@ -178,7 +178,7 @@ Tracks player statistics, rankings, and match history.
 | Table | Primary Key | Columns | Description |
 |-------|-------------|---------|-------------|
 | **user_stats** | `user_id` (INT) | `user_id` (INT), `wins` (INT, default=0), `losses` (INT, default=0), `streak` (INT, default=0), `total_points` (INT, default=0), `highest_score` (INT, default=0), `rank` (INT, default=0) | Aggregated player statistics and leaderboard rankings |
-| **match_history** | `match_id` (AUTO_INCREMENT) | `match_id` (INT), `timestamp` (INT), `player_one_id` (INT), `player_two_id` (INT, FK→user_stats.user_id), `winner_id` (INT), `p1_score` (INT), `p2_score` (INT), `match_duration` (INT, default=0) | Complete match records with player scores and timestamps |
+| **match_history** | `match_id` (AUTO_INCREMENT) | `match_id` (INT), `timestamp` (INT), `player_one_id` (INT), `player_two_id` (INT), `winner_id` (INT), `p1_score` (INT), `p2_score` (INT), `match_duration` (INT, default=0) | Complete match records with player scores and timestamps |
 
 **Key Relationships:**
 ```
