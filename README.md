@@ -178,7 +178,7 @@ Tracks player statistics, rankings, and match history.
 | Table | Primary Key | Columns | Description |
 |-------|-------------|---------|-------------|
 | **user_stats** | `user_id` (INT) | `user_id` (INT), `wins` (INT, default=0), `losses` (INT, default=0), `streak` (INT, default=0), `total_points` (INT, default=0), `highest_score` (INT, default=0), `rank` (INT, default=0) | Aggregated player statistics and leaderboard rankings |
-| **match_history** | `match_id` (AUTO_INCREMENT) | `match_id` (INT, PK), `timestamp` (INT), `player_one_id` (INT), `player_two_id` (INT, FK→user_stats.user_id), `winner_id` (INT), `p1_score` (INT), `p2_score` (INT), `match_duration` (INT, default=0) | Complete match records with player scores and timestamps |
+| **match_history** | `match_id` (AUTO_INCREMENT) | `match_id` (INT), `timestamp` (INT), `player_one_id` (INT), `player_two_id` (INT, FK→user_stats.user_id), `winner_id` (INT), `p1_score` (INT), `p2_score` (INT), `match_duration` (INT, default=0) | Complete match records with player scores and timestamps |
 
 **Key Relationships:**
 ```
