@@ -379,15 +379,33 @@ Workflow:
 ## Resources
 
 #### Svelte
-- https://svelte.dev/
-- https://www.shadcn-svelte.com/
+- [Svelte](https://svelte.dev/)
+- [shadcn-Svelte](https://www.shadcn-svelte.com/)
 
 #### OAuth
-- https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
-- https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app
-- https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
-- https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28
-- https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
+- [Authorizing OAuth apps in GitHub](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow)
+- [Creating an OAuth app in GitHub](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app)
+- [Accessing GitHub API](https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591)
+- [Users via GitHub API](https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28)
+- [Scopes for OAuth apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps)
+
+#### Project-Specific
+- [Example of transcendence from the internet](https://gitlab.com/sada-sil/ft-transcendence)
+
+#### Tools / Frameworks / etc.
+- [The TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+
+- [Fastify Documentation](https://fastify.dev/docs/latest/)
+- [Fastify Getting-Started](https://fastify.dev/docs/latest/Guides/Getting-Started/)
+- [Fastify: Hooks](https://fastify.dev/docs/latest/Reference/Hooks/)
+- [Fastify Route Parameters](https://fastify.dev/docs/latest/Reference/Routes/)
+
+- [Node.js SQLite Tutorial](https://www.sqlitetutorial.net/sqlite-nodejs/)
+
+- [Using fetch with TypeScript](https://kentcdodds.com/blog/using-fetch-with-type-script)
+
+- [OLD points calculator](https://tcdmodules.vercel.app/v14.1?state=48535607)
+
 
 #### AI Usage
 
