@@ -6,6 +6,7 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import { goto } from "$app/navigation";
+  import {t, currentLocale} from "@lib/i18n/i18n";
 
   let usernameBuffer = $state("");
   let userPasswordBuffer = $state("");
@@ -16,17 +17,24 @@
   const handleLoginFormSubmit = async (e: Event) => {
     e.preventDefault();
     e.stopPropagation();
+
     try {
       const email = validateInput(usernameBuffer, { type: 'email' }).input;
       const username = validateInput(usernameBuffer, { type: 'username' }).input;
+<<<<<<< HEAD
       
       const result = await client.login({
+=======
+
+      await client.login({
+>>>>>>> main
         username,
         email,
         passwd: userPasswordBuffer,
         totp_token: requires2FA ? totpToken : undefined,
       });
 
+<<<<<<< HEAD
       // Check if 2FA is required
       if (result.requires_2fa) {
         requires2FA = true;
@@ -34,6 +42,8 @@
         return;
       }
 
+=======
+>>>>>>> main
       goto('/');
     } catch (e: any) {
       errorMessage = e.message || e.toString();
@@ -43,6 +53,7 @@
 
 <form class="space-y-6" onsubmit={handleLoginFormSubmit}>
   <div class="space-y-4">
+<<<<<<< HEAD
     <h2 class="text-2xl font-bold text-center">
       {requires2FA ? 'Enter 2FA Code' : 'Sign in'}
     </h2>
@@ -96,6 +107,31 @@
         ← Back to login
       </Button>
     {/if}
+=======
+    <h2 class="text-2xl font-bold text-center">{$t('login.singin')}</h2>
+
+    <div class="space-y-2">
+      <Label for="username">{$t('login.username')}</Label>
+      <Input 
+        id="username"
+        type="text"
+        bind:value={usernameBuffer}
+        placeholder={$t('login.username_ph')}
+        required
+      />
+    </div>
+
+    <div class="space-y-2">
+      <Label for="password">{$t('login.password')}</Label>
+      <Input 
+        id="password"
+        type="password"
+        bind:value={userPasswordBuffer}
+        placeholder={$t('login.password_ph')}
+        required
+      />
+    </div>
+>>>>>>> main
   </div>
 
   {#if errorMessage}
@@ -105,6 +141,10 @@
   {/if}
 
   <Button type="submit" class="w-full">
+<<<<<<< HEAD
     {requires2FA ? 'Verify' : 'Sign In'}
+=======
+    {$t('login.singin')}
+>>>>>>> main
   </Button>
 </form>

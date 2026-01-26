@@ -4,6 +4,7 @@
   "description": "user service",
   "scripts": {
     "dev": "tsx watch --env-file=../../env/.env.user ./src/index.ts",
+    "predev": "mkdir db data data/avatar || true",
     "test": "tsx --tsconfig=./tsconfig.json --env-file=../../env/.env.user --test ./tests/*.test.ts"
   },
   "author": "",

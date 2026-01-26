@@ -1,5 +1,10 @@
 *node_modules
 *.nfs*
 dist
-*.db
 *package-lock.json
+frontend/.svelte-kit/
+build/
+*.db
+services/*/db/
+.env*
+frontend/.vscode/

@@ -1,5 +1,6 @@
 <script>
   import { client } from "@lib/api/index";
+  import {t, currentLocale} from "@lib/i18n/i18n";
 
   let shouldExpandMenu = false;
 
@@ -21,7 +22,7 @@
     on:mouseleave={() => shouldExpandMenu = false}
   >
     <button class="btn" on:click={toggleMenu}>
-      Menu
+      {$t('menu')}
     </button>
 
     <div

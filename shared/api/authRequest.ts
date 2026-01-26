@@ -12,13 +12,25 @@ export type LoginRequestBody = {
   passwd: string
 };
 
+export type OAuthRequestBody = {
+  client_id?: string,
+  redirect_uri?: string,
+  state?: string,
+  allow_signup?: string,
+  scope?: string
+};
+
+export type OAuthCallBackBody = {
+  code?: string
+};
+
 export type UpdateCredsRequestBody = {
   username?: string,
   email?: string,
   passwd?: string
 }
 
-export type AuthResponseSuccess =  {
+export type AuthResponseSuccess = {
   success: boolean,
   auth: AuthUserClient,
   access_token?: string,

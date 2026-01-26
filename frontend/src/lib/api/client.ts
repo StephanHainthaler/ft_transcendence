@@ -1,11 +1,14 @@
 import { Writable } from "@lib/types/writable";
-import type { AuthUserClient, Friendship, User } from "@shared/user";
-import { getAuth, loginRequest, logoutRequest, signupRequest, updateRequest } from "./auth";
+import type { AuthUserClient, Avatar, Friendship, User } from "@shared/user";
+import { deleteRequest, getAuth, loginRequest, logoutRequest, oauthRequest, signupRequest, updateRequest } from "./auth";
 import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authRequest";
-import type { JWT } from "@shared/api";
+import { fetchUserStats, fetchMatchHistory, fetchLeaderboard } from "@lib/api/gameStats";
+import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";
+import type { JWT, OAuthCallBackBody } from "@shared/api";
 import { parseJWT } from "@shared/api";
-import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest } from "./user";
+import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
+import { AppUser } from "./appUser";
 
 export type ApiError = {
   code: number,
@@ -21,27 +24,32 @@ export class ApiClient {
   private readonly userStore: Writable<User | null> = new Writable('user');
   private readonly authStore: Writable<AuthUserClient | null> = new Writable('auth');
   private readonly accessToken: Writable<JWT | null> = new Writable('token');
-  private listeners: Set<Function> = new Set();
+  private avatarUrl?: string;
 
   constructor() {}
 
   async init() {
     try {
-      const [user, auth] = await Promise.all([
+      const [userResponse, authResponse] = await Promise.all([
         this.getUser(),
         this.getAuth(),
       ])
-      this.userStore.set(user);
-      this.authStore.set(auth);
-      this.notify();
+      this.userStore.set(userResponse.user);
+      this.authStore.set(authResponse.auth);
     } catch (e: any) {
       console.error(e);
     }
     return this;
   }
 
+  /* FRONTEND USAGE */
+
   get user(): User | null {
     return this.userStore.get() ?? null;
+  }
+
+  get avatar() {
+    return this.avatarUrl;
   }
 
   get auth(): AuthUserClient | null {
@@ -56,78 +64,25 @@ export class ApiClient {
     this.authStore.set(val);
   }
 
+  get isLoggedIn(): boolean {
+    return !!(this.user && this.auth);
+  }
+
   get session(): Session | null {
     if (!this.isLoggedIn) return null;
     return { auth: this.auth!, user: this.user! };
   }
 
+  /* USER API */
+
   async getSession(): Promise<Session> {
-    let user = this.userStore.get();
-    let auth = this.authStore.get();
-    if (!user) {
-      const response = await this.getUser();
-      user = response.user as User;
-      this.userStore.set(user);
-    }
-    if (!auth) {
-      const data = await this.getAuth();
-      auth = data.auth as AuthUserClient;
-      this.authStore.set(auth);
-    }
+    const response = await this.getUser();
+    let user = response.user as User;
+    this.userStore.set(user);
+    const data = await this.getAuth();
+    let auth = data.auth as AuthUserClient;
+    this.authStore.set(auth);
     return { auth, user }
-  }
-
-  get isLoggedIn(): boolean {
-    return !!(this.user && this.auth);
-  }
-
-  onChange(fn: Function) {
-    this.listeners.add(fn);
-    return () => this.listeners.delete(fn);
-  }
-
-  private notify() {
-    this.listeners.forEach(fn => fn());
-  }
-
-  updateUser(updateFunc: (e: Event, user: User) => void) {
-    return (e: Event) => {
-      const user = this.user;
-      if (!user) return;
-      updateFunc(e, user);
-    }
-  }
-
-  async updateUserInfo(newUser: Partial<User>): Promise<User> {
-    if (!newUser) throw new Error('No User Set');
-    const response = await fetch(`/api/user/update/${newUser.id}`, {
-      method: "patch",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newUser),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw data;
-    }
-    this.userStore.set(data.user);
-    return data.user;
-  }
-
-  async signup(info: SignupRequestBody) {
-    try {
-      const response = await signupRequest(this.accessToken, info);
-      this.auth = response.auth;
-      this.user = await this.getUser()
-      this.notify();
-    } catch (e: any) {
-      const error = new Error(`Signup Failed: ${e.message || e}`)
-      console.error(error);
-      throw error;
-    }
   }
 
   async getAuth(): Promise<any> {
@@ -136,17 +91,26 @@ export class ApiClient {
 
   async getUser(): Promise<any> {
     const response = await getUser(this.accessToken);
-    return response.user;
+    const avatar = response.avatar;
+    if (response.user)
+      this.userStore.set(response.user);
+    if (avatar)
+      this.avatarUrl = response.avatar.location;
+    return response;
   }
 
-  async getUsers(): Promise<User[]> {
+  async getUsers(): Promise<AppUser[]> {
     const response = await getUsers(this.accessToken);
-    return response.users;
+    const users = response.users?.map((f: { user: User, avatar: Avatar }) => new AppUser(f.user, f.avatar ?? null));
+    return users;
   }
 
-  async getFriends(): Promise<{ friends: User[], friendships: Friendship[] }> {
+  /* FRIEND API */
+
+  async getFriends(): Promise<{ friends: AppUser[], friendships: Friendship[] }> {
     const data = await getFriends(this.accessToken);
-    return { friends: data.friends, friendships: data.friendships };
+    const friends = data.friends?.map((f: { user: User, avatar: Avatar }) => new AppUser(f.user, f.avatar ?? null));
+    return { friends: friends, friendships: data.friendships };
   }
 
   async sendFriendRequest(friendId: number): Promise<Friendship> {
@@ -163,9 +127,37 @@ export class ApiClient {
     await removeFriendship(this.accessToken, friendshipId);
   }
 
-  async login(info: LoginRequestBody & { totp_token?: string }) {
+  /* USER STATS */
+  async getUserStats(userId: number, page: number = 1): Promise<UserStats | null> {
+    return await fetchUserStats(this.accessToken, userId);
+  }
+
+  async getMatchHistory(userId: number, page: number = 1): Promise<MatchHistoryEntry[] | []> {
+    return await fetchMatchHistory(this.accessToken, userId);
+  }
+
+  async getLeaderboard(page: number = 1): Promise<UserStats[] | []> {
+    return await fetchLeaderboard(this.accessToken, page);
+  }
+
+  /* AUTH API */
+
+  async signup(info: SignupRequestBody) {
     try {
-      const authResponse = await loginRequest(info);
+      const response = await signupRequest(this.accessToken, info);
+      this.auth = response.auth;
+      const userResponse = await this.getUser();
+      this.user = userResponse.user;
+    } catch (e: any) {
+      const error = new Error(`Signup Failed: ${e.message || e}`)
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async login(info: SignupRequestBody) {
+    try {
+      const authResponse = await loginRequest(this.accessToken, info);
       
       // If 2FA is required, return early with the flag
       if (authResponse.requires_2fa)
@@ -177,7 +169,6 @@ export class ApiClient {
         this.accessToken.set(jwt);
         const response = await getUser(this.accessToken)
         this.userStore.set(response.user);
-        this.notify();
       }
       return { requires_2fa: false };
     } catch (e: any) {
@@ -187,23 +178,31 @@ export class ApiClient {
     }
   }
 
+  async oauth(code: OAuthCallBackBody) {
+    try {
+      const authResponse = await oauthRequest(this.accessToken, code);
+      this.auth = authResponse.auth;
+
+      this.authStore.set(authResponse.auth)
+      if (authResponse.access_token) {
+        const response = await getUser(this.accessToken)
+        this.userStore.set(response.user);
+      }
+    } catch (e: any) {
+      const error = new Error(`OAuth Failed: ${e.message || e}`)
+      console.error(error);
+      throw error;
+    }
+  }
+
   async logout() {
     try {
       await logoutRequest(this.accessToken);
       this.clearSession();
-      this.notify();
       goto('/auth');
     } catch (e: any) {
       console.error(e);
     }
-  }
-
-  clearListeners() {
-    this.listeners.clear();
-  }
-
-  get authHeader(): string {
-    return `Bearer ${this.accessToken.get()?.raw}`;
   }
 
   set jwt(jwt: JWT) {
@@ -214,9 +213,16 @@ export class ApiClient {
     this.userStore.set(null);
     this.authStore.set(null);
     this.accessToken.set(null);
-    this.accessToken.delete();
     document.cookie = '';
   }
+
+  async delete() {
+    await deleteRequest(this.accessToken);
+    this.clearSession();
+    goto('/auth');
+  }
+
+  /* PERSONAL INFO */
 
   async updateCredentials({
     email, username, passwd
@@ -236,5 +242,15 @@ export class ApiClient {
       console.error(error);
       throw error;
     }
+  }
+
+  async updateUserInfo(newUser: Partial<User>, avatar?: File): Promise<User> {
+    const data = await updateUser(this.accessToken, newUser, avatar);
+
+    if (data.avatar) {
+      this.avatarUrl = data.avatar.location;
+    }
+    this.userStore.set(data.user);
+    return data.user;
   }
 }

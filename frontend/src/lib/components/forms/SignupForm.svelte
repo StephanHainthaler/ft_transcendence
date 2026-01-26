@@ -6,6 +6,7 @@
   import Input from "../ui/input/input.svelte";
   import Button from "../ui/button/button.svelte";
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
+  import {t, currentLocale} from "@lib/i18n/i18n";
 
   let usernameBuffer = $state('');
   let emailBuffer = $state('');
@@ -35,7 +36,6 @@
 
       await goto('/');
     } catch (e: any) {
-      console.error(e);
       errorMessage = e.message || e.error || JSON.stringify(e);
     } finally {
       isLoading = false;
@@ -45,27 +45,27 @@
 
 <form class="space-y-6" onsubmit={handleSignupFormSubmit}>
   <div class="space-y-4">
-    <h2 class="text-2xl font-bold text-center">Register</h2>
+    <h2 class="text-2xl font-bold text-center">{$t('signup.register')}</h2>
 
     <div class="space-y-2">
-      <Label for="username-input">Username</Label>
+      <Label for="username-input">{$t('signup.username')}</Label>
       <Input
         id="username-input"
         type="text"
         bind:value={usernameBuffer}
-        placeholder="Choose a username"
+        placeholder={$t('signup.username_ph')}
         required
         disabled={isLoading}
       />
     </div>
 
     <div class="space-y-2">
-      <Label for="email-input">Email</Label>
+      <Label for="email-input">{$t('signup.email')}</Label>
       <Input
         id="email-input"
         type="email"
         bind:value={emailBuffer}
-        placeholder="Enter your email"
+        placeholder={$t('signup.email_ph')}
         autocomplete="off"
         required
         disabled={isLoading}
@@ -73,12 +73,12 @@
     </div>
 
     <div class="space-y-2">
-      <Label for="password-input">Password</Label>
+      <Label for="password-input">{$t('signup.password')}</Label>
       <Input
         id="password-input"
         type="password"
         bind:value={userPasswordBuffer}
-        placeholder="Create a password"
+        placeholder={$t('signup.password_ph')}
         autocomplete="new-password"
         required
         disabled={isLoading}
@@ -86,12 +86,12 @@
     </div>
 
     <div class="space-y-2">
-      <Label for="password-repeat-input">Repeat Password</Label>
+      <Label for="password-repeat-input">{$t('signup.pass_repeat')}</Label>
       <Input
         id="password-repeat-input"
         type="password"
         bind:value={userPasswordRepeatBuffer}
-        placeholder="Confirm your password"
+        placeholder={$t('signup.pass_confirm')}
         autocomplete="new-password"
         required
         disabled={isLoading}
@@ -106,6 +106,6 @@
   {/if}
 
   <Button type="submit" class="w-full" disabled={isLoading}>
-    {isLoading ? 'Signing up...' : 'Sign Up'}
+    {isLoading ? $t('signup.loading') : $t('signup.signup')}
   </Button>
 </form>

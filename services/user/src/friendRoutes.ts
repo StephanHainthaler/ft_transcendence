@@ -1,11 +1,12 @@
 import { FastifyInstance } from "fastify";
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { Friendship, User } from "@shared/user";
+import { Avatar, Friendship, User } from "@shared/user";
 import { db } from "./db";
 import { eq, IN } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
+import { getUsers } from "./dbHandlers";
 
-const getFriendships = (userId: number): { friends: User[], friendships: Friendship[] } => {
+const getFriendships = (userId: number): { friends: { user: User, avatar: Avatar | null }[], friendships: Friendship[] } => {
   const friendships = db
     .from('friendships')
     .select('*')
@@ -13,11 +14,9 @@ const getFriendships = (userId: number): { friends: User[], friendships: Friends
     .or(eq('user_to_id', userId))
     .all();
 
-  const friends = db
-    .from('users')
-    .select('*')
-    .where(IN('id', [...friendships.map(f => f.user_from_id), ...friendships.map(f => f.user_to_id)]))
-    .all();
+  const ids = [...friendships.map(f => f.user_from_id), ...friendships.map(f => f.user_to_id)];
+
+  const friends = getUsers(ids);
 
   return { friends, friendships };
 }
@@ -46,7 +45,7 @@ const removeFriendship = (reqId: number) => {
 export function friendRoutes(fastify: FastifyInstance) {
   fastify.get<{
     Reply: {
-      200: { success: true, friends: User[], friendships: Friendship[] },
+      200: { success: true, friends: { user: User, avatar: Avatar | null }[], friendships: Friendship[] },
       '4xx': { success: false, message: string },
       500: { success: false, message: string }
     }

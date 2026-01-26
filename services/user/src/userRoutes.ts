@@ -2,9 +2,10 @@ import { FastifyInstance } from "fastify";
 import { db } from "./db";
 import { Avatar, User } from "@shared/user"
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { eq, IN, } from "@server/orm";
+import { eq, IN } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
-import { getUser } from "./dbHandlers";
+import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "./dbHandlers";
+import { MultipartFile } from "@fastify/multipart";
 
 export function userRoutes(fastify: FastifyInstance) {
   fastify.get<{
@@ -54,29 +55,24 @@ export function userRoutes(fastify: FastifyInstance) {
     } catch (e: any) {
       repl.code(e.code || 500).send({ success: false, message: e.message || `Internal server Error ${e}` });
     }
-  })
+  });
 
   fastify.post<{
     Reply: {
-      200: { success: true, user: User },
+      200: { success: true, user: Partial<User>, avatar: Avatar | null },
       '4xx': { success: false, message: string },
       500: { success: false, message: string }
     },
     Body: {
       user: User,
+      oauthAvatarUrl: string,
     }
-  }>
-    ('/new', (request, reply) => {
+  }>('/new', async (request, reply) => {
     try {
-      const { user } = request.body;
-      const result = db
-        .from('users')
-        .insert(user)
-        .select('*')
-        .single();
+      const { user, oauthAvatarUrl } = request.body;
+      const { user: newUser, avatar } = await createUser(user, oauthAvatarUrl);
 
-      if (!result) throw new ApiError({ message: "Failed to insert User", code: 400 });
-      reply.status(200).send({ success: true, user: result })
+      reply.status(200).send({ success: true, user: newUser, avatar });
     } catch (e: any) {
       reply.status(e.code || e.status || 500).send({ success: false, message: e.message || e })
     }
@@ -84,16 +80,13 @@ export function userRoutes(fastify: FastifyInstance) {
 
   fastify.get<{
     Reply: {
-      200: { success: boolean, users: User[] },
+      200: { success: boolean, users: { user: User, avatar: Avatar | null }[] },
       '4xx': { success: boolean, message: string },
       500: { success: boolean, message: string }
     }
-  }>('/all', (request, reply) => {
+  }>('/all', (_, reply) => {
       try {
-        const users = db
-          .from('users')
-          .select('*')
-          .all();
+        const users = getAllUsers();
 
         reply.status(200).send({ success: true, users });
       } catch (e: any) {
@@ -101,21 +94,45 @@ export function userRoutes(fastify: FastifyInstance) {
       }
   })
 
-  fastify.patch<{
+  fastify.post<{
     Body: {
       user: User,
     },
-    Reply: {
-      200: User,
-      '4xx': Error,
-      500: Error,
+    Params: {
+      userId: number,
     }
-  }>('/update', (request, reply) => {
+    Reply: {
+      200: { success: true, user: User, avatar: Avatar | null },
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string },
+    }
+  }>('/update', async (request, reply) => {
     try {
-      const { user } = request.body;
       const token = extractJWTFromHeader(request.headers.authorization);
-      const userId = request.params.userId;
-      if (userId) user.id = userId;
+
+      const parts = request.parts();
+      let user: Partial<User> | undefined;
+      let avatar: MultipartFile | undefined;
+
+      for await (const part of parts) {
+        console.log('Part:', part.fieldname, part.type);
+
+        if (part.type === 'file' && part.fieldname === 'avatar') {
+          avatar = part;
+        } else if (part.type === 'field' && part.fieldname === 'user') {
+          user = JSON.parse(part.value as string);
+        }
+      }
+
+      console.log('Final user:', user);
+      console.log('Final avatar:', avatar);
+
+      if (!user) throw new ApiError({ code: 400, message: 'Missing user form data' });
+
+      const data = await updateUser(token.payload.sub, user, avatar);
+
+      if (!data)
+        throw new ApiError({ code: 404, message: 'User not found' });
 
       const response = db
         .from('users')
@@ -127,9 +144,26 @@ export function userRoutes(fastify: FastifyInstance) {
       if (!response)
         throw new Error('User update Failed');
 
-      reply.status(200).send(response);
+      reply.status(200).send({ success: true, user: data.user, avatar: data.avatar });
     } catch(e: any) {
-      reply.status(500).send(new Error(`Error ${e.message || e}`))
+      reply.status(e.code || e.statuscode || 400).send({ success: false, message: e.message || 'Bad Request' })
     }
+  });
+
+  fastify.delete<{
+    Reply: {
+      200: { success: true },
+      '4xx': { success: false, message: string },
+      500: { success: false, message: string },
+    }
+  }>('/delete', async (req, repl) => {
+      try {
+        console.log('got delete request');
+        const token = extractJWTFromHeader(req.headers.authorization);
+        await deleteUser(token.payload.sub);
+        repl.code(200).send({ success: true });
+      } catch (e: any) {
+        repl.code(e.code || 400).send({ success: false, message: e.message || 'Bad Request' });
+      }
   })
 }
