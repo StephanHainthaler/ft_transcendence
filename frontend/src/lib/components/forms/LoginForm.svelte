@@ -68,6 +68,6 @@
   {/if}
 
   <Button type="submit" class="w-full">
-    {$t('login.singin')}
+    {$t('login.signin')}
   </Button>
 </form>

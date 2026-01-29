@@ -10,7 +10,7 @@
     "username_ph": "Enter your email or username",
     "password": "Password",
     "password_ph": "Enter your password",
-    "singin": "Sign In"
+    "signin": "Sign In"
   },
   "signup": {
     "signup": "Sign up",
@@ -21,7 +21,7 @@
     "email_ph": "Enter your email",
     "password": "Password",
     "password_ph": "Create a password",
-    "pass_repeat": "Enter your password",
+    "pass_repeat": "Repeat your password",
     "pass_confirm": "Confirm your password",
     "loading": "Signing up...",
     "pass_no_match": "Passwords don't match"
@@ -33,7 +33,7 @@
     "error2": "Something went wrong...",
     "redirect": "OAuth Redirect",
     "go_back": "Go back...",
-    "loading": "Completing GitHub OAuth…"
+    "loading": "Completing GitHub OAuth..."
   },
   "sidebar": {
     "login": "Login",
@@ -109,7 +109,7 @@
     "save": "Save Changes",
     "cancel": "Cancel",
     "edit": "Edit",
-    "undated": "Updated successfully",
+    "updated": "Updated successfully",
     "update_err": "Error updating profile",
     "loading": "Saving changes...",
     "delete_account": "Delete Account, please wait...",
