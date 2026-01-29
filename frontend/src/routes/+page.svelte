@@ -45,8 +45,8 @@
         <div class="p-3 bg-primary/10 border border-primary/20 group-hover:bg-primary group-hover:text-black transition-all">
           <Play class="size-8" fill="currentColor" />
         </div>
-        <div class="text-left">
-          <h2 class="text-3xl font-black text-white uppercase tracking-tighter italic group-hover:text-primary">
+        <div class="md:table-cell text-left max-w-[250px] align-middle truncate pr-2">
+          <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tighter italic group-hover:text-primary">
             {$t('play')}
           </h2>
         </div>
@@ -62,8 +62,8 @@
         <div class="p-3 bg-accent/10 border border-accent/20 group-hover:bg-accent group-hover:text-black transition-all">
           <Trophy class="size-8" fill="currentColor" />
         </div>
-        <div class="text-left">
-          <h2 class="text-3xl font-black text-white uppercase tracking-tighter italic group-hover:text-accent">
+        <div class="md:table-cell text-left max-w-[250px] align-middle truncate pr-2">
+          <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tighter italic group-hover:text-accent">
             {$t('tournament.tournament')}
           </h2>
         </div>

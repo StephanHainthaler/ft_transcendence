@@ -19,7 +19,7 @@
   const historyHeaders = [
     { label: "#ID", class: "w-16 hidden md:table-cell text-center opacity-50" },
     { label: $t('stats.played'), class: "text-center hidden md:table-cell" },
-    { label: $t('stats.opponent') },
+    { label: $t('stats.opponent'), class: "text-left" },
     { label: $t('stats.score'), class: "text-center" },
     { label: $t('stats.duration'), class: "text-center hidden md:table-cell" },
     { label: $t('stats.result'), class: "text-right pr-8" }
@@ -100,7 +100,7 @@
           #{match.match_id}
         </td>
 
-        <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-white/70">
+        <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-white/70 hidden md:table-cell">
           {new Date(match.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </td>
 
