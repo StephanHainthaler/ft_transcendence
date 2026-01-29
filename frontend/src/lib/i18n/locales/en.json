@@ -1,6 +1,9 @@
 {
   "main_name": "Transcendence",
   "menu": "Menu",
+  "welcome": "Welcome",
+  "play": "Play",
+  "moto": "ARENA_READY: LINK YOUR PADDLE TO THE GRID",
   "login": {
     "login": "Login",
     "username": "Email or Username",
@@ -25,7 +28,7 @@
   },
   "OAuth": {
     "oauth": "OAuth",
-    "oauth_gh": "OAuth with GitHup",
+    "oauth_gh": "OAuth with GitHub",
     "error": "Something went wrong",
     "error2": "Something went wrong...",
     "redirect": "OAuth Redirect",
@@ -60,14 +63,21 @@
     "score": "Score",
     "duration": "Duration",
     "result": "Result",
+    "user": "User",
+    "played": "Played",
     "victory": "Victory",
     "defeat": "Defeat",
     "draw": "Draw",
-    "page": "Page"
+    "page": "Page",
+    "loading": "Loading..."
   },
   "leaderboard": {
     "title": "Global Leaderboard",
+    "rank": "Rank",
     "player_id": "Player ID",
+    "nickname": "Nickname",
+    "games_played": "Games played",
+    "points": "Points",
     "no_players": "No players found in the leaderboard"
   },
   "buttons": {

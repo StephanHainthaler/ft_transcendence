@@ -1,4 +1,4 @@
-import { client } from "@lib/index";
+import { client } from "@lib/api/index.svelte";
 import { Separator } from "@lib/components/ui";
 import { UserCard } from "@lib/components/ui/UserCard";
 import { Tournament } from "@lib/tournament/tournament";

@@ -1,7 +1,7 @@
 <script lang="ts">
   import '$lib/i18n';
-  import './layout.css';
-  import favicon from '$lib/assets/favicon.ico';
+  import '../app.css';
+  import favicon from '$lib/assets/favicon.png';
   import * as SB from "$lib/components/ui/sidebar";
   import Sidebar from '@lib/components/layout/Sidebar.svelte';
   import { afterNavigate, beforeNavigate, goto } from '$app/navigation';

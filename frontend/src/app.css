@@ -1,5 +1,4 @@
 @import "tailwindcss";
-
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -71,29 +70,48 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  /* Base palette */
+  --my-background: oklch(0.13 0.04 256);
+  --my-foreground: oklch(0.98 0.01 234);
+  --my-card: oklch(0.18 0.03 256);
+  --my-card-foreground: oklch(0.98 0.01 256);
+
+  /* Brand / Neon colors */
+  --my-primary: oklch(0.8 0.25 200);
+  --my-primary-foreground: oklch(0.14 0.02 256); /* High contrast for text on primary */
+  --my-accent: oklch(0.7 0.3 333); 
+  
+  /* UI Elements */
+  --my-muted: oklch(0.25 0.02 256);
+  --my-muted-foreground: oklch(0.8 0.02 256); /* Increased lightness for readability */
+  --my-border: oklch(0.8 0.25 200 / 0.15);
+  
+  /* Effects */
+  --my-neon-glow: 0 0 20px oklch(0.8 0.25 200 / 0.4);
 }
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
+	/* --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+  --color-background: var(--my-background);
+  --color-foreground: var(--my-foreground);
+  --color-card: var(--my-card);
+  --color-card-foreground: var(--my-card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--my-primary);
+  --color-primary-foreground: var(--my-primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
+  --color-accent: var(--my-accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-border: var(--border);
+  --color-border: var(--my-border);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-chart-1: var(--chart-1);
@@ -109,6 +127,39 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --shadow-neon: var(--my-shadow-neon); */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--my-background);
+  --color-foreground: var(--my-foreground);
+  --color-card: var(--my-card);
+  --color-card-foreground: var(--my-card-foreground);
+  --color-popover: var(--my-card);
+  --color-popover-foreground: var(--my-foreground);
+  --color-muted: var(--my-muted);
+  --color-muted-foreground: var(--my-muted-foreground);
+  
+  --color-primary: var(--my-primary);
+  --color-primary-foreground: var(--my-primary-foreground);
+  
+  --color-accent: var(--my-accent);
+  --color-accent-foreground: var(--my-foreground);
+  
+  --color-border: var(--my-border);
+  --color-input: var(--my-border);
+  --color-ring: var(--my-primary);
+
+  --color-sidebar: var(--my-background);
+  --color-sidebar-foreground: var(--my-foreground);
+  --color-sidebar-primary: var(--my-primary);
+  --color-sidebar-border: var(--my-border);
+  --color-sidebar-accent: var(--my-card);
+
+  --shadow-neon: var(--my-neon-glow);
+  --neon-glow: var(--my-neon-glow);
 }
 
 @layer base {

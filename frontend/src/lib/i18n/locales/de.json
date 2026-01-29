@@ -63,7 +63,8 @@
     "victory": "Sieg",
     "defeat": "Niederlage",
     "draw": "Unentschieden",
-    "page": "Seite"
+    "page": "Seite",
+    "loading": "Ladevorgang..."
   },
   "leaderboard": {
     "title": "Globale Bestenliste",

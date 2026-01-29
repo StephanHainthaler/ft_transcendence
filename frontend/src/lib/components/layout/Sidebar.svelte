@@ -2,8 +2,9 @@
   import { goto } from "$app/navigation";
   import * as Sidebar from "$lib/components/ui/sidebar";
   import { client } from "@lib/api/index.svelte";
-  import {t, currentLocale} from "@lib/i18n/i18n";
+  import { currentLocale, t } from "@lib/i18n/i18n";
   import { toast } from "svelte-sonner";
+  import image from '$lib/assets/favicon.png';
 
   const isLoggedIn = $derived(client.loggedIn);
 
@@ -14,99 +15,120 @@
 
  </script>
 
-<Sidebar.Root>
-  <Sidebar.Header>
-    <h1 class="text-2xl font-bold">
-      <a href="/">{$t('main_name')}</a>
+<Sidebar.Root class="border-r border-primary/20 bg-black/80 backdrop-blur-xl">
+  <Sidebar.Header class="p-8 border-b border-white/5">
+    <h1 class="text-2xl font-black italic tracking-tighter text-white uppercase group">
+      <a href="/" class="flex items-center gap-2 group-hover:text-primary transition-all">
+      <div class="relative size-7 flex-shrink-0">
+        <div class="absolute inset-0 bg-primary/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        
+        <img 
+          src={image}
+          alt=""
+          class="relative max-w-full max-h-full object-contain brightness-110"
+        />
+      </div>
+
+      <span class="transition-all duration-300
+               text-sm tracking-tight sm:text-base group-hover:translate-x-0.5 truncate shadow-sm">
+        {$t('main_name')}
+      </span>
+    </a>
     </h1>
   </Sidebar.Header>
 
-  <Sidebar.Content>
+  <Sidebar.Content class="custom-scrollbar">
     {#if isLoggedIn}
     <Sidebar.Group>
-      <Sidebar.GroupLabel>{$t('sidebar.routes')}</Sidebar.GroupLabel>
+      <Sidebar.GroupLabel class="px-4 py-3 text-[11px] font-black uppercase text-primary/40">
+        {$t('sidebar.routes')}
+      </Sidebar.GroupLabel>
+      
+      <Sidebar.GroupContent>
+        <Sidebar.Menu class="gap-1">
+          {#each [
+            { path: '/profile', label: 'sidebar.profile' },
+            { path: '/game', label: 'sidebar.game' },
+            { path: '/tournament', label: 'sidebar.tournament' },
+            { path: '/friends', label: 'sidebar.friends' },
+            { path: '/stats', label: 'sidebar.statistics' }
+          ] as route}
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton 
+                class="px-4 py-5 rounded-none border-l-2 border-transparent hover:border-primary hover:bg-primary/5 hover:text-primary transition-all group"
+                onclick={() => goto(route.path)}
+              >
+                <span class="font-bold uppercase tracking-widest text-[11px]">
+                  {$t(route.label)}
+                </span>
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+            <div class="h-[1px] w-full bg-gradient-to-r from-white/5 via-transparent to-transparent"></div>
+          {/each}
+        </Sidebar.Menu>
+      </Sidebar.GroupContent>
+    </Sidebar.Group>
+    
+    <Sidebar.Separator class="bg-primary/10 my-4" />
+    {/if}
+
+    <Sidebar.Group>
+      <Sidebar.GroupLabel class="px-4 text-[11px] font-black uppercase text-primary/40">
+        {$t('sidebar.account')}
+      </Sidebar.GroupLabel>
       <Sidebar.GroupContent>
         <Sidebar.Menu>
           <Sidebar.MenuItem>
-            <Sidebar.MenuButton class="px-4" onclick={() => goto('/profile')}>
-              {$t('sidebar.profile')}
-            </Sidebar.MenuButton>
-          </Sidebar.MenuItem>
-          
-          <Sidebar.MenuItem>
-            <Sidebar.MenuButton class="px-4" onclick={() => goto('/game')}>
-              {$t('sidebar.game')}
-            </Sidebar.MenuButton>
-          </Sidebar.MenuItem>
-          
-          <Sidebar.MenuItem>
-            <Sidebar.MenuButton class="px-4" onclick={() => goto('/tournament')}>
-              {$t('sidebar.tournament')}
-            </Sidebar.MenuButton>
-          </Sidebar.MenuItem>
-          
-          <Sidebar.MenuItem>
-            <Sidebar.MenuButton class="px-4" onclick={() => goto('/friends')}>
-              {$t('sidebar.friends')}
-            </Sidebar.MenuButton>
-          </Sidebar.MenuItem>
-          
-          <Sidebar.MenuItem>
-            <Sidebar.MenuButton class="px-4" onclick={() => goto('/stats')}>
-              {$t('sidebar.statistics')}
+            <Sidebar.MenuButton 
+              class="px-4 py-5 rounded-none border-l-2 border-transparent hover:border-primary hover:bg-primary/5 hover:text-primary transition-all group"
+              onclick={isLoggedIn ? handleLogout : () => goto('/auth')}
+            >
+              <span class="font-bold uppercase tracking-widest text-[11px]">
+                {isLoggedIn ? $t('sidebar.logout') : $t('sidebar.login')}
+              </span>
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
         </Sidebar.Menu>
       </Sidebar.GroupContent>
     </Sidebar.Group>
-    <Sidebar.Separator />
-    {/if}
 
-      <Sidebar.Group>
-        <Sidebar.GroupLabel>{$t('sidebar.account')}</Sidebar.GroupLabel>
-        <Sidebar.GroupContent>
-          <Sidebar.Menu>
-            {#if isLoggedIn}
-              <Sidebar.MenuItem>
-                <Sidebar.MenuButton class="px-4" onclick={handleLogout}>
-                  {$t('sidebar.logout')}
-                </Sidebar.MenuButton>
-              </Sidebar.MenuItem>
-            {:else}
-              <Sidebar.MenuItem>
-                <Sidebar.MenuButton class="px-4" onclick={() => goto('auth')}>
-                  {$t('sidebar.login')}
-                </Sidebar.MenuButton>
-              </Sidebar.MenuItem>
-            {/if}
-          </Sidebar.Menu>
-        </Sidebar.GroupContent>
-      </Sidebar.Group>
-      <Sidebar.Separator />
+    <Sidebar.Separator class="bg-primary/10 my-4" />
 
-      <Sidebar.Group>
-        <Sidebar.GroupLabel>{$t('sidebar.language')}</Sidebar.GroupLabel>
-        <Sidebar.GroupContent>
-          <Sidebar.Menu>
-            <div class="flex gap-4 px-4 py-2 justify-around">
-              <button onclick={() => t.changeLanguage('en')} class="flex flex-col items-center hover:opacity-80 transition-opacity">
-                <span class="text-xl">🇺🇸</span>
-                <span class="text-[10px] font-bold text-slate-500">EN</span>
-              </button>
+<Sidebar.Group>
+  <Sidebar.GroupLabel class="px-4 text-[11px] font-black uppercase text-primary/40">
+    {$t('sidebar.language')}
+  </Sidebar.GroupLabel>
+  <Sidebar.GroupContent>
+    <div class="flex gap-2 px-4 py-4">
+      {#each [
+        { code: 'en', flag: '🇺🇸' },
+        { code: 'ukr', flag: '🇺🇦' },
+        { code: 'de', flag: '🇩🇪' }
+      ] as lang}
+        {@const isActive = $currentLocale === lang.code}
+        <button 
+          onclick={() => t.changeLanguage(lang.code)} 
+          class="flex-1 flex flex-col items-center py-2 border transition-all group relative
+            {isActive 
+              ? 'border-primary bg-primary/10 shadow-[0_0_15px_rgba(var(--primary-rgb),0.2)]' 
+              : 'border-white/5 hover:border-primary/50 hover:bg-primary/5'}"
+        >
+          <span class="text-xl transition-all {isActive ? 'drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] scale-110' : 'opacity-70 group-hover:opacity-100'}">
+            {lang.flag}
+          </span>
+          
+          <span class="text-[10px] font-black mt-1 transition-colors
+            {isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary/70'}">
+            {lang.code.toUpperCase()}
+          </span>
 
-              <button onclick={() => t.changeLanguage('ukr')} class="flex flex-col items-center hover:opacity-80 transition-opacity">
-                <span class="text-xl">🇺🇦</span>
-                <span class="text-[10px] font-bold text-slate-500">UA</span>
-              </button>
-
-              <button onclick={() => t.changeLanguage('de')} class="flex flex-col items-center hover:opacity-80 transition-opacity">
-                <span class="text-xl">🇩🇪</span>
-                <span class="text-[10px] font-bold text-slate-500">DE</span>
-              </button>
-            </div>
-          </Sidebar.Menu>
-        </Sidebar.GroupContent>
-      </Sidebar.Group>
-
+          {#if isActive}
+            <div class="absolute -bottom-[1px] w-1/2 h-[2px] bg-primary shadow-[0_0_10px_var(--my-primary)]"></div>
+          {/if}
+        </button>
+      {/each}
+    </div>
+  </Sidebar.GroupContent>
+</Sidebar.Group>
   </Sidebar.Content>
 </Sidebar.Root>

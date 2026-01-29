@@ -70,7 +70,7 @@
             {error}
           </Alert.Description>
         </Alert.Root>
-        <a class={`pr-4 ${buttonVariants({ variant: 'link' })}`} href="/auth">{$t('OAuth.error2')}</a>
+        <a class={`pr-4 ${buttonVariants({ variant: 'outline' })}`} href="/auth">{$t('OAuth.error2')}</a>
       {:else}
         <Alert.Root variant='default'>
           <CircleIcon />

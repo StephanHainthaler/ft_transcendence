@@ -1,5 +1,5 @@
-import { a, button, div, h1, nav, updateId } from "@lib/vdom"
-import { client } from "@lib/index";
+import { a, button, div, h1, nav, updateId } from "@lib/vdom";
+import { client } from "@lib/api/index.svelte";
 
 const updateHeader = () => {
   updateId(HeaderDropDown());

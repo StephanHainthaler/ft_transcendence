@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Pong } from "@lib/game/game";
+  import { Pong } from "@lib/game/pong";
   import { AppUser } from "$lib/api/appUser";
   import Button from "../ui/button/button.svelte";
   import type { Game } from "@shared/user";
