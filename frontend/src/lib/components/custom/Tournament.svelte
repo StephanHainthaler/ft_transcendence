@@ -7,6 +7,7 @@
   import AlertDescription from "../ui/alert/alert-description.svelte";
   import Button from "../ui/button/button.svelte";
   import { onMount } from "svelte";
+  import { t } from "@lib/i18n/i18n";
 
   const { players }: { players: AppUser[] } = $props();
 
@@ -68,12 +69,12 @@
   </Alert>
 {:else if winner}
   <Alert>
-    <AlertDescription>And the Winner is... {winner}</AlertDescription>
+    <AlertDescription>{$t('tournament.winn_is')} {winner}</AlertDescription>
   </Alert>
 {:else}
   <Button
     onclick={() => { startNextGame() }}
   >
-    Next
+    {$t('buttons.next')}
   </Button>
 {/if}

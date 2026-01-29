@@ -95,7 +95,8 @@
   },
   "game": {
     "game": "Game",
-    "challenge": "Challenge"
+    "challenge": "Challenge",
+    "end": "End"
   },
   "profile": {
     "profile": "Profile",
@@ -126,6 +127,7 @@
     "available": "Available Players",
     "selected": "Selected Players",
     "choose": "Choose",
+    "winn_is": "And the Winner is...",
     "start": "Start"
   },
   "error": {

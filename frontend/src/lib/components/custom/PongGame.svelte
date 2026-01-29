@@ -3,6 +3,7 @@
   import { AppUser } from "$lib/api/appUser";
   import Button from "../ui/button/button.svelte";
   import type { Game } from "@shared/user";
+  import { t } from "@lib/i18n/i18n";
 
   const { player1, player2, onGameEnd }: { player1: AppUser, player2: AppUser, onGameEnd: (game: Game) => void } = $props();
 
@@ -41,5 +42,5 @@
 <Button
   onclick={reportScore}
 >
-  End
+  {$t('game.end')}
 </Button>
