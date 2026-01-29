@@ -37,11 +37,14 @@
       await new Promise(r => setTimeout(r, 500));
 
       stats = { user_id: userId, rank: 12, wins: 42, losses: 10, total_points: 1540, streak: 5, highest_score: 11 };
-      history = undefined;// history = [
-      //   { match_id: 1, player_one_id: userId, player_two_id: 99, p1_score: 11, p2_score: 5, winner_id: userId, match_duration: 350000, timestamp: 123456789 },
-      //   { match_id: 2, player_one_id: 88, player_two_id: userId, p1_score: 8, p2_score: 11, winner_id: userId, match_duration: 420000, timestamp: 123456789 }
-      // ];
+      // history = undefined;
+        history = [
+        { match_id: 1, player_one_id: userId, player_two_id: 99, p1_score: 11, p2_score: 5, winner_id: userId, match_duration: 350000, timestamp: 123456789 },
+        { match_id: 2, player_one_id: 88, player_two_id: userId, p1_score: 8, p2_score: 11, winner_id: userId, match_duration: 420000, timestamp: 123456789 }
+      ];
       leaderboard = [
+        { user_id: 1, rank: 1, username: "khukkhukhuku", wins: 100, losses: 5, total_points: 5000, streak: 10, highest_score: 11 },
+        { user_id: 1, rank: 1, username: "khuk", wins: 100, losses: 5, total_points: 5000, streak: 10, highest_score: 11 },
         { user_id: 1, rank: 1, username: "khuk", wins: 100, losses: 5, total_points: 5000, streak: 10, highest_score: 11 }
       ];
       currentPage = page;
@@ -146,9 +149,9 @@
     {:else if activeTab === 'leaderboard'}
       <CyberTable headers={[
         { label: $t('leaderboard.rank'), class: "w-20 text-center opacity-50" },
-        { label: $t('leaderboard.player_id') },
-        { label: $t('leaderboard.nickname'), class: "text-left min-w-[150px]" },
-        { label: $t('leaderboard.games_played'), class: "text-center" },
+        { label: $t('leaderboard.player_id'), class: "text-center hidden md:table-cell" },
+        { label: $t('leaderboard.nickname'), class: "text-left min-w-[100px]" },
+        { label: $t('leaderboard.games_played'), class: "text-center hidden md:table-cell"},
         { label: $t('stats.wins'), class: "text-center" },
         { label: $t('stats.losses'), class: "text-center" },
         { label: $t('leaderboard.points'), class: "text-right pr-8" }
@@ -160,15 +163,15 @@
                 #{player.rank}
               </span>
             </td>
-            <td class="p-4">
-              <span class="font-bold text-xs text-white uppercase tracking-wider">{$t('stats.user')} {player.user_id}</span>
+            <td class="p-4 hidden md:table-cell">
+              <span class="font-bold text-xs text-white uppercase tracking-wider hidden md:table-cell">{$t('stats.user')} {player.user_id}</span>
             </td>
-            <td class="p-4">
-              <span class="font-black text-sm text-white uppercase tracking-wider group-hover:text-primary transition-colors">
+            <td class="p-4 max-w-[100px] md:max-w-[200px]">
+              <span class="font-black text-sm text-white uppercase tracking-wider group-hover:text-primary transition-colors block truncate">
                 {player.username || 'Unknown_Pilot'}
               </span>
             </td>
-            <td class="p-4 text-center font-mono text-white/60">
+            <td class="p-4 text-center font-mono text-white/60 hidden md:table-cell">
               {player.wins + player.losses}
             </td>
             <td class="p-4 text-center font-mono text-white/80">{player.wins}</td>
@@ -177,10 +180,10 @@
           </tr>
         {:else}
         <tr>
-          <td colspan="6" class="p-12 text-center bg-primary/5 border-t border-border/30">
-            <div class="flex flex-col items-center gap-3 animate-pulse">
+          <td colspan="7" class="p-12 text-center bg-primary/5 border-t border-border/30">
+            <div class="w-full flex flex-col items-center justify-center gap-3 animate-pulse">
               <span class="text-4xl opacity-20 filter grayscale">🎮</span>
-              <p class="text-muted-foreground font-mono tracking-widest uppercase text-xs">
+              <p class="text-muted-foreground text-center font-mono tracking-widest uppercase text-xs">
                 {$t('stats.no_matches')}
               </p>
               <div class="w-16 h-[1px] bg-primary/30"></div>
