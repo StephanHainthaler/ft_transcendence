@@ -136,7 +136,7 @@ export class ApiClient {
   }
 
   async getMatchHistory(userId: number, page: number = 1): Promise<MatchHistoryEntry[] | []> {
-    return await fetchMatchHistory(userId);
+    return await fetchMatchHistory(userId, page);
   }
 
   async getLeaderboard(page: number = 1): Promise<UserStats[] | []> {

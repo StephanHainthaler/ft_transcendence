@@ -85,12 +85,22 @@ async function loadData(page: number = 1)
     isLoading = true;
     const userId = client.user?.id;
     if (!userId)
-      return;
+      return ;
     if (activeTab === 'leaderboard')
     {
       const l = await client.getLeaderboard(page);
-      leaderboard = l;
+      const data = Array.isArray(l) !== null ? l : l?.matches;
+      if (!data || data.length === 0)
+      {
+        if (page === 1)
+        {
+          currentPage = 1;
+          leaderboard = [];
+        }
+        return ;
+      }
       currentPage = page;
+      leaderboard = l;
     }
     else 
     {
@@ -98,6 +108,16 @@ async function loadData(page: number = 1)
         client.getUserStats(userId),
         client.getMatchHistory(userId, page)
       ]);
+      const data = Array.isArray(h) !== null ? h : h?.matches;
+      if (!data || data.length === 0)
+      {
+        if (page === 1)
+        {
+          history = [];
+          stats = s;
+        }
+        return ;
+      }
       history = h;
       stats = s;
       currentPage = page;

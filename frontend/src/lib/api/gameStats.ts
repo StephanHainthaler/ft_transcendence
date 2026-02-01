@@ -15,9 +15,9 @@ async function fetchUserStats(userId: number):  Promise<UserStats | null>
 	return (response);
 }
 
-async function fetchMatchHistory(userId: number) : Promise<MatchHistoryEntry[]>
+async function fetchMatchHistory(userId: number, page: number = 1) : Promise<MatchHistoryEntry[]>
 {
-	const req = new Request(`/api/stats/v1/history/${userId}`,
+	const req = new Request(`/api/stats/v1/history/${userId}?page=${page}`,
 		{
 			method: "GET",
 		}
