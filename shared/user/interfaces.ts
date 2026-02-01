@@ -1,8 +1,7 @@
 export interface User extends Record<string, string | number | undefined> {
   id: number,
   name: string,
-  username?: string,
-  email?: string,
+  user_name?: string,
 }
 
 export interface Game extends Record<string, string | number | undefined> {
@@ -20,7 +19,7 @@ export interface UserGame extends Record<string, string | number | undefined> {
 }
 
 export interface AuthUserClient {
-  username?: string,
+  user_name?: string,
   email?: string,
 }
 

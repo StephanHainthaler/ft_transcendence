@@ -1,9 +1,9 @@
 import { test, beforeEach } from "node:test";
-import { DB, defineTable, int, text } from "../../../shared/orm";
+import { DB, defineTable, eq, int, text } from "../../shared-server/orm";
 import assert from "node:assert";
 
 
-let db: DB;
+let db: DB<ReturnType<typeof defineTable>>;
 let table: ReturnType<typeof defineTable>;
 
 beforeEach(() => {
@@ -65,7 +65,7 @@ test('select-non-empty', () => {
 test('sql-inject-select-where', () => {
   // Try to inject SQL in a WHERE clause
   const maliciousInput = "'; DROP TABLE \"test-table\"; --";
-  const query = db.from(table).eq('name', maliciousInput).select('*');
+  const query = db.from(table).where(eq('name', maliciousInput)).select('*');
 
   // Should treat it as a literal string, not execute DROP
   query.get(); // Should not throw or drop the table
@@ -85,7 +85,7 @@ test('sql-inject-insert-value', () => {
   query.run(); // Should insert the string literally
 
   // Verify it was inserted as data, not executed
-  const result: any = db.from(table).eq('name', maliciousInput).get();
+  const result: any = db.from(table).where(eq('name', maliciousInput)).get();
   assert.strictEqual(result?.name, maliciousInput);
 });
 
@@ -95,18 +95,18 @@ test('sql-inject-with-quotes', () => {
   db.from(table).insert({ name: 'admin' }).run();
   
   // Should find no match, not bypass authentication
-  const result = db.from(table).eq('name', maliciousInput).get();
+  const result = db.from(table).where(eq('name', maliciousInput)).get();
   assert.strictEqual(result, undefined);
   
   // Should only find exact match
-  const valid: any = db.from(table).eq('name', 'admin').get();
+  const valid: any = db.from(table).where(eq('name', 'admin')).get();
   assert.strictEqual(valid?.name, 'admin');
 });
 
 test('sql-inject-union-attack', () => {
   const maliciousInput = "' UNION SELECT id, name FROM \"test-table\" --";
   
-  const query = db.from(table).eq('name', maliciousInput).select('*');
+  const query = db.from(table).where(eq('name', maliciousInput)).select('*');
   const result: any = query.get();
   
   // Should return nothing or the literal match, not union results
@@ -119,7 +119,7 @@ test('sql-inject-comment-attack', () => {
   const maliciousInput = "target' --";
   
   // Should not match due to trailing comment
-  const result: any = db.from(table).eq('name', maliciousInput).get();
+  const result: any = db.from(table).where(eq('name', maliciousInput)).get();
   assert.strictEqual(result, undefined);
 });
 
@@ -130,6 +130,6 @@ test('sql-inject-semicolon-chaining', () => {
   db.from(table).insert({ name: maliciousInput }).run();
   
   // Verify original wasn't updated
-  const result: any = db.from(table).eq('name', 'original').get();
+  const result: any = db.from(table).where(eq('name', 'original')).get();
   assert.strictEqual(result?.name, 'original');
 });

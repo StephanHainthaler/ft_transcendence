@@ -3,13 +3,10 @@ import { parseJWT } from '@shared/api';
 
 export function extractJWTFromHeader(tokenHeader?: string) {
   try {
-    if (!tokenHeader || !tokenHeader.startsWith('Bearer ')) {
-      console.error('Missing or invalid token header: ', tokenHeader);
-      throw new ApiError({ message: 'Invalid token', code: 401 });
-    }
-    const token = parseJWT(tokenHeader.split(' ')[1]);
+    if (!tokenHeader) throw new ApiError({ message: 'Missing Token', code: 401 });
+    const token = parseJWT(tokenHeader);
     return token;
   } catch (e: any) {
-    throw new ApiError({ message: 'Invalid token', code: 401 });
+    throw new ApiError({ message: e.message || e, code: 401 });
   }
 }

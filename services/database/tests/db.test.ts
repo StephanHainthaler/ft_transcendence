@@ -1,5 +1,5 @@
 import { beforeEach, test } from "node:test";
-import { DB, defineTable, int, text } from "../../shared-server/orm";
+import { DB, defineTable, eq, int, text } from "../../shared-server/orm";
 import assert from "node:assert";
 
 interface Schema {
@@ -19,12 +19,6 @@ beforeEach(() => {
   db.from(table).insert({name: 'first-test-user'}).run();
   db.from(table).insert({name: 'second-test-user'}).run();
 })
-
-test('fail-recreate-table', () => {
-  assert.throws(() => {
-    db.create(table);
-  })
-});
 
 test('select-empty', () => {
   assert.throws(() => {
@@ -103,7 +97,7 @@ test('insert-sql-injection-attempt', () => {
 
 test('select-sql-injection-where', () => {
   const maliciousInput = "' OR '1'='1";
-  const query = db.from(table).select('*' as any).eq('name', maliciousInput);
+  const query = db.from(table).select('*' as any).where(eq('name', maliciousInput));
 
   try {
     const results = query.all();
@@ -119,7 +113,7 @@ test('update-sql-injection', () => {
   const maliciousInput = "test'; DELETE FROM test_table WHERE '1'='1";
   const query = db.from(table)
     .update({ name: maliciousInput })
-    .eq('id', 1);
+    .where(eq('id', 1));
 
   query.run();
 

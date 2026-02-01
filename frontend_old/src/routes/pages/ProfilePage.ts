@@ -1,7 +1,7 @@
 import { Input } from "@lib/components/ui/Input";
 import { Separator } from "@lib/components/ui/Seperator";
 import type { Route } from "@lib/types/route";
-import { client } from "@lib/index";
+import { client } from "@lib/api/index.svelte";
 import { button, div, form, h1, h2, updateId, type VNode } from "@lib/vdom";
 import type { AuthUserClient, User } from "@shared/user";
 import { Layout } from "@lib/components/layout";

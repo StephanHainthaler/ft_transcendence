@@ -1,11 +1,11 @@
 <script lang="ts">
   import '$lib/i18n';
-  import './layout.css';
-  import favicon from '$lib/assets/favicon.svg';
+  import '../app.css';
+  import favicon from '$lib/assets/favicon.png';
   import * as SB from "$lib/components/ui/sidebar";
   import Sidebar from '@lib/components/layout/Sidebar.svelte';
   import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
-  import { client } from '@lib/api';
+  import { client } from '@lib/api/index.svelte';
   import { Toaster } from '@lib/components/ui/sonner';
   import { onMount } from 'svelte';
 
@@ -13,23 +13,13 @@
   let sidebarOpen = $state(false);
 
   onMount(async () =>{
-    try {
-      await client.getSession();
-    } catch (e: any) {
-      console.error(e);
+    if (!client.isLoggedIn)
       goto('/auth');
-    }
   })
 
-  beforeNavigate(async (nav) => {
+  beforeNavigate((nav) => {
     const target = nav.to;
-    try {
-      await client.getSession();
-    } catch (e: any) {
-    }
-    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')
-      && !target?.route.id?.includes('stats')//tempopary
-      ) {
+    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
       if (!client.isLoggedIn) {
         goto('/auth', { replaceState: true });
       }
@@ -43,7 +33,6 @@
         goto('/auth');
       }
     }
-    sidebarOpen = false;
   })
 </script>
 

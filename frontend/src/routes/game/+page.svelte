@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { client } from "@lib/api/index";
   import { AppUser } from "@lib/api/appUser";
   import Grid from "@lib/components/custom/Grid.svelte";
+  import { client } from "@lib/api/index.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";
   import * as Card from "$lib/components/ui/card";
 
