@@ -57,7 +57,7 @@
     }
   };
 
-  const onGameEnd = (data: MatchSubmissionData) =>
+  const onGameEnd = async (data: MatchSubmissionData)  =>
   {
     running = false;
     showingResultScreen = true;
@@ -74,7 +74,8 @@
       console.error("CRITICAL: Both players have the same ID!");
     }
     /* END */
-      client.sendMatchResults(data);
+      console.log("Sending Match - P1:", data.player_one_id, "P2:", data.player_two_id);
+      await client.sendMatchResults(data);
       toast.success($t('game.match_results_sent'));//for testing
       console.log("Match finished: result sent");
     } catch (e: any) {
