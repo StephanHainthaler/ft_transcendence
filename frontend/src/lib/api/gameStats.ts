@@ -3,67 +3,54 @@ import { request } from "./utils";
 import type { Writable } from "@lib/types/writable";
 import type { JWT } from "@shared/api";
 
-async function fetchUserStats(token: Writable<JWT | null>, userId: number):  Promise<UserStats | null>
+async function fetchUserStats(userId: number):  Promise<UserStats | null>
 {
 
 	const req = new Request(`/api/stats/v1/user/${userId}`,
 		{
 			method: "GET",
-			headers: {'authorization': `Bearer ${ token.get()?.raw }`},
 		}
 	);
-	const response = await request(req, token);
-	const data = await response.json();
-	if (!response.ok)
-		throw (data);
-	return (data as UserStats);
+	const response = await request(req);
+	return (response);
 }
 
-async function fetchMatchHistory(token: Writable <JWT | null>, userId: number) : Promise<MatchHistoryEntry[]>
+async function fetchMatchHistory(userId: number) : Promise<MatchHistoryEntry[]>
 {
 	const req = new Request(`/api/stats/v1/history/${userId}`,
 		{
 			method: "GET",
-			headers: {'authorization': `Bearer ${ token.get()?.raw }`}
 		}
 	);
-	const response = await request(req, token);
-	const data = await response.json();
-	if (!response.ok) 
-		throw (data);
-	return (data as MatchHistoryEntry[]);
+	const response = await request(req);
+	return (response);
 }
 
-async function fetchLeaderboard(token: Writable<JWT | null>, page: number = 1): Promise<UserStats[] | []> {
+async function fetchLeaderboard(page: number = 1): Promise<UserStats[] | []> {
 	const req = new Request(`/api/stats/v1/leaderboard?page=${page}`,
 		{
 			method: "GET",
-			headers: {'authorization': `Bearer ${ token.get()?.raw }`}
 		}
 	);
-	const response = await request(req, token);
-	const data = await response.json();
-	if (!response.ok) 
-		throw (data);
-	return (data as UserStats[]);
+	const response = await request(req);
+	return (response);
 }
 
-const sendMatchResults = async (token: Writable<JWT | null>, matchData: MatchSubmissionData) => {
+const sendMatchResults = async (matchData: MatchSubmissionData) => {
   
-  const req = new Request('/api/stats/v1/match', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token.get()?.raw}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(matchData)
-  });
+  const req = new Request('/api/stats/v1/match',
+	{
+    	method: 'POST',
+		headers:
+		{
+			'Content-Type': 'application/json'
+		},
+    	body: JSON.stringify(matchData)
+  	}
+  );
 
-  const response = await request(req, token);
-  const data = await response.json();
-  if (!response.ok) throw data;
-
-  return data;
+	const response = await request(req);
+	return (response);
 }
 
 export { fetchUserStats, fetchMatchHistory, fetchLeaderboard, sendMatchResults };
