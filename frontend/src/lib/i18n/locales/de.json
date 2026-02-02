@@ -104,6 +104,11 @@
     "rematch": "Revanche",
     "return": "Zurück zur Herausforderungsseite",
     "challenge": "Herausforderung",
+    "match_history_load_error": "Fehler beim Laden des Spielverlaufs.",
+    "user_stats_load_error": "Fehler beim Laden der Benutzerstatistik.",
+    "leaderboard_load_error": "Fehler beim Laden der Bestenliste.",
+    "match_record_error": "Fehler beim Aufzeichnen der Spielergebnisse.",
+    "match_results_sent": "Spielergebnisse erfolgreich übermittelt.",
     "end": "Beenden"
   },
   "profile": {

@@ -20,8 +20,8 @@
   let canvas: HTMLCanvasElement | null = $state(null);
   let pong: Pong | null = $state(null);
   let matchData: MatchSubmissionData | null = $state(null);
-  let challengingUser = {} as AppUser;
-  let challengedUser = {} as AppUser;
+  let challengingUser: AppUser | null = $state(null);
+  let challengedUser: AppUser | null = $state(null);
   
   const loadPageData = async () =>
   {
@@ -66,37 +66,20 @@
     }
   };
 
-  const onGameEnd = (data: MatchSubmissionData)  =>
+const onGameEnd = (data: MatchSubmissionData)  =>
+{
+  running = false;
+  showingResultScreen = true;
+
+  console.log(data);
+  matchData = data;
+  try
   {
-    running = false;
-    showingResultScreen = true;
-
-    console.log(data);
-    matchData = data;
-    /* For DEBUG */
-    try
-    {
-      console.log("DEBUG - Player 1 ID:", data.player_one_id);
-      console.log("DEBUG - Player 2 ID:", data.player_two_id);
-
-      if (data.player_one_id === data.player_two_id)
-        console.error("CRITICAL: Both players have the same ID!");
-    
-    /* END */
-      console.log("Sending Match - P1:", data.player_one_id, "P2:", data.player_two_id);
-      console.log('onGameEnd raw data:', data);
-      console.log('onGameEnd JSON:', JSON.stringify(data));
-      client.sendMatchResults(data);
-      toast.success($t('game.match_results_sent')); //for testing
-      console.log("Match finished: result sent");
-    }
-    catch (e: any)
-    {
-      console.error(e);
-      toast.error(`Failed to send match results: ${e.message || e}`); //for testing
-      console.error("Failed to send match results:", `${e.message || e}`);
-    }
-  };
+    client.sendMatchResults(data);
+  } catch (e: any) {
+    console.error("GameEnd Error:", e.message);
+  }
+};
 
   function returnToChallengePage() : void
   {

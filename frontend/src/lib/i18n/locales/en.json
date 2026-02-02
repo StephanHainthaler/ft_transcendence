@@ -104,6 +104,11 @@
     "duration": "Match Duration",
     "rematch": "Rematch",
     "return": "Return to Challenge Page",
+    "match_results_sent": "Match results submitted successfully.",
+    "match_history_load_error": "Error loading match history.",
+    "user_stats_load_error": "Error loading user statistics.",
+    "leaderboard_load_error": "Error loading leaderboard.",
+    "match_record_error": "Error recording match results.",
     "end": "End"
   },
   "profile": {
