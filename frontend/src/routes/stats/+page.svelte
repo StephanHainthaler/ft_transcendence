@@ -7,6 +7,8 @@
   import StatsCard from "$lib/components/custom/StatsCard.svelte";
   import CyberTable from "$lib/components/custom/CyberTable.svelte";
   import ResultBadge from "$lib/components/custom/ResultBadge.svelte";
+    import type { ApiClient } from '@lib/api/client.svelte';
+    import type { AppUser } from '@lib/api/appUser';
 
   let stats = $state<UserStats | null>(null);
   let history = $state<MatchHistoryEntry[]>([]);
@@ -15,11 +17,14 @@
   let isLoading = $state(true);
   let currentPage = $state(1);
   let usernames = $state<Record<number, string>>({});
+  
+
 
   const historyHeaders = [
-    { label: "#ID", class: "w-16 hidden md:table-cell text-center opacity-50" },
+    { label: "#ID", class: "w-16 text-center opacity-50" },
     { label: $t('stats.played'), class: "text-center hidden md:table-cell" },
-    { label: $t('stats.opponent'), class: "text-left" },
+    { label: $t('stats.opponent'), class: "text-left hidden md:table-cell" },
+    { label: $t('stats.nickname'), class: "text-left hidden md:table-cell" },
     { label: $t('stats.score'), class: "text-center" },
     { label: $t('stats.duration'), class: "text-center hidden md:table-cell" },
     { label: $t('stats.result'), class: "text-right pr-8" }
@@ -30,53 +35,12 @@
     return `${Math.floor(totalSeconds / 60)}:${(totalSeconds % 60).toString().padStart(2, '0')}`;
   }
 
-  //Something for testing without backend
-// const getMockMatches = (page: number) => {
-//     const userId = client.user?.id || 1; // Беремо ID поточного юзера або 1
-    
-//     return Array.from({ length: 5 }, (_, i) => {
-//         const p1_score = Math.floor(Math.random() * 11);
-//         const p2_score = Math.floor(Math.random() * 11);
-//         const winner_id = p1_score > p2_score ? userId : (p1_score < p2_score ? 55 : null);
-
-//         return {
-//             match_id: (page - 1) * 5 + i + 1,
-//             player_one_id: userId,
-//             player_two_id: 55,
-//             p1_score: p1_score,
-//             p2_score: p2_score,
-//             winner_id: winner_id,
-//             match_duration: Math.random() * 480000, // до 8 хвилин у мс
-//             timestamp: Date.now() - Math.random() * 10000000 // випадковий час у минулому
-//         };
-//     });
-// };
-
-// async function loadData(page: number = 1)
-// {
-//   try {
-//       isLoading = true;
-//       let matches;
-//       if (page === 1) {
-//           matches = getMockMatches(1);
-//       } else if (page === 2) {
-//           matches = getMockMatches(2);
-//       } else {
-//           matches = [];
-//       }
-//       history = matches; 
-//       currentPage = page;
-//       return {
-//           matches: matches,
-//           totalCount: 10 
-//       };
-//   } catch (e) {
-//       console.error("Load error:", e);
-//   } finally
-//   {
-//     isLoading = false;
-//   }
-// }
+function usersFindUsername(userId: number): string {
+  if (userId === 0) {
+    return 'AI Opponent';
+  }
+  return usernames[userId] ?? 'Unknown_Pilot';
+}
 
 async function loadData(page: number = 1)
 {
@@ -131,7 +95,25 @@ async function loadData(page: number = 1)
   }
 }
 
-onMount(() => loadData());
+async function loadUsers()
+{
+  let users: AppUser[] = [];
+  users = await client.getUsers();
+  if (!users)
+  {
+    console.error('Failed to load users');
+    return;
+  }
+  console.log("Loaded users:", users);
+  users.forEach(user => {
+    usernames[user.id] = user.displayName || user.name || 'Unknown_Pilot';
+  });
+}
+
+onMount(async() => {
+  loadData();
+  loadUsers();
+  });
 </script>
 
 <div class="flex items-center gap-4 mb-8 justify-center">
@@ -174,7 +156,7 @@ onMount(() => loadData());
       {@const isDraw = match.winner_id === null}
 
       <tr class="group hover:bg-primary/5 transition-all duration-300">
-        <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-muted-foreground hidden md:table-cell">
+        <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-muted-foreground">
           #{match.match_id}
         </td>
 
@@ -182,9 +164,15 @@ onMount(() => loadData());
           {new Date(match.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </td>
 
-        <td class="p-4">
-          <span class="font-bold text-xs text-white uppercase tracking-wider">
+        <td class="p-4 hidden md:table-cell">
+          <span class="font-bold text-xs text-white uppercase tracking-wider hidden md:table-cell">
             {$t('stats.user')} {opponentId}
+          </span>
+        </td>
+
+        <td class="p-4 hidden md:table-cell">
+          <span class="font-bold text-xs text-white uppercase tracking-wider">
+            {usersFindUsername(opponentId)}
           </span>
         </td>
 
@@ -227,14 +215,15 @@ onMount(() => loadData());
     {:else if activeTab === 'leaderboard'}
       <CyberTable headers={[
         { label: $t('leaderboard.rank'), class: "w-20 text-center opacity-50" },
-        { label: $t('leaderboard.player_id'), class: "text-center hidden md:table-cell" },
+        { label: $t('leaderboard.player_id'), class: "text-left hidden md:table-cell" },
         { label: $t('leaderboard.nickname'), class: "text-left min-w-[100px]" },
         { label: $t('leaderboard.games_played'), class: "text-center hidden md:table-cell"},
         { label: $t('stats.wins'), class: "text-center" },
         { label: $t('stats.losses'), class: "text-center" },
-        { label: $t('leaderboard.points'), class: "text-right pr-8" }
+        { label: $t('leaderboard.points'), class: "text-center pr-8" }
       ]}>
-        {#each leaderboard as player}
+        {#each leaderboard.filter(player => player.user_id !== 0) as player}
+          {#if player.user_id !== 0}
           <tr class="group hover:bg-primary/6 transition-all duration-300">
             <td class="p-4 text-center">
               <span class="font-mono text-xl font-black {player.rank <= 3 ? 'text-primary drop-shadow-[0_0_5px_var(--my-primary)]' : 'text-white/20'}">
@@ -242,11 +231,11 @@ onMount(() => loadData());
               </span>
             </td>
             <td class="p-4 hidden md:table-cell">
-              <span class="font-bold text-xs text-white uppercase tracking-wider hidden md:table-cell">{$t('stats.user')} {player.user_id}</span>
+              <span class="font-bold text-xs text-white text-center uppercase tracking-wider hidden md:table-cell">{$t('stats.user')} {player.user_id}</span>
             </td>
             <td class="p-4 max-w-[100px] md:max-w-[200px]">
               <span class="font-black text-sm text-white uppercase tracking-wider group-hover:text-primary transition-colors block truncate">
-                {player.username || 'Unknown_Pilot'}
+                {usersFindUsername(player.user_id)}
               </span>
             </td>
             <td class="p-4 text-center font-mono text-white/60 hidden md:table-cell">
@@ -254,8 +243,9 @@ onMount(() => loadData());
             </td>
             <td class="p-4 text-center font-mono text-white/80">{player.wins}</td>
             <td class="p-4 text-center font-mono text-white/80">{player.losses}</td>
-            <td class="p-4 text-right pr-8 font-mono text-primary font-bold">{player.total_points}</td>
+            <td class="p-4 text-center pr-8 font-mono text-primary font-bold">{player.total_points}</td>
           </tr>
+          {/if}
         {:else}
         <tr>
           <td colspan="7" class="p-12 text-center bg-primary/5 border-t border-border/30">

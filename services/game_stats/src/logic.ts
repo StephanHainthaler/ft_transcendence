@@ -24,7 +24,7 @@ export function getUserStats(userId: number): UserStats | null
 		.select('*')
 		.where(eq('user_id', userId))
 		.single();
-		if (! user_stats)
+		if (!user_stats)
 		{
 			const default_stats = 
 			{

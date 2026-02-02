@@ -66,7 +66,7 @@
     }
   };
 
-  const onGameEnd = async (data: MatchSubmissionData)  =>
+  const onGameEnd = (data: MatchSubmissionData)  =>
   {
     running = false;
     showingResultScreen = true;
@@ -84,7 +84,9 @@
     
     /* END */
       console.log("Sending Match - P1:", data.player_one_id, "P2:", data.player_two_id);
-      await client.sendMatchResults(data);
+      console.log('onGameEnd raw data:', data);
+      console.log('onGameEnd JSON:', JSON.stringify(data));
+      client.sendMatchResults(data);
       toast.success($t('game.match_results_sent')); //for testing
       console.log("Match finished: result sent");
     }

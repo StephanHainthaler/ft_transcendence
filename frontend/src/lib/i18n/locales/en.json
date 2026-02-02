@@ -64,6 +64,7 @@
     "duration": "Duration",
     "result": "Result",
     "user": "User",
+    "nickname": "Opponent Nickname",
     "played": "Played",
     "victory": "Victory",
     "defeat": "Defeat",
