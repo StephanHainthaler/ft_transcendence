@@ -19,7 +19,7 @@ export class Player
 	private	_movingUp: boolean;
 	private	_movingDown: boolean;
 
-	public constructor(game: Pong, data: AppUser, playerNumber: number, x: number, y: number, isAI: boolean)
+	public constructor(game: Pong, data: AppUser, playerNumber: number, x: number, y: number)
 	{
 		this._game = game;
 		this._data = data;
@@ -29,7 +29,10 @@ export class Player
 		this._origin = {x, y};
 		this._velocity = 5;
 		this._score = 0;
-		this._isAI = isAI;
+		if (this._data.id === 0)
+			this._isAI = true;
+		else
+			this._isAI = false;
 		this._onHitCoolDown = false;
 		this._movingUp = false;
 		this._movingDown = false;
