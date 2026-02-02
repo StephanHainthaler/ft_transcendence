@@ -12,6 +12,7 @@
   import { Pong } from "@lib/game/pong";
   import type { MatchSubmissionData } from "@shared/game_stats";
     import { User } from "@lucide/svelte";
+    import Button from "@lib/components/ui/button/button.svelte";
 
   let users: AppUser[] = $state([]);
   let aiUser: AppUser | null = $state(null);
@@ -20,8 +21,8 @@
   let canvas: HTMLCanvasElement | null = $state(null);
   let pong: Pong | null = $state(null);
   let matchData: MatchSubmissionData | null = $state(null);
-  let challengingUser: AppUser | null = $state(null);
-  let challengedUser: AppUser | null = $state(null);
+  let challengingUser = {} as AppUser;
+  let challengedUser = {} as AppUser;
   
   const loadPageData = async () =>
   {
@@ -131,12 +132,12 @@ const onGameEnd = (data: MatchSubmissionData)  =>
           {/if}
           <p class="mb-4">{$t('game.duration')}: {matchData.duration} </p>
         {/if}
-        <button onclick={ returnToChallengePage } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        <Button variant="tab" onclick={ returnToChallengePage } >
           {$t('game.return')}
-        </button>
-        <button onclick={ startRematch } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        </Button>
+        <Button variant="tab" onclick={ startRematch } >
           {$t('game.rematch')}
-        </button>
+        </Button>
       {/if}
     </Card.Content>
   </Card.Root>
