@@ -196,17 +196,18 @@ export class ApiClient {
 
   async logout() {
     try {
-      await logoutRequest();
       this.clearSession();
+      await logoutRequest();
       goto('/auth');
     } catch (e: any) {
+      console.log(e);
       throw e;
     }
   }
 
   clearSession() {
-    this.userStore.set(null);
-    this.authStore.set(null);
+    this.userStore.delete();
+    this.authStore.delete();
     this.loggedIn = false;
   }
 

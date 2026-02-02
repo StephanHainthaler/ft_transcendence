@@ -1,10 +1,10 @@
 import { FastifyInstance } from "fastify";
-import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, generateRefreshToken, deleteSession } from "./dbHandlers";
-import { deleteUser, getUser } from "@ft_transcendence/user/src/api";
+import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession } from "./dbHandlers";
+import { deleteUser } from "@ft_transcendence/user/src/api";
 import { AuthUserClient, } from "@shared/user";
 import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody, OAuthCallBackBody } from "@shared/api";
 import { AuthUser } from "./db";
-import { generateJWT, generateTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
+import { generateTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
 import { ApiError } from "@server/error/apiError";
 
@@ -144,7 +144,10 @@ export function authRoutes(fastify: FastifyInstance) {
     try {
       const cookies = request;
       if (cookies)
-        reply.status(200).header('set-cookie', `refresh_token=0; Max-Age=0; Path=/`).send()
+        reply.status(200)
+          .clearCookie('refresh_token')
+          .clearCookie('access_token')
+          .send();
       else
         return reply.status(400).send({ message: 'User not logged in' });
     } catch (e: any) {
