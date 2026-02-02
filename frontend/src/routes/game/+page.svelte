@@ -124,7 +124,7 @@
       {#if !running && !showingResultScreen}
         <Grid title={$t('game.challenge')}>
           {#each users as user}
-            <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.challenge')} />
+            <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.to_challenge')} />
           {/each}
         </Grid>
       {:else if running && !showingResultScreen}
