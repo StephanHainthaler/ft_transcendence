@@ -15,9 +15,9 @@ export class Pong
 	private _player1: Player;
 	private _player2: Player;
 	private _ball: Ball;
-	private _maxPlayerScore: number = 1;
+	private _maxPlayerScore: number = 10;
 	private _currentMatchDuration: number = 0;
-	private _maxMatchduration: number = 11000; // 5 min in ms
+	private _maxMatchduration: number = 30000; // 5 min in ms
 	private _matchStartTime: number = 0;
 	private _pauseStartTime: number = 0;
 	private _pauseDuration: number = 0;
@@ -37,8 +37,8 @@ export class Pong
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
 		this.resizeCanvas();
 
-		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.5, false);
-		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.5, true);
+		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.5);
+		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.5);
 		this._ball = new Ball(this, this._player1, this._player2);
 	
 		this.setupEvents();
@@ -123,15 +123,15 @@ export class Pong
 			|| this._player1.getScore() >= this._maxPlayerScore
 			|| this._player2.getScore() >= this._maxPlayerScore)
 		{
-			// if (this._player1.getScore() == this._player2.getScore())
-			// 	return ;
+			if (this._player1.getScore() != this._player2.getScore())
+			{
+				this._isPaused = true;
+				this.removeEvents();
 
-			this._isPaused = true;
-			this.removeEvents();
-
-			const data = this.submitMatchData();
-			this._onGameEnd(data);
-			return ;
+				const data = this.submitMatchData();
+				this._onGameEnd(data);
+				return ;
+			}
 		}
 
 		// calculate delta: how many "60fps frames" worth of time passed
@@ -218,7 +218,7 @@ export class Pong
 
 		// draw countdown for last 10 seconds
 		if (this._currentMatchDuration >= this._maxMatchduration - 10000)
-			this.drawCountDown(this._currentMatchDuration);
+			this.drawCountDown(this._currentMatchDuration, this._maxMatchduration, this._canvas.width * 0.491, this._canvas.height * 0.92);
 	}
 
 	public	drawDigit(digit: number, originX: number, originY: number)
@@ -292,21 +292,21 @@ export class Pong
 		}
 	}
 
-	public	drawCountDown(currentDuration: number): void
+	public	drawCountDown(currentDuration: number, endTime: number, originX: number, originY: number): void
 	{
 		let currentDigit: number = 0;
 
-		if (currentDuration >= this._maxMatchduration - 10000 && currentDuration < this._maxMatchduration - 9000) currentDigit = 9;
-		else if (currentDuration >= this._maxMatchduration - 9000 && currentDuration < this._maxMatchduration - 8000) currentDigit = 8;
-		else if (currentDuration >= this._maxMatchduration - 8000 && currentDuration < this._maxMatchduration - 7000) currentDigit = 7;
-		else if (currentDuration >= this._maxMatchduration - 7000 && currentDuration < this._maxMatchduration - 6000) currentDigit = 6;
-		else if (currentDuration >= this._maxMatchduration - 6000 && currentDuration < this._maxMatchduration - 5000) currentDigit = 5;
-		else if (currentDuration >= this._maxMatchduration - 5000 && currentDuration < this._maxMatchduration - 4000) currentDigit = 4;
-		else if (currentDuration >= this._maxMatchduration - 4000 && currentDuration < this._maxMatchduration - 3000) currentDigit = 3;
-		else if (currentDuration >= this._maxMatchduration - 3000 && currentDuration < this._maxMatchduration - 2000) currentDigit = 2;
-		else if (currentDuration >= this._maxMatchduration - 2000 && currentDuration < this._maxMatchduration - 1000) currentDigit = 1;
-		else if (currentDuration >= this._maxMatchduration - 1000 && currentDuration < this._maxMatchduration) currentDigit = 0;
-		this.drawDigit(currentDigit, this._canvas.width * 0.491, this._canvas.height * 0.92);
+		if (currentDuration >= endTime - 10000 && currentDuration < endTime - 9000) currentDigit = 9;
+		else if (currentDuration >= endTime - 9000 && currentDuration < endTime - 8000) currentDigit = 8;
+		else if (currentDuration >= endTime - 8000 && currentDuration < endTime - 7000) currentDigit = 7;
+		else if (currentDuration >= endTime - 7000 && currentDuration < endTime - 6000) currentDigit = 6;
+		else if (currentDuration >= endTime - 6000 && currentDuration < endTime - 5000) currentDigit = 5;
+		else if (currentDuration >= endTime - 5000 && currentDuration < endTime - 4000) currentDigit = 4;
+		else if (currentDuration >= endTime - 4000 && currentDuration < endTime - 3000) currentDigit = 3;
+		else if (currentDuration >= endTime - 3000 && currentDuration < endTime - 2000) currentDigit = 2;
+		else if (currentDuration >= endTime - 2000 && currentDuration < endTime - 1000) currentDigit = 1;
+		else if (currentDuration >= endTime - 1000 && currentDuration < endTime) currentDigit = 0;
+		this.drawDigit(currentDigit, originX, originY);
 	}
 
 	public	changeGameState() : void
@@ -357,8 +357,6 @@ export class Pong
 		this._isPaused = true;
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
-		this._baseWidth = 1280;
-		this._baseHeight = 720;
 
 		this.resizeCanvas();
 		this.setupEvents();

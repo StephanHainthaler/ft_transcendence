@@ -11,9 +11,10 @@
 
   import { Pong } from "@lib/game/pong";
   import type { MatchSubmissionData } from "@shared/game_stats";
-  // import { recordMatch } from "../../../../services/game_stats/src/logic";
+    import { User } from "@lucide/svelte";
 
   let users: AppUser[] = $state([]);
+  let aiUser: AppUser | null = $state(null);
   let running = $state(false);
   let showingResultScreen = $state(false);
   let canvas: HTMLCanvasElement | null = $state(null);
@@ -22,7 +23,8 @@
   let challengingUser = {} as AppUser;
   let challengedUser = {} as AppUser;
   
-  const loadPageData = async () => {
+  const loadPageData = async () =>
+  {
     await tick();
     //await tick();
     try
@@ -30,6 +32,17 @@
       const data = await client.getUsers();
       console.log(data);
       users = data;
+
+      //filter out current user
+      if (client.user)
+        users = users.filter((u) => u.id !== client.user!.id);
+
+      //add new AI user
+      aiUser = new AppUser({
+        id: 0, //0 or -1 to indicate AI user?
+        name: "AI Opponent"
+      }, null);
+      users.push(aiUser);
     }
     catch (e: any)
     {
@@ -37,18 +50,14 @@
     }
   }
 
-  let testUser1 = {} as AppUser;
-  let testUser2 = {} as AppUser;
-
-  loadPageData();
-
-  const challengeUser = async (u: AppUser) =>
+  const challengeUser = async (challengedUser: AppUser) =>
   {
     running = true;
     showingResultScreen = false;
+  
     await tick();
-    console.log(u);
-    challengedUser = u;
+    console.log(challengedUser);
+
     if (client.user)
     {
       challengingUser = new AppUser(client.user, null);
@@ -70,17 +79,19 @@
       console.log("DEBUG - Player 1 ID:", data.player_one_id);
       console.log("DEBUG - Player 2 ID:", data.player_two_id);
 
-    if (data.player_one_id === data.player_two_id) {
-      console.error("CRITICAL: Both players have the same ID!");
-    }
+      if (data.player_one_id === data.player_two_id)
+        console.error("CRITICAL: Both players have the same ID!");
+    
     /* END */
       console.log("Sending Match - P1:", data.player_one_id, "P2:", data.player_two_id);
       await client.sendMatchResults(data);
-      toast.success($t('game.match_results_sent'));//for testing
+      toast.success($t('game.match_results_sent')); //for testing
       console.log("Match finished: result sent");
-    } catch (e: any) {
+    }
+    catch (e: any)
+    {
       console.error(e);
-      toast.error(`Failed to send match results: ${e.message || e}`);//for testing
+      toast.error(`Failed to send match results: ${e.message || e}`); //for testing
       console.error("Failed to send match results:", `${e.message || e}`);
     }
   };
@@ -91,23 +102,15 @@
     showingResultScreen = false;
 	};
 
-  function startRematch() : void
+  async function startRematch()
   {
-    if (!pong)
-      console.error("Pong instance is null!");
-    else
-      console.log("Pong instance exists!");
-    if (!pong?.getCanvas())
-      console.error("Canvas is null!");
-    else
-      console.log("Canvas exists!");
-  
-    if (pong && pong.getCanvas())
+    if (pong)
     {
       running = true;
       showingResultScreen = false;
-      pong.resetMatch(pong?.getCanvas());
-      //pong = new Pong(challengingUser, challengedUser, canvasElement, onGameEnd);
+
+      await tick();
+      pong.resetMatch(canvas!);
     }
   };
 
