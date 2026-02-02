@@ -80,7 +80,7 @@ export const GameStatsControllers = {
 			const data: MatchSubmissionData = {
 				player_one_id: safeParseInt(body.player_one_id, 'player_one_id', 0),
 				player_two_id: safeParseInt(body.player_two_id, 'player_two_id', 0),
-				winner_id: safeParseInt(body.winner_id, 'winner_id', 1),
+				winner_id: safeParseInt(body.winner_id, 'winner_id', 0),
 				p1_score: safeParseInt(body.p1_score, 'p1_score', 0),
 				p2_score: safeParseInt(body.p2_score, 'p2_score', 0),
 				duration: safeParseInt(body.duration || 0, 'duration', 0),
