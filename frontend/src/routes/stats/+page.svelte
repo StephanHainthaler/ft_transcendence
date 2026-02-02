@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { client } from "@lib/api/index";
+  import { client } from "@lib/api/index.svelte";
   import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";
   import * as Card from "$lib/components/ui/card";
   import { Button } from "$lib/components/ui/button";
