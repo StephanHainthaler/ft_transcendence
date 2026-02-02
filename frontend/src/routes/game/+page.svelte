@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { client } from "@lib/api/index";
+  import { client } from "@lib/api/index.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";
   import * as Card from "$lib/components/ui/card";
   import { tick } from 'svelte';

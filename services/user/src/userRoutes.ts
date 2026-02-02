@@ -5,7 +5,6 @@ import { extractJWTFromHeader } from "@server/jwt/validate";
 import { eq, IN } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
 import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "./dbHandlers";
-import { MultipartFile } from "@fastify/multipart";
 
 export function userRoutes(fastify: FastifyInstance) {
   fastify.get<{
@@ -19,7 +18,8 @@ export function userRoutes(fastify: FastifyInstance) {
     }
   }>('/:userId?', (request, reply) => {
     try {
-      const token = extractJWTFromHeader(request.headers.authorization);
+      console.log('ACCESSTOKEN IN USER', request.headers.cookie);
+      const token = extractJWTFromHeader(request.cookies.access_token);
       try {
         const { user, avatar } = getUser(token.payload.sub);
         if (!user) {
@@ -31,7 +31,7 @@ export function userRoutes(fastify: FastifyInstance) {
         throw new ApiError({ message: `Database Error: ${e.message || e}`, code: 409 })
       }
     } catch (e: any) {
-      reply.code(e.code || 500).send({ success: false, message: e.message || 'Unauthorized'})
+      reply.code(e.code || 400).send({ success: false, message: e.message || 'Missing Auth Token' })
     }
   });
 
@@ -108,28 +108,32 @@ export function userRoutes(fastify: FastifyInstance) {
     }
   }>('/update', async (request, reply) => {
     try {
-      const token = extractJWTFromHeader(request.headers.authorization);
+      const token = extractJWTFromHeader(request.cookies.access_token);
 
       const parts = request.parts();
       let user: Partial<User> | undefined;
-      let avatar: MultipartFile | undefined;
+      let avatarBuffer: Buffer | undefined;
+      let avatarMimetype: string | undefined;
 
       for await (const part of parts) {
         console.log('Part:', part.fieldname, part.type);
 
         if (part.type === 'file' && part.fieldname === 'avatar') {
-          avatar = part;
+          avatarBuffer = await part.toBuffer();
+          avatarMimetype = part.mimetype;
         } else if (part.type === 'field' && part.fieldname === 'user') {
           user = JSON.parse(part.value as string);
+          console.log(user);
         }
       }
 
       console.log('Final user:', user);
-      console.log('Final avatar:', avatar);
+      console.log('Final avatar:', avatarBuffer);
 
       if (!user) throw new ApiError({ code: 400, message: 'Missing user form data' });
 
-      const data = await updateUser(token.payload.sub, user, avatar);
+      const avatarData = avatarBuffer && avatarMimetype ? { buffer: avatarBuffer, mimetype: avatarMimetype } : null;
+      const data = await updateUser(token.payload.sub, user, avatarData);
 
       if (!data)
         throw new ApiError({ code: 404, message: 'User not found' });
@@ -159,7 +163,7 @@ export function userRoutes(fastify: FastifyInstance) {
   }>('/delete', async (req, repl) => {
       try {
         console.log('got delete request');
-        const token = extractJWTFromHeader(req.headers.authorization);
+        const token = extractJWTFromHeader(req.cookies.access_token);
         await deleteUser(token.payload.sub);
         repl.code(200).send({ success: true });
       } catch (e: any) {

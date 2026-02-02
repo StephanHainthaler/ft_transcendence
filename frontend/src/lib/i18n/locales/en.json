@@ -1,13 +1,16 @@
 {
   "main_name": "Transcendence",
   "menu": "Menu",
+  "welcome": "Welcome",
+  "play": "Play",
+  "moto": "ARENA_READY: LINK YOUR PADDLE TO THE GRID",
   "login": {
     "login": "Login",
     "username": "Email or Username",
     "username_ph": "Enter your email or username",
     "password": "Password",
     "password_ph": "Enter your password",
-    "singin": "Sign In"
+    "signin": "Sign In"
   },
   "signup": {
     "signup": "Sign up",
@@ -18,7 +21,7 @@
     "email_ph": "Enter your email",
     "password": "Password",
     "password_ph": "Create a password",
-    "pass_repeat": "Enter your password",
+    "pass_repeat": "Repeat your password",
     "pass_confirm": "Confirm your password",
     "loading": "Signing up...",
     "pass_no_match": "Passwords don't match"
@@ -30,7 +33,7 @@
     "error2": "Something went wrong...",
     "redirect": "OAuth Redirect",
     "go_back": "Go back...",
-    "loading": "Completing GitHub OAuth…"
+    "loading": "Completing GitHub OAuth..."
   },
   "sidebar": {
     "login": "Login",
@@ -60,14 +63,21 @@
     "score": "Score",
     "duration": "Duration",
     "result": "Result",
+    "user": "User",
+    "played": "Played",
     "victory": "Victory",
     "defeat": "Defeat",
     "draw": "Draw",
-    "page": "Page"
+    "page": "Page",
+    "loading": "Loading..."
   },
   "leaderboard": {
     "title": "Global Leaderboard",
+    "rank": "Rank",
     "player_id": "Player ID",
+    "nickname": "Nickname",
+    "games_played": "Games played",
+    "points": "Points",
     "no_players": "No players found in the leaderboard"
   },
   "buttons": {
@@ -85,7 +95,8 @@
   },
   "game": {
     "game": "Game",
-    "challenge": "Challenge"
+    "challenge": "Challenge",
+    "end": "End"
   },
   "profile": {
     "profile": "Profile",
@@ -99,7 +110,7 @@
     "save": "Save Changes",
     "cancel": "Cancel",
     "edit": "Edit",
-    "undated": "Updated successfully",
+    "updated": "Updated successfully",
     "update_err": "Error updating profile",
     "loading": "Saving changes...",
     "delete_account": "Delete Account, please wait...",
@@ -108,13 +119,15 @@
     "delete_success": "Account deleted successfully! Redirecting...",
     "yes": "Yes",
     "no": "No",
-    "delete_err": "Error deleting account"
+    "delete_err": "Error deleting account",
+    "avatar_btn": "Upload Avatar"
   },
   "tournament": {
     "tournament": "Tournament",
     "available": "Available Players",
     "selected": "Selected Players",
     "choose": "Choose",
+    "winn_is": "And the Winner is...",
     "start": "Start"
   },
   "error": {

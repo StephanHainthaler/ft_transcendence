@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
-  import { client } from "$lib/api";
+  import { client } from "$lib/api/index.svelte";
   import { validateInput } from "@lib/validation/inputValidation";
   import Label from "$lib/components/ui/label/label.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
@@ -13,11 +13,11 @@
     e.stopPropagation();
 
     try {
-      const email = validateInput(usernameBuffer, { type: 'email' }).input;
-      const username = validateInput(usernameBuffer, { type: 'username' }).input;
+      const email = validateInput(user_nameBuffer, { type: 'email' }).input;
+      const user_name = validateInput(user_nameBuffer, { type: 'username' }).input;
 
       await client.login({
-        username,
+        user_name,
         email,
         passwd: userPasswordBuffer,
       });
@@ -28,7 +28,7 @@
     }
   }
 
-  let usernameBuffer = $state("");
+  let user_nameBuffer = $state("");
   let userPasswordBuffer = $state("");
   let errorMessage = $state("");
 
@@ -41,9 +41,9 @@
     <div class="space-y-2">
       <Label for="username">{$t('login.username')}</Label>
       <Input 
-        id="username"
+        id="user_name"
         type="text"
-        bind:value={usernameBuffer}
+        bind:value={user_nameBuffer}
         placeholder={$t('login.username_ph')}
         required
       />
@@ -68,6 +68,6 @@
   {/if}
 
   <Button type="submit" class="w-full">
-    {$t('login.singin')}
+    {$t('login.signin')}
   </Button>
 </form>

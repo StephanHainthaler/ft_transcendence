@@ -1,7 +1,7 @@
 import { Separator } from "@lib/components/ui/Seperator";
 import type { Route } from "@lib/types/route";
 import { button, div, form, h1, h2, updateId, span, el, type VNode } from "@lib/vdom";
-import { client } from "@lib/index";
+import { client } from "@lib/api/index.svelte";
 import { Layout } from "@lib/components/layout";
 import { fetchUserStats, fetchMatchHistory } from "@lib/api/gameStats";
 import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";

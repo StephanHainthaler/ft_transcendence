@@ -21,9 +21,6 @@ clean:
 	@npm run clean
 
 test:
-	@make test-frontend
-
-test-backend:
 	npm run test:backend
 
 test-frontend:

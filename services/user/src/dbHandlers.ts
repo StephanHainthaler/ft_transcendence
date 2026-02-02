@@ -4,7 +4,6 @@ import { eq, IN } from "@server/orm";
 import { sqliteErrorToApiError } from "@server/orm/error"
 import { writeFile, unlink } from "node:fs/promises";
 import { join } from "node:path";
-import { MultipartFile } from "@fastify/multipart";
 
 const AVATAR_DIR = process.env.AVATAR_DIR!;
 if (!AVATAR_DIR) throw new Error('AVATAR_DIR env is missing');
@@ -69,7 +68,7 @@ export function getAllUsers(): { user: User, avatar: Avatar | null }[] {
   }
 }
 
-async function storeAvatar(userId: number, avatar: MultipartFile | string): Promise<Avatar> {
+async function storeAvatar(userId: number, avatar: { buffer: Buffer, mimetype: string } | string): Promise<Avatar> {
   try {
     if (typeof avatar !== 'string') {
       const currentAvatar = db
@@ -88,15 +87,12 @@ async function storeAvatar(userId: number, avatar: MultipartFile | string): Prom
         db.from('avatars').delete().where(eq('id', currentAvatar.id)).run();
       }
 
-      const extensionIdx = avatar.filename.lastIndexOf('.');
-      const filename = avatar.filename.slice(0, extensionIdx);
-      const extension = avatar.filename.slice(extensionIdx);
-      const newFileName = `${filename}-${Date.now()}${extension}`;
+      const extension = avatar.mimetype.split('/')[1] || 'png';
+      const newFileName = `avatar-${userId}-${Date.now()}.${extension}`;
       const filePath = join(AVATAR_DIR, newFileName);
       const newLocation = join('/api/user/avatar', newFileName);
 
-      const buffer = Buffer.from(await avatar.toBuffer());
-      await writeFile(filePath, buffer);
+      await writeFile(filePath, avatar.buffer);
 
       const newAvatar = db
         .from('avatars')
@@ -177,7 +173,7 @@ export async function deleteUser(userId: number) {
   }
 }
 
-export async function updateUser(id: number, user: Partial<User>, avatar: MultipartFile | null | undefined): Promise<{ user: User, avatar: Avatar | null }> {
+export async function updateUser(id: number, user: Partial<User>, avatar: { buffer: Buffer, mimetype: string } | null | undefined): Promise<{ user: User, avatar: Avatar | null }> {
   try {
     const updatedUser = db
       .from('users')

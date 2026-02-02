@@ -1,13 +1,13 @@
 import type { AuthUserClient } from "../user";
 
 export type SignupRequestBody = {
-  username: string,
+  user_name: string,
   email: string,
   passwd: string
 };
 
 export type LoginRequestBody = {
-  username?: string,
+  user_name?: string,
   email?: string,
   passwd: string
 };
@@ -25,7 +25,7 @@ export type OAuthCallBackBody = {
 };
 
 export type UpdateCredsRequestBody = {
-  username?: string,
+  user_name?: string,
   email?: string,
   passwd?: string
 }
