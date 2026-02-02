@@ -1,5 +1,5 @@
 import { DB } from "@server/orm";
-import { int, text, defineTable } from "@server/orm";
+import { int, defineTable } from "@server/orm";
 import { UserStats, MatchHistoryEntry } from "@shared/game_stats";
 
 export interface Schema {
@@ -25,7 +25,7 @@ export const match_history_table = defineTable('match_history', {
 	winner_id: int().notNull().references(() => user_stats_table.columns.user_id),
 	match_duration: int().default(0),
 	p1_score: int().notNull(), 
-    p2_score: int().notNull()
+  p2_score: int().notNull()
 });
 
 // export let db = new DB<Schema>();
@@ -33,9 +33,9 @@ let databaseInstance: DB<Schema> | null = null;
 
 export function getDb(): DB<Schema> {
 	if (!databaseInstance) {
-        throw new Error("Database has not been initialized. Please call setDb() first.");
-    }
-    return databaseInstance;
+    throw new Error("Database has not been initialized. Please call setDb() first.");
+  }
+  return databaseInstance;
 }
 
 /**
@@ -43,11 +43,11 @@ export function getDb(): DB<Schema> {
  * Returns true if the database was successfully initialized, false if it was already set.
  */
 export function setDb(newDb: DB<Schema>): boolean {
-    if (databaseInstance) {
-        console.warn("Warning: Overwriting an existing database instance.");
-    }
-    databaseInstance = newDb;
-    return true;
+  if (databaseInstance) {
+    console.warn("Warning: Overwriting an existing database instance.");
+  }
+  databaseInstance = newDb;
+  return true;
 }
 
 export function initDB(path: string) {

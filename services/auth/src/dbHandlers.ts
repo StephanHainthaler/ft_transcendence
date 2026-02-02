@@ -8,6 +8,7 @@ import crypto from "crypto";
 import { JWT } from "@shared/api";
 import { eq } from "@server/orm";
 import { sqliteErrorToApiError } from "@server/orm/error";
+import { ApiError } from "@server/error/apiError";
 
 async function hashPassword(passwd: string): Promise<string> {
   const hash = await argon2.hash(passwd)
@@ -65,14 +66,11 @@ export function getAuthUser({
 
 export async function deleteAuthUser(authUser: AuthUser){
   try {
-    console.log('deleting session');
     deleteSession({ authId: authUser.id });
-    console.log('deleted session');
     db.from('auth_users')
       .where(eq('id', authUser.id))
       .delete()
       .run();
-    console.log('deleted user');
   } catch (e: any) {
     throw sqliteErrorToApiError(e);
   }
@@ -119,14 +117,12 @@ export async function updateUserCredentials(newAuthUser: Partial<AuthUser>) {
       const newPasswordHash = await hashPassword(passwd);
       newAuthUser.passwd = newPasswordHash;
     }
-    console.log("updating with newAuthUser:", newAuthUser);
     return db.from('auth_users')
       .update(newAuthUser)
       .where(eq('id', newAuthUser.id))
       .select('*')
       .single()
   } catch (e: any) {
-    console.error(e);
     throw sqliteErrorToApiError(e);
   }
 }
@@ -136,12 +132,21 @@ export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ use
   const { user: newUser } = await createUser(user);
   authUser.user_id = newUser.id;
 
-
-  if (!authUser.passwd) throw new Error("Auth user is missing password");
+  if (!authUser.passwd) throw new ApiError({ code: 404, message: "Password missing" });
   authUser.passwd = await hashPassword(authUser.passwd);
 
-  const newAuthUser = db.from('auth_users').insert(authUser).select('*').single();
-  if (!newAuthUser) throw new Error(`Auth user creation Failed with: ${JSON.stringify(authUser)}`)
+  let newAuthUser;
+  try {
+    newAuthUser = db
+      .from('auth_users')
+      .insert(authUser)
+      .select('*')
+      .single();
+  } catch (e) {
+    throw sqliteErrorToApiError(e);
+  }
+
+  if (!newAuthUser) throw new ApiError({ code: 500, message: 'Internal Server Error' });
   return { user: newUser, authUser: newAuthUser };
 }
 
@@ -171,14 +176,21 @@ export function createSession(user: AuthUser, secret: string): { accessToken: JW
   } catch (e: any) {
     throw sqliteErrorToApiError(e);
   }
-  if (currentSession) {
-    db.from('sessions').update(session).where(eq('auth_id', user.id)).run();
-  } else {
-    const query = db.from('sessions').insert(session);
-    const result = query.run();
-    if (result.changes <= 0) {
-      throw new Error('Database: token storage failed');
+  try {
+    if (currentSession) {
+      db
+        .from('sessions')
+        .update(session)
+        .where(eq('auth_id', user.id))
+        .run();
+    } else {
+      db
+        .from('sessions')
+        .insert(session)
+        .run();
     }
+  } catch (e) {
+    throw sqliteErrorToApiError(e);
   }
 
   return { accessToken, refreshToken };
@@ -191,9 +203,14 @@ export function getSession({
 }): Session | null{
   if (userId) {
     try {
-      const session = db.from('sessions').select('*').where(eq('user_id', userId)).single();
+      const session = db
+        .from('sessions')
+        .select('*')
+        .where(eq('user_id', userId))
+        .single();
+
       if (!session)
-        throw new Error('No session for that user');
+        throw new ApiError({ code: 404, message: 'No session for that user' });
 
       return session;
     } catch (e: any) {
@@ -201,9 +218,14 @@ export function getSession({
     }
   } else if (authId) {
     try {
-      const session = db.from('sessions').select('*').where(eq('auth_id', authId)).single();
+      const session = db
+        .from('sessions')
+        .select('*')
+        .where(eq('auth_id', authId))
+        .single();
+
       if (!session)
-        throw new Error('No session for that user');
+        throw new ApiError({ code: 404, message: 'No session for that user' });
 
       return session;
     } catch (e: any) {
@@ -212,16 +234,18 @@ export function getSession({
   } else if (token) {
     try {
       const tokenHash = hashRefreshToken(token);
-      console.log('Looking for session with hash: ', tokenHash);
-      const sessionQuery = db.from('sessions').select('*').where(eq('token', tokenHash));
-      const session = sessionQuery.single();
+      const session = db
+        .from('sessions')
+        .select('*')
+        .where(eq('token', tokenHash))
+        .single();
 
       return session;
     } catch (e: any) {
       throw sqliteErrorToApiError(e);
     }
   } else {
-    throw new Error('Invalid session query data');
+    throw new ApiError({ code: 401, message: 'Invalid session query data'});
   }
 }
 
@@ -234,24 +258,24 @@ export function deleteSession({
     if (userId) {
       const session = db.from('sessions').delete().where(eq('user_id', userId)).run();
       if (!session)
-        throw new Error('No session for that user');
+        throw new ApiError({ code: 404, message: 'No session for that user' });
 
       return session;
     } else if (authId) {
       const session = db.from('sessions').delete().where(eq('auth_id', authId)).run();
       if (!session)
-        throw new Error('No session for that user');
+        throw new ApiError({ code: 404, message: 'No session for that user' });
 
       return session;
     } else if (token) {
       const tokenHash = hashRefreshToken(token);
       const session = db.from('sessions').delete().where(eq('token', tokenHash)).run();
       if (!session)
-        throw new Error('No session for that user');
+        throw new ApiError({ code: 404, message: 'No session for that user' });
 
       return session;
     } else {
-      throw new Error('Invalid session query data');
+      throw new ApiError({ code: 401, message: 'Invalid session query data'});
     }
   } catch (e: any) {
     throw sqliteErrorToApiError(e);
