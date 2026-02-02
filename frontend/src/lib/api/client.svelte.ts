@@ -5,7 +5,6 @@ import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authR
 import { fetchUserStats, fetchMatchHistory, fetchLeaderboard } from "@lib/api/gameStats";
 import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";
 import type { OAuthCallBackBody } from "@shared/api";
-import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
@@ -164,11 +163,8 @@ export class ApiClient {
     try {
       const authResponse = await loginRequest(info);
       this.authStore.set(authResponse.auth)
-      if (authResponse.access_token) {
-        const jwt = parseJWT(authResponse.access_token);
-        const response = await getUser()
-        this.userStore.set(response.user);
-      }
+      const response = await getUser()
+      this.userStore.set(response.user);
       this.loggedIn = true;
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
@@ -183,10 +179,8 @@ export class ApiClient {
       this.auth = authResponse.auth;
 
       this.authStore.set(authResponse.auth)
-      if (authResponse.access_token) {
-        const response = await getUser()
-        this.userStore.set(response.user);
-      }
+      const response = await getUser()
+      this.userStore.set(response.user);
       this.loggedIn = true;
     } catch (e: any) {
       const error = new Error(`OAuth Failed: ${e.message || e}`)
