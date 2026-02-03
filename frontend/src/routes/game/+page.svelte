@@ -15,13 +15,16 @@
 
   let users: AppUser[] = $state([]);
   let aiUser: AppUser | null = $state(null);
-  let running = $state(false);
-  let showingResultScreen = $state(false);
+  let isRunningGame = $state(false);
+  let isShowingResults = $state(false);
   let canvas: HTMLCanvasElement | null = $state(null);
   let pong: Pong | null = $state(null);
   let matchData: MatchSubmissionData | null = $state(null);
   let challengingUser = {} as AppUser;
   let challengedUser = {} as AppUser;
+  let pointsToWin = $state(10);
+	let matchDurationInMinutes = $state(5);
+
   
   const loadPageData = async () =>
   {
@@ -40,7 +43,7 @@
       //add new AI user
       aiUser = new AppUser({
         id: 0, //0 to indicate AI user
-        name: "AI Opponent" //add translation
+        name: "AI Opponent",
       }, null);
       users.push(aiUser);
     }
@@ -52,8 +55,8 @@
 
   const challengeUser = async (challengedUser: AppUser) =>
   {
-    running = true;
-    showingResultScreen = false;
+    isRunningGame = true;
+    isShowingResults = false;
   
     await tick();
     console.log(challengedUser);
@@ -62,14 +65,14 @@
     {
       challengingUser = new AppUser(client.user, null);
       if (canvas)
-        pong = new Pong(challengingUser, challengedUser, canvas, onGameEnd);
+        pong = new Pong(challengingUser, challengedUser, canvas, pointsToWin, matchDurationInMinutes, onGameEnd);
     }
   };
 
   const onGameEnd = (data: MatchSubmissionData) =>
   {
-    running = false;
-    showingResultScreen = true;
+    isRunningGame = false;
+    isShowingResults = true;
 
     console.log(data);
     matchData = data;
@@ -97,16 +100,16 @@
 
   function returnToChallengePage() : void
   {
-		running = false;
-    showingResultScreen = false;
+		isRunningGame = false;
+    isShowingResults = false;
 	};
 
   async function startRematch()
   {
     if (pong)
     {
-      running = true;
-      showingResultScreen = false;
+      isRunningGame = true;
+      isShowingResults = false;
 
       await tick();
       pong.resetMatch(canvas!);
@@ -123,13 +126,25 @@
       <Card.Title>{$t('game.game')}</Card.Title>
     </Card.Header>
     <Card.Content class='size-full'>
-      {#if !running && !showingResultScreen}
+      {#if !isRunningGame && !isShowingResults}
+        <Grid title={$t('game.settings')}>
+          <label>
+            {$t('game.pointsToWin')}:
+            <input type="number" bind:value={pointsToWin} min="1" max="20" />
+            <input type="range" bind:value={pointsToWin} min="1" max="20" />
+          </label>
+          <label>
+            {$t('game.matchDurationInMinutes')}:
+            <input type="number" bind:value={matchDurationInMinutes} min="1" max="10" />
+            <input type="range" bind:value={matchDurationInMinutes} min="1" max="10" />
+          </label>
+        </Grid>
         <Grid title={$t('game.challenge')}>
           {#each users as user}
-            <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.challenge')} />
+            <GridCard title={user.id === 0 ? $t('game.aiOpponent') : user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.challenge')}/>
           {/each}
         </Grid>
-      {:else if running && !showingResultScreen}
+      {:else if isRunningGame && !isShowingResults}
         <div class="size-full flex flex-col">
           <canvas bind:this={canvas} class='bg-black size-full' tabindex='0'></canvas>
         </div>
