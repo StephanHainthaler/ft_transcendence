@@ -374,6 +374,7 @@ Workflow:
 #### Svelte
 - [Svelte](https://svelte.dev/)
 - [shadcn-Svelte](https://www.shadcn-svelte.com/)
+- [Svelte/store](https://svelte.dev/docs/svelte/svelte-store)
 
 #### OAuth
 - [Authorizing OAuth apps in GitHub](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow)
