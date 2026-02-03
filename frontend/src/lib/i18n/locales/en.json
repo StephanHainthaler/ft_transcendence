@@ -85,7 +85,13 @@
   },
   "game": {
     "game": "Game",
+    "settings": "Game Settings",
+    "aiOpponent": "AI Opponent",
     "challenge": "Challenge",
+    "pointsToWin": "Points to Win",
+    "matchDurationInMinutes": "Match Duration (in minutes)",
+    "paused": "Paused",
+    "overtime": "Overtime",
     "summary": "Match Summary",
     "win": "Win",
     "lose": "Lose",
