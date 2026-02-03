@@ -1,6 +1,7 @@
 export async function request(req: Request): Promise<any> {
-  const response = await fetch(req);
-
+  const response = await fetch(req, {
+  credentials: 'include',
+});
   let data;
   try {
     data = await response.json();

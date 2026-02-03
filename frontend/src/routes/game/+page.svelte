@@ -1,26 +1,49 @@
 <script lang="ts">
+  import { AppUser } from "@lib/api/appUser";
+  import Grid from "@lib/components/custom/Grid.svelte";
   import { client } from "@lib/api/index.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";
   import * as Card from "$lib/components/ui/card";
+
   import { tick } from 'svelte';
-  import Grid from "@lib/components/custom/Grid.svelte";
-  import { AppUser } from "@lib/api/appUser";
   import { toast } from "svelte-sonner";
-  import {t} from "@lib/i18n/i18n";
+  import { t } from "@lib/i18n/i18n";
 
   import { Pong } from "@lib/game/pong";
   import type { MatchSubmissionData } from "@shared/game_stats";
+    import { User } from "@lucide/svelte";
+    import Button from "@lib/components/ui/button/button.svelte";
 
-  let users: AppUser[] = $state([])
-
-  const loadPageData = async () => {
+  let users: AppUser[] = $state([]);
+  let aiUser: AppUser | null = $state(null);
+  let running = $state(false);
+  let showingResultScreen = $state(false);
+  let canvas: HTMLCanvasElement | null = $state(null);
+  let pong: Pong | null = $state(null);
+  let matchData: MatchSubmissionData | null = $state(null);
+  let challengingUser = {} as AppUser;
+  let challengedUser = {} as AppUser;
+  
+  const loadPageData = async () =>
+  {
     await tick();
-    await tick();
+    //await tick();
     try
     {
       const data = await client.getUsers();
       console.log(data);
       users = data;
+
+      //filter out current user
+      if (client.user)
+        users = users.filter((u) => u.id !== client.user!.id);
+
+      //add new AI user
+      aiUser = new AppUser({
+        id: 0, //0 or -1 to indicate AI user?
+        name: "AI Opponent"
+      }, null);
+      users.push(aiUser);
     }
     catch (e: any)
     {
@@ -28,36 +51,56 @@
     }
   }
 
-  let running = $state(false);
-  let canvas: HTMLCanvasElement | null = $state(null);
-  let pong: Pong;
-
-
-  const onGameEnd = (Data: MatchSubmissionData) => {
-    console.log(Data);
-
-      //send Data to database
-      
-  
-  };
-
-  let testUser1 = {} as AppUser;
-  let testUser2 = {} as AppUser;
-
-  loadPageData();
-
-  const challengeUser = async (u: AppUser) => {
+  const challengeUser = async (challengedUser: AppUser) =>
+  {
     running = true;
+    showingResultScreen = false;
+  
     await tick();
-    console.log(u);
-    testUser1 = u;
+    console.log(challengedUser);
+
     if (client.user)
     {
-      testUser2 = new AppUser(client.user, null);
+      challengingUser = new AppUser(client.user, null);
       if (canvas)
-        pong = new Pong(testUser1, testUser2, canvas, onGameEnd);
+        pong = new Pong(challengingUser, challengedUser, canvas, onGameEnd);
     }
+  };
+
+const onGameEnd = (data: MatchSubmissionData)  =>
+{
+  running = false;
+  showingResultScreen = true;
+
+  console.log(data);
+  matchData = data;
+  try
+  {
+    client.sendMatchResults(data);
+  } catch (e: any) {
+    console.error("GameEnd Error:", e.message);
   }
+};
+
+  function returnToChallengePage() : void
+  {
+		running = false;
+    showingResultScreen = false;
+	};
+
+  async function startRematch()
+  {
+    if (pong)
+    {
+      running = true;
+      showingResultScreen = false;
+
+      await tick();
+      pong.resetMatch(canvas!);
+    }
+  };
+
+  loadPageData();
 
 </script>
 
@@ -67,16 +110,34 @@
       <Card.Title>{$t('game.game')}</Card.Title>
     </Card.Header>
     <Card.Content class='size-full'>
-      {#if !running}
+      {#if !running && !showingResultScreen}
         <Grid title={$t('game.challenge')}>
           {#each users as user}
-            <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.challenge')} />
+            <GridCard title={user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.to_challenge')} />
           {/each}
         </Grid>
-      {:else}
+      {:else if running && !showingResultScreen}
         <div class="size-full flex flex-col">
           <canvas bind:this={canvas} class='bg-black size-full' tabindex='0'></canvas>
         </div>
+      {:else}
+        <h2 class="text-2xl font-bold mb-4">{$t('game.summary')}</h2>
+        {#if matchData}
+          {#if matchData.winner_id === challengingUser.id}
+          <p class="mb-2">{$t('game.win')}: {challengingUser.name} ({matchData.p1_score})</p>
+          <p class="mb-4">{$t('game.lose')}: {challengedUser.name} ({matchData.p2_score})</p>
+          {:else}
+          <p class="mb-2">{$t('game.lose')}: {challengingUser.name} ({matchData.p1_score})</p>
+          <p class="mb-4">{$t('game.win')}: {challengedUser.name} ({matchData.p2_score})</p>
+          {/if}
+          <p class="mb-4">{$t('game.duration')}: {matchData.duration} </p>
+        {/if}
+        <Button variant="tab" onclick={ returnToChallengePage } >
+          {$t('game.return')}
+        </Button>
+        <Button variant="tab" onclick={ startRematch } >
+          {$t('game.rematch')}
+        </Button>
       {/if}
     </Card.Content>
   </Card.Root>

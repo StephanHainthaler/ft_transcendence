@@ -2,8 +2,8 @@ import { Writable } from "@lib/types/writable";
 import type { AuthUserClient, Avatar, Friendship, User } from "@shared/user";
 import { deleteRequest, getAuth, loginRequest, logoutRequest, oauthRequest, signupRequest, updateRequest } from "./auth";
 import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authRequest";
-import { fetchUserStats, fetchMatchHistory, fetchLeaderboard } from "@lib/api/gameStats";
-import type { UserStats, MatchHistoryEntry } from "@shared/game_stats";
+import { fetchUserStats, fetchMatchHistory, fetchLeaderboard, sendMatchResults } from "@lib/api/gameStats";
+import type { UserStats, MatchHistoryEntry, MatchSubmissionData } from "@shared/game_stats";
 import type { OAuthCallBackBody } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
@@ -135,12 +135,17 @@ export class ApiClient {
   }
 
   async getMatchHistory(userId: number, page: number = 1): Promise<MatchHistoryEntry[] | []> {
-    return await fetchMatchHistory(userId);
+    return await fetchMatchHistory(userId, page);
   }
 
   async getLeaderboard(page: number = 1): Promise<UserStats[] | []> {
     return await fetchLeaderboard(page);
   }
+
+  async sendMatchResults(matchData: MatchSubmissionData) {
+    return await sendMatchResults(matchData);
+  }
+  
 
   /* AUTH API */
 

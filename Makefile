@@ -1,4 +1,4 @@
-.PHONY: prod dev frontend backend install clean api test test-backend test-frontend
+.PHONY: prod dev frontend backend install clean fclean api test test-backend test-frontend
 
 FRONTEND := ./frontend
 
@@ -19,6 +19,9 @@ install:
 
 clean:
 	@npm run clean
+
+fclean: clean
+	@npm run clean:db
 
 test:
 	npm run test:backend

@@ -64,6 +64,7 @@
     "duration": "Duration",
     "result": "Result",
     "user": "User",
+    "nickname": "Opponent Nickname",
     "played": "Played",
     "victory": "Victory",
     "defeat": "Defeat",
@@ -96,6 +97,18 @@
   "game": {
     "game": "Game",
     "challenge": "Challenge",
+    "to_challenge": "Challenge",
+    "summary": "Match Summary",
+    "win": "Win",
+    "lose": "Lose",
+    "duration": "Match Duration",
+    "rematch": "Rematch",
+    "return": "Return to Challenge Page",
+    "match_results_sent": "Match results submitted successfully.",
+    "match_history_load_error": "Error loading match history.",
+    "user_stats_load_error": "Error loading user statistics.",
+    "leaderboard_load_error": "Error loading leaderboard.",
+    "match_record_error": "Error recording match results.",
     "end": "End"
   },
   "profile": {
