@@ -5,6 +5,7 @@ dist
 frontend/.svelte-kit/
 build/
 *.db
-services/*/db/
+**/*.db
+services/**/db/
 .env*
 frontend/.vscode/

@@ -8,7 +8,7 @@ export class AppUser {
   }
 
   get displayName() {
-    return this.user.username || this.user.name;
+    return String(this.user.username || this.user.name);
   }
 
   get id() {
