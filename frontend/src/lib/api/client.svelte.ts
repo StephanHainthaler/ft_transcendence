@@ -5,7 +5,6 @@ import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authR
 import { fetchUserStats, fetchMatchHistory, fetchLeaderboard, sendMatchResults } from "@lib/api/gameStats";
 import type { UserStats, MatchHistoryEntry, MatchSubmissionData } from "@shared/game_stats";
 import type { OAuthCallBackBody } from "@shared/api";
-import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
@@ -169,11 +168,8 @@ export class ApiClient {
     try {
       const authResponse = await loginRequest(info);
       this.authStore.set(authResponse.auth)
-      if (authResponse.access_token) {
-        const jwt = parseJWT(authResponse.access_token);
-        const response = await getUser()
-        this.userStore.set(response.user);
-      }
+      const response = await getUser()
+      this.userStore.set(response.user);
       this.loggedIn = true;
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
@@ -188,10 +184,8 @@ export class ApiClient {
       this.auth = authResponse.auth;
 
       this.authStore.set(authResponse.auth)
-      if (authResponse.access_token) {
-        const response = await getUser()
-        this.userStore.set(response.user);
-      }
+      const response = await getUser()
+      this.userStore.set(response.user);
       this.loggedIn = true;
     } catch (e: any) {
       const error = new Error(`OAuth Failed: ${e.message || e}`)
@@ -201,17 +195,18 @@ export class ApiClient {
 
   async logout() {
     try {
-      await logoutRequest();
       this.clearSession();
+      await logoutRequest();
       goto('/auth');
     } catch (e: any) {
+      console.log(e);
       throw e;
     }
   }
 
   clearSession() {
-    this.userStore.set(null);
-    this.authStore.set(null);
+    this.userStore.delete();
+    this.authStore.delete();
     this.loggedIn = false;
   }
 

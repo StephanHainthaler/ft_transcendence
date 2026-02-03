@@ -20,7 +20,7 @@ async function start()
 {
 	try {
 		// Initializing the database
-		initDB('./db/game_stats.db'); 
+		initDB('./db/game_stats.db');
 
 		server.setErrorHandler((error, request, reply) =>
 		{

@@ -1,21 +1,16 @@
 import Fastify from 'fastify'
 import fastifyCookie from '@fastify/cookie';
-import { healthRoutes } from './healthcheck/healthcheck';
+import { healthRoutes } from './health';
 
-const AUTH_URL = process.env.AUTH_SERVICE_URL;
-
-const USER_URL = process.env.USER_SERVICE_URL;
-
-const GAME_STATS_URL = process.env.GAME_STATS_SERVICE_URL;
-
-const SERVER_PONG_URL = process.env.SERVER_PONG_URL;
+export const AUTH_URL = process.env.AUTH_SERVICE_URL;
+export const USER_URL = process.env.USER_SERVICE_URL;
+export const GAME_STATS_URL = process.env.GAME_STATS_SERVICE_URL;
 
 const publicRoutes = [
   '/auth/login',
   '/auth/refresh',
   '/auth/sign-up',
   '/user/avatar',
-  '/game',
   '/stats',
   '/auth/github-oauth',
 ];
@@ -25,7 +20,6 @@ async function startApiGateway() {
   if (!AUTH_URL) throw new Error("AUTH_SERVICE_URL is not defined");
   if (!USER_URL) throw new Error("USER_SERVICE_URL is not defined");
   if (!GAME_STATS_URL) throw new Error("GAME_STATS_SERVICE_URL is not defined");
-  if (!SERVER_PONG_URL) throw new Error("SERVER_PONG_URL is not defined");
 
   const fastify = Fastify({
     logger: {
@@ -34,7 +28,7 @@ async function startApiGateway() {
       },
     },
     disableRequestLogging: true
- });
+  });
 
   fastify.register(fastifyCookie);
 
@@ -73,7 +67,7 @@ async function startApiGateway() {
         }
 
       } catch (e: any) {
-        console.error('Failed to validate: ', e);
+        request.log.error('Failed to validate: ', e);
         return reply.code(401).send({ message: 'You are not authenticated' });
       }
     }
@@ -89,12 +83,6 @@ async function startApiGateway() {
     upstream: AUTH_URL,
     prefix: '/auth',
     http2: false,
-  });
-
-  fastify.register(proxy, {
-    upstream: SERVER_PONG_URL,
-    prefix: '/game',
-    websocket: true,
   });
 
   fastify.register(proxy, {

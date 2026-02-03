@@ -18,7 +18,7 @@ export async function updateRequest({
     body: JSON.stringify({ email, user_name, passwd }),
   });
 
-  const data = await fetch(req);
+  const data = await request(req);
 
   return data;
 }
@@ -58,11 +58,7 @@ export async function loginRequest(
     body: JSON.stringify(info),
   });
 
-  const response = await request(login);
-  const data: AuthResponseSuccess = await response.json();
-
-  if (!response.ok)
-    throw data;
+  const data = await request(login);
 
   return data;
 }
@@ -105,7 +101,7 @@ export async function logoutRequest() {
 
   try {
     await request(req);
-  } catch {
+  } catch (e) {
     toast.error('Failed to log out');
   }
 }

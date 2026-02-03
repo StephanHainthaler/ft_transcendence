@@ -33,7 +33,6 @@ export type UpdateCredsRequestBody = {
 export type AuthResponseSuccess = {
   success: boolean,
   auth: AuthUserClient,
-  access_token?: string,
 }
 
 export type ErrorResponse = {
