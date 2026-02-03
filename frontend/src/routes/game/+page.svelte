@@ -4,6 +4,7 @@
   import Grid from "@lib/components/custom/Grid.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";
   import * as Card from "$lib/components/ui/card";
+  import Button from "@lib/components/ui/button/button.svelte";
 
   import { tick } from 'svelte';
   import { toast } from "svelte-sonner";
@@ -11,7 +12,6 @@
 
   import { Pong } from "@lib/game/pong";
   import type { MatchSubmissionData } from "@shared/game_stats";
-    import { User } from "@lucide/svelte";
 
   let users: AppUser[] = $state([]);
   let aiUser: AppUser | null = $state(null);
@@ -39,8 +39,8 @@
 
       //add new AI user
       aiUser = new AppUser({
-        id: 0, //0 or -1 to indicate AI user?
-        name: "AI Opponent"
+        id: 0, //0 to indicate AI user
+        name: "AI Opponent" //add translation
       }, null);
       users.push(aiUser);
     }
@@ -145,12 +145,12 @@
           {/if}
           <p class="mb-4">{$t('game.duration')}: {matchData.duration} </p>
         {/if}
-        <button onclick={ returnToChallengePage } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        <Button onclick={ returnToChallengePage } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
           {$t('game.return')}
-        </button>
-        <button onclick={ startRematch } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        </Button>
+        <Button onclick={ startRematch } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
           {$t('game.rematch')}
-        </button>
+        </Button>
       {/if}
     </Card.Content>
   </Card.Root>
