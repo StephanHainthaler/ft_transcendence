@@ -1,13 +1,14 @@
 import { db } from "./db";
 import { AuthUser, Session } from "./db";
 import { AuthUserClient, User } from "@shared/user"
-import { createUser, getUser } from "@ft_transcendence/user/src/api"
+import { createUser } from "@ft_transcendence/user/src/api"
 import argon2 from "argon2";
 import { generateJWT } from "./jwt";
 import crypto from "crypto";
 import { JWT } from "@shared/api";
 import { eq } from "@server/orm";
 import { sqliteErrorToApiError } from "@server/orm/error";
+import { ApiError } from "@server/error/apiError";
 
 async function hashPassword(passwd: string): Promise<string> {
   const hash = await argon2.hash(passwd)
@@ -23,37 +24,41 @@ export function hashRefreshToken(token: string): string {
 }
 
 export function getAuthUser({
-  username, authId, userId, email, oauthId
+  user_name, authId, userId, email, oauthId
 }:{
-  username?: string,
+  user_name?: string,
   authId?: number,
   userId?: number,
   email?: string,
   oauthId?: number,
 }): AuthUser | null {
-  if (username) {
-    const user = db.from('auth_users').select('*').where(eq('user_name', username)).single();
-    if (user) return user;
-  }
-  if (authId) {
-    const user = db.from('auth_users').select('*').where(eq('id', authId)).single();
-    if (user) return user;
-  }
-  if (userId) {
-    const user = db.from('auth_users').select('*').where(eq('user_id', userId)).single();
-    if (user) return user;
-  }
-  if (email) {
-    const user = db.from('auth_users').select('*').where(eq('email', email)).single();
-    if (user) return user;
-  }
-  if (oauthId) {
-    const user = db.from('auth_users').select('*').where(eq('oauth_id', oauthId)).single();
-    if (user) return user;
+  try {
+    if (user_name) {
+      const user = db.from('auth_users').select('*').where(eq('user_name', user_name)).single();
+      if (user) return user;
+    }
+    if (authId) {
+      const user = db.from('auth_users').select('*').where(eq('id', authId)).single();
+      if (user) return user;
+    }
+    if (userId) {
+      const user = db.from('auth_users').select('*').where(eq('user_id', userId)).single();
+      if (user) return user;
+    }
+    if (email) {
+      const user = db.from('auth_users').select('*').where(eq('email', email)).single();
+      if (user) return user;
+    }
+    if (oauthId) {
+      const user = db.from('auth_users').select('*').where(eq('oauth_id', oauthId)).single();
+      if (user) return user;
+    }
+  } catch (e: any) {
+    throw sqliteErrorToApiError(e);
   }
 
-  if (!userId && !username && !authId && !oauthId) {
-    throw new Error("Missing fields: need either username, authid or userid");
+  if (!userId && !user_name && !authId && !oauthId) {
+    throw new Error("Missing fields: need either user_name, authid or userid");
   }
 
   return null;
@@ -61,46 +66,43 @@ export function getAuthUser({
 
 export async function deleteAuthUser(authUser: AuthUser){
   try {
-    console.log('deleting session');
     deleteSession({ authId: authUser.id });
-    console.log('deleted session');
     db.from('auth_users')
       .where(eq('id', authUser.id))
       .delete()
       .run();
-    console.log('deleted user');
   } catch (e: any) {
     throw sqliteErrorToApiError(e);
   }
 }
 
 export function getAuthUserClient({
-  username, authId, userId, email,
+  user_name, authId, userId, email,
 }:{
-  username?: string,
+  user_name?: string,
   authId?: number,
   userId?: number,
   email?: string,
 }): AuthUserClient | null {
-  const authUser = getAuthUser({ username, authId, userId, email });
+  const authUser = getAuthUser({ user_name, authId, userId, email });
   if (authUser) {
     return {
       email: authUser.email,
-      username: authUser.user_name,
+      user_name: authUser.user_name,
     }
   }
   return null;
 }
 
 export async function verifyUserCredentials({
-  email, username, passwd,
+  email, user_name, passwd,
 }: {
-  email?: string, username?: string, passwd?: string
+  email?: string, user_name?: string, passwd?: string
 }): Promise<AuthUser> {
-  if (!email && !username) throw new Error("Missing email or username");
+  if (!email && !user_name) throw new Error("Missing email or user_name");
   if (!passwd) throw new Error("Missing password");
 
-  const user = getAuthUser({ username, email });
+  const user = getAuthUser({ user_name, email });
 
   if (!user) throw new Error("Invalid credentials");
   if (!await argon2.verify(user.passwd, passwd)) throw new Error("Invalid user password");
@@ -108,11 +110,21 @@ export async function verifyUserCredentials({
   return user;
 }
 
-export function updateUserCredentials(newAuthUser: Partial<AuthUser>) {
-  return db.from('auth_users')
-    .update(newAuthUser)
-    .where(eq('id', newAuthUser.id))
-    .single()
+export async function updateUserCredentials(newAuthUser: Partial<AuthUser>) {
+  try {
+    const { passwd } = newAuthUser;
+    if (passwd) {
+      const newPasswordHash = await hashPassword(passwd);
+      newAuthUser.passwd = newPasswordHash;
+    }
+    return db.from('auth_users')
+      .update(newAuthUser)
+      .where(eq('id', newAuthUser.id))
+      .select('*')
+      .single()
+  } catch (e: any) {
+    throw sqliteErrorToApiError(e);
+  }
 }
 
 export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ user: User, authUser: AuthUser }> {
@@ -120,19 +132,28 @@ export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ use
   const { user: newUser } = await createUser(user);
   authUser.user_id = newUser.id;
 
-
-  if (!authUser.passwd) throw new Error("Auth user is missing password");
+  if (!authUser.passwd) throw new ApiError({ code: 404, message: "Password missing" });
   authUser.passwd = await hashPassword(authUser.passwd);
 
-  const newAuthUser = db.from('auth_users').insert(authUser).select('*').single();
-  if (!newAuthUser) throw new Error(`Auth user creation Failed with: ${JSON.stringify(authUser)}`)
+  let newAuthUser;
+  try {
+    newAuthUser = db
+      .from('auth_users')
+      .insert(authUser)
+      .select('*')
+      .single();
+  } catch (e) {
+    throw sqliteErrorToApiError(e);
+  }
+
+  if (!newAuthUser) throw new ApiError({ code: 500, message: 'Internal Server Error' });
   return { user: newUser, authUser: newAuthUser };
 }
 
 export const refreshTokenLifetime = 1000 * 60 * 60 * 24 * 10;
 
 export function createSession(user: AuthUser, secret: string): { accessToken: JWT, refreshToken: string } {
-  const accessToken = generateJWT(user, secret)
+  const accessToken = generateJWT({ id: user.id }, secret)
   const refreshToken = generateRefreshToken();
 
   const tokenHash = hashRefreshToken(refreshToken);
@@ -145,20 +166,31 @@ export function createSession(user: AuthUser, secret: string): { accessToken: JW
     expires_in: refreshTokenLifetime,
   };
 
-  const currentSession = db
-    .from('sessions')
-    .select('*')
-    .where(eq('auth_id', user.id))
-    .single();
-
-  if (currentSession) {
-    db.from('sessions').update(session).where(eq('auth_id', user.id)).run();
-  } else {
-    const query = db.from('sessions').insert(session);
-    const result = query.run();
-    if (result.changes <= 0) {
-      throw new Error('Database: token storage failed');
+  let currentSession;
+  try {
+    currentSession = db
+      .from('sessions')
+      .select('*')
+      .where(eq('auth_id', user.id))
+      .single();
+  } catch (e: any) {
+    throw sqliteErrorToApiError(e);
+  }
+  try {
+    if (currentSession) {
+      db
+        .from('sessions')
+        .update(session)
+        .where(eq('auth_id', user.id))
+        .run();
+    } else {
+      db
+        .from('sessions')
+        .insert(session)
+        .run();
     }
+  } catch (e) {
+    throw sqliteErrorToApiError(e);
   }
 
   return { accessToken, refreshToken };
@@ -168,29 +200,52 @@ export function getSession({
   authId, userId,  token,
 }: {
   authId?: number, userId?: number, token?: string
-}): Session {
+}): Session | null{
   if (userId) {
-    const session = db.from('sessions').select('*').where(eq('user_id', userId)).single();
-    if (!session)
-      throw new Error('No session for that user');
+    try {
+      const session = db
+        .from('sessions')
+        .select('*')
+        .where(eq('user_id', userId))
+        .single();
 
-    return session;
+      if (!session)
+        throw new ApiError({ code: 404, message: 'No session for that user' });
+
+      return session;
+    } catch (e: any) {
+      throw sqliteErrorToApiError(e);
+    }
   } else if (authId) {
-    const session = db.from('sessions').select('*').where(eq('auth_id', authId)).single();
-    if (!session)
-      throw new Error('No session for that user');
+    try {
+      const session = db
+        .from('sessions')
+        .select('*')
+        .where(eq('auth_id', authId))
+        .single();
 
-    return session;
+      if (!session)
+        throw new ApiError({ code: 404, message: 'No session for that user' });
+
+      return session;
+    } catch (e: any) {
+      throw sqliteErrorToApiError(e);
+    }
   } else if (token) {
-    const tokenHash = hashRefreshToken(token);
-    const sessionQuery = db.from('sessions').select('*').where(eq('token', tokenHash));
-    const session = sessionQuery.single();
-    if (!session)
-      throw new Error('No session for that user');
+    try {
+      const tokenHash = hashRefreshToken(token);
+      const session = db
+        .from('sessions')
+        .select('*')
+        .where(eq('token', tokenHash))
+        .single();
 
-    return session;
+      return session;
+    } catch (e: any) {
+      throw sqliteErrorToApiError(e);
+    }
   } else {
-    throw new Error('Invalid session query data');
+    throw new ApiError({ code: 401, message: 'Invalid session query data'});
   }
 }
 
@@ -199,26 +254,30 @@ export function deleteSession({
 }: {
   authId?: number, userId?: number, token?: string
 }) {
-  if (userId) {
-    const session = db.from('sessions').delete().where(eq('user_id', userId)).run();
-    if (!session)
-      throw new Error('No session for that user');
+  try {
+    if (userId) {
+      const session = db.from('sessions').delete().where(eq('user_id', userId)).run();
+      if (!session)
+        throw new ApiError({ code: 404, message: 'No session for that user' });
 
-    return session;
-  } else if (authId) {
-    const session = db.from('sessions').delete().where(eq('auth_id', authId)).run();
-    if (!session)
-      throw new Error('No session for that user');
+      return session;
+    } else if (authId) {
+      const session = db.from('sessions').delete().where(eq('auth_id', authId)).run();
+      if (!session)
+        throw new ApiError({ code: 404, message: 'No session for that user' });
 
-    return session;
-  } else if (token) {
-    const tokenHash = hashRefreshToken(token);
-    const session = db.from('sessions').delete().where(eq('token', tokenHash)).run();
-    if (!session)
-      throw new Error('No session for that user');
+      return session;
+    } else if (token) {
+      const tokenHash = hashRefreshToken(token);
+      const session = db.from('sessions').delete().where(eq('token', tokenHash)).run();
+      if (!session)
+        throw new ApiError({ code: 404, message: 'No session for that user' });
 
-    return session;
-  } else {
-    throw new Error('Invalid session query data');
+      return session;
+    } else {
+      throw new ApiError({ code: 401, message: 'Invalid session query data'});
+    }
+  } catch (e: any) {
+    throw sqliteErrorToApiError(e);
   }
 }

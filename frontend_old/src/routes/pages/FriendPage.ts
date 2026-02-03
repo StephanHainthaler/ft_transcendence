@@ -1,4 +1,4 @@
-import { client } from "@lib/index";
+import { client } from "@lib/api";
 import { Alert } from "@lib/components/ui/Alert";
 import { UserCard } from "@lib/components/ui/UserCard";
 import type { Route } from "@lib/types/route";

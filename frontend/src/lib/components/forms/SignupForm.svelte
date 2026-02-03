@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { client } from "@lib/api/index";
+  import { client } from "@lib/api/index.svelte";
   import { validateInputThrow } from "@lib/validation/inputValidation";
   import { goto } from "$app/navigation";
   import Label from "../ui/label/label.svelte";
@@ -8,7 +8,7 @@
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
   import {t, currentLocale} from "@lib/i18n/i18n";
 
-  let usernameBuffer = $state('');
+  let user_nameBuffer = $state('');
   let emailBuffer = $state('');
   let userPasswordBuffer = $state('');
   let userPasswordRepeatBuffer = $state('');
@@ -21,7 +21,7 @@
     isLoading = true;
 
     try {
-      const username = validateInputThrow(usernameBuffer, { type: 'username' });
+      const user_name = validateInputThrow(user_nameBuffer, { type: 'username' });
       const email = validateInputThrow(emailBuffer, { type: 'email' });
 
       if (userPasswordBuffer !== userPasswordRepeatBuffer) {
@@ -29,7 +29,7 @@
       }
 
       await client.signup({
-        username,
+        user_name,
         email,
         passwd: userPasswordBuffer,
       });
@@ -50,9 +50,9 @@
     <div class="space-y-2">
       <Label for="username-input">{$t('signup.username')}</Label>
       <Input
-        id="username-input"
+        id="user_name-input"
         type="text"
-        bind:value={usernameBuffer}
+        bind:value={user_nameBuffer}
         placeholder={$t('signup.username_ph')}
         required
         disabled={isLoading}

@@ -1,36 +1,39 @@
 {
   "main_name": "Transcendence",
   "menu": "Menü",
+  "welcome": "Willkommen",
+  "play": "Spielen",
+  "moto": "ARENA_BEREIT: VERBINDE DEIN PADDLE MIT DEM NETZ",
   "login": {
     "login": "Anmelden",
     "username": "E-Mail oder Benutzername",
-    "username_ph": "E-Mail oder Benutzernamen eingeben",
+    "username_ph": "E-Mail oder Benutzername eingeben",
     "password": "Passwort",
     "password_ph": "Passwort eingeben",
-    "singin": "Einloggen"
+    "signin": "Einloggen"
   },
   "signup": {
     "signup": "Registrieren",
-    "register": "Registrierung",
+    "register": "Registrieren",
     "username": "Benutzername",
-    "username_ph": "Wähle einen Benutzernamen",
+    "username_ph": "Benutzername wählen",
     "email": "E-Mail",
-    "email_ph": "E-Mail-Adresse eingeben",
+    "email_ph": "E-Mail eingeben",
     "password": "Passwort",
     "password_ph": "Passwort erstellen",
-    "pass_repeat": "Passwort eingeben",
+    "pass_repeat": "Passwort wiederholen",
     "pass_confirm": "Passwort bestätigen",
-    "loading": "Registrierung läuft...",
+    "loading": "Registrierung...",
     "pass_no_match": "Passwörter stimmen nicht überein"
   },
   "OAuth": {
     "oauth": "OAuth",
     "oauth_gh": "OAuth mit GitHub",
     "error": "Etwas ist schiefgelaufen",
-    "error2": "Etwas ist schiefgelaufen...",
+    "error2": "Fehler aufgetreten...",
     "redirect": "OAuth-Weiterleitung",
     "go_back": "Zurückgehen...",
-    "loading": "GitHub OAuth wird abgeschlossen…"
+    "loading": "GitHub OAuth wird abgeschlossen..."
   },
   "sidebar": {
     "login": "Anmelden",
@@ -46,28 +49,36 @@
   },
   "stats": {
     "title": "Spielerstatistik",
-    "my_statistics": "Meine Statistiken",
+    "my_statistics": "Meine Statistik",
     "leaderboard": "Bestenliste",
-    "your_rank": "Dein Rang",
+    "your_rank": "Ihr Rang",
     "wins": "Siege",
     "losses": "Niederlagen",
     "total_points": "Gesamtpunkte",
     "streak": "Serie",
-    "highest_score": "Höchstpunktzahl",
+    "highest_score": "Highscore",
     "match_history": "Spielverlauf",
     "no_matches": "Keine Spiele im Verlauf gefunden",
     "opponent": "Gegner",
     "score": "Ergebnis",
     "duration": "Dauer",
     "result": "Resultat",
+    "user": "Benutzer",
+    "nickname": "Gegner-Spitzname",
+    "played": "Gespielt",
     "victory": "Sieg",
     "defeat": "Niederlage",
     "draw": "Unentschieden",
-    "page": "Seite"
+    "page": "Seite",
+    "loading": "Laden..."
   },
   "leaderboard": {
     "title": "Globale Bestenliste",
+    "rank": "Rang",
     "player_id": "Spieler-ID",
+    "nickname": "Spitzname",
+    "games_played": "Gespielte Spiele",
+    "points": "Punkte",
     "no_players": "Keine Spieler in der Bestenliste gefunden"
   },
   "buttons": {
@@ -97,11 +108,17 @@
     "lose": "Verloren",
     "duration": "Spielzeit",
     "rematch": "Revanche",
-    "return": "Zurück zur Herausforderungsseite"
+    "return": "Zurück zur Herausforderungsseite",
+    "match_results_sent": "Spielergebnisse erfolgreich übermittelt.",
+    "match_history_load_error": "Fehler beim Laden des Spielverlaufs.",
+    "user_stats_load_error": "Fehler beim Laden der Benutzerstatistik.",
+    "leaderboard_load_error": "Fehler beim Laden der Bestenliste.",
+    "match_record_error": "Fehler beim Aufzeichnen der Spielergebnisse.",
+    "end": "Beenden"
   },
   "profile": {
     "profile": "Profil",
-    "pers_info": "Persönliche Info",
+    "pers_info": "Persönliche Infos",
     "disp_name": "Anzeigename",
     "credentials": "Zugangsdaten",
     "username": "Benutzername",
@@ -110,13 +127,25 @@
     "pass_repeat": "Passwort wiederholen",
     "save": "Änderungen speichern",
     "cancel": "Abbrechen",
-    "edit": "Bearbeiten"
+    "edit": "Bearbeiten",
+    "updated": "Erfolgreich aktualisiert",
+    "update_err": "Fehler beim Aktualisieren des Profils",
+    "loading": "Änderungen werden gespeichert...",
+    "delete_account": "Konto wird gelöscht, bitte warten...",
+    "delete_confirm": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Dies kann nicht rückgängig gemacht werden.",
+    "deleting": "Konto wird gelöscht...",
+    "delete_success": "Konto erfolgreich gelöscht! Weiterleitung...",
+    "yes": "Ja",
+    "no": "Nein",
+    "delete_err": "Fehler beim Löschen des Kontos",
+    "avatar_btn": "Avatar hochladen"
   },
   "tournament": {
     "tournament": "Turnier",
     "available": "Verfügbare Spieler",
     "selected": "Ausgewählte Spieler",
-    "choose": "Auswählen",
+    "choose": "Wählen",
+    "winn_is": "Und der Gewinner ist...",
     "start": "Starten"
   },
   "error": {

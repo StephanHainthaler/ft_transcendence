@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { client } from "@lib/api/index";
   import { AppUser } from "@lib/api/appUser";
   import Grid from "@lib/components/custom/Grid.svelte";
+  import { client } from "@lib/api/index.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";
   import * as Card from "$lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
@@ -12,6 +12,7 @@
 
   import { Pong } from "@lib/game/pong";
   import type { MatchSubmissionData } from "@shared/game_stats";
+  import { User } from "@lucide/svelte";
 
   let users: AppUser[] = $state([]);
   let aiUser: AppUser | null = $state(null);
@@ -24,7 +25,6 @@
   let challengedUser = {} as AppUser;
   let pointsToWin = $state(10);
 	let matchDurationInMinutes = $state(5);
-
   
   const loadPageData = async () =>
   {
@@ -69,34 +69,20 @@
     }
   };
 
-  const onGameEnd = (data: MatchSubmissionData) =>
+const onGameEnd = (data: MatchSubmissionData)  =>
+{
+  running = false;
+  showingResultScreen = true;
+
+  console.log(data);
+  matchData = data;
+  try
   {
-    isRunningGame = false;
-    isShowingResults = true;
-
-    console.log(data);
-    matchData = data;
-    /* For DEBUG */
-    try
-    {
-      console.log("DEBUG - Player 1 ID:", data.player_one_id);
-      console.log("DEBUG - Player 2 ID:", data.player_two_id);
-
-      if (data.player_one_id === data.player_two_id)
-        console.error("CRITICAL: Both players have the same ID!");
-    
-    /* END */
-      client.sendMatchResults(data);
-      toast.success($t('game.match_results_sent')); //for testing
-      console.log("Match finished: result sent");
-    }
-    catch (e: any)
-    {
-      console.error(e);
-      toast.error(`Failed to send match results: ${e.message || e}`); //for testing
-      console.error("Failed to send match results:", `${e.message || e}`);
-    }
-  };
+    client.sendMatchResults(data);
+  } catch (e: any) {
+    console.error("GameEnd Error:", e.message);
+  }
+};
 
   function returnToChallengePage() : void
   {
@@ -160,10 +146,10 @@
           {/if}
           <p class="mb-4">{$t('game.duration')}: {matchData.duration} </p>
         {/if}
-        <Button onclick={ returnToChallengePage } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        <Button variant="tab" onclick={ returnToChallengePage } >
           {$t('game.return')}
         </Button>
-        <Button onclick={ startRematch } class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        <Button variant="tab" onclick={ startRematch } >
           {$t('game.rematch')}
         </Button>
       {/if}
