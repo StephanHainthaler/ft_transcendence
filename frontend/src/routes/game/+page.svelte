@@ -12,7 +12,6 @@
 
   import { Pong } from "@lib/game/pong";
   import type { MatchSubmissionData } from "@shared/game_stats";
-  import { User } from "@lucide/svelte";
 
   let users: AppUser[] = $state([]);
   let aiUser: AppUser | null = $state(null);
@@ -21,11 +20,11 @@
   let canvas: HTMLCanvasElement | null = $state(null);
   let pong: Pong | null = $state(null);
   let matchData: MatchSubmissionData | null = $state(null);
-  let challengingUser = {} as AppUser;
-  let challengedUser = {} as AppUser;
+  let challengingUser = $state({} as AppUser);
+  let challengedUser = $state({} as AppUser);
   let pointsToWin = $state(10);
-	let matchDurationInMinutes = $state(5);
-  
+  let matchDurationInMinutes = $state(5);
+
   const loadPageData = async () =>
   {
     await tick();
@@ -57,7 +56,7 @@
   {
     isRunningGame = true;
     isShowingResults = false;
-  
+
     await tick();
     console.log(challengedUser);
 
@@ -71,8 +70,8 @@
 
 const onGameEnd = (data: MatchSubmissionData)  =>
 {
-  running = false;
-  showingResultScreen = true;
+  isRunningGame = false;
+  isShowingResults = true;
 
   console.log(data);
   matchData = data;
