@@ -149,6 +149,22 @@
     "start": "Start"
   },
   "error": {
-    "404": "404 not found"
+    "db": {
+      "already_exists": "Record already exists.",
+      "referenced_not_found": "Referenced resource not found.",
+      "missing_fields": "Required fields are missing.",
+      "invalid_format": "Invalid data format.",
+      "permission_denied": "Database access denied.",
+      "service_unavailable": "Database service is temporarily unavailable.",
+      "storage_error": "Storage error or disk is full.",
+      "too_large": "Input data is too large.",
+      "comparison_mismatch": "String collation mismatch.",
+      "unexpected": "Unexpected database error."
+    },
+    "404": "Not Found",
+    "common": {
+      "validation_failed": "Please check the form fields for correctness.",
+      "unexpected": "An error occurred while processing your request."
+    }
   }
 }

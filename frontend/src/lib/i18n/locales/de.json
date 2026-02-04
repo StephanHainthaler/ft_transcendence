@@ -149,6 +149,21 @@
     "start": "Starten"
   },
   "error": {
-    "404": "404 nicht gefunden"
-  }
-}
+    "db": {
+      "already_exists": "Datensatz existiert bereits.",
+      "referenced_not_found": "Referenzierte Ressource nicht gefunden.",
+      "missing_fields": "Erforderliche Felder fehlen.",
+      "invalid_format": "Ungültiges Datenformat.",
+      "permission_denied": "Datenbankzugriff verweigert.",
+      "service_unavailable": "Dienst der Datenbank ist vorübergehend nicht verfügbar.",
+      "storage_error": "Speicherfehler oder Laufwerk ist voll.",
+      "too_large": "Eingabedaten sind zu groß.",
+      "comparison_mismatch": "String-Kollation stimmt nicht überein.",
+      "unexpected": "Unerwarteter Datenbankfehler."
+    },
+    "404": "Nicht gefunden",
+    "common": {
+      "validation_failed": "Bitte überprüfen Sie die Formularfelder auf Richtigkeit.",
+      "unexpected": "Ein Fehler ist beim Verarbeiten Ihrer Anfrage aufgetreten."  
+    }
+}}
