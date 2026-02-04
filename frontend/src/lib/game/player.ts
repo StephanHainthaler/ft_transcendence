@@ -100,6 +100,11 @@ export class Player
     	return (this._origin);
 	}
 
+	public setOrigin(newOrigin: vector): void
+	{
+    	this._origin = newOrigin;
+	}
+
 	public getWidth(): number
 	{
     	return (this._width);
