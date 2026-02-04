@@ -71,15 +71,17 @@
 
 const onGameEnd = (data: MatchSubmissionData)  =>
 {
-  running = false;
-  showingResultScreen = true;
+  isRunningGame = false;
+  isShowingResults = true;
 
   console.log(data);
   matchData = data;
   try
   {
     client.sendMatchResults(data);
-  } catch (e: any) {
+  } 
+  catch (e: any)
+  {
     console.error("GameEnd Error:", e.message);
   }
 };
