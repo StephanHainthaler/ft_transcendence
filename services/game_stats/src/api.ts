@@ -9,7 +9,7 @@ function safeParseInt(value: any, name: string, min: number = 0): number
 	const nb = parseInt(value);
 	if (isNaN(nb) || nb < min)
 	{
-		throw new ApiError({ 
+		throw new ApiError({
 			message: `Invalid or missing parameter: ${name}. Must be an integer >= ${min}.`, 
 			code: 400 
 		});

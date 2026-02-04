@@ -1,6 +1,6 @@
-import { ApiError } from "@server/error/apiError";
-import { JWT } from "@shared/api";
-import { User } from "@shared/user";
+import { ApiError } from "../error/apiError";
+import { JWT } from "../../../shared/api";
+import { User } from "../../../shared/user";
 
 const USER_API = process.env.USER_API_URL!;
 

@@ -1,4 +1,4 @@
-import Fastify, { FastifyServerOptions } from 'fastify'
+import { FastifyServerOptions } from 'fastify'
 import { userRoutes } from './userRoutes';
 import { initDB } from './db';
 import { healthRoute } from './health';
@@ -6,26 +6,17 @@ import { friendRoutes } from './friendRoutes';
 import multipart from "@fastify/multipart";
 import { avatarRoutes } from './avatarRoutes';
 import fastifyCookie from '@fastify/cookie';
+import { createServer } from '@server/fastify/createServer';
 
-const DB_PATH = process.env.DB_FILE_PATH;
-console.log(process.env.DB_FILE_PATH);
-
-if (!DB_PATH) throw new Error("Missing Database path");
+const DB_PATH = process.env.DB_PATH;
 
 export async function buildApp(dbPath?: string, options?: FastifyServerOptions) {
-  initDB(dbPath || process.env.DB_FILE_PATH!);
+  if (!dbPath && !DB_PATH)
+    throw new Error("Missing Database Path environment variable");
 
-  const fastify = Fastify({
-    logger: {
-      transport: {
-        target: 'pino-pretty'
-      },
-      level: 'info',
-    },
-    disableRequestLogging: true,
-    ...options
-  });
+  initDB(dbPath || DB_PATH!);
 
+  const fastify = createServer(options);
   fastify.register(fastifyCookie);
   fastify.register(multipart);
   fastify.register(avatarRoutes);

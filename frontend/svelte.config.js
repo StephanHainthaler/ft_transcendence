@@ -1,19 +1,39 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { defineConfig } from "vite";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	// Consult https://svelte.dev/docs/kit/integrations
-	// for more information about preprocessors
-	preprocess: vitePreprocess(),
-	kit: {
-    adapter: adapter(),
+  // Consult https://svelte.dev/docs/kit/integrations
+  // for more information about preprocessors
+  preprocess: vitePreprocess(),
+  compilerOptions: {
+    enableSourcemap: true
+  },
+  kit: {
+    adapter: adapter({
+      precompress: false,
+      strict: true,
+      pages: './dist',
+      assets: './dist',
+      fallback: 'index.html',
+    }),
+    prerender: {
+      crawl: false
+    },
     alias: {
       "@lib/*": "./src/lib/*",
       "$lib/*": "./src/lib/*",
       "@shared/*": "../shared/*",
     }
-  }
+  },
+  vite: defineConfig({
+    build: {
+      outDir: "./dist",
+      emptyOutDir: true,
+      sourcemap: true,
+    },
+  }),
 };
 
 export default config;

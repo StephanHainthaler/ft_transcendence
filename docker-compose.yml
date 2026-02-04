@@ -1,13 +1,13 @@
 services:
-  webserver:
-    container_name: transcendence_webserver
+  nginx:
+    container_name: transcendence_nginx
 
     build:
       context: .
       dockerfile: services/nginx/Dockerfile
 
     ports:
-      - "8080:80"
+      - "3000:80"
 
     networks:
       transcendence_network:
@@ -20,9 +20,54 @@ services:
       dockerfile: services/api/Dockerfile
 
     env_file:
-        - env/.env.api
+        - env/prod/.env.api
     ports:
-      - "3001:3000"
+      - "3000"
+
+    networks:
+      transcendence_network:
+
+  user:
+    container_name: transcendence_user
+
+    build:
+      context: .
+      dockerfile: services/user/Dockerfile
+
+    env_file:
+        - env/prod/.env.user
+    ports:
+      - "3001"
+
+    networks:
+      transcendence_network:
+
+  auth:
+    container_name: transcendence_auth
+
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+
+    env_file:
+        - env/prod/.env.auth
+    ports:
+      - "3002"
+
+    networks:
+      transcendence_network:
+
+  stats:
+    container_name: transcendence_stats
+
+    build:
+      context: .
+      dockerfile: services/game_stats/Dockerfile
+
+    env_file:
+        - env/prod/.env.game_stats
+    ports:
+      - "3003"
 
     networks:
       transcendence_network:

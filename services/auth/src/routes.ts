@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession } from "./dbHandlers";
-import { deleteUser } from "@ft_transcendence/user/src/api";
+import { deleteUser } from "@server/user/api";
 import { AuthUserClient, } from "@shared/user";
 import type { AuthDeleteRequest, AuthGetUserRequest, AuthLoginReply, AuthLogoutRequest, AuthOAuthRequest, AuthSignUpRequest, AuthUpdateRequest, AuthValidateRequest } from "@shared/api/authReply";
 import { AuthUser } from "./db";
@@ -23,7 +23,7 @@ export function authRoutes(fastify: FastifyInstance) {
       };
       return repl.status(200).send({ success: true, auth: authUserClient });
     } catch (e: any) {
-      return repl.code(e.code || 400).send(e.message || e);
+      return repl.code(e.code || 400).send({ success: false, message: e.message || e });
     }
   })
 

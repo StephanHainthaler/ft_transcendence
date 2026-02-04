@@ -22,7 +22,12 @@ export class Writable<T> {
   get(): T | null {
     const value = window.localStorage.getItem(this.storageKey);
     if (value) {
-      return JSON.parse(value);
+      try {
+        return JSON.parse(value);
+      } catch {
+        window.localStorage.removeItem(this.storageKey);
+        return null;
+      }
     }
     return null;
   }

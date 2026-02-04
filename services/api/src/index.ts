@@ -1,6 +1,6 @@
-import Fastify from 'fastify'
 import fastifyCookie from '@fastify/cookie';
 import { healthRoutes } from './health';
+import { createServer } from "@server/fastify/createServer";
 
 export const AUTH_URL = process.env.AUTH_SERVICE_URL;
 export const USER_URL = process.env.USER_SERVICE_URL;
@@ -21,14 +21,7 @@ async function startApiGateway() {
   if (!USER_URL) throw new Error("USER_SERVICE_URL is not defined");
   if (!GAME_STATS_URL) throw new Error("GAME_STATS_SERVICE_URL is not defined");
 
-  const fastify = Fastify({
-    logger: {
-      transport: {
-        target: 'pino-pretty'
-      },
-    },
-    disableRequestLogging: true
-  });
+  const fastify = createServer();
 
   fastify.register(fastifyCookie);
 
@@ -68,7 +61,7 @@ async function startApiGateway() {
 
       } catch (e: any) {
         request.log.error('Failed to validate: ', e);
-        return reply.code(401).send({ message: 'You are not authenticated' });
+        return reply.code(401).send({ success: false, message: 'You are not authenticated' });
       }
     }
   });

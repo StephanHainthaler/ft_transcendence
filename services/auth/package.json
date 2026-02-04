@@ -1,16 +1,21 @@
 {
   "name": "@ft_transcendence/auth",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "predev": "mkdirp db",
-    "dev": "tsx watch --env-file=../../env/.env.auth src/index.ts",
+    "prebuild": "mkdirp db",
+    "dev": "tsx watch --env-file=../../env/dev/.env.auth src/index.ts",
     "test": "tsx --test --test-reporter=spec ./tests/*.test.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
     "@types/node": "^24.10.0",
     "argon2": "^0.44.0",
+    "better-sqlite3": "^12.6.2",
     "fastify": "^5.6.1",
+    "fastify-pino-pretty": "^5.2.0",
+    "tsc-alias": "^1.8.16",
+    "mkdirp": "^3.0.1",
     "typescript": "^5.9.3"
   }
 }

@@ -1,7 +1,8 @@
 export async function request(req: Request): Promise<any> {
+  console.log("Sending request", `to: ${req.url}`);
   const response = await fetch(req, {
-  credentials: 'include',
-});
+    credentials: 'include',
+  });
   let data;
   try {
     data = await response.json();

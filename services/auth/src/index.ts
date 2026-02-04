@@ -3,20 +3,17 @@ import { healthRoute } from "./health";
 import { authRoutes } from "./routes";
 import { initDB } from "./db";
 import fastifyCookie from "@fastify/cookie";
+import { createServer } from "@server/fastify/createServer";
+
+const DB_PATH = process.env.DB_PATH;
 
 export function buildAuth(dbPath?: string, options?: FastifyServerOptions) {
-  initDB(dbPath || process.env.DB_FILE_PATH!);
+  if (!dbPath && !DB_PATH)
+    throw new Error("Missing Database Path environment variable");
 
-  const fastify = Fastify({
-    logger: {
-      transport: {
-        target: 'pino-pretty'
-      },
-      level: 'info',
-    },
-    disableRequestLogging: true,
-    ...options
-  });
+  initDB(dbPath || DB_PATH!);
+
+  const fastify = createServer(options);
 
   fastify.register(fastifyCookie);
   fastify.register(healthRoute);
@@ -43,6 +40,7 @@ async function startAuth() {
     await fastify.listen({ port: 3002 });
   } catch (e: any){
     console.error(e);
+    process.exit(1);
   }
 }
 

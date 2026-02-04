@@ -30,8 +30,8 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'dist',
     target: 'esnext',
+    sourcemap: 'inline',
   },
   logLevel: 'error',
 });
