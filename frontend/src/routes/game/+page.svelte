@@ -12,7 +12,6 @@
 
   import { Pong } from "@lib/game/pong";
   import type { MatchSubmissionData } from "@shared/game_stats";
-  import { User } from "@lucide/svelte";
 
   let users: AppUser[] = $state([]);
   let aiUser: AppUser | null = $state(null);
@@ -69,22 +68,21 @@
     }
   };
 
-const onGameEnd = (data: MatchSubmissionData)  =>
-{
-  isRunningGame = false;
-  isShowingResults = true;
+  const onGameEnd = (data: MatchSubmissionData)  =>
+  {
+    isRunningGame = false;
+    isShowingResults = true;
 
-  console.log(data);
-  matchData = data;
-  try
-  {
-    client.sendMatchResults(data);
-  } 
-  catch (e: any)
-  {
-    console.error("GameEnd Error:", e.message);
-  }
-};
+    console.log(data);
+    matchData = data;
+    try
+    {
+      client.sendMatchResults(data);
+    } 
+    catch (e: any){
+      console.error("GameEnd Error:", e.message);
+    }
+  };
 
   function returnToChallengePage() : void
   {
