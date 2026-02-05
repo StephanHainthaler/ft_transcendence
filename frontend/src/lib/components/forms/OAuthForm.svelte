@@ -2,12 +2,13 @@
   import * as Alert from "$lib/components/ui/alert";
   import Button from "$lib/components/ui/button/button.svelte";
   import { CircleAlertIcon } from "@lucide/svelte";
-  import {t, currentLocale} from "@lib/i18n/i18n";
+  import {t} from "@lib/i18n/i18n";
 
   // see https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
   // https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
 
   let errorMessage: Error | null = $state(null);
+  let userError = $state('');
 
   function generateState() {
     return crypto.randomUUID();
@@ -25,7 +26,9 @@
       window.location.href = oauthUrl;
     } catch (e: any) {
       errorMessage = new Error(`OAuth Failed: ${e.message || e}`)
+      userError = $t('OAuth.error') || 'OAuth Failed';
       console.error(errorMessage);
+      throw errorMessage;
     }
   }
 
@@ -52,6 +55,7 @@
       await GithubRedirect(info);
     } catch (e: any) {
       errorMessage = new Error(`GH Redirect Failed: ${e.message || e}`)
+      userError = $t('OAuth.error1') || 'GitHub Redirect Failed';
       console.error(errorMessage);
     }
 
@@ -67,7 +71,7 @@
     <CircleAlertIcon />
     <Alert.Title>{$t('OAuth.error')}</Alert.Title>
     <Alert.Description>
-      <p>{errorMessage.message}</p>
+      <p>{userError || 'Something went wrong...'}</p>
     </Alert.Description>
   </Alert.Root>
   {/if}

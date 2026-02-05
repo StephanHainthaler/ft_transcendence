@@ -10,7 +10,7 @@
 
   const handleLogout = () => {
     client.logout();
-    toast.success("Successfully logged out");
+    toast.success($t('login.logout') || 'Successfully logged out');
   };
 
  </script>

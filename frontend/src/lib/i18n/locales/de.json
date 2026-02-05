@@ -10,7 +10,8 @@
     "username_ph": "E-Mail oder Benutzername eingeben",
     "password": "Passwort",
     "password_ph": "Passwort eingeben",
-    "signin": "Einloggen"
+    "signin": "Einloggen",
+    "logout": "Erfolgreich abgemeldet"
   },
   "signup": {
     "signup": "Registrieren",
@@ -33,6 +34,7 @@
     "error2": "Fehler aufgetreten...",
     "redirect": "OAuth-Weiterleitung",
     "go_back": "Zurückgehen...",
+    "success": "Erfolgreich via OAuth authentifiziert",
     "loading": "GitHub OAuth wird abgeschlossen..."
   },
   "sidebar": {

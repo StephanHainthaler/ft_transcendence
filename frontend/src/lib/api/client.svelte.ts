@@ -101,6 +101,27 @@ export class ApiClient {
     return response;
   }
 
+  //   async getUser(): Promise<any> {
+  //   try
+  //   {  
+  //     let response = await getUser();
+  //     if (!response.user) {
+  //       await new Promise(resolve => setTimeout(resolve, 500));
+  //       response = await getUser();
+  //     }
+  //     if (response && response.user)
+  //    {
+  //       this.userStore.set(response.user);
+  //       if (response.avatar)
+  //         this.avatarUrl = response.avatar.location;
+  //       return response;
+  //     }
+  //     return null;
+  //   } catch (e: any) {
+  //     throw new Error(`Get User Failed: ${e.message || e}`);
+  //   }
+  // }
+
   async getUsers(): Promise<AppUser[]> {
     const response = await getUsers();
     const users = response.users?.map((f: { user: User, avatar: Avatar }) => new AppUser(f.user, f.avatar ?? null));

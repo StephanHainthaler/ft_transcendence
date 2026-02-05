@@ -5,7 +5,9 @@
   import { Play, Trophy, ArrowLeftRight } from "lucide-svelte";
   import { goto } from "$app/navigation";
 
-  const userName = $derived(client.user?.username || "Guest_Agent");
+  const userName = $derived(client.user?.displayName || client.user?.name || 
+    client.user?.user_name || "Guest_Agent"
+  );
 </script>
 
 <div class="p-8 space-y-6 max-w-7xl mx-auto font-sans">
