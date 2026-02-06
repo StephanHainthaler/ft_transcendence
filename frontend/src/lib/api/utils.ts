@@ -1,12 +1,22 @@
+import type { AppError } from "$lib/types/error";
+
 export async function request(req: Request): Promise<any> {
   const response = await fetch(req, {
-  credentials: 'include',
-});
+  credentials: 'include'});
   let data;
   try {
     data = await response.json();
-  } catch {}
-  if (!response.ok && data)
-    throw data;
+  } catch {
+    data = null;
+  }
+  if (!response.ok)
+  {
+    let error: AppError = {
+      message: data.message || 'An error occurred',
+      code: data.code || response.status,
+      extra: data.extra || null,
+    };
+    throw error;
+  }
   return data;
 }

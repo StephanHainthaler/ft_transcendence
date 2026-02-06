@@ -33,12 +33,17 @@ export function authRoutes(fastify: FastifyInstance) {
 
       validateJWT(token, secret);
       return reply.code(200).send({ success: true });
-    } catch (e) {
-      const refresh_token = request.cookies.refresh_token;
-      if (!refresh_token)
-        throw new ApiError({ message: "Unauthenticated", code: 401 });
-
+    } catch (e: any) {
+      
       try {
+
+        const refresh_token = request.cookies.refresh_token;
+        if (!refresh_token) {
+          request.log.error("No refresh token provided", e.message || e);
+          console.log("throwing");
+          throw new ApiError({ message: "No refresh token provided", code: 401 });
+        }
+
         const session = getSession({ token: refresh_token });
         if (!session) {
           throw new ApiError({ message: 'Unauthenticated', code: 401 });
@@ -64,8 +69,9 @@ export function authRoutes(fastify: FastifyInstance) {
             refresh_token: newSession.refreshToken,
           });
       } catch (e: any) {
+        console.log("Refresh token validation failed", e.message || e);
         request.log.error(e);
-        return reply.status(401).send({ success: false, message: 'Unauthenticated' });
+        return reply.status(e.code || 401).send({ success: false, message: e.message || 'Unauthenticated' });
       }
     }
   });

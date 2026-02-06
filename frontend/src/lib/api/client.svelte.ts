@@ -25,18 +25,31 @@ export class ApiClient {
   private readonly authStore: Writable<AuthUserClient | null> = new Writable('auth');
   private avatarUrl?: string = $state(undefined);
   loggedIn: boolean = $state(false);
+  status: 'ready' | 'loading' | 'error' = $state('loading');
 
   constructor() {}
 
   async init() {
     try {
+      this.status = 'loading';
       const userResponse = await this.getUser();
       const authResponse = await this.getAuth();
       this.userStore.set(userResponse.user);
       this.authStore.set(authResponse.auth);
       this.loggedIn = true;
+      this.status = 'ready';
     } catch (e: any) {
+      if (e.code === 401) {
+        this.userStore.set(null);
+        this.authStore.set(null);
+        this.avatarUrl = undefined;
+        this.loggedIn = false;
+        this.status = 'ready';
+      }
+      else {
+      this.status = 'error';
       toast.error(e.message || e);
+      }
     }
     return this;
   }
