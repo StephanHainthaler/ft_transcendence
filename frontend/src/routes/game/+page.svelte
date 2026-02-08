@@ -124,11 +124,14 @@ const onGameEnd = (data: MatchSubmissionData)  =>
             <input type="number" bind:value={matchDurationInMinutes} min="1" max="10" />
             <input type="range" bind:value={matchDurationInMinutes} min="1" max="10" />
           </label>
-          <label>
-            {$t('game.AIdifficulty')}:
-            <input type="number" bind:value={AIdifficulty} min="1" max="3" />
-            <input type="range" bind:value={AIdifficulty} min="1" max="3" />
-          </label>
+          <div class="flex items-center gap-4">
+            <span class="font-medium">{$t('game.AIdifficulty')}:</span>
+              <div class="flex gap-2">
+                <Button size="sm" class={AIdifficulty === 1 ? "bg-green-600 text-white" : "bg-green-600 text-black hover:bg-green-300"} onclick={() => (AIdifficulty = 1)}>easy</Button>
+                <Button size="sm" class={AIdifficulty === 2 ? "bg-yellow-400 text-white" : "bg-yellow-400 text-black hover:bg-yellow-300"} onclick={() => (AIdifficulty = 2)}>medium</Button>
+                <Button size="sm" class={AIdifficulty === 3 ? "bg-red-600 text-white" : "bg-red-600 text-black hover:bg-red-300"} onclick={() => (AIdifficulty = 3)}>hard</Button>
+              </div>
+          </div>
         </Grid>
         <Grid title={$t('game.challenge')}>
           {#each users as user}
