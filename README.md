@@ -23,7 +23,7 @@ _This project has been created as part of the 42 curriculum by vvobis, shaintha,
 
 **ft_transcendence** is the final project of Coding School 42. It is a full-stack web application where players can play Pong with features including user authentication, real-time multiplayer games, tournament systems and AI opponents.
 
-The project emphasizes full-stack development, team organization, project management, and establishing roles within the team.
+The project's goal is to enhance skills in full-stack development, team organization, project management, and establishing roles within the team.
 
 ## Features & Modules
 
