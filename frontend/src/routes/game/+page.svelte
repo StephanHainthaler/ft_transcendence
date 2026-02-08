@@ -127,9 +127,9 @@ const onGameEnd = (data: MatchSubmissionData)  =>
           <div class="flex items-center gap-4">
             <span class="font-medium">{$t('game.AIdifficulty')}:</span>
               <div class="flex gap-2">
-                <Button size="sm" class={AIdifficulty === 1 ? "bg-green-600 text-white" : "bg-green-600 text-black hover:bg-green-300"} onclick={() => (AIdifficulty = 1)}>easy</Button>
-                <Button size="sm" class={AIdifficulty === 2 ? "bg-yellow-400 text-white" : "bg-yellow-400 text-black hover:bg-yellow-300"} onclick={() => (AIdifficulty = 2)}>medium</Button>
-                <Button size="sm" class={AIdifficulty === 3 ? "bg-red-600 text-white" : "bg-red-600 text-black hover:bg-red-300"} onclick={() => (AIdifficulty = 3)}>hard</Button>
+                <Button size="sm" class={AIdifficulty === 1 ? "bg-green-600 text-white" : "bg-green-600 text-black hover:bg-green-300"} onclick={() => (AIdifficulty = 1)}>{$t('game.easy')}</Button>
+                <Button size="sm" class={AIdifficulty === 2 ? "bg-yellow-400 text-white" : "bg-yellow-400 text-black hover:bg-yellow-300"} onclick={() => (AIdifficulty = 2)}>{$t('game.medium')}</Button>
+                <Button size="sm" class={AIdifficulty === 3 ? "bg-red-600 text-white" : "bg-red-600 text-black hover:bg-red-300"} onclick={() => (AIdifficulty = 3)}>{$t('game.hard')}</Button>
               </div>
           </div>
         </Grid>
