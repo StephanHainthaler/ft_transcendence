@@ -37,7 +37,7 @@ export class Player
 		this._onHitCoolDown = false;
 		this._movingUp = false;
 		this._movingDown = false;
-		this._AIdifficulty = 2;
+		this._AIdifficulty = 1;
 	}
 
 	public startMoveUp(): void{ this._movingUp = true; }
@@ -73,7 +73,7 @@ export class Player
 		// if the ball is going away from the AI opponent go to the middle
 		// or if the ball moving towards AI + ball is   canvas width/10 * AIdifficulty    away from AI
 		if (ball.getDirection().x < 0 || 
-			(ball.getDirection().x > 0 && (ball.getOrigin().x < (this._game.getCanvas().width / 10 * this._AIdifficulty))))
+			(ball.getDirection().x > 0 && (ball.getOrigin().x < (this._game.getCanvas().width - (this._game.getCanvas().width / 10 * this._AIdifficulty) ))))
 		{
 			if (this._origin.y < this._game.getCanvas().height / 2 - 1)
 				this._origin.y += scaledVelocity;
