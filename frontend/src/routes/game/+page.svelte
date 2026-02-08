@@ -24,6 +24,7 @@
   let challengedUser = $state({} as AppUser);
   let pointsToWin = $state(10);
   let matchDurationInMinutes = $state(5);
+  let AIdifficulty = $state(2);
 
   const loadPageData = async () =>
   {
@@ -64,7 +65,7 @@
     {
       challengingUser = new AppUser(client.user, null);
       if (canvas)
-        pong = new Pong(challengingUser, challengedUser, canvas, pointsToWin, matchDurationInMinutes, onGameEnd);
+        pong = new Pong(challengingUser, challengedUser, canvas, pointsToWin, matchDurationInMinutes, AIdifficulty, onGameEnd);
     }
   };
 
@@ -122,6 +123,11 @@ const onGameEnd = (data: MatchSubmissionData)  =>
             {$t('game.matchDurationInMinutes')}:
             <input type="number" bind:value={matchDurationInMinutes} min="1" max="10" />
             <input type="range" bind:value={matchDurationInMinutes} min="1" max="10" />
+          </label>
+          <label>
+            {$t('game.AIdifficulty')}:
+            <input type="number" bind:value={AIdifficulty} min="1" max="3" />
+            <input type="range" bind:value={AIdifficulty} min="1" max="3" />
           </label>
         </Grid>
         <Grid title={$t('game.challenge')}>

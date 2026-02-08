@@ -101,6 +101,7 @@
     "challenge": "Challenge",
     "pointsToWin": "Points to Win",
     "matchDurationInMinutes": "Match Duration (in minutes)",
+    "AIdifficulty": "AI Difficulty",
     "paused": "Paused",
     "overtime": "Overtime",
     "summary": "Match Summary",

@@ -18,9 +18,9 @@ export class Player
 	private _onHitCoolDown: boolean;
 	private	_movingUp: boolean;
 	private	_movingDown: boolean;
-	private _AIdifficulty: number; // number between 1 and 10
+	private _AIdifficulty: number; // number between 1 and 3
 
-	public constructor(game: Pong, data: AppUser, playerNumber: number, x: number, y: number)
+	public constructor(game: Pong, data: AppUser, playerNumber: number, x: number, y: number, AIdifficulty: number)
 	{
 		this._game = game;
 		this._data = data;
@@ -37,7 +37,7 @@ export class Player
 		this._onHitCoolDown = false;
 		this._movingUp = false;
 		this._movingDown = false;
-		this._AIdifficulty = 1;
+		this._AIdifficulty = AIdifficulty;
 	}
 
 	public startMoveUp(): void{ this._movingUp = true; }
@@ -71,13 +71,13 @@ export class Player
 		const scaledVelocity = this._velocity * scale * delta;
 
 		// if the ball is going away from the AI opponent go to the middle
-		// or if the ball moving towards AI + ball is   canvas width/10 * AIdifficulty    away from AI
+		// or if the ball moving towards AI + ball is   canvas width/3 * AIdifficulty    away from AI
 		if (ball.getDirection().x < 0 || 
-			(ball.getDirection().x > 0 && (ball.getOrigin().x < (this._game.getCanvas().width - (this._game.getCanvas().width / 10 * this._AIdifficulty) ))))
+			(ball.getDirection().x > 0 && (ball.getOrigin().x < (this._game.getCanvas().width - (this._game.getCanvas().width / 4 * this._AIdifficulty) ))))
 		{
-			if (this._origin.y < this._game.getCanvas().height / 2 - 1)
+			if (this._origin.y < this._game.getCanvas().height * 0.445 - 1)
 				this._origin.y += scaledVelocity;
-			else if (this._origin.y > this._game.getCanvas().height / 2 + 1)
+			else if (this._origin.y >= this._game.getCanvas().height * 0.445 + 1)
 				this._origin.y -= scaledVelocity;
 		}
 		else if (ball.getOrigin().y - ball.getHeight() > this._origin.y && (this._origin.y + this._height) + scaledVelocity < (this._game.getCanvas().height * 0.9))

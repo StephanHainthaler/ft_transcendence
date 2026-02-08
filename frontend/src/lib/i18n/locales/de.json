@@ -101,6 +101,7 @@
     "challenge": "Herausfordern",
     "pointsToWin": "Punkte zum Gewinnen",
     "matchDurationInMinutes": "Spielzeit (in Minuten)",
+    "AIdifficulty": "KI-Schwierigkeit",
     "paused": "Pausiert",
     "overtime": "Verlängerung",
     "summary": "Spielzusammenfassung",

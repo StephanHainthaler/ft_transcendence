@@ -101,6 +101,7 @@
     "challenge": "Викликати",
     "pointsToWin": "Очки для перемоги",
     "matchDurationInMinutes": "Тривалість матчу (в хвилинах)",
+    "AIdifficulty": "Сложность ИИ",
     "paused": "Пауза",
     "overtime": "Овертайм",
     "summary": "Підсумок матчу",
