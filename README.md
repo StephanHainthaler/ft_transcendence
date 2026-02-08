@@ -120,6 +120,34 @@ Our application follows a **microservices architecture** with the following comp
 ```
 
 ## Database Schema
+### Database Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     User Service (SQLite)                        │
+├─────────────────────────────────────────────────────────────────┤
+│ users (id, name, username, email)                               │
+│   ├─→ avatars (user_id FK, location)                            │
+│   ├─→ friendships (user_from_id, user_to_id, status)           │
+│   └─→ user_games (user_id FK, game_id FK)                       │
+│         └─→ games (id, player1, player2, scores, duration)      │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   Auth Service (SQLite)                          │
+├─────────────────────────────────────────────────────────────────┤
+│ auth_users (id, user_id FK, user_name, email, passwd, oauth_id) │
+│   └─→ sessions (auth_id FK, token, expires_in, created_at)      │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                  Game Stats Service (SQLite)                     │
+├─────────────────────────────────────────────────────────────────┤
+│ user_stats (user_id FK, wins, losses, streak, points, rank)     │
+│   └─→ match_history (player_one_id, player_two_id, winner_id,   │
+│                      scores, duration, timestamp)               │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 There are three separate SQLite databases managed by microservices:
 
@@ -182,35 +210,6 @@ match_history references three user_stats records:
   ├── player_one_id → user_stats
   ├── player_two_id → user_stats
   └── winner_id → user_stats
-```
-
-### Database Architecture Diagram
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     User Service (SQLite)                        │
-├─────────────────────────────────────────────────────────────────┤
-│ users (id, name, username, email)                               │
-│   ├─→ avatars (user_id FK, location)                            │
-│   ├─→ friendships (user_from_id, user_to_id, status)           │
-│   └─→ user_games (user_id FK, game_id FK)                       │
-│         └─→ games (id, player1, player2, scores, duration)      │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                   Auth Service (SQLite)                          │
-├─────────────────────────────────────────────────────────────────┤
-│ auth_users (id, user_id FK, user_name, email, passwd, oauth_id) │
-│   └─→ sessions (auth_id FK, token, expires_in, created_at)      │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                  Game Stats Service (SQLite)                     │
-├─────────────────────────────────────────────────────────────────┤
-│ user_stats (user_id FK, wins, losses, streak, points, rank)     │
-│   └─→ match_history (player_one_id, player_two_id, winner_id,   │
-│                      scores, duration, timestamp)               │
-└─────────────────────────────────────────────────────────────────┘
 ```
 
 ## Instructions
