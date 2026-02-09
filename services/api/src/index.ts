@@ -28,6 +28,8 @@ async function startApiGateway() {
   const proxy = await import ('@fastify/http-proxy');
 
   fastify.addHook('onRequest', async (request, reply) => {
+    request.log.info(`REQUEST WITH URL ${request.originalUrl}`);
+    request.log.info(AUTH_URL);
     if (!publicRoutes.some(r => request.url.includes(r))) {
       try {
         const response = await fetch(`${AUTH_URL}/validate`, {
