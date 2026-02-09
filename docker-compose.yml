@@ -1,4 +1,18 @@
 services:
+  frontend:
+    container_name: transcendence_frontend
+
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+
+    ports:
+      - "3000"
+
+    networks:
+      transcendence_network:
+
+
   nginx:
     container_name: transcendence_nginx
 
@@ -7,7 +21,7 @@ services:
       dockerfile: services/nginx/Dockerfile
 
     ports:
-      - "3000:80"
+      - "8080:80"
 
     networks:
       transcendence_network:

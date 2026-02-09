@@ -269,7 +269,7 @@ export function authRoutes(fastify: FastifyInstance) {
       }
     } catch (e: any) {
       request.log.error(e);
-      return reply.code(401).send({ success: false, message: JSON.stringify(e) })
+      return reply.code(401).send({ success: false, message: e.message || e })
     }
   });
 

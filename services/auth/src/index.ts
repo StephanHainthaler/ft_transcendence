@@ -1,4 +1,4 @@
-import Fastify, { FastifyServerOptions } from "fastify";
+import { FastifyServerOptions } from "fastify";
 import { healthRoute } from "./health";
 import { authRoutes } from "./routes";
 import { initDB } from "./db";
@@ -6,6 +6,19 @@ import fastifyCookie from "@fastify/cookie";
 import { createServer } from "@server/fastify/createServer";
 
 const DB_PATH = process.env.DB_PATH;
+
+export const HTTP = process.env.HTTP_PROTOCOL;
+if (!HTTP) {
+  console.error("Missing Protocol env Vairable! Exiting...");
+  process.exit(1);
+}
+
+const userUrl = process.env.USER_SERVICE_URL;
+if (!userUrl) {
+  console.error("Missing USER_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const USER_URL = `${HTTP}://${userUrl}`;
 
 export function buildAuth(dbPath?: string, options?: FastifyServerOptions) {
   if (!dbPath && !DB_PATH)
@@ -34,10 +47,9 @@ export function buildAuth(dbPath?: string, options?: FastifyServerOptions) {
 }
 
 async function startAuth() {
-  const fastify = buildAuth();
-
   try {
-    await fastify.listen({ port: 3002 });
+    const fastify = buildAuth();
+    await fastify.listen({ host: '0.0.0.0', port: 3002 });
   } catch (e: any){
     console.error(e);
     process.exit(1);

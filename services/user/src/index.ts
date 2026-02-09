@@ -43,7 +43,7 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
 export async function startService() {
   try {
     const fastify = await buildApp();
-    await fastify.listen({ port: 3001 });
+    await fastify.listen({ host: '0.0.0.0', port: 3001 });
   } catch (e: any) {
     console.error(e);
   }

@@ -2,9 +2,32 @@ import fastifyCookie from '@fastify/cookie';
 import { healthRoutes } from './health';
 import { createServer } from "@server/fastify/createServer";
 
-export const AUTH_URL = process.env.AUTH_SERVICE_URL;
-export const USER_URL = process.env.USER_SERVICE_URL;
-export const GAME_STATS_URL = process.env.GAME_STATS_SERVICE_URL;
+export const HTTP = process.env.HTTP_PROTOCOL;
+if (!HTTP) {
+  console.error("Missing Protocol env Vairable! Exiting...");
+  process.exit(1);
+}
+
+const authUrl = process.env.AUTH_SERVICE_URL;
+if (!authUrl) {
+  console.error("Missing AUTH_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const AUTH_URL = `${HTTP}://${authUrl}`;
+
+const userUrl = process.env.USER_SERVICE_URL;
+if (!userUrl) {
+  console.error("Missing USER_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const USER_URL = `${HTTP}://${userUrl}`;
+
+const gameStatsUrl = process.env.GAME_STATS_SERVICE_URL;
+if (!gameStatsUrl) {
+  console.error("Missing GAME_STATS_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const GAME_STATS_URL  = `${HTTP}://${gameStatsUrl}`;
 
 const publicRoutes = [
   '/auth/login',
@@ -21,16 +44,22 @@ async function startApiGateway() {
   if (!USER_URL) throw new Error("USER_SERVICE_URL is not defined");
   if (!GAME_STATS_URL) throw new Error("GAME_STATS_SERVICE_URL is not defined");
 
+  console.log(AUTH_URL);
+
   const fastify = createServer();
 
   fastify.register(fastifyCookie);
 
   const proxy = await import ('@fastify/http-proxy');
+  console.log('auth url in api services: ', AUTH_URL);
 
   fastify.addHook('onRequest', async (request, reply) => {
+    request.log.info(`REQUEST WITH URL ${request.originalUrl}`);
     if (!publicRoutes.some(r => request.url.includes(r))) {
       try {
-        const response = await fetch(`${AUTH_URL}/validate`, {
+        const authReqUrl = `${AUTH_URL}/validate`;
+        console.log("Trying validate req with:", authReqUrl);
+        const response = await fetch(authReqUrl, {
           method: 'post',
           headers: {
             'Cookie': request.headers.cookie || ''
@@ -60,6 +89,7 @@ async function startApiGateway() {
         }
 
       } catch (e: any) {
+        console.log('Caught error: ', e);
         request.log.error('Failed to validate: ', e);
         return reply.code(401).send({ success: false, message: 'You are not authenticated' });
       }

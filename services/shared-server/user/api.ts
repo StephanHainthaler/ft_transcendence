@@ -2,7 +2,20 @@ import { ApiError } from "../error/apiError";
 import { JWT } from "../../../shared/api";
 import { User } from "../../../shared/user";
 
-const USER_API = process.env.USER_API_URL!;
+export const HTTP = process.env.HTTP_PROTOCOL;
+if (!HTTP) {
+  console.error("Missing Protocol env Vairable! Exiting...");
+  process.exit(1);
+}
+
+const userUrl = process.env.USER_SERVICE_URL;
+if (!userUrl) {
+  console.error("Missing USER_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const USER_API = `${HTTP}://${userUrl}`;
+
+
 
 export async function deleteUser(token: JWT) {
   const response = await fetch(`${USER_API}/delete`, {
