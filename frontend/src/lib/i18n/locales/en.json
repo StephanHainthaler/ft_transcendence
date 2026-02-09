@@ -154,6 +154,7 @@
   "error": {
     "404": "Not Found",
     "common": {
+      "unauthorized": "You are not authorized to perform this action.",
       "validation_failed": "Please check the form fields for correctness.",
       "unexpected": "An error occurred while processing your request."
     }

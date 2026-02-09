@@ -9,6 +9,7 @@ import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, s
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
 import { toast } from "svelte-sonner";
+import type { AppError } from "@lib/types/error";
 
 export type ApiError = {
   code: number,
@@ -280,4 +281,20 @@ export class ApiClient {
     this.userStore.set(data.user);
     return data.user;
   }
+
+  // handleError(error: any) {
+  //   const e = error as AppError;
+  //   console.error('API Error:', e.code, '\n', e.message || 'An error occurred');
+  //   switch (e.code)
+  //   {
+  //     case 401:
+  //       this.clearSession();
+  //       toast.error('Session expired. Please log in again.');
+  //       goto('/auth');
+  //       break;
+  //     case 403:
+
+  //     default:
+  //       toast.error(e.message || 'An error occurred');
+  //   }
 }
