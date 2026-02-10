@@ -48,7 +48,6 @@
         id: 0, //0 to indicate AI user
         name: "AI Opponent",
       }, null);
-      //users.push(aiUser);
     }
     catch (e: any)
     {
@@ -87,6 +86,11 @@
       console.error("GameEnd Error:", e.message);
     }
   };
+
+  function formatDuration(durationMs: number) {
+    const totalSeconds = Math.floor(durationMs / 1000);
+    return `${Math.floor(totalSeconds / 60)}:${(totalSeconds % 60).toString().padStart(2, '0')}`;
+  }
 
   function returnToChallengePage() : void
   {
@@ -202,23 +206,32 @@
           <canvas bind:this={canvas} class='bg-black size-full' tabindex='0'></canvas>
         </div>
       {:else}
-        <h2 class="text-2xl font-bold mb-4">{$t('game.summary')}</h2>
-        {#if matchData}
-          {#if matchData.winner_id === challengingUser.id}
-          <p class="mb-2">{$t('game.win')}: {challengingUser.name} ({matchData.p1_score})</p>
-          <p class="mb-4">{$t('game.lose')}: {challengedUser.name} ({matchData.p2_score})</p>
-          {:else}
-          <p class="mb-2">{$t('game.lose')}: {challengingUser.name} ({matchData.p1_score})</p>
-          <p class="mb-4">{$t('game.win')}: {challengedUser.name} ({matchData.p2_score})</p>
-          {/if}
-          <p class="mb-4">{$t('game.duration')}: {matchData.duration} </p>
-        {/if}
-        <Button variant="tab" onclick={ returnToChallengePage } >
-          {$t('game.return')}
-        </Button>
-        <Button variant="tab" onclick={ startRematch } >
-          {$t('game.rematch')}
-        </Button>
+        <Card.Root class="flex-1 min-h-0 flex flex-col h-full">
+          <Card.Header>
+            <Card.Title>{$t('game.summary')}</Card.Title>
+          </Card.Header>
+          <Card.Content class="flex-1 min-h-0 overflow-hidden">
+            {#if matchData}
+              {$t('game.duration')}: {formatDuration(matchData.duration ?? 0)}
+              <div class='h-full grid grid-cols-1 grid-rows-4 md:grid-rows-2 md:grid-cols-2 gap-2 p-2 md:p-8'>
+                <Grid title={matchData.winner_id === matchData.player_one_id ? $t('game.win') : $t('game.lose')}>
+                  <p class="mb-4">Player1: {challengingUser.name}</p>
+                  <p class="mb-4">Score: {matchData.p1_score}</p>
+                </Grid>
+                <Grid title={matchData.winner_id === matchData.player_two_id ? $t('game.win') : $t('game.lose')}>
+                  <p class="mb-4">Player2: {challengedUser.name}</p>
+                  <p class="mb-4">Score: {matchData.p2_score}</p>
+                </Grid>
+                <Button size="sm" onclick={ returnToChallengePage } >
+                  {$t('game.return')}
+                </Button>
+                <Button size="sm" onclick={ startRematch } >
+                  {$t('game.rematch')}
+                </Button>
+              </div>
+            {/if}
+          </Card.Content>
+        </Card.Root>
       {/if}
     </Card.Content>
   </Card.Root>

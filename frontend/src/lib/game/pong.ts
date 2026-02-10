@@ -45,7 +45,35 @@ export class Pong
 		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445, AIdifficulty);
 		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.445, AIdifficulty);
 		this._ball = new Ball(this, this._player1, this._player2);
-	
+		//this.drawPreMatchCountdown();
+		this.startMatch();
+	}
+
+	public drawPreMatchCountdown(): void
+	{
+		this._context.font = "80px Arial";
+		this._context.textAlign = "center";
+		this._context.fillStyle = "rgb(255, 255, 255)";
+		this._context.fillText("3", this._canvas.width * 0.5, this._canvas.height * 0.5);
+		setTimeout(() =>
+		{
+			this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+			this._context.fillText("2", this._canvas.width * 0.5, this._canvas.height * 0.5);
+		}, 1000);
+		setTimeout(() =>
+		{
+			this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+			this._context.fillText("1", this._canvas.width * 0.5, this._canvas.height * 0.5);
+		}, 2000);
+		setTimeout(() =>
+		{
+			this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+			this.startMatch();
+		}, 3000);
+	}
+
+	public startMatch(): void
+	{
 		this.setupEvents();
 		this._matchStartTime = new Date().getTime();
 		this._isPaused = false;
@@ -231,7 +259,7 @@ export class Pong
 				this._context.fillStyle = "rgb(255, 0, 0)";
 		}
 		if (currentCountdown < 0)
-			this._context.fillText(get(t)('game.overtime'), this._canvas.width * 0.5, this._canvas.height * 0.985); //add translation
+			this._context.fillText(get(t)('game.overtime'), this._canvas.width * 0.5, this._canvas.height * 0.985);
 		else
 			this._context.fillText(currentCountdown.toString(), this._canvas.width * 0.5, this._canvas.height * 0.98)
 
@@ -288,7 +316,7 @@ export class Pong
 
 	public	resetMatch(canvas: HTMLCanvasElement) : void
 	{
-		// reinitialize canvas and context and setup events
+		// reinitialize canvas and context
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
 		this.resizeCanvas();
@@ -302,7 +330,7 @@ export class Pong
 		this._player1.stopMoveUp(), this._player1.stopMoveDown();
 		this._player2.stopMoveUp(), this._player2.stopMoveDown();
 		this._ball.spawnBall(this._canvas.width * 0.5, this._canvas.height * 0.5, this._player1, this._player2);
-	
+
 		// reset match timers
 		this._currentMatchDuration = 0;
 		this._pauseDuration = 0;
