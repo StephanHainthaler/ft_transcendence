@@ -6,6 +6,8 @@
   import { goto } from "$app/navigation";
 
 const userName = $derived.by(() => {
+    if (!client || client.status === 'error')
+      return "Guest_Agent";
     if (client.status === 'loading')
       return "Guest_Agent";
     if (client.user) {
@@ -19,7 +21,7 @@ const userName = $derived.by(() => {
 <div class="p-8 space-y-6 max-w-7xl mx-auto font-sans">
   <header class="relative p-6 border-l-4 border-primary bg-primary/5 backdrop-blur-sm">
     <h1 class="text-2xl md:text-4xl font-black uppercase italic tracking-tighter text-white">
-      {$t('welcome')}, <span class="text-primary drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.6)]">{userName}</span>
+      {$t('welcome') || "Welcome"} <span class="text-primary drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.6)]">{userName}</span>
     </h1>
   </header>
   
@@ -42,7 +44,7 @@ const userName = $derived.by(() => {
       <div class="absolute bottom-4 left-6 flex items-center gap-2">
          <div class="hidden lg:inline-block size-2 bg-primary animate-pulse shadow-[0_0_8px_rgba(var(--primary-rgb),0.8)]"></div>
          <span class="hidden lg:inline-block text-[10px] font-mono text-primary uppercase tracking-[0.4em] drop-shadow-[0_0_5px_rgba(var(--primary-rgb),0.5)]">
-            {$t('moto')}
+            {$t('moto') || "Fly High, Fight Hard!"}
          </span>
       </div>
     </div> <button 
@@ -55,7 +57,7 @@ const userName = $derived.by(() => {
         </div>
         <div class="md:table-cell text-left max-w-[250px] align-middle truncate pr-2">
           <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tighter italic group-hover:text-primary">
-            {$t('play')}
+            {$t('play') || "Play Now"}
           </h2>
         </div>
       </div>
@@ -72,7 +74,7 @@ const userName = $derived.by(() => {
         </div>
         <div class="md:table-cell text-left max-w-[250px] align-middle truncate pr-2">
           <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tighter italic group-hover:text-accent">
-            {$t('tournament.tournament')}
+            {$t('tournament.tournament') || "Tournament"}
           </h2>
         </div>
       </div>

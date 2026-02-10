@@ -12,17 +12,30 @@ i18next.init({
     ukr: { translation: ukr },
     de: { translation: de }
   },
-  interpolation: { escapeValue: false }
+  interpolation: { escapeValue: false },
+  parseMissingKeyHandler: (key) => {
+    console.warn(`Missing translation key: ${key}`);
+    return "";
+  }
 });
 
 const createI18nStore = () => {
-  const { subscribe, set } = writable(i18next.t.bind(i18next));
+  const safeT = () => (key: string, options?: string) => {
+    const res  = i18next.t(key, options);
+    if (res === key) {
+      console.warn(`Missing translation for key: ${key}`);
+      return options ? options : "";
+    }
+    return res;
+  };
+
+  const { subscribe, set } = writable(safeT());
 
   return {
     subscribe,
     changeLanguage: async (lang: string) => {
       await i18next.changeLanguage(lang);
-      set(i18next.t.bind(i18next)); 
+      set(safeT()); 
       currentLocale.set(i18next.language);
     }
   };
