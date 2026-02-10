@@ -37,6 +37,9 @@ export class Pong
 	{
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
+		this._maxPlayerScore = pointsToWin;
+		this._maxMatchDuration = matchDurationInMinutes * 60000;
+		this._onGameEnd = _onGameEnd;
 		this.resizeCanvas();
 
 		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445, AIdifficulty);
@@ -44,9 +47,6 @@ export class Pong
 		this._ball = new Ball(this, this._player1, this._player2);
 	
 		this.setupEvents();
-		this._maxPlayerScore = pointsToWin;
-		this._maxMatchDuration = matchDurationInMinutes * 60000;
-		this._onGameEnd = _onGameEnd;
 		this._matchStartTime = new Date().getTime();
 		this._isPaused = false;
 		window.requestAnimationFrame((time) => this.updatePong(time));

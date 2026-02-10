@@ -4,7 +4,11 @@
   import { client } from "@lib/api/index.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";
   import * as Card from "$lib/components/ui/card";
+  import * as Dialog from "$lib/components/ui/dialog/index.js";
   import Button from "@lib/components/ui/button/button.svelte";
+  import { buttonVariants } from "@lib/components/ui/button";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import { Label } from "$lib/components/ui/label/index.js";
 
   import { tick } from 'svelte';
   import { toast } from "svelte-sonner";
@@ -14,7 +18,7 @@
   import type { MatchSubmissionData } from "@shared/game_stats";
 
   let users: AppUser[] = $state([]);
-  let aiUser: AppUser | null = $state(null);
+  let aiUser: AppUser = $state({} as AppUser);
   let isRunningGame = $state(false);
   let isShowingResults = $state(false);
   let canvas: HTMLCanvasElement | null = $state(null);
@@ -29,7 +33,6 @@
   const loadPageData = async () =>
   {
     await tick();
-    //await tick();
     try
     {
       const data = await client.getUsers();
@@ -45,7 +48,7 @@
         id: 0, //0 to indicate AI user
         name: "AI Opponent",
       }, null);
-      users.push(aiUser);
+      //users.push(aiUser);
     }
     catch (e: any)
     {
@@ -107,6 +110,7 @@
 
 </script>
 
+
 <div class='size-full flex flex-col justify-center items-center'>
   <Card.Root class='size-full'>
     <Card.Header>
@@ -127,16 +131,70 @@
           </label>
           <div class="flex items-center gap-4">
             <span class="font-medium">{$t('game.AIdifficulty')}:</span>
-              <div class="flex gap-2">
-                <Button size="sm" class={AIdifficulty === 1 ? "bg-green-600 text-white" : "bg-green-600 text-black hover:bg-green-300"} onclick={() => (AIdifficulty = 1)}>{$t('game.easy')}</Button>
-                <Button size="sm" class={AIdifficulty === 2 ? "bg-yellow-400 text-white" : "bg-yellow-400 text-black hover:bg-yellow-300"} onclick={() => (AIdifficulty = 2)}>{$t('game.medium')}</Button>
-                <Button size="sm" class={AIdifficulty === 3 ? "bg-red-600 text-white" : "bg-red-600 text-black hover:bg-red-300"} onclick={() => (AIdifficulty = 3)}>{$t('game.hard')}</Button>
-              </div>
+            <div class="flex gap-2">
+              <Button size="sm" class={AIdifficulty === 1 ? "bg-green-600 text-white" : "bg-green-600 text-black hover:bg-green-300"} onclick={() => (AIdifficulty = 1)}>{$t('game.easy')}</Button>
+              <Button size="sm" class={AIdifficulty === 2 ? "bg-yellow-400 text-white" : "bg-yellow-400 text-black hover:bg-yellow-300"} onclick={() => (AIdifficulty = 2)}>{$t('game.medium')}</Button>
+              <Button size="sm" class={AIdifficulty === 3 ? "bg-red-600 text-white" : "bg-red-600 text-black hover:bg-red-300"} onclick={() => (AIdifficulty = 3)}>{$t('game.hard')}</Button>
+            </div>
+          </div>
+          <div>
+            <Dialog.Root>
+              <Dialog.Trigger class={buttonVariants({ variant: "outline" })}>
+                {$t('game.challengeAI')}
+              </Dialog.Trigger>
+              <Dialog.Content class="sm:max-w-[425px]">
+                <Dialog.Header>
+                  <Dialog.Title>{$t('game.rules')}</Dialog.Title>
+                  <Dialog.Description>
+                    {$t('game.rulesDescription')}
+                  </Dialog.Description>
+                </Dialog.Header>
+                <div class="grid gap-4">
+                  <div class="grid gap-3">
+                    <p class="mb-3">{$t('game.howToPlay')}</p>
+                    <p class="mb-3">{$t('game.howToWin')}</p>
+                    <Label for="name-1">{$t('game.leftPlayer')}: {client.user!.name}</Label>
+                    <Label for="name-1">{$t('game.rightPlayer')}: {$t('game.aiOpponent')}</Label>
+                    <Label for="name-1">{$t('game.pointsToWin')}: {pointsToWin}</Label>
+                    <Label for="name-1">{$t('game.matchDuration')}: {matchDurationInMinutes} {$t('game.minutes')}</Label>
+                    <Label for="name-1">{$t('game.AIdifficulty')}: {AIdifficulty === 1 ? $t('game.easy') : AIdifficulty === 2 ? $t('game.medium') : $t('game.hard')}</Label>
+                  </div>
+                </div>
+                <Dialog.Footer>
+                  <Dialog.Close class={buttonVariants({ variant: "outline" })}>{$t('game.cancel')}</Dialog.Close>
+                  <Button size="sm" onclick={() => challengeUser(aiUser)}>{$t('game.startMatch')}</Button>
+                </Dialog.Footer>
+              </Dialog.Content>
+            </Dialog.Root>
           </div>
         </Grid>
         <Grid title={$t('game.challenge')}>
           {#each users as user}
-            <GridCard title={user.id === 0 ? $t('game.aiOpponent') : user.name} avatarUrl={user.avatarUrl} callback={() => challengeUser(user)} buttonDesc={$t('game.challenge')}/>
+            <Dialog.Root>
+              <Dialog.Trigger class="w-full">
+                <GridCard title={user.name} avatarUrl={user.avatarUrl} buttonDesc={$t('game.challenge')} callback={() => (challengedUser = user)}/>
+              </Dialog.Trigger>
+              <Dialog.Content class="sm:max-w-[425px]">
+                <Dialog.Header>
+                  <Dialog.Title>{$t('game.rules')}</Dialog.Title>
+                  <Dialog.Description>{$t('game.rulesDescription')}</Dialog.Description>
+                </Dialog.Header>
+                <div class="grid gap-4">
+                  <div class="grid gap-3">
+                    <p class="mb-3">{$t('game.howToPlay')}</p>
+                    <p class="mb-3">{$t('game.howToWin')}</p>
+                    <Label for="name-1">{$t('game.leftPlayer')}: {client.user!.name}</Label>
+                    <Label for="name-1">{$t('game.rightPlayer')}: {challengedUser.name}</Label>
+                    <Label for="name-1">{$t('game.pointsToWin')}: {pointsToWin}</Label>
+                    <Label for="name-1">{$t('game.matchDuration')}: {matchDurationInMinutes} {$t('game.minutes')}</Label>
+                  </div>
+                </div>
+                <Dialog.Footer>
+                  <Dialog.Close class={buttonVariants({ variant: "outline" })}>{$t('game.cancel')}</Dialog.Close>
+                  <Button size="sm" onclick={() => challengeUser(user)}>{$t('game.startMatch')}</Button>
+                </Dialog.Footer>
+              </Dialog.Content>
+            </Dialog.Root>
           {/each}
         </Grid>
       {:else if isRunningGame && !isShowingResults}
