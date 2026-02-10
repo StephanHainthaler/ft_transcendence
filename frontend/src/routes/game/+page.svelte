@@ -20,11 +20,11 @@
   let canvas: HTMLCanvasElement | null = $state(null);
   let pong: Pong | null = $state(null);
   let matchData: MatchSubmissionData | null = $state(null);
-  let challengingUser = {} as AppUser;
-  let challengedUser = {} as AppUser;
+  let challengingUser = $state({} as AppUser);
+  let challengedUser = $state({} as AppUser);
   let pointsToWin = $state(10);
-	let matchDurationInMinutes = $state(5);
-  
+  let matchDurationInMinutes = $state(5);
+
   const loadPageData = async () =>
   {
     await tick();
@@ -56,7 +56,7 @@
   {
     isRunningGame = true;
     isShowingResults = false;
-  
+
     await tick();
     console.log(challengedUser);
 
