@@ -7,7 +7,12 @@
     "username_ph": "E-Mail oder Benutzernamen eingeben",
     "password": "Passwort",
     "password_ph": "Passwort eingeben",
-    "singin": "Einloggen"
+    "singin": "Einloggen",
+    "enter_2fa": "2FA-Code eingeben",
+    "enter_2fa_code": "Gib den 6-stelligen Code aus deiner Authenticator-App ein",
+    "auth_code": "Authentifizierungscode",
+    "back_to_login": "Zurück zur Anmeldung",
+    "verify": "Bestätigen"
   },
   "signup": {
     "signup": "Registrieren",

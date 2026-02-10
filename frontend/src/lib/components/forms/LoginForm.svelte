@@ -21,29 +21,21 @@
     try {
       const email = validateInput(usernameBuffer, { type: 'email' }).input;
       const username = validateInput(usernameBuffer, { type: 'username' }).input;
-<<<<<<< HEAD
       
       const result = await client.login({
-=======
-
-      await client.login({
->>>>>>> main
         username,
         email,
         passwd: userPasswordBuffer,
         totp_token: requires2FA ? totpToken : undefined,
       });
 
-<<<<<<< HEAD
       // Check if 2FA is required
-      if (result.requires_2fa) {
+      if (result?.requires_2fa) {
         requires2FA = true;
         errorMessage = "";
         return;
       }
 
-=======
->>>>>>> main
       goto('/');
     } catch (e: any) {
       errorMessage = e.message || e.toString();
@@ -53,39 +45,38 @@
 
 <form class="space-y-6" onsubmit={handleLoginFormSubmit}>
   <div class="space-y-4">
-<<<<<<< HEAD
     <h2 class="text-2xl font-bold text-center">
-      {requires2FA ? 'Enter 2FA Code' : 'Sign in'}
+      {requires2FA ? $t('login.enter_2fa') : $t('login.singin')}
     </h2>
 
     {#if !requires2FA}
       <div class="space-y-2">
-        <Label for="username">Email or Username</Label>
+        <Label for="username">{$t('login.username')}</Label>
         <Input 
           id="username"
           type="text"
           bind:value={usernameBuffer}
-          placeholder="Enter your email or username"
+          placeholder={$t('login.username_ph')}
           required
         />
       </div>
 
       <div class="space-y-2">
-        <Label for="password">Password</Label>
+        <Label for="password">{$t('login.password')}</Label>
         <Input 
           id="password"
           type="password"
           bind:value={userPasswordBuffer}
-          placeholder="Enter your password"
+          placeholder={$t('login.password_ph')}
           required
         />
       </div>
     {:else}
       <p class="text-sm text-center text-muted-foreground">
-        Enter the 6-digit code from your authenticator app
+        {$t('login.enter_2fa_code')}
       </p>
       <div class="space-y-2">
-        <Label for="totp">Authentication Code</Label>
+        <Label for="totp">{$t('login.auth_code')}</Label>
         <Input 
           id="totp"
           type="text"
@@ -104,34 +95,9 @@
         class="w-full"
         onclick={() => { requires2FA = false; totpToken = ''; }}
       >
-        ← Back to login
+        ← {$t('login.back_to_login')}
       </Button>
     {/if}
-=======
-    <h2 class="text-2xl font-bold text-center">{$t('login.singin')}</h2>
-
-    <div class="space-y-2">
-      <Label for="username">{$t('login.username')}</Label>
-      <Input 
-        id="username"
-        type="text"
-        bind:value={usernameBuffer}
-        placeholder={$t('login.username_ph')}
-        required
-      />
-    </div>
-
-    <div class="space-y-2">
-      <Label for="password">{$t('login.password')}</Label>
-      <Input 
-        id="password"
-        type="password"
-        bind:value={userPasswordBuffer}
-        placeholder={$t('login.password_ph')}
-        required
-      />
-    </div>
->>>>>>> main
   </div>
 
   {#if errorMessage}
@@ -141,10 +107,6 @@
   {/if}
 
   <Button type="submit" class="w-full">
-<<<<<<< HEAD
-    {requires2FA ? 'Verify' : 'Sign In'}
-=======
-    {$t('login.singin')}
->>>>>>> main
+    {requires2FA ? $t('login.verify') : $t('login.singin')}
   </Button>
 </form>

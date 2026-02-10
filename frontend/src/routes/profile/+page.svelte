@@ -6,14 +6,11 @@
   import Label from "@lib/components/ui/label/label.svelte";
   import * as Card from "@lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
-<<<<<<< HEAD
   import TwoFactorSetup from "@lib/components/TwoFactorSetup.svelte";
-=======
   import {t} from "@lib/i18n/i18n";
   import * as Dialog from "$lib/components/ui/dialog";
   import { Trash } from "@lucide/svelte";
-    import { toast } from "svelte-sonner";
->>>>>>> main
+  import { toast } from "svelte-sonner";
 
   type ProfilePageData = {
     auth: AuthUserClient;

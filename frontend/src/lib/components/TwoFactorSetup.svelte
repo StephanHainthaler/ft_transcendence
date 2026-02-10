@@ -19,8 +19,10 @@
   let successMessage = $state('');
 
   const startSetup = async () => {
+    console.log('startSetup clicked!');
     try {
       errorMessage = '';
+      console.log('Calling setup2FA...');
       const result = await setup2FA(token);
       console.log('2FA setup result:', result);
       qrCodeUrl = result.qrCodeUrl;

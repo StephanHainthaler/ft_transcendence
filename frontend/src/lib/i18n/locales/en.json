@@ -7,7 +7,12 @@
     "username_ph": "Enter your email or username",
     "password": "Password",
     "password_ph": "Enter your password",
-    "singin": "Sign In"
+    "singin": "Sign In",
+    "enter_2fa": "Enter 2FA Code",
+    "enter_2fa_code": "Enter the 6-digit code from your authenticator app",
+    "auth_code": "Authentication Code",
+    "back_to_login": "Back to login",
+    "verify": "Verify"
   },
   "signup": {
     "signup": "Sign up",
