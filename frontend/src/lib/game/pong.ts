@@ -193,7 +193,8 @@ export class Pong
 	{
 		// clear canvas and set font and alignment
 		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-		this._context.font = "60px Arial";
+		const fontSize = Math.round(this._canvas.height * (60 / 720));
+		this._context.font = `${fontSize}px Arial`;
 		this._context.textAlign = "center";
 		
 		// set color depending on the game state
