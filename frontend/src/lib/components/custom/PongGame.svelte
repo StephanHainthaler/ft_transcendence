@@ -13,9 +13,9 @@
 
   $effect(() => {
     if (gameCanvas) {
-      pong = new Pong(player1.displayName ?? player1.name, player2.displayName ?? player2.name, gameCanvas);
+      pong = new Pong(player1.displayName ?? player1.name, player2.displayName ?? player2.name, gameCanvas, 10, 5, 5, onGameEnd);
       // return () => pong.stop()
-      pong.setup();
+      pong.setupEvents();
     }
   })
 
