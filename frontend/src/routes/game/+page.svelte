@@ -24,6 +24,7 @@
   let challengedUser = $state({} as AppUser);
   let pointsToWin = $state(10);
   let matchDurationInMinutes = $state(5);
+  let AIdifficulty = $state(2);
 
   const loadPageData = async () =>
   {
@@ -64,7 +65,7 @@
     {
       challengingUser = new AppUser(client.user, null);
       if (canvas)
-        pong = new Pong(challengingUser, challengedUser, canvas, pointsToWin, matchDurationInMinutes, onGameEnd);
+        pong = new Pong(challengingUser, challengedUser, canvas, pointsToWin, matchDurationInMinutes, AIdifficulty, onGameEnd);
     }
   };
 
@@ -124,6 +125,14 @@
             <input type="number" bind:value={matchDurationInMinutes} min="1" max="10" />
             <input type="range" bind:value={matchDurationInMinutes} min="1" max="10" />
           </label>
+          <div class="flex items-center gap-4">
+            <span class="font-medium">{$t('game.AIdifficulty')}:</span>
+              <div class="flex gap-2">
+                <Button size="sm" class={AIdifficulty === 1 ? "bg-green-600 text-white" : "bg-green-600 text-black hover:bg-green-300"} onclick={() => (AIdifficulty = 1)}>{$t('game.easy')}</Button>
+                <Button size="sm" class={AIdifficulty === 2 ? "bg-yellow-400 text-white" : "bg-yellow-400 text-black hover:bg-yellow-300"} onclick={() => (AIdifficulty = 2)}>{$t('game.medium')}</Button>
+                <Button size="sm" class={AIdifficulty === 3 ? "bg-red-600 text-white" : "bg-red-600 text-black hover:bg-red-300"} onclick={() => (AIdifficulty = 3)}>{$t('game.hard')}</Button>
+              </div>
+          </div>
         </Grid>
         <Grid title={$t('game.challenge')}>
           {#each users as user}

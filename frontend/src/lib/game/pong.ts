@@ -33,14 +33,14 @@ export class Pong
 	private _resizeEventListener!: EventListener;
 	private _onGameEnd: (Data: MatchSubmissionData) => void;
 
-	public	constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, pointsToWin: number, matchDurationInMinutes: number, _onGameEnd:(Data: MatchSubmissionData) => void)
+	public	constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, pointsToWin: number, matchDurationInMinutes: number, AIdifficulty: number, _onGameEnd:(Data: MatchSubmissionData) => void)
 	{
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
 		this.resizeCanvas();
 
-		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445);
-		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.445);
+		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445, AIdifficulty);
+		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.445, AIdifficulty);
 		this._ball = new Ball(this, this._player1, this._player2);
 	
 		this.setupEvents();
