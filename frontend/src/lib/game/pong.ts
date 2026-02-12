@@ -45,8 +45,8 @@ export class Pong
 		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445, AIdifficulty);
 		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.445, AIdifficulty);
 		this._ball = new Ball(this, this._player1, this._player2);
-		//this.drawPreMatchCountdown();
-		this.startMatch();
+		this.drawPreMatchCountdown();
+		//this.startMatch();
 	}
 
 	public drawPreMatchCountdown(): void
