@@ -6,7 +6,7 @@ import argon2 from "argon2";
 import { generateJWT } from "./jwt";
 import crypto from "crypto";
 import { JWT } from "@shared/api";
-import { eq } from "@server/orm";
+import { eq, IN } from "@server/orm";
 import { sqliteErrorToApiError } from "@server/orm/error";
 import { ApiError } from "@server/error/apiError";
 
@@ -246,6 +246,33 @@ export function getSession({
     }
   } else {
     throw new ApiError({ code: 401, message: 'Invalid session query data'});
+  }
+}
+
+export function deleteExpiredSessions() {
+  const now = Date.now();
+  db.from('sessions')
+    .select('*')
+    .all()
+    .filter(s => (s.created_at + s.expires_in) <= now)
+    .forEach(s => {
+      db.from('sessions').delete().where(eq('user_id', s.user_id)).run();
+    });
+}
+
+export function getSessions(ids: number[]) {
+  try {
+    deleteExpiredSessions();
+
+    const sessions = db.from('sessions')
+      .select('user_id')
+      .where(IN('user_id', ids))
+      .all()
+
+    return sessions.map(s => s.user_id);
+  } catch (e: any) {
+    console.error(e);
+    throw sqliteErrorToApiError(e)
   }
 }
 

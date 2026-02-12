@@ -4,7 +4,7 @@
   import favicon from '$lib/assets/favicon.png';
   import * as SB from "$lib/components/ui/sidebar";
   import Sidebar from '@lib/components/layout/Sidebar.svelte';
-  import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
+  import { goto } from '$app/navigation';
   import { client } from '@lib/api/index.svelte';
   import { Toaster } from '@lib/components/ui/sonner';
   import { onMount } from 'svelte';

@@ -39,7 +39,7 @@ export const updateUser = async (user: Partial<User>, avatar?: File) => {
 }
 
 export const getFriends = async () => {
-  const req = new Request(`${import.meta.env.VITE_API_URL}/user/friend/`, {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user/friend`, {
     method: 'get',
   })
 
@@ -54,6 +54,15 @@ export const acceptFriendRequest = async (reqId: number) => {
   });
 
   const data = await request(req);
+
+  return data;
+}
+
+export const checkFriendsOnlineStatus = async () => {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user/friend/online`)
+
+  const data = await request(req);
+  console.log(data);
 
   return data;
 }

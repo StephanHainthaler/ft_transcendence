@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
-import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession } from "./dbHandlers";
+import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession, getSessions } from "./dbHandlers";
 import { deleteUser } from "@server/user/api";
 import { AuthUserClient, } from "@shared/user";
-import type { AuthDeleteRequest, AuthGetUserRequest, AuthLoginReply, AuthLogoutRequest, AuthOAuthRequest, AuthSignUpRequest, AuthUpdateRequest, AuthValidateRequest } from "@shared/api/authReply";
+import type { AuthDeleteRequest, AuthGetUserRequest, AuthLoginReply, AuthLogoutRequest, AuthOAuthRequest, AuthSessionRequest, AuthSignUpRequest, AuthUpdateRequest, AuthValidateRequest } from "@shared/api/authReply";
 import { AuthUser } from "./db";
 import { generateTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
@@ -36,17 +36,17 @@ export function authRoutes(fastify: FastifyInstance) {
       validateJWT(token, secret);
       return reply.code(200).send({ success: true });
     } catch (e) {
-      const refresh_token = request.cookies.refresh_token;
-      if (!refresh_token)
+      try {
+        const refresh_token = request.cookies.refresh_token;
+        if (!refresh_token)
         throw new ApiError({ message: "Unauthenticated", code: 401 });
 
-      try {
         const session = getSession({ token: refresh_token });
         if (!session) {
           throw new ApiError({ message: 'Unauthenticated', code: 401 });
         }
 
-        validateRefreshToken({ id: session.user_id }, refresh_token);
+        validateRefreshToken({ id: session.auth_id }, refresh_token);
         const authUser = getAuthUser({ userId: session.user_id });
         if (!authUser)
           return reply.code(400).send({ message: 'Invalid User', success: false });
@@ -118,18 +118,17 @@ export function authRoutes(fastify: FastifyInstance) {
 
   fastify.post<AuthLogoutRequest>('/logout', (request, reply) => {
     try {
-      const cookies = request;
-      if (cookies)
-        reply
-          .code(200)
-          .clearCookie('refresh_token')
-          .clearCookie('access_token')
-          .send({ success: true });
-      else
-        reply.code(401).send({ success: false, message: 'User not logged in' });
+      const jwt = extractJWTFromHeader(request.cookies.access_token);
+
+      deleteSession({ userId: jwt.payload.sub })
+      reply
+        .code(200)
+        .clearCookie('refresh_token')
+        .clearCookie('access_token')
+        .send({ success: true });
     } catch (e: any) {
       request.log.error(e);
-      reply.code(500).send({ success: false, message: `Internal server error` })
+      reply.code(401).send({ success: false, message: 'User not logged in' });
     }
   });
 
@@ -359,6 +358,25 @@ export function authRoutes(fastify: FastifyInstance) {
       req.log.error(e);
 
       return repl
+        .code(e.code || 500)
+        .send({
+          success: false,
+          message: e.message || 'Internal Server Error'
+        });
+    }
+  })
+
+  fastify.post<AuthSessionRequest>('/sessions', (req, repl) => {
+    try {
+      console.log('got sessions request', req.body);
+
+      const sessions = getSessions(req.body.ids);
+
+      repl.code(200).send({ success: true, sessions })
+    } catch (e: any) {
+      req.log.error(e);
+
+      repl
         .code(e.code || 500)
         .send({
           success: false,

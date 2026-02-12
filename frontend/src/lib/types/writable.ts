@@ -4,7 +4,8 @@ export class Writable<T> {
   constructor(key: string, value?: T) {
     if (window.window && window.localStorage) {
       this.storageKey = key;
-      if (value)
+      const currentVal = window.localStorage.getItem(key);
+      if (value && !currentVal)
         window.localStorage.setItem(this.storageKey, JSON.stringify(value));
     } else {
       throw new Error("This module is only for frontend");

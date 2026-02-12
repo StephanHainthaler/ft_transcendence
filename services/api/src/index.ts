@@ -51,20 +51,33 @@ async function startApiGateway() {
   fastify.register(fastifyCookie);
 
   const proxy = await import ('@fastify/http-proxy');
-  console.log('auth url in api services: ', AUTH_URL);
 
   fastify.addHook('onRequest', async (request, reply) => {
-    request.log.info(`REQUEST WITH URL ${request.originalUrl}`);
+    console.info(`REQUEST WITH URL ${request.originalUrl}`);
     if (!publicRoutes.some(r => request.url.includes(r))) {
+      let response: Response;
       try {
         const authReqUrl = `${AUTH_URL}/validate`;
-        console.log("Trying validate req with:", authReqUrl);
-        const response = await fetch(authReqUrl, {
+        console.log("Trying validate req with:", authReqUrl, "on request: ", request.originalUrl);
+        response = await fetch(authReqUrl, {
           method: 'post',
           headers: {
             'Cookie': request.headers.cookie || ''
           }
         });
+      } catch (e: any) {
+        request.log.error('Auth service connection failed: ', e);
+        const code = e.code || e.cause?.code;
+        if (code === 'ECONNREFUSED') {
+          return reply.code(503).send({ success: false, message: 'Authentication service is not running' });
+        }
+        if (code === 'ECONNRESET' || code === 'ETIMEDOUT' || code === 'UND_ERR_CONNECT_TIMEOUT') {
+          return reply.code(504).send({ success: false, message: 'Authentication service timed out' });
+        }
+        return reply.code(502).send({ success: false, message: 'Authentication service unavailable' });
+      }
+
+      try {
         const data = await response.json();
 
         if (!response.ok) {
@@ -78,39 +91,41 @@ async function startApiGateway() {
               httpOnly: true,
               path: '/',
               sameSite: 'strict',
-              secure: 'auto'
+              secure: HTTP === 'https'
             })
             .setCookie('refresh_token', data.refresh_token, {
               httpOnly: true,
               path: '/',
               sameSite: 'strict',
-              secure: 'auto'
+              secure: HTTP === 'https'
             })
         }
-
       } catch (e: any) {
-        request.log.error('Failed to validate: ', e);
-        return reply.code(502).send({ success: false, message: 'Authentication service unavailable' });
+        request.log.error('Failed to parse auth response: ', e);
+        return reply.code(502).send({ success: false, message: 'Invalid response from authentication service' });
       }
     }
   });
 
+  const http2 = HTTP === 'https';
+  console.log('running with https:', http2);
+
   fastify.register(proxy, {
     upstream: USER_URL,
     prefix: '/user',
-    http2: false,
+    http2: false
   });
 
   fastify.register(proxy, {
     upstream: AUTH_URL,
     prefix: '/auth',
-    http2: false,
+    http2: false
   });
 
   fastify.register(proxy, {
     upstream: GAME_STATS_URL,
     prefix: '/stats',
-    http2: false,
+    http2: false
   })
 
   fastify.register(healthRoutes, {

@@ -1,4 +1,5 @@
 import Fastify, { FastifyServerOptions } from "fastify";
+import { Agent, setGlobalDispatcher } from 'undici';
 import fs from "fs";
 
 function loadHttpsOptions(): { key: Buffer; cert: Buffer } | null {
@@ -12,6 +13,12 @@ function loadHttpsOptions(): { key: Buffer; cert: Buffer } | null {
     };
   }
   return null;
+}
+
+if (process.env.HTTP_PROTOCOL === 'https') {
+  setGlobalDispatcher(new Agent({
+    connect: { rejectUnauthorized: false }
+  }));
 }
 
 export function createServer(options?: FastifyServerOptions) {
