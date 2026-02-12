@@ -7,6 +7,7 @@ import { AuthUser } from "./db";
 import { generateTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
 import { ApiError } from "@server/error/apiError";
+import { GITHUB_REDIRECT_URL, HTTP } from "./";
 
 const secret = process.env.AUTH_HMAC_SECRET!;
 
@@ -139,6 +140,8 @@ export function authRoutes(fastify: FastifyInstance) {
         return reply.status(400).send({ success: false, message: "Error: Missing OAuth code" });
       }
 
+      console.log(GITHUB_REDIRECT_URL);
+
       // Exchange code for access_token with GitHub
       const response = await fetch(`https://github.com/login/oauth/access_token`, {
         method: "POST",
@@ -147,7 +150,7 @@ export function authRoutes(fastify: FastifyInstance) {
           client_id: process.env.GITHUB_APP_CLIENT_ID!, // stored in /env/.env.auth
           client_secret: process.env.GITHUB_APP_CLIENT_SECRET!, // stored in /env/.env.auth
           code,
-          redirect_uri: `http://localhost:8080/`,
+          redirect_uri: `${HTTP}://${GITHUB_REDIRECT_URL}/`,
         }),
       });
 

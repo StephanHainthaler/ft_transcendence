@@ -8,7 +8,6 @@ const config = {
   // for more information about preprocessors
   preprocess: vitePreprocess(),
   compilerOptions: {
-    enableSourcemap: true
   },
   kit: {
     adapter: adapter({

@@ -7,6 +7,12 @@ import { createServer } from "@server/fastify/createServer";
 
 const DB_PATH = process.env.DB_PATH;
 
+export const GITHUB_REDIRECT_URL = process.env.GITHUB_REDIRECT_URL;
+if (!GITHUB_REDIRECT_URL) {
+  console.error("Missing Github redirect url env Vairable! Exiting...");
+  process.exit(1);
+}
+
 export const HTTP = process.env.HTTP_PROTOCOL;
 if (!HTTP) {
   console.error("Missing Protocol env Vairable! Exiting...");

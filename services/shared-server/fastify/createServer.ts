@@ -1,6 +1,22 @@
 import Fastify, { FastifyServerOptions } from "fastify";
+import fs from "fs";
+
+function loadHttpsOptions(): { key: Buffer; cert: Buffer } | null {
+  const keyPath = process.env.SSL_KEY_PATH || "/app/certs/server.key";
+  const certPath = process.env.SSL_CERT_PATH || "/app/certs/server.crt";
+
+  if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+    return {
+      key: fs.readFileSync(keyPath),
+      cert: fs.readFileSync(certPath),
+    };
+  }
+  return null;
+}
 
 export function createServer(options?: FastifyServerOptions) {
+  const httpsOpts = loadHttpsOptions();
+
   return Fastify({
     logger: {
       transport: {
@@ -8,6 +24,7 @@ export function createServer(options?: FastifyServerOptions) {
       },
     },
     disableRequestLogging: true,
+    ...(httpsOpts ? { https: httpsOpts } : {}),
     ...options
   });
 }
