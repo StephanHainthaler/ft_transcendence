@@ -77,7 +77,7 @@
           <CircleIcon />
           <Alert.Title>{$t('OAuth.wait') || 'Waiting for OAuth completion'}</Alert.Title>
           <Alert.Description>
-            {$t('OAuth.loading')} || {consoleError}
+            {$t('OAuth.loading')}
           </Alert.Description>
         </Alert.Root>
       {/if}

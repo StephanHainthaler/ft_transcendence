@@ -40,19 +40,23 @@ export class ApiClient {
       this.loggedIn = true;
       this.status = 'ready';
     } catch (e: any) {
-      if (e.code === 401) {
+      if (e.code === 401 || e.status  === 401) {
         this.userStore.set(null);
         this.authStore.set(null);
         this.avatarUrl = undefined;
         this.loggedIn = false;
         this.status = 'ready';
-      }
+        if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/auth'))
+        {
+          console.log("Session expired or missing. Redirecting to /auth...");
+          goto('/auth');
+        }
+      } 
       else {
-      this.status = 'error';
-      toast.error(e.message || e);
+        this.status = 'error';
       }
     }
-    return this;
+    return (this);
   }
 
   /* FRONTEND USAGE */

@@ -1,10 +1,16 @@
-import { redirect, type Cookies } from "@sveltejs/kit";
+import type { LayoutServerLoad } from "./$types";
+import { redirect } from '@sveltejs/kit';
 
 export const ssr = false;
 
-export async function load({ request, cookies }: { request: Request, cookies: Cookies }) {
-  const token = request.headers.get('authorization');
-  if (!token && !request.url.includes('/auth') && !cookies.get('refresh_token')) {
-    redirect(302, '/auth');
+export const load: LayoutServerLoad = async ({cookies, url}) =>
+{
+  const token = !!cookies.get('refresh_token');
+  const isAuthPage = url.pathname === '/auth' || url.pathname.startsWith('/auth');
+  if (!token && !isAuthPage)
+  {
+    if (url.pathname !== '/')
+      throw redirect(302, '/auth');
   }
+  return {loggedIn: !!token};
 }
