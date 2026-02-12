@@ -33,6 +33,7 @@ export class ApiClient {
   async init() {
     try {
       this.status = 'loading';
+      //check if it ever was logged in
       const userResponse = await this.getUser();
       const authResponse = await this.getAuth();
       this.userStore.set(userResponse.user);

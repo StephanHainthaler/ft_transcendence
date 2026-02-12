@@ -11,6 +11,7 @@ export async function request(req: Request): Promise<any> {
   }
   if (!response.ok)
   {
+    //if 401 client.clearSession
     let error: AppError = {
       message: data.message || 'An error occurred',
       code: data.code || response.status,

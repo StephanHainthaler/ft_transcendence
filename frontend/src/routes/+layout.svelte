@@ -16,11 +16,11 @@
     client.loggedIn = data.loggedIn;
   });
 
-  onMount(async () => {
-    console.log("The status of the user. IsLoggedIn:  ", data.loggedIn);
-    if (client.loggedIn)
-      await client.init();
-  })
+  // onMount(async () => {
+  //   console.log("The status of the user. IsLoggedIn:  ", data.loggedIn);
+  //   if (client.loggedIn)
+  //     await client.init();
+  // })
 
   beforeNavigate((nav) => {
     const target = nav.to;
