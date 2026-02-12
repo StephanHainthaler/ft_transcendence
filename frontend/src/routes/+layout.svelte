@@ -4,36 +4,37 @@
   import favicon from '$lib/assets/favicon.png';
   import * as SB from "$lib/components/ui/sidebar";
   import Sidebar from '@lib/components/layout/Sidebar.svelte';
-  import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
+  import { beforeNavigate, goto } from '$app/navigation';
   import { client } from '@lib/api/index.svelte';
   import { Toaster } from '@lib/components/ui/sonner';
   import { onMount } from 'svelte';
 
-  let { children } = $props();
+  let { data, children } = $props();
   let sidebarOpen = $state(false);
 
-  onMount(async () =>{
-    if (!client.isLoggedIn)
-      goto('/auth');
+  $effect(() => {
+    client.loggedIn = data.loggedIn;
+  });
+
+  onMount(async () => {
+    console.log("The status of the user. IsLoggedIn:  ", data.loggedIn);
+    if (client.loggedIn)
+      await client.init();
   })
 
   beforeNavigate((nav) => {
     const target = nav.to;
+    if (!nav.to)
+      return;
     if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
-      if (!client.isLoggedIn) {
+      if (!client.loggedIn)
+      {
+        nav.cancel();
         goto('/auth', { replaceState: true });
       }
     }
-  })
+  });
 
-  afterNavigate((nav) => {
-    const target = nav.to;
-    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
-      if (!client.isLoggedIn) {
-        goto('/auth');
-      }
-    }
-  })
 </script>
 
 <svelte:head>
