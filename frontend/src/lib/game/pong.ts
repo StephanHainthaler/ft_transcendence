@@ -45,35 +45,7 @@ export class Pong
 		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445, AIdifficulty);
 		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.445, AIdifficulty);
 		this._ball = new Ball(this, this._player1, this._player2);
-		this.drawPreMatchCountdown();
-		//this.startMatch();
-	}
 
-	public drawPreMatchCountdown(): void
-	{
-		this._context.font = "80px Arial";
-		this._context.textAlign = "center";
-		this._context.fillStyle = "rgb(255, 255, 255)";
-		this._context.fillText("3", this._canvas.width * 0.5, this._canvas.height * 0.5);
-		setTimeout(() =>
-		{
-			this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-			this._context.fillText("2", this._canvas.width * 0.5, this._canvas.height * 0.5);
-		}, 1000);
-		setTimeout(() =>
-		{
-			this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-			this._context.fillText("1", this._canvas.width * 0.5, this._canvas.height * 0.5);
-		}, 2000);
-		setTimeout(() =>
-		{
-			this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-			this.startMatch();
-		}, 3000);
-	}
-
-	public startMatch(): void
-	{
 		this.setupEvents();
 		this._matchStartTime = new Date().getTime();
 		this._isPaused = false;
