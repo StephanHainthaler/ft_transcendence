@@ -2,9 +2,10 @@ import { FastifyInstance } from "fastify";
 import { extractJWTFromHeader } from "@server/jwt/validate";
 import { Avatar, Friendship, User } from "@shared/user";
 import { db } from "./db";
-import { eq, IN } from "@server/orm";
+import { eq } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
 import { getUsers } from "./dbHandlers";
+import { AUTH_URL } from "./";
 
 function safeParseInt(value: any, name: string, min: number = 0): number {
   const nb = parseInt(value);
@@ -138,6 +139,33 @@ export function friendRoutes(fastify: FastifyInstance) {
       console.log(jwt, reqId);
       removeFriendship(reqId);
       repl.code(200).send({ success: true });
+    } catch (e: any) {
+      console.error(e);
+      if (typeof e.code === 'number') {
+        repl.code(e.code).send({ success: false, message: e.message || e });
+      } else {
+        repl.code(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    }
+  })
+
+  fastify.get('/online', async (req, repl) => {
+    try {
+      const jwt = extractJWTFromHeader(req.cookies.access_token);
+      const friendships = getFriendships(jwt.payload.sub);
+      const friendsIds = friendships.friends.map(f => f.user.id);
+
+      const response = await fetch(`${AUTH_URL}/sessions`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ids: friendsIds }),
+        method: "POST"
+      });
+
+      const data = await response.json();
+      return data;
+
     } catch (e: any) {
       console.error(e);
       if (typeof e.code === 'number') {

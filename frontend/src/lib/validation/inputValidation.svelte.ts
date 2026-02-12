@@ -8,6 +8,9 @@ import {
   AVATAR_ALLOWED_MIME_TYPES,
 } from '@shared/validation';
 
+import { t } from "@lib/i18n/i18n";
+import { get } from 'svelte/store';
+
 type InputType = 'username' | 'email' | 'password' | 'displayName';
 
 interface ValidationResult {
@@ -32,7 +35,7 @@ export function validateInputThrow(input?: string, {
 
   if (type) {
     const error = validators[type](input);
-    if (error) throw new Error(error);
+    if (error) throw new Error(get(t)(error));
   }
   return input;
 }

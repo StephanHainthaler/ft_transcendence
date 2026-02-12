@@ -11,6 +11,20 @@ import { createServer } from '@server/fastify/createServer';
 
 const DB_PATH = process.env.DB_PATH;
 
+export const HTTP = process.env.HTTP_PROTOCOL;
+if (!HTTP) {
+  console.error("Missing Protocol env Vairable! Exiting...");
+  process.exit(1);
+}
+
+const authUrl = process.env.AUTH_SERVICE_URL;
+if (!authUrl) {
+  console.error("Missing AUTH_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const AUTH_URL = `${HTTP}://${authUrl}`;
+
+
 export async function buildApp(dbPath?: string, options?: FastifyServerOptions) {
   if (!dbPath && !DB_PATH)
     throw new Error("Missing Database Path environment variable");
@@ -26,7 +40,7 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
   fastify.register(userRoutes);
   fastify.register(healthRoute);
   fastify.register(friendRoutes, {
-    prefix: '/friend/',
+    prefix: '/friend',
   });
 
   fastify.addHook('onResponse', async (request, reply) => {
@@ -35,7 +49,6 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
         req: request,
         res: reply,
         err: reply.raw.statusMessage,
-
       }, 'request completed');
     }
   });

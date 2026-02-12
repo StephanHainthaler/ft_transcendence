@@ -10,7 +10,9 @@ export async function request(req: Request): Promise<any> {
     data = await response.json();
   } catch {}
   if (!response.ok && data) {
-    if (response.status == 401) await client.logout();
+    if (response.status == 401) {
+      try { client.clearSession()} catch {}
+    };
     throw data;
   }
   return data;
