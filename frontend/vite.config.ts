@@ -5,7 +5,6 @@ import path from 'path';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
-  envDir: '../env/',
   resolve: {
     alias: {
       '@lib': path.resolve(__dirname, './src/lib'),

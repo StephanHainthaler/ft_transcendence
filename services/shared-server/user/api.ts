@@ -25,10 +25,9 @@ export async function deleteUser(token: JWT) {
     }
   });
 
-  const data = await response.json();
-
   if (!response.ok) {
-    throw new ApiError({ code: response.status, message: data.message || 'Internal Server Error '})
+    const data = await response.json().catch(() => ({}));
+    throw new ApiError({ code: response.status, message: data.message || 'Internal Server Error' });
   }
 }
 
@@ -43,12 +42,12 @@ export async function createUser(user: User | Partial<User>, opts?: {
     body: JSON.stringify({ user, oauthAvatarUrl: opts?.oauthAvatarUrl })
   });
 
-  const result = await response.json();
-
   if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
     throw new ApiError({ code: response.status, message: result.message || 'Failed to create User' });
   }
 
+  const result = await response.json();
   return result;
 }
 
@@ -61,12 +60,12 @@ export async function updateUser(user: User | Partial<User>): Promise<User> {
     body: form
   });
 
-  const result = await response.json();
-
   if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
     throw new ApiError({ code: response.status, message: result.message || 'Failed to update User' });
   }
 
+  const result = await response.json();
   return result;
 }
 
@@ -74,25 +73,26 @@ export async function getUser(id: number): Promise<User> {
   const response = await fetch(`${USER_API}/${id}`, {
     method: 'get',
   });
-  const data = await response.json();
 
   if (!response.ok) {
-    throw new ApiError({ code: response.status, message: data.message });
+    const data = await response.json().catch(() => ({}));
+    throw new ApiError({ code: response.status, message: data.message || 'Request failed' });
   }
 
+  const data = await response.json();
   return data.user;
-
 }
 
 export async function getAllUsers() {
   const response = await fetch(`${USER_API}/all`, {
     method: 'get',
-  })
-  const data = await response.json();
+  });
 
   if (!response.ok) {
-    throw new ApiError({ code: response.status, message: data.message });
+    const data = await response.json().catch(() => ({}));
+    throw new ApiError({ code: response.status, message: data.message || 'Request failed' });
   }
 
+  const data = await response.json();
   return data.users;
 }

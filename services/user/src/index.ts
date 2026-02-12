@@ -4,6 +4,7 @@ import { initDB } from './db';
 import { healthRoute } from './health';
 import { friendRoutes } from './friendRoutes';
 import multipart from "@fastify/multipart";
+import { AVATAR_MAX_BYTES } from '@shared/validation';
 import { avatarRoutes } from './avatarRoutes';
 import fastifyCookie from '@fastify/cookie';
 import { createServer } from '@server/fastify/createServer';
@@ -18,7 +19,9 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
 
   const fastify = createServer(options);
   fastify.register(fastifyCookie);
-  fastify.register(multipart);
+  fastify.register(multipart, {
+    limits: { fileSize: AVATAR_MAX_BYTES, files: 1, fields: 10 }
+  });
   fastify.register(avatarRoutes);
   fastify.register(userRoutes);
   fastify.register(healthRoute);

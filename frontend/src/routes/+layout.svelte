@@ -17,23 +17,6 @@
       goto('/auth');
   })
 
-  beforeNavigate((nav) => {
-    const target = nav.to;
-    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
-      if (!client.isLoggedIn) {
-        goto('/auth', { replaceState: true });
-      }
-    }
-  })
-
-  afterNavigate((nav) => {
-    const target = nav.to;
-    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
-      if (!client.isLoggedIn) {
-        goto('/auth');
-      }
-    }
-  })
 </script>
 
 <svelte:head>

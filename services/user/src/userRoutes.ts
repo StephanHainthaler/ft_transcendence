@@ -2,8 +2,9 @@ import { FastifyInstance } from "fastify";
 import { db } from "./db";
 import { Avatar, User } from "@shared/user"
 import { extractJWTFromHeader } from "@server/jwt/validate";
-import { eq, IN } from "@server/orm";
+import { IN } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
+import { validateDisplayName, validateAvatarMimeType, validateAvatarSize } from "@shared/validation";
 import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "./dbHandlers";
 
 export function userRoutes(fastify: FastifyInstance) {
@@ -16,22 +17,21 @@ export function userRoutes(fastify: FastifyInstance) {
     Params: {
       userId?: number,
     }
-  }>('/:userId?', (request, reply) => {
+  }>('/:userId?', async (request, reply) => {
     try {
-      console.log('ACCESSTOKEN IN USER', request.headers.cookie);
       const token = extractJWTFromHeader(request.cookies.access_token);
       try {
         const { user, avatar } = getUser(token.payload.sub);
         if (!user) {
-          reply.status(404).send({ success: false, message: "No such user" })
+          return reply.status(404).send({ success: false, message: "No such user" })
         } else {
-          reply.status(200).send({ success: true, user, avatar });
+          return reply.status(200).send({ success: true, user, avatar });
         }
       } catch (e: any) {
         throw new ApiError({ message: `Database Error: ${e.message || e}`, code: 409 })
       }
     } catch (e: any) {
-      reply.code(e.code || 400).send({ success: false, message: e.message || 'Missing Auth Token' })
+      return reply.code(e.code || 400).send({ success: false, message: e.message || 'Missing Auth Token' })
     }
   });
 
@@ -70,6 +70,8 @@ export function userRoutes(fastify: FastifyInstance) {
   }>('/new', async (request, reply) => {
     try {
       const { user, oauthAvatarUrl } = request.body;
+      const nameErr = validateDisplayName(user.name);
+      if (nameErr) throw new ApiError({ code: 400, message: nameErr });
       const { user: newUser, avatar } = await createUser(user, oauthAvatarUrl);
 
       reply.status(200).send({ success: true, user: newUser, avatar });
@@ -119,16 +121,20 @@ export function userRoutes(fastify: FastifyInstance) {
         console.log('Part:', part.fieldname, part.type);
 
         if (part.type === 'file' && part.fieldname === 'avatar') {
+          const mimeErr = validateAvatarMimeType(part.mimetype);
+          if (mimeErr) throw new ApiError({ code: 400, message: mimeErr });
           avatarBuffer = await part.toBuffer();
+          const sizeErr = validateAvatarSize(avatarBuffer.length);
+          if (sizeErr) throw new ApiError({ code: 413, message: sizeErr });
           avatarMimetype = part.mimetype;
         } else if (part.type === 'field' && part.fieldname === 'user') {
           user = JSON.parse(part.value as string);
-          console.log(user);
+          if (user?.name) {
+            const nameErr = validateDisplayName(user.name);
+            if (nameErr) throw new ApiError({ code: 400, message: nameErr });
+          }
         }
       }
-
-      console.log('Final user:', user);
-      console.log('Final avatar:', avatarBuffer);
 
       if (!user) throw new ApiError({ code: 400, message: 'Missing user form data' });
 
@@ -138,19 +144,9 @@ export function userRoutes(fastify: FastifyInstance) {
       if (!data)
         throw new ApiError({ code: 404, message: 'User not found' });
 
-      const response = db
-        .from('users')
-        .update(user)
-        .where(eq('id', user.id))
-        .select('*')
-        .single();
-
-      if (!response)
-        throw new Error('User update Failed');
-
       reply.status(200).send({ success: true, user: data.user, avatar: data.avatar });
     } catch(e: any) {
-      reply.status(e.code || e.statuscode || 400).send({ success: false, message: e.message || 'Bad Request' })
+      reply.status(e.code || e.statusCode || 400).send({ success: false, message: e.message || 'Bad Request' })
     }
   });
 
@@ -162,7 +158,6 @@ export function userRoutes(fastify: FastifyInstance) {
     }
   }>('/delete', async (req, repl) => {
       try {
-        console.log('got delete request');
         const token = extractJWTFromHeader(req.cookies.access_token);
         await deleteUser(token.payload.sub);
         repl.code(200).send({ success: true });

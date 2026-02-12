@@ -7,6 +7,7 @@ import { AuthUser } from "./db";
 import { generateTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
 import { ApiError } from "@server/error/apiError";
+import { validateUsername, validateEmail, validatePassword } from "@shared/validation";
 import { GITHUB_REDIRECT_URL, HTTP } from "./";
 
 const secret = process.env.AUTH_HMAC_SECRET!;
@@ -107,7 +108,7 @@ export function authRoutes(fastify: FastifyInstance) {
 
       } catch (e: any) {
         request.log.error(e);
-        return reply.code(e.code).send({ success: false, message: e.message || e });
+        return reply.code(e.code || 500).send({ success: false, message: e.message || e });
       }
     } catch (e: any) {
       request.log.error(e);
@@ -222,6 +223,13 @@ export function authRoutes(fastify: FastifyInstance) {
     try {
       const { passwd, user_name, email } = request.body;
 
+      const usernameErr = validateUsername(user_name);
+      if (usernameErr) throw new ApiError({ code: 400, message: usernameErr });
+      const emailErr = validateEmail(email);
+      if (emailErr) throw new ApiError({ code: 400, message: emailErr });
+      const passwordErr = validatePassword(passwd);
+      if (passwordErr) throw new ApiError({ code: 400, message: passwordErr });
+
       const authUser = getAuthUser({ user_name, email });
       if (authUser)
         return reply
@@ -279,6 +287,19 @@ export function authRoutes(fastify: FastifyInstance) {
   fastify.patch<AuthUpdateRequest>('/update', async (request, reply) => {
     const { email, user_name, passwd } = request.body;
 
+    if (user_name !== undefined) {
+      const usernameErr = validateUsername(user_name);
+      if (usernameErr) throw new ApiError({ code: 400, message: usernameErr });
+    }
+    if (email !== undefined) {
+      const emailErr = validateEmail(email);
+      if (emailErr) throw new ApiError({ code: 400, message: emailErr });
+    }
+    if (passwd !== undefined) {
+      const passwordErr = validatePassword(passwd);
+      if (passwordErr) throw new ApiError({ code: 400, message: passwordErr });
+    }
+
     try {
       const authUser = getAuthUser({ email, user_name });
       if (!authUser)
@@ -311,7 +332,7 @@ export function authRoutes(fastify: FastifyInstance) {
         });
     } catch (e: any) {
       reply
-        .code(e.code || e.status | 400)
+        .code(e.code || e.status || 400)
         .send({
           success: false,
           message: e.message || e

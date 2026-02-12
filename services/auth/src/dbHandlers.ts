@@ -58,7 +58,7 @@ export function getAuthUser({
   }
 
   if (!userId && !user_name && !authId && !oauthId) {
-    throw new Error("Missing fields: need either user_name, authid or userid");
+    throw new ApiError({ message: "Missing fields: need either user_name, authid or userid", code: 400 });
   }
 
   return null;
@@ -99,13 +99,13 @@ export async function verifyUserCredentials({
 }: {
   email?: string, user_name?: string, passwd?: string
 }): Promise<AuthUser> {
-  if (!email && !user_name) throw new Error("Missing email or user_name");
-  if (!passwd) throw new Error("Missing password");
+  if (!email && !user_name) throw new ApiError({ message: "Missing email or user_name", code: 400 });
+  if (!passwd) throw new ApiError({ message: "Missing password", code: 400 });
 
   const user = getAuthUser({ user_name, email });
 
-  if (!user) throw new Error("Invalid credentials");
-  if (!await argon2.verify(user.passwd, passwd)) throw new Error("Invalid user password");
+  if (!user) throw new ApiError({ message: "Invalid credentials", code: 401 });
+  if (!await argon2.verify(user.passwd, passwd)) throw new ApiError({ message: "Invalid credentials", code: 401 });
 
   return user;
 }

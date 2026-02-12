@@ -23,6 +23,7 @@
     try {
       const user_name = validateInputThrow(user_nameBuffer, { type: 'username' });
       const email = validateInputThrow(emailBuffer, { type: 'email' });
+      validateInputThrow(userPasswordBuffer, { type: 'password' });
 
       if (userPasswordBuffer !== userPasswordRepeatBuffer) {
         throw new Error("Passwords don't match");

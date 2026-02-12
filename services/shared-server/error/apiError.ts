@@ -4,7 +4,7 @@ export class ApiError extends Error {
 
   constructor({ message, code }: { message: string; code: number; }) {
     super(message);
-    this.code = code,
+    this.code = code;
     this.message = message;
   }
 }

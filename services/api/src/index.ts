@@ -89,9 +89,8 @@ async function startApiGateway() {
         }
 
       } catch (e: any) {
-        console.log('Caught error: ', e);
         request.log.error('Failed to validate: ', e);
-        return reply.code(401).send({ success: false, message: 'You are not authenticated' });
+        return reply.code(502).send({ success: false, message: 'Authentication service unavailable' });
       }
     }
   });

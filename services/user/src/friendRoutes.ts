@@ -6,6 +6,13 @@ import { eq, IN } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
 import { getUsers } from "./dbHandlers";
 
+function safeParseInt(value: any, name: string, min: number = 0): number {
+  const nb = parseInt(value);
+  if (isNaN(nb) || nb < min)
+    throw new ApiError({ code: 400, message: `Invalid parameter: ${name}` });
+  return nb;
+}
+
 const getFriendships = (userId: number): { friends: { user: User, avatar: Avatar | null }[], friendships: Friendship[] } => {
   const friendships = db
     .from('friendships')
@@ -55,12 +62,10 @@ export function friendRoutes(fastify: FastifyInstance) {
       const { friends, friendships } = getFriendships(jwt.payload.sub);
       repl.code(200).send({ success: true, friends, friendships });
     } catch (e: any) {
-      const code = e.code;
-      if (code) {
-        console.error(e);
+      console.error(e);
+      if (typeof e.code === 'number') {
         repl.code(e.code).send({ success: false, message: e.message});
       } else {
-        console.error(e);
         repl.code(500).send({ success: false, message: 'Internal Server Error' });
       }
     }
@@ -78,13 +83,13 @@ export function friendRoutes(fastify: FastifyInstance) {
   }>('/request/:toId', (req, repl) => {
     try {
       const jwt = extractJWTFromHeader(req.cookies.access_token);
-      const toId = req.params.toId;
+      const toId = safeParseInt(req.params.toId, 'toId');
       const friendship = registerFriendRequest(jwt.payload.sub, toId);
       if (!friendship) throw new ApiError({ code: 500, message: 'Failed to create friendship' });
       repl.code(200).send({ success: true, friendship });
     } catch(e: any) {
       console.error(e);
-      if (e.code) {
+      if (typeof e.code === 'number') {
         repl.code(e.code).send({ success: false, message: e.message });
       } else {
         repl.code(500).send({ success: false, message: `Internal Server Error ${e}` });
@@ -104,12 +109,12 @@ export function friendRoutes(fastify: FastifyInstance) {
   }>('/accept/:reqId', (req, repl) => {
     try {
       const jwt = extractJWTFromHeader(req.cookies.access_token);
-      const reqId = req.params.reqId;
+      const reqId = safeParseInt(req.params.reqId, 'reqId');
       acceptFriendRequestFromReqId(jwt.payload.sub, reqId);
       repl.code(200).send({ success: true })
     } catch (e: any) {
       console.error(e);
-      if (e.code) {
+      if (typeof e.code === 'number') {
         repl.code(e.code).send({ success: false, message: e.message });
       } else {
         repl.code(500).send({ success: false, message: "Internal Server Error" });
@@ -129,13 +134,13 @@ export function friendRoutes(fastify: FastifyInstance) {
   }>('/remove/:reqId', (req, repl) => {
     try {
       const jwt = extractJWTFromHeader(req.cookies.access_token);
-      const reqId = req.params.reqId;
+      const reqId = safeParseInt(req.params.reqId, 'reqId');
       console.log(jwt, reqId);
       removeFriendship(reqId);
       repl.code(200).send({ success: true });
     } catch (e: any) {
       console.error(e);
-      if (e.code) {
+      if (typeof e.code === 'number') {
         repl.code(e.code).send({ success: false, message: e.message || e });
       } else {
         repl.code(500).send({ success: false, message: 'Internal Server Error' });
