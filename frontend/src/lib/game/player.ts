@@ -89,7 +89,7 @@ export class Player
 	public updateForResize(canvas: HTMLCanvasElement, relativeY: number): void
 	{
 		this._origin.y = relativeY * canvas.height;
-		this._width = canvas.width * 0.004;
+		this._width = canvas.width * 0.01;
 		this._height = canvas.height * 0.12;
 		this._origin.x = this._playerNumber === 1 ? canvas.width * 0.1 : canvas.width * 0.9;
 	}

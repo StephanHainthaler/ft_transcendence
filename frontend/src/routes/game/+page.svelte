@@ -107,11 +107,11 @@ const onGameEnd = (data: MatchSubmissionData)  =>
 </script>
 
 <div class='size-full flex flex-col justify-center items-center'>
-  <Card.Root class='size-full'>
+  <Card.Root class='size-full flex flex-col'>
     <Card.Header>
       <Card.Title>{$t('game.game')}</Card.Title>
     </Card.Header>
-    <Card.Content class='size-full'>
+    <Card.Content class='flex-1 min-h-0 overflow-hidden'>
       {#if !isRunningGame && !isShowingResults}
         <Grid title={$t('game.settings')}>
           <label>
