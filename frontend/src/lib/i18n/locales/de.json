@@ -122,6 +122,7 @@
     "win": "Gewonnen",
     "lose": "Verloren",
     "duration": "Spielzeit",
+    "noMatchData": "Keine Spieldaten verfügbar.",
     "rematch": "Revanche",
     "return": "Zurück zur Herausforderungsseite",
     "match_results_sent": "Spielergebnisse erfolgreich übermittelt.",

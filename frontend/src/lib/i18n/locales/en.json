@@ -122,6 +122,7 @@
     "win": "Win",
     "lose": "Lose",
     "duration": "Match Duration",
+    "noMatchData": "No match data available.",
     "rematch": "Rematch",
     "return": "Return to Challenge Page",
     "match_results_sent": "Match results submitted successfully.",
