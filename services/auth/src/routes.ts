@@ -72,8 +72,7 @@ export function authRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.post<AuthLoginReply>
-  ('/login', async (request, reply) => {
+  fastify.post<AuthLoginReply>('/login', async (request, reply) => {
     try {
       const { passwd, user_name, email } = request.body;
 
