@@ -11,7 +11,8 @@
     "password": "Passwort",
     "password_ph": "Passwort eingeben",
     "signin": "Einloggen",
-    "logout": "Erfolgreich abgemeldet"
+    "logout": "Erfolgreich abgemeldet",
+    "logout_fail": "Failed to log out"
   },
   "signup": {
     "signup": "Registrieren",
@@ -34,6 +35,7 @@
     "error2": "Fehler aufgetreten...",
     "redirect": "OAuth-Weiterleitung",
     "go_back": "Zurückgehen...",
+    "wait": "Bitte warten...",
     "success": "Erfolgreich via OAuth authentifiziert",
     "loading": "GitHub OAuth wird abgeschlossen..."
   },

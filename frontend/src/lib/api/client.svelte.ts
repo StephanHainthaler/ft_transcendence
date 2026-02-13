@@ -31,32 +31,40 @@ export class ApiClient {
   constructor() {}
 
   async init() {
-    try {
+    if (!this.user || !this.auth)
+    {
+      this.loggedIn = false;
+      this.status = 'ready';
+      return (this);
+    }
+    try
+    {
       this.status = 'loading';
-      //check if it ever was logged in
-      const userResponse = await this.getUser();
-      const authResponse = await this.getAuth();
+      const [userResponse, authResponse] = await Promise.all([
+              this.getUser(),
+              this.getAuth()
+            ]);
       this.userStore.set(userResponse.user);
       this.authStore.set(authResponse.auth);
       this.loggedIn = true;
       this.status = 'ready';
-    } catch (e: any) {
+    } catch (e: any)
+    {
       if (e.code === 401 || e.status  === 401) {
-        this.userStore.set(null);
-        this.authStore.set(null);
+        this.clearSession();
         this.avatarUrl = undefined;
         this.loggedIn = false;
         this.status = 'ready';
         if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/auth'))
-        {
-          console.log("Session expired or missing. Redirecting to /auth...");
-          goto('/auth');
+          {
+            console.log("Session expired or missing. Redirecting to /auth...");
+            goto('/auth');
+          }
+        } 
+        else {
+          this.status = 'error';
         }
-      } 
-      else {
-        this.status = 'error';
       }
-    }
     return (this);
   }
 
@@ -198,7 +206,7 @@ export class ApiClient {
       this.loggedIn = true;
     } catch (e: any) {
       const error = new Error(`Signup Failed: ${e.message || e}`)
-      toast.error(error.message);
+      //toast.error(error.message);
       throw error;
     }
   }
@@ -213,7 +221,7 @@ export class ApiClient {
       this.loggedIn = true;
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
-      toast.error(error.message);
+      //toast.error(error.message);
       throw error;
     }
   }

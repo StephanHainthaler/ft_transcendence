@@ -11,7 +11,8 @@
     "password": "Password",
     "password_ph": "Enter your password",
     "signin": "Sign In",
-    "logout": "Successfully logged out"
+    "logout": "Successfully logged out",
+    "logout_fail": "Failed to log out"
   },
   "signup": {
     "signup": "Sign up",

@@ -36,7 +36,7 @@
 
 <form class="space-y-6" onsubmit={handleLoginFormSubmit}>
   <div class="space-y-4">
-    <h2 class="text-2xl font-bold text-center">{$t('login.singin')}</h2>
+    <h2 class="text-2xl font-bold text-center">{$t('login.signin')}</h2>
 
     <div class="space-y-2">
       <Label for="username">{$t('login.username')}</Label>

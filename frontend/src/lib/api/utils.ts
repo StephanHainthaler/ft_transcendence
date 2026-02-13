@@ -1,4 +1,5 @@
 import type { AppError } from "$lib/types/error";
+import { client } from "./index.svelte";
 
 export async function request(req: Request): Promise<any> {
   const response = await fetch(req, {
@@ -11,7 +12,8 @@ export async function request(req: Request): Promise<any> {
   }
   if (!response.ok)
   {
-    //if 401 client.clearSession
+    if (response.status === 401) 
+      client.clearSession();
     let error: AppError = {
       message: data.message || 'An error occurred',
       code: data.code || response.status,
