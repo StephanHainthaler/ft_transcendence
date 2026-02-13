@@ -33,20 +33,20 @@ export class Pong
 	private _resizeEventListener!: EventListener;
 	private _onGameEnd: (Data: MatchSubmissionData) => void;
 
-	public	constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, pointsToWin: number, matchDurationInMinutes: number, _onGameEnd:(Data: MatchSubmissionData) => void)
+	public	constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, pointsToWin: number, matchDurationInMinutes: number, AIdifficulty: number, _onGameEnd:(Data: MatchSubmissionData) => void)
 	{
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
-		this.resizeCanvas();
-
-		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445);
-		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.445);
-		this._ball = new Ball(this, this._player1, this._player2);
-	
-		this.setupEvents();
 		this._maxPlayerScore = pointsToWin;
 		this._maxMatchDuration = matchDurationInMinutes * 60000;
 		this._onGameEnd = _onGameEnd;
+		this.resizeCanvas();
+
+		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445, AIdifficulty);
+		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.445, AIdifficulty);
+		this._ball = new Ball(this, this._player1, this._player2);
+
+		this.setupEvents();
 		this._matchStartTime = new Date().getTime();
 		this._isPaused = false;
 		window.requestAnimationFrame((time) => this.updatePong(time));
@@ -193,7 +193,8 @@ export class Pong
 	{
 		// clear canvas and set font and alignment
 		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-		this._context.font = "60px Arial";
+		const fontSize = Math.round(this._canvas.height * (60 / 720));
+		this._context.font = `${fontSize}px Arial`;
 		this._context.textAlign = "center";
 		
 		// set color depending on the game state
@@ -231,7 +232,7 @@ export class Pong
 				this._context.fillStyle = "rgb(255, 0, 0)";
 		}
 		if (currentCountdown < 0)
-			this._context.fillText(get(t)('game.overtime'), this._canvas.width * 0.5, this._canvas.height * 0.985); //add translation
+			this._context.fillText(get(t)('game.overtime'), this._canvas.width * 0.5, this._canvas.height * 0.985);
 		else
 			this._context.fillText(currentCountdown.toString(), this._canvas.width * 0.5, this._canvas.height * 0.98)
 
@@ -288,7 +289,7 @@ export class Pong
 
 	public	resetMatch(canvas: HTMLCanvasElement) : void
 	{
-		// reinitialize canvas and context and setup events
+		// reinitialize canvas and context
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
 		this.resizeCanvas();
@@ -302,7 +303,7 @@ export class Pong
 		this._player1.stopMoveUp(), this._player1.stopMoveDown();
 		this._player2.stopMoveUp(), this._player2.stopMoveDown();
 		this._ball.spawnBall(this._canvas.width * 0.5, this._canvas.height * 0.5, this._player1, this._player2);
-	
+
 		// reset match timers
 		this._currentMatchDuration = 0;
 		this._pauseDuration = 0;
