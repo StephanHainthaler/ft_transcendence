@@ -44,10 +44,13 @@ const acceptFriendRequestFromReqId = (toId: number, reqId: number) => {
   db.from('friendships').update({ status: 'accepted' }).where(eq('id', reqId)).and(eq('user_to_id', toId)).run();
 }
 
-const removeFriendship = (reqId: number) => {
-  const q = db.from('friendships').delete().where(eq('id', reqId));
-  console.log(q.stringify());
-  q.run();
+const removeFriendship = (userId: number, reqId: number) => {
+  const friendship = db.from('friendships').select('*').where(eq('id', reqId)).single();
+  if (!friendship)
+    throw new ApiError({ code: 404, message: 'Friendship not found' });
+  if (friendship.user_from_id !== userId && friendship.user_to_id !== userId)
+    throw new ApiError({ code: 403, message: 'Not authorized to remove this friendship' });
+  db.from('friendships').delete().where(eq('id', reqId)).run();
 }
 
 export function friendRoutes(fastify: FastifyInstance) {
@@ -136,8 +139,7 @@ export function friendRoutes(fastify: FastifyInstance) {
     try {
       const jwt = extractJWTFromHeader(req.cookies.access_token);
       const reqId = safeParseInt(req.params.reqId, 'reqId');
-      console.log(jwt, reqId);
-      removeFriendship(reqId);
+      removeFriendship(jwt.payload.sub, reqId);
       repl.code(200).send({ success: true });
     } catch (e: any) {
       console.error(e);

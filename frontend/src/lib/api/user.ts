@@ -62,7 +62,6 @@ export const checkFriendsOnlineStatus = async () => {
   const req = new Request(`${import.meta.env.VITE_API_URL}/user/friend/online`)
 
   const data = await request(req);
-  console.log(data);
 
   return data;
 }

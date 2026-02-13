@@ -35,7 +35,7 @@ export function userRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.get<{
+  fastify.post<{
     Body: {
       usersId: number[]
     },

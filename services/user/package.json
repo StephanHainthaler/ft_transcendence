@@ -4,7 +4,7 @@
   "description": "user service",
   "scripts": {
     "build": "tsc && tsc-alias --dir dist/services/user",
-    "prebuild": "mkdirp db",
+    "prebuild": "mkdirp db data data/avatar",
     "dev": "tsx watch --env-file=../../env/dev/.env.user ./src/index.ts",
     "predev": "mkdirp db data data/avatar",
     "test": "tsx --tsconfig=./tsconfig.json --env-file=../../env/dev/.env.user --test ./tests/*.test.ts"
