@@ -72,8 +72,7 @@ export function authRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.post<AuthLoginReply>
-  ('/login', async (request, reply) => {
+  fastify.post<AuthLoginReply>('/login', async (request, reply) => {
     try {
       const { passwd, user_name, email } = request.body;
 
@@ -169,8 +168,8 @@ export function authRoutes(fastify: FastifyInstance) {
         const user_email_response = await fetch("https://api.github.com/user/emails", {
           headers: { Authorization: `Bearer ${response_data.access_token}`}, //, 'X-GitHub-Api-Version': '2022-11-28'},
         });
-        const github_user_email = await user_email_response.json();
-        github_user.email = github_user_email.email;
+        const github_user_emails = await user_email_response.json();
+        github_user.email = Array.isArray(github_user_emails) ? github_user_emails[0]?.email : github_user_emails?.email;
       }
       if (!github_user.email) {
         github_user.email = `${github_user.login}@users.noreply.github.com`;
@@ -284,30 +283,26 @@ export function authRoutes(fastify: FastifyInstance) {
   });
 
   fastify.patch<AuthUpdateRequest>('/update', async (request, reply) => {
-    const { email, user_name, passwd } = request.body;
-
-    if (user_name !== undefined) {
-      const usernameErr = validateUsername(user_name);
-      if (usernameErr) throw new ApiError({ code: 400, message: usernameErr });
-    }
-    if (email !== undefined) {
-      const emailErr = validateEmail(email);
-      if (emailErr) throw new ApiError({ code: 400, message: emailErr });
-    }
-    if (passwd !== undefined) {
-      const passwordErr = validatePassword(passwd);
-      if (passwordErr) throw new ApiError({ code: 400, message: passwordErr });
-    }
-
     try {
-      const authUser = getAuthUser({ email, user_name });
+      const jwt = extractJWTFromHeader(request.cookies.access_token);
+      const { email, user_name, passwd } = request.body;
+
+      if (user_name !== undefined) {
+        const usernameErr = validateUsername(user_name);
+        if (usernameErr) throw new ApiError({ code: 400, message: usernameErr });
+      }
+      if (email !== undefined) {
+        const emailErr = validateEmail(email);
+        if (emailErr) throw new ApiError({ code: 400, message: emailErr });
+      }
+      if (passwd !== undefined) {
+        const passwordErr = validatePassword(passwd);
+        if (passwordErr) throw new ApiError({ code: 400, message: passwordErr });
+      }
+
+      const authUser = getAuthUser({ userId: jwt.payload.sub });
       if (!authUser)
-        return reply
-          .code(401)
-          .send({
-            success: false,
-            message: "No such User"
-          });
+        throw new ApiError({ code: 404, message: "No such User" });
 
       const newAuth = {
         id: authUser.id,

@@ -57,8 +57,8 @@ export function getAuthUser({
     throw sqliteErrorToApiError(e);
   }
 
-  if (!userId && !user_name && !authId && !oauthId) {
-    throw new ApiError({ message: "Missing fields: need either user_name, authid or userid", code: 400 });
+  if (!userId && !email && !user_name && !authId && !oauthId) {
+    throw new ApiError({ message: "Missing fields: need either email, user_name, authid or userid", code: 400 });
   }
 
   return null;
