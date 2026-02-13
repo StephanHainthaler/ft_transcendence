@@ -9,11 +9,11 @@ export async function request(req: Request): Promise<any> {
   try {
     data = await response.json();
   } catch {}
-  if (!response.ok && data) {
+  if (!response.ok) {
     if (response.status == 401) {
       try { client.clearSession()} catch {}
     };
-    throw data;
+    throw data ?? { message: `Request failed with status ${response.status}` };
   }
   return data;
 }

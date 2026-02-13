@@ -25,6 +25,7 @@ export class ApiClient {
   private readonly authStore: Writable<AuthUserClient | null> = new Writable('auth');
   private avatarUrl?: string = $state(undefined);
   private currentOnlineFriends: number[] = $state([]);
+  private onlineInterval: ReturnType<typeof setInterval> | null = null;
   loggedIn: boolean = $state(false);
 
   constructor() {}
@@ -40,7 +41,7 @@ export class ApiClient {
       } else {
         this.loggedIn = false;
       }
-      setInterval(async () => {
+      this.onlineInterval = setInterval(async () => {
         await this.checkOnlineStatus()
       }, 10 * 1000);
     } catch (e: any) {
@@ -227,6 +228,10 @@ export class ApiClient {
     this.userStore.delete();
     this.authStore.delete();
     this.loggedIn = false;
+    if (this.onlineInterval) {
+      clearInterval(this.onlineInterval);
+      this.onlineInterval = null;
+    }
   }
 
   async delete() {
