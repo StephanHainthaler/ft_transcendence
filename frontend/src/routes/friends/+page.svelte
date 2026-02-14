@@ -4,13 +4,11 @@
   import Grid from "@lib/components/custom/Grid.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";
   import Button from "@lib/components/ui/button/button.svelte";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import * as Card from "@lib/components/ui/card";
   import {t} from "@lib/i18n/i18n";
   import type { AppUser } from "@lib/api/appUser";
   import { toast } from "svelte-sonner";
-
-  let errorMessage = '';
 
   const removeFriendship = async (friendShipId: number) => {
     try {
@@ -58,19 +56,30 @@
   let pendingRec: Friendship[] = $state([])
   let { friends, friendships }: { friends: AppUser[], friendships: Friendship[] } = $state({friends: [], friendships: []});
 
+  const intervalHandler = setInterval(async () => {
+    await loadPageData();
+  }, 30 * 1000)
+
   const loadPageData = async () => {
-    const data = await client.getFriends();
-    users = (await client.getUsers()).filter(u => u.id !== client.user?.id);
-    friends = data.friends.filter(f => f.id !== client.user?.id);
-    friendships = data.friendships;
-    accepted = friendships.filter(f => f.status === 'accepted');
-    pendingSend = friendships.filter(f => f.status === 'pending' && f.user_from_id === client.user?.id);
-    pendingRec = friendships.filter(f => f.status === 'pending' && f.user_to_id === client.user?.id);
+    try {
+      const data = await client.getFriends();
+      users = (await client.getUsers()).filter(u => u.id !== client.user?.id);
+      friends = data.friends.filter(f => f.id !== client.user?.id);
+      friendships = data.friendships;
+      accepted = friendships.filter(f => f.status === 'accepted');
+      pendingSend = friendships.filter(f => f.status === 'pending' && f.user_from_id === client.user?.id);
+      pendingRec = friendships.filter(f => f.status === 'pending' && f.user_to_id === client.user?.id);
+    } catch {
+      toast.error("Failed to load friends");
+    }
   }
 
   onMount(async () => {
+    await client.checkOnlineStatus()
     await loadPageData();
   })
+
+  onDestroy(() => clearInterval(intervalHandler))
 </script>
 
 <Card.Root class="flex-1 min-h-0 flex flex-col h-full">
@@ -89,19 +98,19 @@
 
       <Grid title={$t('friends.card_title')}>
         {#each accepted as a}
-          <GridCard title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)!.name} buttonDesc={$t('friends.remove')} callback={async () => await removeFriendship(a.id)}/>
+          <GridCard isOnline={!!client.onlineFriends.find(f => f !== client.user?.id && (a.user_to_id === f || a.user_from_id === f))} title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)?.name ?? '?'} buttonDesc={$t('friends.remove')} callback={async () => await removeFriendship(a.id)}/>
         {/each}
       </Grid>
 
       <Grid title={$t('friends.cancel')}>
         {#each pendingSend as p}
-          <GridCard title={friends.find(u => u.id === p.user_to_id)!.name} buttonDesc={'Cancel'} callback={async () => await removeFriendship(p.id)}/>
+          <GridCard title={friends.find(u => u.id === p.user_to_id)?.name ?? '?'} buttonDesc={'Cancel'} callback={async () => await removeFriendship(p.id)}/>
         {/each}
       </Grid>
 
       <Grid title={$t('friends.accept')}>
         {#each pendingRec as u}
-          <GridCard title={friends.find(fr => fr.id === u.user_from_id)!?.name} buttonDesc={$t('friends.reject')} callback={async () => await removeFriendship(u.id)}>
+          <GridCard title={friends.find(fr => fr.id === u.user_from_id)?.name ?? '?'} buttonDesc={$t('friends.reject')} callback={async () => await removeFriendship(u.id)}>
             {#snippet extraBtn()}
               <Button class='btn primary sm' onclick={async () => await acceptFriendRequest(u.id)}>{$t('friends.accept')}</Button>
             {/snippet}

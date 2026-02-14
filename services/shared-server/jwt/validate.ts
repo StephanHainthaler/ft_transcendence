@@ -1,5 +1,5 @@
-import { ApiError } from '@server/error/apiError';
-import { parseJWT } from '@shared/api';
+import { ApiError } from '../error/apiError';
+import { parseJWT } from '../../../shared/api';
 
 export function extractJWTFromHeader(tokenHeader?: string) {
   try {

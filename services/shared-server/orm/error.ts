@@ -1,4 +1,4 @@
-import { ApiError } from "@server/error/apiError";
+import { ApiError } from "../error/apiError";
 
 export function sqliteErrorToApiError(error: unknown): ApiError {
   if (error && typeof error === 'object' && 'code' in error) {

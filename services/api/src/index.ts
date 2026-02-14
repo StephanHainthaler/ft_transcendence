@@ -1,10 +1,33 @@
-import Fastify from 'fastify'
 import fastifyCookie from '@fastify/cookie';
 import { healthRoutes } from './health';
+import { createServer } from "@server/fastify/createServer";
 
-export const AUTH_URL = process.env.AUTH_SERVICE_URL;
-export const USER_URL = process.env.USER_SERVICE_URL;
-export const GAME_STATS_URL = process.env.GAME_STATS_SERVICE_URL;
+export const HTTP = process.env.HTTP_PROTOCOL;
+if (!HTTP) {
+  console.error("Missing Protocol env Vairable! Exiting...");
+  process.exit(1);
+}
+
+const authUrl = process.env.AUTH_SERVICE_URL;
+if (!authUrl) {
+  console.error("Missing AUTH_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const AUTH_URL = `${HTTP}://${authUrl}`;
+
+const userUrl = process.env.USER_SERVICE_URL;
+if (!userUrl) {
+  console.error("Missing USER_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const USER_URL = `${HTTP}://${userUrl}`;
+
+const gameStatsUrl = process.env.GAME_STATS_SERVICE_URL;
+if (!gameStatsUrl) {
+  console.error("Missing GAME_STATS_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const GAME_STATS_URL  = `${HTTP}://${gameStatsUrl}`;
 
 const publicRoutes = [
   '/auth/login',
@@ -21,28 +44,40 @@ async function startApiGateway() {
   if (!USER_URL) throw new Error("USER_SERVICE_URL is not defined");
   if (!GAME_STATS_URL) throw new Error("GAME_STATS_SERVICE_URL is not defined");
 
-  const fastify = Fastify({
-    logger: {
-      transport: {
-        target: 'pino-pretty'
-      },
-    },
-    disableRequestLogging: true
-  });
+  console.log(AUTH_URL);
+
+  const fastify = createServer();
 
   fastify.register(fastifyCookie);
 
   const proxy = await import ('@fastify/http-proxy');
 
   fastify.addHook('onRequest', async (request, reply) => {
+    console.info(`REQUEST WITH URL ${request.originalUrl}`);
     if (!publicRoutes.some(r => request.url.includes(r))) {
+      let response: Response;
       try {
-        const response = await fetch(`${AUTH_URL}/validate`, {
+        const authReqUrl = `${AUTH_URL}/validate`;
+        console.log("Trying validate req with:", authReqUrl, "on request: ", request.originalUrl);
+        response = await fetch(authReqUrl, {
           method: 'post',
           headers: {
             'Cookie': request.headers.cookie || ''
           }
         });
+      } catch (e: any) {
+        request.log.error('Auth service connection failed: ', e);
+        const code = e.code || e.cause?.code;
+        if (code === 'ECONNREFUSED') {
+          return reply.code(503).send({ success: false, message: 'Authentication service is not running' });
+        }
+        if (code === 'ECONNRESET' || code === 'ETIMEDOUT' || code === 'UND_ERR_CONNECT_TIMEOUT') {
+          return reply.code(504).send({ success: false, message: 'Authentication service timed out' });
+        }
+        return reply.code(502).send({ success: false, message: 'Authentication service unavailable' });
+      }
+
+      try {
         const data = await response.json();
 
         if (!response.ok) {
@@ -56,39 +91,41 @@ async function startApiGateway() {
               httpOnly: true,
               path: '/',
               sameSite: 'strict',
-              secure: 'auto'
+              secure: HTTP === 'https'
             })
             .setCookie('refresh_token', data.refresh_token, {
               httpOnly: true,
               path: '/',
               sameSite: 'strict',
-              secure: 'auto'
+              secure: HTTP === 'https'
             })
         }
-
       } catch (e: any) {
-        request.log.error('Failed to validate: ', e);
-        return reply.code(401).send({ message: 'You are not authenticated' });
+        request.log.error('Failed to parse auth response: ', e);
+        return reply.code(502).send({ success: false, message: 'Invalid response from authentication service' });
       }
     }
   });
 
+  const http2 = HTTP === 'https';
+  console.log('running with https:', http2);
+
   fastify.register(proxy, {
     upstream: USER_URL,
     prefix: '/user',
-    http2: false,
+    http2: false
   });
 
   fastify.register(proxy, {
     upstream: AUTH_URL,
     prefix: '/auth',
-    http2: false,
+    http2: false
   });
 
   fastify.register(proxy, {
     upstream: GAME_STATS_URL,
     prefix: '/stats',
-    http2: false,
+    http2: false
   })
 
   fastify.register(healthRoutes, {

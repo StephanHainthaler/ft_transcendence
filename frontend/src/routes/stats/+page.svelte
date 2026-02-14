@@ -8,6 +8,7 @@
   import CyberTable from "$lib/components/custom/CyberTable.svelte";
   import ResultBadge from "$lib/components/custom/ResultBadge.svelte";
   import type { AppUser } from '@lib/api/appUser';
+  import type { AppUser } from '@lib/api/appUser';
 
   let stats = $state<UserStats | null>(null);
   let history = $state<MatchHistoryEntry[]>([]);

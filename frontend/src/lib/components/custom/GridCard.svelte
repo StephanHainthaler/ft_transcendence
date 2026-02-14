@@ -4,9 +4,11 @@
   import Button from "../ui/button/button.svelte";
   import { t } from "@lib/i18n/i18n";
   import * as Avatar from "$lib/components/ui/avatar";
+  import { Badge } from "$lib/components/ui/badge";
 
   const {
     title,
+    isOnline,
     desc,
     buttonDesc,
     avatarUrl,
@@ -14,6 +16,7 @@
     callback
   }: {
     title: string,
+    isOnline?: boolean,
     desc?: string,
     buttonDesc?: string,
     avatarUrl?: string,
@@ -34,6 +37,11 @@
     <Item.Header>
       <Item.Title>
         <h3 class="text-white text-lg font-medium">{title}</h3>
+        {#if isOnline === true}
+          <Badge>{$t('online')}</Badge>
+        {:else if isOnline === false}
+          <Badge variant='destructive'>{$t('offline')}</Badge>
+        {/if}
       </Item.Title>
     </Item.Header>
     {#if desc}

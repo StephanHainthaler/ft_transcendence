@@ -10,7 +10,7 @@
   import * as Dialog from "$lib/components/ui/dialog";
   import { Trash } from "@lucide/svelte";
   import { toast } from "svelte-sonner";
-  import { validateInputThrow } from "@lib/validation/inputValidation";
+  import { validateInputThrow, validateAvatarFile } from "@lib/validation/inputValidation";
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -48,6 +48,12 @@
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) {
+      const avatarError = validateAvatarFile(file);
+      if (avatarError) {
+        toast.error(avatarError);
+        input.value = '';
+        return;
+      }
       session.avatarFile = file;
       if (currentAvatarEl && input.files?.[0]) {
         const url = URL.createObjectURL(file);
@@ -60,28 +66,30 @@
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
-    console.log(session);
-    const updatePromise = client.updateUserInfo(session.user, session.avatarFile);
-    toast.promise(updatePromise, {
-      success: () => {
-        editMode = false;
-        return 'Updated successfully!'
-      },
-      loading: 'Loading...',
-      error: (e) => `Failed to update Account: ${e}`,
-    });
     try {
+      validateInputThrow(session.user.name, { type: 'displayName' });
       const user_name = validateInputThrow(session.auth.user_name, { type: 'username' });
       const email = validateInputThrow(session.auth.email, { type: 'email' });
 
       let passwd;
       if (session.passwd.length > 0) {
+        validateInputThrow(session.passwd, { type: 'password' });
         if (session.passwd !== session.passwdRepeat) {
           throw new Error("Passwords don't match");
-        } else {
-          passwd = session.passwd;
         }
+        passwd = session.passwd;
       }
+
+      const updatePromise = client.updateUserInfo(session.user, session.avatarFile);
+      toast.promise(updatePromise, {
+        success: () => {
+          editMode = false;
+          return 'Updated successfully!'
+        },
+        loading: 'Loading...',
+        error: (e) => `Failed to update Account: ${e}`,
+      });
+
       const updateAuthPromise = client.updateCredentials({ email, user_name, passwd });
       toast.promise(updateAuthPromise, {
         success: () => {
@@ -188,7 +196,7 @@
             <Input
               id="avatar"
               type="file"
-              accept="image/*"
+              accept="image/png,image/jpeg,image/webp"
               class="mt-2"
               onchange={handleFileChange}
             />

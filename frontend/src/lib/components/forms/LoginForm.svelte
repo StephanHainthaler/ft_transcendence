@@ -13,6 +13,7 @@
     e.stopPropagation();
 
     try {
+      if (!userPasswordBuffer) throw new Error('Password is required');
       const email = validateInput(user_nameBuffer, { type: 'email' }).input;
       const user_name = validateInput(user_nameBuffer, { type: 'username' }).input;
 
