@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
   import { client } from "$lib/api/index.svelte";
-  import { validateInput } from "@lib/validation/inputValidation";
+  import { validateInput } from "@lib/validation/inputValidation.svelte.svelte";
   import Label from "$lib/components/ui/label/label.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import Input from "$lib/components/ui/input/input.svelte";

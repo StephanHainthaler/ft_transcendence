@@ -1,11 +1,7 @@
 import type { SignupRequestBody, LoginRequestBody, AuthResponseSuccess, OAuthCallBackBody } from "@shared/api/authRequest";
-
 import { request } from './utils';
 import { toast } from "svelte-sonner";
-import { t } from "$lib/i18n/i18n"
-import { get } from "svelte/store";
-
-const tr = get(t);
+import { t, get } from "@lib/i18n/i18n";
 
 export async function updateRequest({
   email, user_name, passwd
@@ -29,11 +25,10 @@ export async function updateRequest({
 }
 
 export async function signupRequest(
-  info: SignupRequestBody,
-): Promise<AuthResponseSuccess> {
+  info: SignupRequestBody, ): Promise<AuthResponseSuccess> {
   if (!info.user_name || !info.email)
-    throw new Error("Missing Email or Username!");
-  if (!info.passwd) throw new Error("Missing Password!");
+    throw new Error("missing_email_or_username");
+  if (!info.passwd) throw new Error("missing_pass");
 
   const signupReq = new Request(`${import.meta.env.VITE_API_URL}/auth/sign-up`, {
     method: 'POST',
@@ -49,11 +44,10 @@ export async function signupRequest(
 }
 
 export async function loginRequest(
-  info: LoginRequestBody,
-): Promise<AuthResponseSuccess> {
+  info: LoginRequestBody, ): Promise<AuthResponseSuccess> {
   if ((!info.user_name && !info.email))
-    throw new Error("Missing Email of Username!");
-  if (!info.passwd) throw new Error("Missing Password!");
+    throw new Error("missing_email_or_username");
+  if (!info.passwd) throw new Error("missing_pass");
 
   const login: Request = new Request(`${import.meta.env.VITE_API_URL}/auth/login`, {
     method: 'POST',
@@ -69,10 +63,9 @@ export async function loginRequest(
 }
 
 export async function oauthRequest(
-  info: OAuthCallBackBody,
-): Promise<AuthResponseSuccess> {
+  info: OAuthCallBackBody, ): Promise<AuthResponseSuccess> {
   if (!info.code)
-    throw new Error("Missing OAuth Code!");
+    throw new Error("missing_OAuth_code");
 
   const oauth: Request = new Request(`${import.meta.env.VITE_API_URL}/auth/github-oauth`, {
     method: 'POST',
@@ -95,7 +88,10 @@ export async function deleteRequest() {
   try {
     await request(req);
   } catch (e: any) {
-    toast.error('Failed to Delete Account');
+    const tr = get(t);
+    const message = tr('error.delete_acc_fail');
+    toast.error( message || 'Failed to Delete Account');
+    throw (e);
   }
 }
 
@@ -107,7 +103,10 @@ export async function logoutRequest() {
   try {
     await request(req);
   } catch (e) {
-    toast.error(tr('login.logout_fail') || 'Failed to log out');
+    const tr = get(t);
+    const message = tr('error.log_out_fail');
+    toast.error( message || 'Failed to log out');
+    throw (e);
   }
 }
 

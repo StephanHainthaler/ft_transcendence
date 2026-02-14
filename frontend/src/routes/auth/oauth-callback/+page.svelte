@@ -12,7 +12,6 @@
 
   let isLoading = $state(true);
   let errorMessage = $state('');
-  let consoleError = $state('');
 
   // (3) function will be called /oauth-callback
   // It will extract the code and state out of redirect_uri
@@ -66,7 +65,7 @@
       {#if !isLoading}
         <Alert.Root variant='destructive'>
           <CircleAlertIcon />
-          <Alert.Title>{$t('OAuth.error2')}</Alert.Title>
+          <Alert.Title>{$t('OAuth.error2', 'Something went wrong...')}</Alert.Title>
           <Alert.Description>
             {errorMessage}
           </Alert.Description>
@@ -77,7 +76,7 @@
           <CircleIcon />
           <Alert.Title>{$t('OAuth.wait') || 'Waiting for OAuth completion'}</Alert.Title>
           <Alert.Description>
-            {$t('OAuth.loading')}
+            {$t('OAuth.loading', 'Completing GitHub OAuth...')}
           </Alert.Description>
         </Alert.Root>
       {/if}

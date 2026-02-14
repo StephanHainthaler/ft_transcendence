@@ -1,6 +1,6 @@
 <script lang="ts">
   import { client } from "@lib/api/index.svelte";
-  import { validateInputThrow } from "@lib/validation/inputValidation";
+  import { validateInputThrow } from "@lib/validation/inputValidation.svelte.svelte";
   import { goto } from "$app/navigation";
   import Label from "../ui/label/label.svelte";
   import Input from "../ui/input/input.svelte";

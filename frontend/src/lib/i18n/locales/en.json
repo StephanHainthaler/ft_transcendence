@@ -26,7 +26,8 @@
     "pass_repeat": "Repeat your password",
     "pass_confirm": "Confirm your password",
     "loading": "Signing up...",
-    "pass_no_match": "Passwords don't match"
+    "pass_no_match": "Passwords don't match",
+    "signup_fail": 
   },
   "OAuth": {
     "oauth": "OAuth",
@@ -204,6 +205,12 @@
       "unauthorized": "You are not authorized to perform this action.",
       "validation_failed": "Please check the form fields for correctness.",
       "unexpected": "An error occurred while processing your request."
-    }
+    },
+    "auth_missing_credentials": "No Credentials to update!",
+    "missing_email_or_username": "Missing Email or Username!",
+    "missing_pass": "Missing Password!",
+    "missing_OAuth_code": "Missing OAuth Code!",
+    "delete_acc_fail": "Failed to Delete Account",
+    "log_out_fail": "Failed to log out"
   }
 }

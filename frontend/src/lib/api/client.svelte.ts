@@ -8,8 +8,8 @@ import type { OAuthCallBackBody } from "@shared/api";
 import { acceptFriendRequest, checkFriendsOnlineStatus, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
-import { toast } from "svelte-sonner";
-import type { AppError } from "@lib/types/error";
+import { AppError } from "$lib/types/error";
+
 
 export type ApiError = {
   code: number,
@@ -218,9 +218,8 @@ export class ApiClient {
       this.user = userResponse.user;
       this.loggedIn = true;
     } catch (e: any) {
-      const error = new Error(`Signup Failed: ${e.message || e}`)
-      //toast.error(error.message);
-      throw error;
+      console.error("Signup Failed:", e);
+      throw e;
     }
   }
 
@@ -312,19 +311,4 @@ export class ApiClient {
     return data.user;
   }
 
-  // handleError(error: any) {
-  //   const e = error as AppError;
-  //   console.error('API Error:', e.code, '\n', e.message || 'An error occurred');
-  //   switch (e.code)
-  //   {
-  //     case 401:
-  //       this.clearSession();
-  //       toast.error('Session expired. Please log in again.');
-  //       goto('/auth');
-  //       break;
-  //     case 403:
-
-  //     default:
-  //       toast.error(e.message || 'An error occurred');
-  //   }
 }
