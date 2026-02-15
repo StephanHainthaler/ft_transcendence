@@ -81,40 +81,40 @@ Our application follows a **microservices architecture** with the following comp
 ┌───────────────────────────────────────────────────────────────────────┐
 │                          CLIENT (Web Browser)                          │
 │                     (Svelte + Vite + Canvas/WebSocket)                │
+│                    Dev: Port 8080 | Prod: NGINX Port 443             │
 └────────────────────────────────┬────────────────────────────────────────┘
                                  │ HTTP/HTTPS
-                                 ▼
+                                 ▼ (Dev: direct to services)
 ┌────────────────────────────────────────────────────────────────────────┐
-│                    NGINX (Reverse Proxy / Load Balancer)               │
-│                         Port: 80 / 443                                 │
-└─┬──────────────┬──────────────┬──────────────┬──────────────┬──────────┘
-  │              │              │              │              │
-  │ HTTP/REST    │ HTTP/REST    │ HTTP/REST    │ HTTP/REST    │ WebSocket
-  │              │              │              │              │
-  ▼              ▼              ▼              ▼              ▼
-┌──────────┐  ┌────────────┐ ┌──────────┐ ┌─────────────┐ ┌────────┐
-│   API    │  │   AUTH     │ │  USER    │ │ GAME_STATS  │ │ GAME   │
-│ Gateway  │  │  Service   │ │ Service  │ │  Service    │ │Service │
-│(Fastify) │  │ (Fastify)  │ │(Fastify) │ │  (Fastify)  │ │(Fastify)
-│Port:3000 │  │ Port:3001  │ │Port:3002 │ │  Port:3004  │ │Port:3003
-│ Routes:  │  │ Routes:    │ │ Routes:  │ │ Routes:     │ │ Routes:│
-│ •/api/*  │  │ •/auth/*   │ │ •/user/* │ │ •/stats/*   │ │•/game/*│
-│ •/login  │  │ •/oauth/*  │ │ •/profile│ │ •/rankings  │ │        │
-│          │  │ •/logout   │ │ •/avatar │ │ •/history   │ │ Features:
-│          │  │ •/2fa      │ │ •/friends│ │             │ │ • Game loop
-└────┬─────┘  └─────┬──────┘ └────┬─────┘ └──────┬──────┘ │ • Real-time
-     │              │             │              │        │   sync
-     │              │             │              │        │ • Physics
-     │              │             │              │        │
-     └──────────────┼─────────────┼──────────────┼────────┘
-                    │             │              │
-                    ▼             ▼              ▼
+│    NGINX (Reverse Proxy / Load Balancer) - Production only             │
+│                      Port: 443 (HTTPS)                                 │
+└─┬──────────────┬──────────────┬──────────────┬──────────────┘
+  │              │              │              │
+  │ HTTP/REST    │ HTTP/REST    │ HTTP/REST    │ HTTP/REST
+  │              │              │              │
+  ▼              ▼              ▼              ▼
+┌──────────┐  ┌────────────┐ ┌──────────┐ ┌─────────────┐
+│   API    │  │   AUTH     │ │  USER    │ │ GAME_STATS  │
+│ Gateway  │  │  Service   │ │ Service  │ │  Service    │
+│(Fastify) │  │ (Fastify)  │ │(Fastify) │ │  (Fastify)  │
+│Port:3000 │  │ Port:3002  │ │Port:3001 │ │  Port:3003  │
+│          │  │            │ │          │ │             │
+│ Routes:  │  │ Routes:    │ │ Routes:  │ │ Routes:     │
+│ •/api/*  │  │ •/auth/*   │ │ •/user/* │ │ •/stats/*   │
+│ •/login  │  │ •/oauth/*  │ │ •/avatar │ │ •/rankings  │
+│          │  │ •/2fa      │ │ •/friend │ │ •/history   │
+└──────────┘  └────────────┘ └──────────┘ └─────────────┘
+     │              │             │              │
+     └──────────────┼─────────────┼──────────────┘
+                    │             │              
+                    ▼             ▼              
             ┌──────────────┐ ┌──────────┐ ┌──────────────┐
             │ SQLite DB    │ │ SQLite   │ │ SQLite DB    │
-            │ (auth.db)    │ │ DB (db)  │ │ (game_stats) │
-            │              │ │          │ │              │
+            │ (auth.db)    │ │ DB (user │ │(game_stats.  │
+            │              │ │ db)      │ │ db)          │
             │ •auth_users  │ │ •users   │ │ •user_stats  │
-            │ •sessions    │ │ •games   │ │ •match_hist. │
+            │ •sessions    │ │ •avatars │ │ •match_hist. │
+            │              │ │ •games   │ │              │
             │              │ │ •friends │ │              │
             └──────────────┘ └──────────┘ └──────────────┘
 ```
@@ -126,7 +126,7 @@ Our application follows a **microservices architecture** with the following comp
 ┌─────────────────────────────────────────────────────────────────┐
 │                     User Service (SQLite)                        │
 ├─────────────────────────────────────────────────────────────────┤
-│ users (id, name, username, email)                               │
+│ users (id, name, user_name)                                      │
 │   ├─→ avatars (user_id FK, location)                            │
 │   ├─→ friendships (user_from_id, user_to_id, status)           │
 │   └─→ user_games (user_id FK, game_id FK)                       │
@@ -143,7 +143,8 @@ Our application follows a **microservices architecture** with the following comp
 ┌─────────────────────────────────────────────────────────────────┐
 │                  Game Stats Service (SQLite)                     │
 ├─────────────────────────────────────────────────────────────────┤
-│ user_stats (user_id FK, wins, losses, streak, points, rank)     │
+│ user_stats (user_id FK, wins, losses, rank, total_points,       │
+│             highest_score, streak)                               │
 │   └─→ match_history (player_one_id, player_two_id, winner_id,   │
 │                      scores, duration, timestamp)               │
 └─────────────────────────────────────────────────────────────────┘
@@ -159,7 +160,7 @@ Manages user accounts, profiles, avatars, games, and friend relationships.
 
 | Table | Primary Key | Columns | Description |
 |-------|-------------|---------|-------------|
-| **users** | `id` (AUTO_INCREMENT) | `id` (INT), `name` (TEXT), `username` (TEXT, UNIQUE), `email` (TEXT, UNIQUE) | User account information |
+| **users** | `id` (AUTO_INCREMENT) | `id` (INT), `name` (TEXT), `user_name` (TEXT, UNIQUE) | User account information |
 | **avatars** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT), `location` (TEXT) | User avatars |
 | **games** | `id` (AUTO_INCREMENT) | `id` (INT), `player1` (INT), `player2` (INT), `score1` (INT), `score2` (INT), `duration` (TEXT), `date` (TEXT) | Game records |
 | **user_games** | Composite (game_id, user_id) | `game_id` (INT), `user_id` (INT) | Junction table linking users to games |
@@ -181,7 +182,7 @@ Handles user authentication, sessions and OAuth.
 
 | Table | Primary Key | Columns | Description |
 |-------|-------------|---------|-------------|
-| **auth_users** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT, UNIQUE), `user_name` (TEXT, UNIQUE), `email` (TEXT, UNIQUE), `passwd` (TEXT), `oauth_id` (INT, UNIQUE) | Authentication credentials with optional OAuth ID; requires either username or email |
+| **auth_users** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT, UNIQUE), `user_name` (TEXT, UNIQUE), `email` (TEXT, UNIQUE), `passwd` (TEXT), `oauth_id` (INT, UNIQUE) | Authentication credentials with optional OAuth ID; requires either `user_name` or `email` to be NOT NULL |
 | **sessions** | Composite (auth_id, user_id) | `auth_id` (INT), `user_id` (INT, UNIQUE), `token` (TEXT), `expires_in` (INT), `created_at` (INT) | Active user sessions with JWT tokens and expiration times |
 
 **Key Relationships:**
@@ -241,21 +242,14 @@ cd ft_transcendence
 
 #### Step 2: Create .env Files
 
-Create a folder called `env` at the root of the repository:
+Create the following .env files with the specified variables in both `env/dev/` and `env/prod/` directories:
 
-```sh
-mkdir env
-```
-
-Create the following .env files with the specified variables:
-| Filename   | Description | Variables |
-|:-----------| :---------- |:----------|
-| .env.api | API Gateway service (Port: 3000) | <ul><li>PORT</li><li>API_URL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li><li>SERVER_PONG_URL</li></ul> |
-| .env.auth | Authentication (Port: 3001) | <ul><li>PORT</li><li>DB_FILE_PATH</li><li>USER_API_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
-| .env.user | User Service (Port: 3002) | <ul><li>PORT</li><li>DB_FILE_PATH</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
-| .env.game | Game Service (Port: 3003) | <ul><li>PORT</li><li>USER_URL</li></ul> |
-| .env.game_stats | Game Stats Service (Port: 3004) | <ul><li>PORT</li><li>HOST</li></ul> |
-| .env.development | Frontend development (Vite Port: 5173) | <ul><li>VITE_API_URL</li><li>USER_API_URL</li><li>GAME_STATS_SERVICE_URL</li><li>VITE_SERVER_GAME_WS_URL</li><li>VITE_GITHUB_CLIENT_ID</li></ul> |
+| Filename | Directory | Description | Variables |
+|:---------|:----------|:------------|:----------|
+| .env.api | env/dev/, env/prod/ | API Gateway service (Port: 3000) | <ul><li>HTTP_PROTOCOL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li></ul> |
+| .env.auth | env/dev/, env/prod/ | Authentication (Port: 3002) | <ul><li>HTTP_PROTOCOL</li><li>DB_PATH</li><li>USER_SERVICE_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li><li>GITHUB_REDIRECT_URL</li></ul> |
+| .env.user | env/dev/, env/prod/ | User Service (Port: 3001) | <ul><li>HTTP_PROTOCOL</li><li>DB_PATH</li><li>AUTH_SERVICE_URL</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
+| .env.game_stats | env/dev/, env/prod/ | Game Stats Service (Port: 3003) | <ul><li>HOST</li><li>PORT</li><li>DB_PATH</li></ul> |
 
 
 #### Step 3: GitHub OAuth Configuration
@@ -324,7 +318,11 @@ make
 This will:
 - Start **Vite** development server for the frontend at **http://localhost:8080**
 - Hot Module Replacement (HMR) enabled for instant code updates
-- Start all backend services in development mode with auto-restart on file changes
+- Start all backend services in development mode with auto-restart on file changes:
+  - API Gateway at `http://localhost:3000`
+  - User Service at `http://localhost:3001`
+  - Auth Service at `http://localhost:3002`
+  - Game Stats Service at `http://localhost:3003`
 - Transpile TypeScript to JavaScript automatically
 - Compile Tailwind CSS utilities dynamically
 
