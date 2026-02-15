@@ -1,15 +1,10 @@
 <script lang="ts">
-  import { client } from "$lib/api";
   import { setup2FA, enable2FA } from "$lib/api/auth";
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
   import Button from "$lib/components/ui/button/button.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import Label from "$lib/components/ui/label/label.svelte";
   import * as Card from "$lib/components/ui/card";
-
-  // Get the token store from client (we need to access it for API calls)
-  // @ts-ignore - accessing private for now
-  const token = client['accessToken'];
 
   let step: 'idle' | 'setup' | 'verify' | 'done' = $state('idle');
   let qrCodeUrl = $state('');
@@ -19,29 +14,28 @@
   let successMessage = $state('');
 
   const startSetup = async () => {
-    console.log('startSetup clicked!');
     try {
       errorMessage = '';
-      console.log('Calling setup2FA...');
-      const result = await setup2FA(token);
-      console.log('2FA setup result:', result);
+      const result = await setup2FA();
+      if (!result?.qrCodeUrl || !result?.secret)
+        throw new Error('Invalid 2FA setup response');
+
       qrCodeUrl = result.qrCodeUrl;
       secretKey = result.secret;
       step = 'setup';
     } catch (e: any) {
-      console.error('2FA setup error:', e);
-      errorMessage = e.message || 'Failed to setup 2FA';
+      errorMessage = e?.message || e?.toString?.() || 'Failed to setup 2FA';
     }
   };
 
   const verifyAndEnable = async () => {
     try {
       errorMessage = '';
-      await enable2FA(token, verifyCode);
+      await enable2FA(verifyCode);
       successMessage = '2FA has been enabled successfully!';
       step = 'done';
     } catch (e: any) {
-      errorMessage = e.message || 'Invalid code. Please try again.';
+      errorMessage = e?.message || e?.toString?.() || 'Invalid code. Please try again.';
     }
   };
 
@@ -68,6 +62,11 @@
         Protect your account by requiring a verification code from your authenticator app when signing in.
       </p>
       <Button onclick={startSetup}>Enable 2FA</Button>
+      {#if errorMessage}
+        <Alert variant="destructive" class="mt-4">
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      {/if}
 
     {:else if step === 'setup'}
       <div class="space-y-4">

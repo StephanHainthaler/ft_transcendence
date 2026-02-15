@@ -126,7 +126,7 @@ export async function getAuth() {
 
 // 2FA Functions
 
-export async function setup2FA(_token?: unknown): Promise<{ secret: string; qrCodeUrl: string }> {
+export async function setup2FA(): Promise<{ secret: string; qrCodeUrl: string }> {
   const req = new Request('/api/auth/2fa/setup', {
     method: 'POST',
   });
@@ -134,7 +134,7 @@ export async function setup2FA(_token?: unknown): Promise<{ secret: string; qrCo
   return await request(req);
 }
 
-export async function enable2FA(_token: unknown, totpToken: string): Promise<{ success: boolean; message: string }> {
+export async function enable2FA(totpToken: string): Promise<{ success: boolean; message: string }> {
   const req = new Request('/api/auth/2fa/enable', {
     method: 'POST',
     headers: {

@@ -129,9 +129,14 @@ export function authRoutes(fastify: FastifyInstance) {
   fastify.post('/2fa/setup', async (request, reply) => {
     try {
       const token = extractJWTFromHeader(request.cookies.access_token);
-      const authUser = getAuthUser({ userId: token.payload.sub });
+      const authUser =
+        getAuthUser({ authId: token.payload.sub })
+        ?? getAuthUser({ userId: token.payload.sub });
       if (!authUser)
         return reply.code(404).send({ success: false, message: 'No Such User' });
+
+      if (is2FAEnabled(authUser))
+        return reply.code(409).send({ success: false, message: '2FA already enabled for this User' });
 
       const result = await setupTotp(authUser);
       return reply.code(200).send(result);
@@ -144,7 +149,9 @@ export function authRoutes(fastify: FastifyInstance) {
   fastify.post('/2fa/enable', async (request, reply) => {
     try {
       const token = extractJWTFromHeader(request.cookies.access_token);
-      const authUser = getAuthUser({ userId: token.payload.sub });
+      const authUser =
+        getAuthUser({ authId: token.payload.sub })
+        ?? getAuthUser({ userId: token.payload.sub });
       if (!authUser)
         return reply.code(404).send({ success: false, message: 'No Such User' });
 
