@@ -101,9 +101,6 @@ export function defineTable<T extends Schema>(name: string, schema: T, ...checks
     def.tableName = name;
     def.name = key;
     columns[key] = def
-    if (name === 'auth_users') {
-      // console.log(columns[key])
-    }
   }
   const table = new Table(columns, name, checks);
   const fields = Object.keys(schema).reduce((acc, key) => {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { client } from "@lib/api";
+  import { client } from "@lib/api/index.svelte";
   import type { Friendship } from "@shared/user";
   import Grid from "@lib/components/custom/Grid.svelte";
   import GridCard from "@lib/components/custom/GridCard.svelte";

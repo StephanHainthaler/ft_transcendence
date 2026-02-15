@@ -1,7 +1,7 @@
 import { GameClient } from "@lib/api/gameClient";
 import { Layout } from "@lib/components/layout";
 import { UserCard } from "@lib/components/ui/UserCard";
-import { client } from "@lib/index";
+import { client } from "@lib/api/index.svelte";
 import { type Route } from "@lib/types/route";
 import { canvas, div, updateId } from "@lib/vdom";
 import type { User } from "@shared/user";

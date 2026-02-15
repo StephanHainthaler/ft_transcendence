@@ -18,10 +18,12 @@
     "build:docker:frontend": "vite build",
     "test:backend:api": "npm run test -w @ft_transcendence/api",
     "test:backend:database": "npm run test -w @ft_transcendence/database",
+    "test:backend:game_stats": "npm run test -w @ft_transcendence/game_stats",
     "test:backend:user": "npm run test -w @ft_transcendence/user",
     "test:backend": "npm-run-all --continue-on-error test:backend:*",
     "clean:workspaces": "npm run clean --workspaces --if-present",
     "clean:root": "rm -rf node_modules",
+    "clean:db": "rm -f services/**/db/*.db services/**/db/*.db-journal services/**/db/*.db-wal",
     "clean": "npm run clean:workspaces && npm run clean:root"
   },
   "devDependencies": {
@@ -51,6 +53,7 @@
     "better-sqlite3": "^12.6.2",
     "concurrently": "^9.2.1",
     "fastify": "^5.6.2",
+    "mkdirp": "^3.0.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "qrcode": "^1.5.4",

@@ -1,13 +1,16 @@
 {
   "main_name": "Transcendence",
   "menu": "Menu",
+  "welcome": "Welcome",
+  "play": "Play",
+  "moto": "ARENA_READY: LINK YOUR PADDLE TO THE GRID",
   "login": {
     "login": "Login",
     "username": "Email or Username",
     "username_ph": "Enter your email or username",
     "password": "Password",
     "password_ph": "Enter your password",
-    "singin": "Sign In",
+    "signin": "Sign In",
     "enter_2fa": "Enter 2FA Code",
     "enter_2fa_code": "Enter the 6-digit code from your authenticator app",
     "auth_code": "Authentication Code",
@@ -23,19 +26,19 @@
     "email_ph": "Enter your email",
     "password": "Password",
     "password_ph": "Create a password",
-    "pass_repeat": "Enter your password",
+    "pass_repeat": "Repeat your password",
     "pass_confirm": "Confirm your password",
     "loading": "Signing up...",
     "pass_no_match": "Passwords don't match"
   },
   "OAuth": {
     "oauth": "OAuth",
-    "oauth_gh": "OAuth with GitHup",
+    "oauth_gh": "OAuth with GitHub",
     "error": "Something went wrong",
     "error2": "Something went wrong...",
     "redirect": "OAuth Redirect",
     "go_back": "Go back...",
-    "loading": "Completing GitHub OAuth…"
+    "loading": "Completing GitHub OAuth..."
   },
   "sidebar": {
     "login": "Login",
@@ -65,14 +68,22 @@
     "score": "Score",
     "duration": "Duration",
     "result": "Result",
+    "user": "User",
+    "nickname": "Opponent Nickname",
+    "played": "Played",
     "victory": "Victory",
     "defeat": "Defeat",
     "draw": "Draw",
-    "page": "Page"
+    "page": "Page",
+    "loading": "Loading..."
   },
   "leaderboard": {
     "title": "Global Leaderboard",
+    "rank": "Rank",
     "player_id": "Player ID",
+    "nickname": "Nickname",
+    "games_played": "Games played",
+    "points": "Points",
     "no_players": "No players found in the leaderboard"
   },
   "buttons": {
@@ -90,7 +101,41 @@
   },
   "game": {
     "game": "Game",
-    "challenge": "Challenge"
+    "settings": "Game Settings",
+    "aiOpponent": "AI Opponent",
+    "challenge": "Challenge",
+    "pointsToWin": "Points to Win",
+    "matchDuration": "Match Duration",
+    "matchDurationInMinutes": "Match Duration (in minutes)",
+    "minutes": "minutes",
+    "AIdifficulty": "AI Difficulty",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "challengeAI": "Challenge AI",
+    "rules": "Rules & Instructions",
+    "rulesDescription": "The game will start after pressing the start match button.",
+    "howToPlay": "How to Play: Reflect the ball with your paddle past your opponent's paddle to score a point. Left player uses the W/S keys and right player uses the Up/Down keys to move the paddle up and down.",
+    "howToWin": "How to Win: First to reach the points to win or have the most points when time runs out wins!",
+    "leftPlayer": "Left Player",
+    "rightPlayer": "Right Player",
+    "cancel": "Cancel",
+    "startMatch": "Start Match",
+    "paused": "Paused",
+    "overtime": "Overtime",
+    "summary": "Match Summary",
+    "win": "Win",
+    "lose": "Lose",
+    "duration": "Match Duration",
+    "noMatchData": "No match data available.",
+    "rematch": "Rematch",
+    "return": "Return to Challenge Page",
+    "match_results_sent": "Match results submitted successfully.",
+    "match_history_load_error": "Error loading match history.",
+    "user_stats_load_error": "Error loading user statistics.",
+    "leaderboard_load_error": "Error loading leaderboard.",
+    "match_record_error": "Error recording match results.",
+    "end": "End"
   },
   "profile": {
     "profile": "Profile",
@@ -104,7 +149,7 @@
     "save": "Save Changes",
     "cancel": "Cancel",
     "edit": "Edit",
-    "undated": "Updated successfully",
+    "updated": "Updated successfully",
     "update_err": "Error updating profile",
     "loading": "Saving changes...",
     "delete_account": "Delete Account, please wait...",
@@ -113,13 +158,15 @@
     "delete_success": "Account deleted successfully! Redirecting...",
     "yes": "Yes",
     "no": "No",
-    "delete_err": "Error deleting account"
+    "delete_err": "Error deleting account",
+    "avatar_btn": "Upload Avatar"
   },
   "tournament": {
     "tournament": "Tournament",
     "available": "Available Players",
     "selected": "Selected Players",
     "choose": "Choose",
+    "winn_is": "And the Winner is...",
     "start": "Start"
   },
   "error": {

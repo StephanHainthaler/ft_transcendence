@@ -1,161 +1,186 @@
 import { FastifyInstance } from "fastify";
 import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession } from "./dbHandlers";
-import { deleteUser, updateUser } from "@ft_transcendence/user/src/api";
+import { deleteUser } from "@ft_transcendence/user/src/api";
 import { AuthUserClient, } from "@shared/user";
-import { type Redirect, type SignupRequestBody, type ErrorResponse, type LoginRequestBody, type AuthResponseSuccess, type UpdateCredsRequestBody, OAuthCallBackBody } from "@shared/api";
+import type { AuthDeleteRequest, AuthGetUserRequest, AuthLoginReply, AuthLogoutRequest, AuthOAuthRequest, AuthSignUpRequest, AuthUpdateRequest, AuthValidateRequest } from "@shared/api/authReply";
 import { AuthUser } from "./db";
-import { generateJWT, generateRefreshTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
+import { generateTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
 import { ApiError } from "@server/error/apiError";
 import { setupTotp, enableTotp, verifyTotp, is2FAEnabled } from "./totpHandlers";
 
-type AuthReply = {
-  200: AuthResponseSuccess,
-  302: Redirect,
-  '4xx': ErrorResponse
-  500: ErrorResponse
-}
-
-const secret = '1234';
+const secret = process.env.AUTH_HMAC_SECRET!;
 
 export function authRoutes(fastify: FastifyInstance) {
-  fastify.get<{
-    Reply: AuthReply
-  }>('/:userId?', async (req, repl) => {
-      try {
-        const token = extractJWTFromHeader(req.headers.authorization);
-        const authUser = getAuthUser({ userId: token.payload.sub });
-        if (!authUser) throw { status: 400, message: 'No Such User' };
+  fastify.get<AuthGetUserRequest>('/:userId?', async (req, repl) => {
+    try {
+      const token = extractJWTFromHeader(req.cookies.access_token);
+      const authUser = getAuthUser({ userId: token.payload.sub });
+      if (!authUser) throw new ApiError({ code: 400, message: 'No Such User' });
 
-        const authUserClient: AuthUserClient = {
-          email: authUser.email,
-          username: authUser.user_name
-        };
-        return repl.status(200).send({ success: true, auth: authUserClient });
-      } catch (e: any) {
-        return repl.code(e.status || 500).send(e.message || e || 'Internal server error');
-      }
+      const authUserClient: AuthUserClient = {
+        email: authUser.email,
+        user_name: authUser.user_name
+      };
+      return repl.status(200).send({ success: true, auth: authUserClient });
+    } catch (e: any) {
+      return repl.code(e.code || 400).send(e.message || e);
+    }
   })
 
-  fastify.post<{
-    Reply: AuthReply
-  }>('/refresh', async (request, reply) => {
-      const cookieHeader = request.headers.cookie;
-      if (!cookieHeader) return reply.code(401).send({ success: false, message: 'Missing Cookie' });
+  fastify.post<AuthValidateRequest>('/validate', async (request, reply) => {
+    try {
+      const token = extractJWTFromHeader(request.cookies.access_token);
 
-      let cookies;
-      try {
-        const cookiesRaw = cookieHeader.split('; ').map(c => c.split('='));
-        cookies = Object.fromEntries(cookiesRaw);
-      } catch (e: any) {
-        return reply.code(400).send({ success: false, message: 'Invalid cookie format' });
-      }
+      validateJWT(token, secret);
+      return reply.code(200).send({ success: true });
+    } catch (e) {
+      const refresh_token = request.cookies.refresh_token;
+      if (!refresh_token)
+        throw new ApiError({ message: "Unauthenticated", code: 401 });
 
-      const refresh_token = cookies.refresh_token;
       try {
         const session = getSession({ token: refresh_token });
-        validateRefreshToken({ id: session.auth_id }, refresh_token);
-        const token = generateJWT({ id: session.user_id }, secret);
-
-        const auth = getAuthUserClient({ authId: session.auth_id });
-        if (!auth) return reply.code(401).send({ success: false, message: 'Invalid User information' });
-
-        return reply.status(200).send({ success: true, auth, access_token: token.raw })
-      } catch (e: any) {
-        console.error('Error in refresh:', e);
-        return reply.status(401).send({ success: false, message: 'Invalid Token' });
-      }
-  })
-
-  fastify.post<{
-    Reply: {
-      200: { success: boolean },
-      '4xx': { success: boolean, message: string },
-      500: { success: boolean, message: string }
-    }
-  }>('/validate', (request, reply) => {
-      try {
-        const token = extractJWTFromHeader(request.headers.authorization);
-        validateJWT(token, secret);
-      } catch (e: any) {
-        console.error(e);
-        reply.code(401).send({ success: false, message: e.message || 'Invalid Token' });
-        return ;
-      }
-      reply.code(200).send({ success: true })
-      return ;
-  });
-
-  fastify.post <{
-    Body: LoginRequestBody & { totp_token?: string },
-    Reply: AuthReply & { 202: { success: boolean, requires_2fa: boolean, message: string } },
-  }>
-  ('/login', async (request, reply) => {
-      try {
-        const { passwd, username, email, totp_token } = request.body;
-
-        const requestAuthUser = { passwd, username, email };
-        const verifiedAuthUser = await verifyUserCredentials(requestAuthUser);
-
-        // Check if 2FA is enabled
-        if (is2FAEnabled(verifiedAuthUser)) {
-          if (!totp_token) {
-            return reply.status(202).send({
-              success: true,
-              requires_2fa: true,
-              message: '2FA verification required',
-            });
-          }
-
-          if (!verifyTotp(verifiedAuthUser, totp_token)) {
-            return reply.status(401).send({
-              success: false,
-              message: 'Invalid 2FA token',
-            });
-          }
+        if (!session) {
+          throw new ApiError({ message: 'Unauthenticated', code: 401 });
         }
 
-        const authUserClient: AuthUserClient = {
-          username: verifiedAuthUser.user_name,
-          email: verifiedAuthUser.email,
-        };
+        const authUser = getAuthUser({ userId: session.user_id });
+        if (!authUser)
+          return reply.code(400).send({ message: 'Invalid User', success: false });
 
-        try {
-          const session = createSession(verifiedAuthUser, secret);
-          const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken);
-          console.log("REFRESH_TOKEN_COOKIE", refreshTokenCookie)
+        validateRefreshToken({ id: authUser.id }, refresh_token);
+        deleteSession({ authId: authUser.id });
+        const newSession = createSession(authUser, secret);
 
-          return reply.header('set-cookie', refreshTokenCookie).code(200).send({
+        const auth = getAuthUserClient({ authId: authUser.id });
+        if (!auth)
+          return reply.code(401).send({ success: false, message: 'Invalid User information' });
+
+        return reply
+          .code(201)
+          .send({
             success: true,
-            auth: authUserClient,
-            access_token: session.accessToken.raw,
+            access_token: newSession.accessToken.raw,
+            refresh_token: newSession.refreshToken,
           });
-        } catch (e: any) {
-          console.error(e);
-          return reply.code(e.code || 500).send({ success: false, message: e.message || e });
-        }
       } catch (e: any) {
-        console.error(e);
-        return reply.status(401).send({ success: false, message: 'Invalid user credentials' });
+        request.log.error(e);
+        return reply.status(401).send({ success: false, message: 'Unauthenticated' });
       }
+    }
   });
 
-  fastify.post('/logout', (request, reply) => {
+  fastify.post<AuthLoginReply>('/login', async (request, reply) => {
+    try {
+      const { passwd, user_name, email, totp_token } = request.body;
+
+      const requestAuthUser = { passwd, user_name, email };
+      const verifiedAuthUser = await verifyUserCredentials(requestAuthUser);
+
+      if (is2FAEnabled(verifiedAuthUser)) {
+        if (!totp_token) {
+          return reply.status(202).send({
+            success: true,
+            requires_2fa: true,
+            message: '2FA verification required',
+          });
+        }
+
+        if (!verifyTotp(verifiedAuthUser, totp_token)) {
+          return reply.status(401).send({
+            success: false,
+            message: 'Invalid 2FA token',
+          });
+        }
+      }
+
+      const authUserClient: AuthUserClient = {
+        user_name: verifiedAuthUser.user_name,
+        email: verifiedAuthUser.email,
+      };
+
+      const session = createSession(verifiedAuthUser, secret);
+
+      return reply
+        .setCookie("access_token", session.accessToken.raw, {
+          httpOnly: true,
+          path: '/',
+          sameSite: 'strict',
+          secure: 'auto'
+        })
+        .setCookie('refresh_token', session.refreshToken, {
+          httpOnly: true,
+          path: '/',
+          sameSite: 'strict',
+          secure: 'auto'
+        })
+        .code(200).send({
+          success: true,
+          auth: authUserClient,
+        });
+
+    } catch (e: any) {
+      request.log.error(e);
+      return reply.status(401).send({ success: false, message: 'Invalid user credentials' });
+    }
+  });
+
+  fastify.post('/2fa/setup', async (request, reply) => {
+    try {
+      const token = extractJWTFromHeader(request.cookies.access_token);
+      const authUser = getAuthUser({ userId: token.payload.sub });
+      if (!authUser)
+        return reply.code(404).send({ success: false, message: 'No Such User' });
+
+      const result = await setupTotp(authUser);
+      return reply.code(200).send(result);
+    } catch (e: any) {
+      request.log.error(e);
+      return reply.code(e.code || 401).send({ success: false, message: e.message || 'Unauthenticated' });
+    }
+  });
+
+  fastify.post('/2fa/enable', async (request, reply) => {
+    try {
+      const token = extractJWTFromHeader(request.cookies.access_token);
+      const authUser = getAuthUser({ userId: token.payload.sub });
+      if (!authUser)
+        return reply.code(404).send({ success: false, message: 'No Such User' });
+
+      const body = request.body as { token?: string };
+      if (!body.token)
+        return reply.code(400).send({ success: false, message: 'Missing 2FA token' });
+
+      const ok = enableTotp(authUser, body.token);
+      if (!ok)
+        return reply.code(401).send({ success: false, message: 'Invalid 2FA token' });
+
+      return reply.code(200).send({ success: true, message: '2FA enabled successfully' });
+    } catch (e: any) {
+      request.log.error(e);
+      return reply.code(e.code || 401).send({ success: false, message: e.message || 'Unauthenticated' });
+    }
+  });
+
+  fastify.post<AuthLogoutRequest>('/logout', (request, reply) => {
     try {
       const cookies = request;
       if (cookies)
-        reply.status(200).header('set-cookie', `refresh_token=0; Max-Age=0; Path=/`).send()
+        reply
+          .code(200)
+          .clearCookie('refresh_token')
+          .clearCookie('access_token')
+          .send({ success: true });
       else
-        return reply.status(400).send({ message: 'User not logged in' });
+        reply.code(401).send({ success: false, message: 'User not logged in' });
     } catch (e: any) {
-      return reply.code(500).send({ success: false, message: `Internal server error: ${e}` })
+      request.log.error(e);
+      reply.code(500).send({ success: false, message: `Internal server error` })
     }
   });
 
-  fastify.post<{
-    Body: OAuthCallBackBody,
-    Reply: AuthReply,
-  }>('/github-oauth', async (request, reply) => { // needs to return the access_token
+  fastify.post<AuthOAuthRequest>('/github-oauth', async (request, reply) => { // needs to return the access_token
     try {
       const { code } = request.body as { code?: string }; // stating receiving structure to be able to extract the value of code
 
@@ -180,17 +205,11 @@ export function authRoutes(fastify: FastifyInstance) {
         return reply.status(401).send({ success: false, message: 'Invalid OAuth code' });
       }
 
-      console.log("response_data.access_token")
-      console.log(response_data.access_token); // OK - terminal
-
       // Now I can get user information from GitHub
       const user_response = await fetch("https://api.github.com/user", {
         headers: { Authorization: `Bearer ${response_data.access_token}`}, //, 'X-GitHub-Api-Version': '2022-11-28'},
       });
       const github_user = await user_response.json();
-
-      console.log("github_user");
-      console.log(github_user); // OK - terminal
 
       if (!github_user.email) { // try to retrieve email from different endpoint
         const user_email_response = await fetch("https://api.github.com/user/emails", {
@@ -202,12 +221,6 @@ export function authRoutes(fastify: FastifyInstance) {
       if (!github_user.email) {
         github_user.email = `${github_user.login}@users.noreply.github.com`;
       }
-
-      // console.log("response_data.scope");
-      // console.log(response_data.scope);
-
-      console.log("github_user.email");
-      console.log(github_user.email); // = null or undefined for me -- what to do?
 
       if (!github_user.login || !github_user.email) {
         return reply.status(401).send({ success: false, message: 'Error fetching user credentials from GitHub.' });
@@ -224,16 +237,13 @@ export function authRoutes(fastify: FastifyInstance) {
         authUser = newAuthUser;
       }
 
-      console.log("authUser");
-      console.log(authUser);
-
       //_______________________________________________________________
 
       try {
         const session = createSession(authUser, secret);
-        const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken)
+        const refreshTokenCookie = generateTokenCookie(session.refreshToken, 'refresh_token');
         const authUserClient: AuthUserClient = {
-          username: authUser.user_name,
+          user_name: authUser.user_name,
           email: authUser.email,
         }
 
@@ -244,102 +254,141 @@ export function authRoutes(fastify: FastifyInstance) {
           access_token: session.accessToken.raw, // is this correct?
         } as any);
       } catch (e: any) {
-        console.error(e);
+        request.log.error(e);
         return reply.code(e.code || 500).send({ success: false, message: e.message || e });
       }
 
     } catch (e) {
-      console.error(e);
+      request.log.error(e);
       return reply.code(500).send({ success: false, message: `OAuth Login Error` });
     }
   });
 
-  fastify.post<{
-    Body: SignupRequestBody,
-    Reply: AuthReply,
-  }>('/sign-up', async (request, reply) => {
+  fastify.post<AuthSignUpRequest>('/sign-up', async (request, reply) => {
+    try {
+      const { passwd, user_name, email } = request.body;
+
+      const authUser = getAuthUser({ user_name, email });
+      if (authUser)
+        return reply
+          .code(409)
+          .send({
+            success: false,
+            message: "Username or Email already taken"
+        });
+
+      const tempAuthUser: Partial<AuthUser> = { user_name: user_name, email };
+      const { user, authUser: newAuthUser } = await createAuthUser({ ...tempAuthUser, passwd });
+
       try {
-        const { passwd, username, email } = request.body;
+        const session = createSession(newAuthUser, secret);
+        const authUserClient: AuthUserClient = {
+          email: newAuthUser.email,
+          user_name: newAuthUser.user_name,
+        }
 
-        const authUser = getAuthUser({ username, email });
-        if (authUser)
-          return reply.status(400).send({ success: false, message: "Username or Email already taken" });
-
-        const tempAuthUser: Partial<AuthUser> = { user_name: username, email };
-        const { user, authUser: newAuthUser } = await createAuthUser({ ...tempAuthUser, passwd });
-
-        try {
-          const session = createSession(newAuthUser, secret);
-          const refreshTokenCookie = generateRefreshTokenCookie(session.refreshToken)
-          const authUserClient: AuthUserClient = {
-            email: newAuthUser.email,
-            username: newAuthUser.user_name,
-          }
-
-          return reply.header('set-cookie', refreshTokenCookie).code(200).send({
+        return reply
+          .code(200)
+          .setCookie('access_token', session.accessToken.raw, {
+            httpOnly: true,
+            path: '/',
+            sameSite: 'strict',
+            secure: 'auto'
+          })
+          .setCookie('refresh_token', session.refreshToken, {
+            httpOnly: true,
+            path: '/',
+            sameSite: 'strict',
+            secure: 'auto'
+          })
+          .send({
             success: true,
             user: user,
             auth: authUserClient,
             access_token: session.accessToken.raw,
           } as any);
-        } catch (e: any) {
-          console.error(e);
-          return reply.code(500).send({ success: false, message: `Internal Server Error` });
-        }
       } catch (e: any) {
-        console.error(e);
-        return reply.code(401).send({ success: false, message: JSON.stringify(e) })
+        request.log.error(e);
+        return reply
+          .code(e.code || 500)
+          .send({
+            success: false,
+            message: e.message || `Internal Server Error`
+          });
       }
+    } catch (e: any) {
+      request.log.error(e);
+      return reply.code(401).send({ success: false, message: JSON.stringify(e) })
+    }
   });
 
-  fastify.patch<{
-    Body: UpdateCredsRequestBody,
-    Reply: AuthReply,
-  }>('/update', async (request, reply) => {
-      const { email, username, passwd } = request.body;
+  fastify.patch<AuthUpdateRequest>('/update', async (request, reply) => {
+    const { email, user_name, passwd } = request.body;
 
-      try {
-        const authUser = getAuthUser({ email, username });
-        if (!authUser) return reply.status(401).send({ success: false, message: "No such User" });
+    try {
+      const authUser = getAuthUser({ email, user_name });
+      if (!authUser)
+        return reply
+          .code(401)
+          .send({
+            success: false,
+            message: "No such User"
+          });
 
-        const newAuth = {
-          id: authUser.id,
-          passwd,
-          email,
-          username,
-        }
-
-        const newUser = updateUserCredentials(newAuth);
-        await updateUser({ email, id: authUser.user_id });
-        if (!newUser)
-          throw new Error("Failed to update database");
-        reply.code(200).send({ success: true, auth: {
-          email: newUser.email, username: newUser.user_name }
-        });
-      } catch (e: any) {
-        reply.status(e.code || e.status | 400).send({ success: false, message: `${e.message || e}` })
+      const newAuth = {
+        id: authUser.id,
+        passwd,
+        email,
+        user_name,
       }
+
+      const newUser = await updateUserCredentials(newAuth);
+      if (!newUser)
+        throw new ApiError({ message: "Failed to update database", code: 400 });
+
+      reply
+        .code(200)
+        .send({
+          success: true,
+          auth: {
+            email: newUser.email,
+            user_name: newUser.user_name
+          }
+        });
+    } catch (e: any) {
+      reply
+        .code(e.code || e.status | 400)
+        .send({
+          success: false,
+          message: e.message || e
+        })
+    }
   })
 
-  fastify.delete<{
-    Reply: {
-      200: { success: true },
-      '4xx': { success: false, message: string },
-      500: { success: false, message: string }
-    }
-  }>('/delete', async (req, repl) => {
+  fastify.delete<AuthDeleteRequest>('/delete', async (req, repl) => {
     try {
-      const token = extractJWTFromHeader(req.headers.authorization);
+      const token = extractJWTFromHeader(req.cookies.access_token);
       const authUser = getAuthUser({ userId: token.payload.sub });
       if (!authUser) throw new ApiError({ code: 404, message: 'No such User' });
 
       await deleteUser(token);
       await deleteAuthUser(authUser);
 
-      return repl.header('set-cookie', `refresh_token=0; Max-Age=0; Path=/`).code(200).send({ success: true })
+      return repl
+        .code(200)
+        .clearCookie('refresh_token')
+        .clearCookie('access_token')
+        .send({ success: true })
+
     } catch (e: any) {
-      console.log(e);
-      return repl.code(e.code || 500).send({ success: false, message: e.message || 'Internal Server Error' });
+      req.log.error(e);
+
+      return repl
+        .code(e.code || 500)
+        .send({
+          success: false,
+          message: e.message || 'Internal Server Error'
+        });
     }
   })
 }

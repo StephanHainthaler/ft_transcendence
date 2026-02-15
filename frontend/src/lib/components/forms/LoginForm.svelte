@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
-  import { client } from "$lib/api";
+  import { client } from "$lib/api/index.svelte";
   import { validateInput } from "@lib/validation/inputValidation";
   import Label from "$lib/components/ui/label/label.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
@@ -20,10 +20,10 @@
 
     try {
       const email = validateInput(usernameBuffer, { type: 'email' }).input;
-      const username = validateInput(usernameBuffer, { type: 'username' }).input;
-      
+      const user_name = validateInput(usernameBuffer, { type: 'username' }).input;
+
       const result = await client.login({
-        username,
+        user_name,
         email,
         passwd: userPasswordBuffer,
         totp_token: requires2FA ? totpToken : undefined,
@@ -46,7 +46,7 @@
 <form class="space-y-6" onsubmit={handleLoginFormSubmit}>
   <div class="space-y-4">
     <h2 class="text-2xl font-bold text-center">
-      {requires2FA ? $t('login.enter_2fa') : $t('login.singin')}
+      {requires2FA ? $t('login.enter_2fa') : $t('login.signin')}
     </h2>
 
     {#if !requires2FA}
@@ -107,6 +107,6 @@
   {/if}
 
   <Button type="submit" class="w-full">
-    {requires2FA ? $t('login.verify') : $t('login.singin')}
+    {requires2FA ? $t('login.verify') : $t('login.signin')}
   </Button>
 </form>

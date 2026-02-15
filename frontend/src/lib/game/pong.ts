@@ -2,6 +2,8 @@ import { AppUser} from "../api/appUser";
 import { Player } from "./player";
 import { Ball } from "./ball";
 import type { MatchSubmissionData } from '@shared/game_stats';
+import { get } from "svelte/store";
+import { t } from "../../lib/i18n/i18n";
 
 const TARGET_FPS = 60;
 const TARGET_FRAME_TIME = 1000 / TARGET_FPS; // ~16.67ms
@@ -15,37 +17,50 @@ export class Pong
 	private _player1: Player;
 	private _player2: Player;
 	private _ball: Ball;
-	private _onGameEnd: (Data: MatchSubmissionData) => void;
+	private _maxPlayerScore: number = 10;
+	private _maxMatchDuration: number = 300000; // 5 min in ms
+	private _currentMatchDuration: number = 0;
 	private _matchStartTime: number = 0;
 	private _pauseStartTime: number = 0;
 	private _pauseDuration: number = 0;
 	private _isPaused: boolean = true;
 	private _lastFrameTime: number = 0;
 
-	public constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, _onGameEnd:(Data: MatchSubmissionData) => void)
+	private _mousedownEventListener! : EventListener;
+	private _keydownEventListener!: EventListener;
+	private _keyupEventListener!: EventListener;
+	private _blurEventListener!: EventListener;
+	private _resizeEventListener!: EventListener;
+	private _onGameEnd: (Data: MatchSubmissionData) => void;
+
+	public	constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, pointsToWin: number, matchDurationInMinutes: number, AIdifficulty: number, _onGameEnd:(Data: MatchSubmissionData) => void)
 	{
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
+		this._maxPlayerScore = pointsToWin;
+		this._maxMatchDuration = matchDurationInMinutes * 60000;
+		this._onGameEnd = _onGameEnd;
 		this.resizeCanvas();
 
-		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.5, false);
-		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.5, true);
+		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445, AIdifficulty);
+		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.445, AIdifficulty);
 		this._ball = new Ball(this, this._player1, this._player2);
-		this._onGameEnd = _onGameEnd;
-	
+
 		this.setupEvents();
 		this._matchStartTime = new Date().getTime();
 		this._isPaused = false;
+		window.requestAnimationFrame((time) => this.updatePong(time));
 	}
 
-	public setupEvents() : void
+	public	setupEvents() : void
 	{
-		//this._canvas.tabIndex = 0; // <-- should already been done in svelte.page (game)
-		this._canvas.addEventListener('mousedown', () => this._canvas.focus());
+		// event for clicking the canvas
+		this._mousedownEventListener = () => this._canvas.focus();
 
-		// Keyboard listeners: W/S for player 1, ArrowUp/ArrowDown for player 2
-		this._canvas.addEventListener('keydown', (e: KeyboardEvent) =>
+		// event for holding the key
+		this._keydownEventListener = (event: Event) =>
 		{
+			const e = event as KeyboardEvent;
 			if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
 			
 			const k = e.key;
@@ -55,42 +70,71 @@ export class Pong
 			else if (k.toLowerCase() === 's') this._player1.startMoveDown();
 			else if (k === 'ArrowUp') this._player2.startMoveUp();
 			else if (k === 'ArrowDown') this._player2.startMoveDown();
-		});
+		};
 
-		this._canvas.addEventListener('keyup', (e: KeyboardEvent) =>
+		// event for releasing the key
+		this._keyupEventListener = (event: Event) =>
 		{
+			const e = event as KeyboardEvent;
 			const k = e.key;
 			if (this._isPaused == true) return ;
 			else if (k.toLowerCase() === 'w') this._player1.stopMoveUp();
 			else if (k.toLowerCase() === 's') this._player1.stopMoveDown();
 			else if (k === 'ArrowUp') this._player2.stopMoveUp();
 			else if (k === 'ArrowDown') this._player2.stopMoveDown();
-		});
+		};
 
 		// prevents movement from getting stuck when losing this._canvas focus
-		this._canvas.addEventListener('blur', () =>
+		this._blurEventListener = () =>
 		{
 			if (this._isPaused == true) return ;
 			this._player1.stopMoveUp();
 			this._player1.stopMoveDown();
 			this._player2.stopMoveUp();
 			this._player2.stopMoveDown();
-		});
+		};
 
 		// handle window resize
-		window.addEventListener('resize', () => this.handleResize());
+		this._resizeEventListener = () => this.handleResize();
 
-		window.requestAnimationFrame((time) => this.updatePong(time));
+		// add event listeners
+		this._canvas.addEventListener('mousedown', this._mousedownEventListener);
+		this._canvas.addEventListener('keydown', this._keydownEventListener);
+		this._canvas.addEventListener('keyup', this._keyupEventListener);
+		this._canvas.addEventListener('blur', this._blurEventListener);
+		window.addEventListener('resize', this._resizeEventListener);
 	}
 
-	public updatePong = (currentTime: number = 0) => {
+	public	removeEvents(): void
+	{
+		this._canvas.removeEventListener('mousedown', this._mousedownEventListener);
+		this._canvas.removeEventListener('keydown', this._keydownEventListener);
+		this._canvas.removeEventListener('keyup', this._keyupEventListener);
+		this._canvas.removeEventListener('blur', this._blurEventListener);
+		window.removeEventListener('resize', this._resizeEventListener);
+	}
 
-		//check time/score END CONDITIONS
-		if (this._player1.getScore() > 9 || this._player2.getScore() > 9)
+	public	updatePong = (currentTime: number = 0) =>
+	{
+		// get current match duration
+		if (this._isPaused == true)
+			this._currentMatchDuration = new Date().getTime() - this._matchStartTime - this._pauseDuration - (new Date().getTime() - this._pauseStartTime);
+		else
+			this._currentMatchDuration = new Date().getTime() - this._matchStartTime - this._pauseDuration;
+
+		// check for match end conditions
+		if (this._currentMatchDuration >= this._maxMatchDuration
+			|| this._player1.getScore() >= this._maxPlayerScore
+			|| this._player2.getScore() >= this._maxPlayerScore)
 		{
-			const data = this.submitMatchData();
-			this._onGameEnd(data);
-			return ;
+			if (this._player1.getScore() != this._player2.getScore())
+			{
+				this._isPaused = true;
+				this.removeEvents();
+				const data = this.getMatchData();
+				this._onGameEnd(data);
+				return ;
+			}
 		}
 
 		// calculate delta: how many "60fps frames" worth of time passed
@@ -105,12 +149,12 @@ export class Pong
 		this.moveBall(delta); 
 		this.movePlayer(this._player1, delta);
 		this.movePlayer(this._player2, delta);
-		this.drawArena();
+		this.drawGame();
 
 		window.requestAnimationFrame((time) => this.updatePong(time));
 	};
 
-	private resizeCanvas(): void
+	private	resizeCanvas(): void
 	{
 		const aspectRatio = this._baseWidth / this._baseHeight;
 		let width = window.innerWidth * 0.9;
@@ -126,7 +170,7 @@ export class Pong
 		this._canvas.height = height;
 	}
 
-	private handleResize(): void
+	private	handleResize(): void
 	{
 		const oldWidth = this._canvas.width;
 		const oldHeight = this._canvas.height;
@@ -145,108 +189,62 @@ export class Pong
 		this._ball.updateForResize(this._canvas, ballRelX, ballRelY);
 	}
 
-	public drawArena() : void
+	public	drawGame() : void
 	{
-		//clear canvas
+		// clear canvas and set font and alignment
 		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+		const fontSize = Math.round(this._canvas.height * (60 / 720));
+		this._context.font = `${fontSize}px Arial`;
+		this._context.textAlign = "center";
+		
+		// set color depending on the game state
+		if (this._isPaused == true)
+			this._context.fillStyle = "rgb(170, 170, 170)";
+		else
+			this._context.fillStyle = "rgb(255, 255, 255)";
 
-		//set color to white
-		this._context.fillStyle = "#ffffffff";
-
-		//draw upper and lower borders To Do set the borders accordingly to collisions zone
+		// draw upper and lower borders
 		this._context.fillRect(0, this._canvas.height * 0.1 - this._canvas.height * 0.01, this._canvas.width, this._canvas.height * 0.01);
 		this._context.fillRect(0, this._canvas.height * 0.9, this._canvas.width, this._canvas.height * 0.01);
 
-		//draw middle line
+		// draw middle line
 		for (let i = this._canvas.height * 0.1; i < this._canvas.height * 0.9; i += this._canvas.height * 0.03)
 			this._context.fillRect(this._canvas.width * 0.5, i, this._canvas.width * 0.005, this._canvas.height * 0.01);
 
-		//draw player scores
-		this.drawPlayerScore(this._player1.getScore(), this._canvas.width * 0.45, this._canvas.height * 0.01);
-		this.drawPlayerScore(this._player2.getScore(), this._canvas.width * 0.535, this._canvas.height * 0.01);
+		// draw player scores
+		this._context.fillText(this._player1.getScore().toString(), this._canvas.width * 0.45, this._canvas.height * 0.075);
+		this._context.fillText(this._player2.getScore().toString(), this._canvas.width * 0.55, this._canvas.height * 0.075);
 
-		//draw player paddles
+		// draw player paddles
 		this._context.fillRect(this._player1.getOrigin().x, this._player1.getOrigin().y, this._player1.getWidth(), this._player1.getHeight());
 		this._context.fillRect(this._player2.getOrigin().x - this._player2.getWidth(), this._player2.getOrigin().y, this._player2.getWidth(), this._player2.getHeight());
 
-		//draw ball
-		this._context.fillStyle = "#ff0000ff";
+		// draw ball
 		this._context.fillRect(this._ball.getOrigin().x, this._ball.getOrigin().y, this._ball.getWidth(), this._ball.getHeight());
 
-	}
-
-	public drawPlayerScore(score: number, x: number, y: number)
-	{
-		let number_width = this._canvas.width * 0.02;
-		let number_height = this._canvas.height * 0.065;
-		
-		switch (score)
+		// draw match timer
+		let currentCountdown = Math.round((this._maxMatchDuration - this._currentMatchDuration) / 1000);
+		if (currentCountdown < 10)
 		{
-			case 0:
-				this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
-				this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
-				this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
-				break;
-			case 1:
-				this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
-				break;
-			case 2:
-				this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height * 0.5);
-				this._context.fillRect(x, y + number_height * 0.5, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x, y + number_height * 0.5, this._canvas.height * 0.005, number_height * 0.5);
-				this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
-				break;
-			case 3:
-				this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x, y + number_height * 0.5, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
-				break;
-			case 4:
-				this._context.fillRect(x, y, this._canvas.height * 0.005, number_height * 0.5);
-				this._context.fillRect(x, y + number_height * 0.5, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
-				break;
-			case 5:
-				this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x, y, this._canvas.height * 0.005, number_height * 0.5);
-				this._context.fillRect(x, y + number_height * 0.5, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x + number_width, y + number_height * 0.5, this._canvas.height * 0.005, number_height * 0.5);
-				this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
-				break;
-			case 6:
-				this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
-				this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x + number_width, y + number_height * 0.5, this._canvas.height * 0.005, number_height * 0.5);
-				this._context.fillRect(x, y + number_height * 0.5, number_width, this._canvas.height * 0.005);
-				break;
-			case 7:
-				this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
-				break;
-			case 8:
-				this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
-				this._context.fillRect(x, y, this._canvas.height * 0.005, number_height);
-				this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x, y + number_height * 0.5, number_width, this._canvas.height * 0.005);
-				break;
-			case 9:
-				this._context.fillRect(x, y, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x + number_width, y, this._canvas.height * 0.005, number_height);
-				this._context.fillRect(x, y, this._canvas.height * 0.005, number_height * 0.5);
-				this._context.fillRect(x, y + number_height, number_width, this._canvas.height * 0.005);
-				this._context.fillRect(x, y + number_height * 0.5, number_width, this._canvas.height * 0.005);
-				break;
-			default:
-				return ;
+			if (this._isPaused == true)
+				this._context.fillStyle = "rgb(167, 3, 3)";
+			else
+				this._context.fillStyle = "rgb(255, 0, 0)";
+		}
+		if (currentCountdown < 0)
+			this._context.fillText(get(t)('game.overtime'), this._canvas.width * 0.5, this._canvas.height * 0.985);
+		else
+			this._context.fillText(currentCountdown.toString(), this._canvas.width * 0.5, this._canvas.height * 0.98)
+
+		// draw pause screen if paused
+		if (this._isPaused == true)
+		{
+			this._context.fillStyle = "rgb(255, 255, 255)";
+			this._context.fillText(get(t)('game.paused'), this._canvas.width * 0.5, this._canvas.height * 0.5);
 		}
 	}
 
-	public changeGameState() : void
+	public	changeGameState() : void
 	{
 		if (this._isPaused == false)
 			this._pauseStartTime = new Date().getTime();
@@ -255,14 +253,14 @@ export class Pong
 		this._isPaused = !this._isPaused;
 	}
 
-	public moveBall(delta: number): void
+	public	moveBall(delta: number): void
 	{
 		if (this._isPaused == true)
 			return ;
 		this._ball.move(this._player1, this._player2, delta);
 	}
 
-	public movePlayer(player: Player, delta: number)
+	public	movePlayer(player: Player, delta: number)
 	{
 		if (this._isPaused == true)
 			return ;
@@ -272,7 +270,7 @@ export class Pong
 			player.moveByAI(this._ball, delta);
 	}
 
-	public submitMatchData(): MatchSubmissionData
+	public	getMatchData(): MatchSubmissionData
 	{
 		const matchData = {} as MatchSubmissionData;
 
@@ -285,16 +283,44 @@ export class Pong
 		else
 			matchData.winner_id = matchData.player_two_id;
 		matchData.duration = new Date().getTime() - this._matchStartTime - this._pauseDuration;
-		//matchData.matchStartTime = this._matchStartTime;
+		matchData.timestamp = this._matchStartTime;
 		return (matchData);
 	}
 
-	public getCanvas() : HTMLCanvasElement
+	public	resetMatch(canvas: HTMLCanvasElement) : void
+	{
+		// reinitialize canvas and context
+		this._canvas = canvas;
+		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
+		this.resizeCanvas();
+		this.setupEvents();
+
+		// reset players and ball
+		this._player1.setScore(0);
+		this._player2.setScore(0);
+		this._player1.setOrigin({x: this._canvas.width * 0.1, y: this._canvas.height * 0.445});
+		this._player2.setOrigin({x: this._canvas.width * 0.9, y: this._canvas.height * 0.445});
+		this._player1.stopMoveUp(), this._player1.stopMoveDown();
+		this._player2.stopMoveUp(), this._player2.stopMoveDown();
+		this._ball.spawnBall(this._canvas.width * 0.5, this._canvas.height * 0.5, this._player1, this._player2);
+
+		// reset match timers
+		this._currentMatchDuration = 0;
+		this._pauseDuration = 0;
+		this._pauseStartTime = 0;
+		this._matchStartTime = new Date().getTime();
+		this._lastFrameTime = 0;
+
+		this._isPaused = false;
+		window.requestAnimationFrame((time) => this.updatePong(time));
+	}
+
+	public	getCanvas() : HTMLCanvasElement
 	{
 		return (this._canvas);
 	}
 
-	public getScale(): number
+	public	getScale(): number
 	{
 		return (this._canvas.width / this._baseWidth);
 	}

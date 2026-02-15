@@ -59,7 +59,7 @@
 </script>
 
 <form onsubmit={handleOAuthRequest}>
-  <Button type="submit" class="w-full bg-blue-500 text-white py-2">
+  <Button type="submit" class="w-full">
     {$t('OAuth.oauth_gh')}
   </Button>
   {#if errorMessage}

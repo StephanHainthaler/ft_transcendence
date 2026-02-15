@@ -1,23 +1,37 @@
-import Fastify from "fastify";
+import Fastify, { FastifyServerOptions } from "fastify";
 import { healthRoute } from "./health";
 import { authRoutes } from "./routes";
 import { initDB } from "./db";
+import fastifyCookie from "@fastify/cookie";
 
-export function buildAuth() {
+export function buildAuth(dbPath?: string, options?: FastifyServerOptions) {
+  initDB(dbPath || process.env.DB_FILE_PATH!);
+
   const fastify = Fastify({
     logger: {
-      level: 'info',
       transport: {
         target: 'pino-pretty'
       },
+      level: 'info',
     },
-    disableRequestLogging: true
+    disableRequestLogging: true,
+    ...options
   });
 
+  fastify.register(fastifyCookie);
   fastify.register(healthRoute);
   fastify.register(authRoutes);
 
-  initDB(process.env.DB_FILE_PATH!);
+  fastify.addHook('onResponse', async (request, reply) => {
+    if (reply.statusCode >= 400) {
+      request.log.info({
+        req: request,
+        res: reply,
+        err: reply.raw.statusMessage,
+
+      }, 'request completed');
+    }
+  });
 
   return fastify
 }

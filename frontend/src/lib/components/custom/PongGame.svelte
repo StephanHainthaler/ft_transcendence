@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { Pong } from "@lib/game/game";
+  import { Pong } from "@lib/game/pong";
   import { AppUser } from "$lib/api/appUser";
   import Button from "../ui/button/button.svelte";
   import type { Game } from "@shared/user";
+  import { t } from "@lib/i18n/i18n";
 
   const { player1, player2, onGameEnd }: { player1: AppUser, player2: AppUser, onGameEnd: (game: Game) => void } = $props();
 
@@ -12,9 +13,9 @@
 
   $effect(() => {
     if (gameCanvas) {
-      pong = new Pong(player1.displayName ?? player1.name, player2.displayName ?? player2.name, gameCanvas);
+      pong = new Pong(player1.displayName ?? player1.name, player2.displayName ?? player2.name, gameCanvas, 10, 5, 5, onGameEnd);
       // return () => pong.stop()
-      pong.setup();
+      pong.setupEvents();
     }
   })
 
@@ -41,5 +42,5 @@
 <Button
   onclick={reportScore}
 >
-  End
+  {$t('game.end')}
 </Button>
