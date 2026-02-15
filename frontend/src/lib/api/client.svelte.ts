@@ -8,7 +8,7 @@ import type { OAuthCallBackBody } from "@shared/api";
 import { acceptFriendRequest, checkFriendsOnlineStatus, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
-import { AppError } from "$lib/types/error";
+import { AppError, isAppError } from "$lib/types/error";
 
 
 export type ApiError = {
