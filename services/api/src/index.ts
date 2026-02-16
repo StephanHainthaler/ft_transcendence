@@ -132,6 +132,14 @@ async function startApiGateway() {
     prefix: "/health"
   });
 
+  const shutdown = async () => {
+    fastify.log.info('Shutting down gracefully...');
+    await fastify.close();
+    process.exit(0);
+  };
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
+
   try {
     await fastify.listen({ port: 3000, host: '0.0.0.0' });
   } catch (err: any) {

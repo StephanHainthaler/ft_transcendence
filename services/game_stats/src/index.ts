@@ -54,10 +54,18 @@ async function start()
 		// Register routes with prefix /v1
 		server.register(gameStatsRoutes, { prefix: '/v1' });
 
+		const shutdown = async () => {
+			server.log.info('Shutting down gracefully...');
+			await server.close();
+			process.exit(0);
+		};
+		process.on('SIGTERM', shutdown);
+		process.on('SIGINT', shutdown);
+
 		// Start the server
 		await server.listen({ port: PORT, host: HOST });
 		server.log.info(`Server listening on ${HOST}:${PORT}`);
-		
+
 	} catch (err) {
 		server.log.error(err);
 		process.exit(1);

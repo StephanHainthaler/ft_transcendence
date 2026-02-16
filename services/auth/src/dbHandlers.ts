@@ -153,7 +153,7 @@ export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ use
 export const refreshTokenLifetime = 1000 * 60 * 60 * 24 * 10;
 
 export function createSession(user: AuthUser, secret: string): { accessToken: JWT, refreshToken: string } {
-  const accessToken = generateJWT({ id: user.id }, secret)
+  const accessToken = generateJWT({ id: user.user_id }, secret)
   const refreshToken = generateRefreshToken();
 
   const tokenHash = hashRefreshToken(refreshToken);
