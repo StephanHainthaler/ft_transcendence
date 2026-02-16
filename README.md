@@ -32,24 +32,24 @@ The project's goal is to enhance skills in full-stack development, team organiza
 | **Web**              |                           |                    |                 |         |            |            |                           |
 | `-`                  | Frontend Framework        | - [Svelte](https://svelte.dev/)<br> - [Vite](https://vite.dev/guide/)<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Tailwind CSS](https://v2.tailwindcss.com/docs)<br> - [shadcn-Svelte](https://www.shadcn-svelte.com/) | everyone        | Minor   | 1          | n.a.        |  - Svelte is simple & fast<br> - Vite makes development quick with instant updates<br> - TypeScript catches bugs early<br> - Tailwind for styling<br> - shadcn/svelte provides pre-built components |
 | `-`                  | Backend Framework         | - [Fastify](https://fastify.dev/docs/latest/)<br> -[TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Node.js](https://nodejs.org/docs/latest/api/) | everyone        | Minor   | 1          | n.a.        |  - Fastify is quick & good for building separate services<br> - TypeScript helps avoid mistakes with data types |
-| `-`                  | ORM Database              | - Custom ORM<br> - [SQLite](https://www.sqlite.org/docs.html) via better-sqlite3 | vvobis          | Minor   | 1          | n.a.        |  - Custom ORM keeps us in control & type-safe<br> - SQLite is simple to use & works everywhere |
+| `-`                  | ORM Database              | - Custom ORM<br> - [SQLite](https://www.sqlite.org/docs.html) via better-sqlite3 | vvobis          | Minor   | 1          | n.a.        |  - Custom ORM keeps us in control & type-safe<br> - SQLite is simple to use & works everywhere|
 | **Accessibility**    |                           |                    |                 |         |            |            |                           |
 | `-`                  | Language Support          | - [shadcn-Svelte](https://www.shadcn-svelte.com/) localization support | khuk            | Minor   | 1          | n.a.        |  - Multi-lingual team |
 | `-`                  | Browser compatibility       | - worked automatically | everyone        | Minor   | 1          | n.a.        |  - Vite handles older browsers automatically<br> - Tailwind CSS works the same everywhere |
 | **User Management**  |                           |                    |                 |         |            |            |                           |
-| `-`                  | Standard user management  | - [SQLite](https://www.sqlite.org/docs.html)<br> - REST API ([Fastify](https://fastify.dev/docs/latest/Reference/))<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) | vvobis          | Major   | 2          | n.a.        |  - SQLite keeps data safe & consistent<br> - REST API is simple to use<br> - TypeScript prevents errors when handling user data |
+| `-`                  | Standard user management  | - [SQLite](https://www.sqlite.org/docs.html)<br> - REST API ([Fastify](https://fastify.dev/docs/latest/Reference/))<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) | vvobis          | Major   | 2          | n.a.        |  - SQLite keeps data safe & consistent<br> - REST API is simple to use<br> - TypeScript prevents errors when handling user data<br>- Avatar Upload<br>- Profile Management|
 | `-`                  | Game stats                | - [SQLite](https://www.sqlite.org/docs.html) (Game Stats Service) | khuk            | Minor   | 1          | n.a.        |  - Separate database for stats so the user service doesn't get slowed down |
 | `-`                  | Remote authentication     | - [OAuth 2.0 (GitHub)](https://docs.github.com/en/apps/oauth-apps) | pgober          | Minor   | 1          | n.a.        |  - GitHub OAuth makes login easier for users<br> |
-| `-`                  | JWT & 2FA               | - [JWT](https://www.jwt.io/) (RS256 signing)<br> - [2FA](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication) | vvobis & juitz  | Minor   | 1          | n.a.        |  - JWT lets services talk to each other without a shared database<br> - 2FA adds extra security when needed |
+| `-`                  | JWT & 2FA               | - [JWT](https://www.jwt.io/) (RS256 signing)<br> - [2FA](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication) | vvobis & juitz  | Minor   | 1          | n.a.        |  - Encodes User Information as JWT in cookie for authentication<br> - 2FA adds extra security when needed |
 |**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
 | `-`                  | AI Opponent               | - Mathematical Algorithm | pgober          | Major   | 2          | difficulty can be chosen in game settings        |  - Math-based AI is simple & fair<br> -  no need for complex ML |
 | **Gaming**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Web-based game            | - [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)<br> - [WebSocket](https://websocket.org/reference/websocket-api/) | shaintha & juitz| Major   | 2          | n.a.        |  - Canvas is the standard way to draw games in browsers<br> -  WebSocket keeps the game smooth for both players |
-| `-`                  | Tournament system         | - [SQLite](https://www.sqlite.org/docs.html) storage<br> | vvobis          | Minor   | 1          | n.a.        |  - Automatic bracket generation handles any number of players<br> - WebSocket keeps everyone updated as the tournament progresses |
+| `-`                  | Web-based game            | - [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)<br> | shaintha & juitz| Major   | 2          | n.a.        |  - Canvas is the standard way to draw games in browsers<br> |
+| `-`                  | Tournament system         | - [SQLite](https://www.sqlite.org/docs.html) storage<br> | vvobis          | Minor   | 1          | n.a.        |  - Automatic bracket generation handles any number of even players<br>- Local tournament matches |
 | **DevOps**           |                           |                    |                 |         |            |            |                           |
 | `-`                  | Backend as microservices  | - [Nginx](https://nginx.org/en/docs/) reverse proxy<br> - [Fastify](https://fastify.dev/docs/latest/Reference/) services | everyone        | Major   | 2          | n.a.        |  - Microservices let each person work on their own part independently<br> - Nginx puts everything together |
 | **Modules of Choice**|                           |                    |                 |         |            |            |                           |
-| `-`                  | Custom ORM                | - [SQLite](https://www.sqlite.org/docs.html) bindings | vvobis          | Minor   | 1          | n.a.        |  - Custom ORM gives us type safety without being complicated |
+| `-`                  | Custom ORM                | - [SQLite](https://www.sqlite.org/docs.html) bindings | vvobis          | Minor   | 1          | n.a.        |  - Custom ORM gives us type safety without being complicated<br>- Handles Table creation, deletion, query, insert and update |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
 #### Decision against certain Modules
@@ -57,14 +57,14 @@ The project's goal is to enhance skills in full-stack development, team organiza
 | Category | Notes |
 |--------|-------|
 | Web | - Blockchain too much of a hassle to learn (I think) |
-| Gaming | - Remote players works well with server-side Pong<br> - Customization could be fairly easy, but maybe annoying as well<br> - Live chat seems very complicated, but also very interesting<br> - **NOTE:** Game might be best done by one person, except live chat maybe |
+| Gaming | - Customization could be fairly easy, but maybe annoying as well<br> - Live chat seems very complicated, but also very interesting<br> - **NOTE:** Game might be best done by one person, except live chat maybe |
 | DevOps | - Other modules too much |
 
 ## Roles, Team Information & Individual Contributions
   
 | **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
 |:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA |   |
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT, Docker Deployment| <ul><li>JWT-Encoding with user information</li><li>Cookie based auth</li><li>ORM-Type safety</li><li>Avatar Upload using multipart forms</li><li>Docker Setup using https</li><li>Learned a lot about Error Handling</li></ul>|
 | shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics |  |
 | khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support |   |
 | pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure<br> > env variables<br> - AI fairness<br> > mathematical algorithm vs ML complexity |
@@ -77,78 +77,94 @@ For more information on the individual contributions, you can also check the Mod
 
 Our application follows a **microservices architecture** with the following components:
 
-```
-┌───────────────────────────────────────────────────────────────────────┐
-│                          CLIENT (Web Browser)                          │
-│                     (Svelte + Vite + Canvas/WebSocket)                │
-│                    Dev: Port 8080 | Prod: NGINX Port 443             │
-└────────────────────────────────┬────────────────────────────────────────┘
-                                 │ HTTP/HTTPS
-                                 ▼ (Dev: direct to services)
-┌────────────────────────────────────────────────────────────────────────┐
-│    NGINX (Reverse Proxy / Load Balancer) - Production only             │
-│                      Port: 443 (HTTPS)                                 │
-└─┬──────────────┬──────────────┬──────────────┬──────────────┘
-  │              │              │              │
-  │ HTTP/REST    │ HTTP/REST    │ HTTP/REST    │ HTTP/REST
-  │              │              │              │
-  ▼              ▼              ▼              ▼
-┌──────────┐  ┌────────────┐ ┌──────────┐ ┌─────────────┐
-│   API    │  │   AUTH     │ │  USER    │ │ GAME_STATS  │
-│ Gateway  │  │  Service   │ │ Service  │ │  Service    │
-│(Fastify) │  │ (Fastify)  │ │(Fastify) │ │  (Fastify)  │
-│Port:3000 │  │ Port:3002  │ │Port:3001 │ │  Port:3003  │
-│          │  │            │ │          │ │             │
-│ Routes:  │  │ Routes:    │ │ Routes:  │ │ Routes:     │
-│ •/api/*  │  │ •/auth/*   │ │ •/user/* │ │ •/stats/*   │
-│ •/login  │  │ •/oauth/*  │ │ •/avatar │ │ •/rankings  │
-│          │  │ •/2fa      │ │ •/friend │ │ •/history   │
-└──────────┘  └────────────┘ └──────────┘ └─────────────┘
-     │              │             │              │
-     └──────────────┼─────────────┼──────────────┘
-                    │             │              
-                    ▼             ▼              
-            ┌──────────────┐ ┌──────────┐ ┌──────────────┐
-            │ SQLite DB    │ │ SQLite   │ │ SQLite DB    │
-            │ (auth.db)    │ │ DB (user │ │(game_stats.  │
-            │              │ │ db)      │ │ db)          │
-            │ •auth_users  │ │ •users   │ │ •user_stats  │
-            │ •sessions    │ │ •avatars │ │ •match_hist. │
-            │              │ │ •games   │ │              │
-            │              │ │ •friends │ │              │
-            └──────────────┘ └──────────┘ └──────────────┘
-```
+```mermaid
+graph TD
+    Client["🌐 CLIENT &lpar;Web Browser&rpar;"]
+    NGINX["NGINX @ localhost:8443"]
 
+    Client --> NGINX
+    NGINX --> ApiGateway["ApiGateway @ api:3000"]
+    NGINX --> SvelteKit["SvelteKit @ frontend:3000"]
+
+    %% API Gateway routes to backend microservices
+    ApiGateway --> AuthService["AuthService @ auth:3002"]
+    ApiGateway --> UserService["UserService @ user:3001"]
+    ApiGateway --> GameStatsService["GameStatsService @ stats:3003"]
+
+    %% Frontend serves SPA and handles SSR
+    SvelteKit --> SvelteSPA["Svelte SPA files"]
+    SvelteKit --> SvelteServer["SvelteKit Server"]
+
+    %% Auth Service details
+    subgraph auth_box["AuthService — Prefix: /api/"]
+        direction TB
+        AuthService
+        AuthRoutes["Routes: /api/*
+        ─────────────────
+        • Routes all traffic to backend services
+        • Validates protected route authenticity
+        • Two-factor authentication"]
+    end
+    AuthService --> AuthDB[("SQLite DB
+    Auth users
+    Credentials
+    2FA status & secrets")]
+
+    %% User Service details
+    subgraph user_box["UserService — Prefix: /user/"]
+        direction TB
+        UserService
+        UserRoutes["Routes: /user/new · delete · update · all
+        /user/friends/request · accept · remove · online
+        /user/avatar/
+        ─────────────────
+        • Store app users & manage profiles
+        • Manage friendships & online status
+        • Store avatars"]
+    end
+    UserService --> UserDB[("SQLite DB
+    App users
+    Friendships
+    Avatar relations")]
+
+    %% GameStats Service details
+    subgraph stats_box["GameStatsService — Prefix: /stats/"]
+        direction TB
+        GameStatsService
+        StatsRoutes["Routes: /game_stats/user/ · /history/
+        /leaderboard · /match
+        ─────────────────
+        • Record match history
+        • Store match results
+        • Simple ranking system
+        • Global leaderboard"]
+    end
+    GameStatsService --> StatsDB[("SQLite DB
+    Match history
+    User stats
+    Leaderboard")]
+
+    %% SPA details
+    subgraph spa_box["Svelte SPA"]
+        direction TB
+        SvelteSPA
+        SPARoutes["Routes: /auth · /profile · /game · /stats · /friends
+        ─────────────────
+        • Authentication & playing games
+        • Edit profile & credentials
+        • Manage friendships
+        • View game stats"]
+    end
+
+    %% SvelteKit Server details
+    subgraph server_box["SvelteKit Server"]
+        direction TB
+        SvelteServer
+        ServerInfo["• Serves all frontend files
+        • Auth status checks during navigation"]
+    end
+```
 ## Database Schema
-### Database Architecture Diagram
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     User Service (SQLite)                        │
-├─────────────────────────────────────────────────────────────────┤
-│ users (id, name, user_name)                                      │
-│   ├─→ avatars (user_id FK, location)                            │
-│   ├─→ friendships (user_from_id, user_to_id, status)           │
-│   └─→ user_games (user_id FK, game_id FK)                       │
-│         └─→ games (id, player1, player2, scores, duration)      │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                   Auth Service (SQLite)                          │
-├─────────────────────────────────────────────────────────────────┤
-│ auth_users (id, user_id FK, user_name, email, passwd, oauth_id) │
-│   └─→ sessions (auth_id FK, token, expires_in, created_at)      │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                  Game Stats Service (SQLite)                     │
-├─────────────────────────────────────────────────────────────────┤
-│ user_stats (user_id FK, wins, losses, rank, total_points,       │
-│             highest_score, streak)                               │
-│   └─→ match_history (player_one_id, player_two_id, winner_id,   │
-│                      scores, duration, timestamp)               │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 There are three separate SQLite databases managed by microservices:
 
@@ -158,14 +174,48 @@ Manages user accounts, profiles, avatars, games, and friend relationships.
 
 **Tables:**
 
-| Table | Primary Key | Columns | Description |
-|-------|-------------|---------|-------------|
-| **users** | `id` (AUTO_INCREMENT) | `id` (INT), `name` (TEXT), `user_name` (TEXT, UNIQUE) | User account information |
-| **avatars** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT), `location` (TEXT) | User avatars |
-| **games** | `id` (AUTO_INCREMENT) | `id` (INT), `player1` (INT), `player2` (INT), `score1` (INT), `score2` (INT), `duration` (TEXT), `date` (TEXT) | Game records |
-| **user_games** | Composite (game_id, user_id) | `game_id` (INT), `user_id` (INT) | Junction table linking users to games |
-| **friendships** | `id` (AUTO_INCREMENT) | `id` (INT), `user_from_id` (INT), `user_to_id` (INT), `status` (TEXT) | Friend requests & relationships with status (pending/accepted/rejected) |
+```mermaid
+erDiagram
+    users {
+        INTEGER id PK
+        TEXT name
+        TEXT user_name UK
+    }
 
+    games {
+        INTEGER id PK
+        INTEGER player1
+        INTEGER player2
+        INTEGER score1
+        INTEGER score2
+        TEXT duration
+        TEXT date
+    }
+
+    user_games {
+        INTEGER game_id FK
+        INTEGER user_id FK
+    }
+
+    friendships {
+        INTEGER id PK
+        INTEGER user_from_id FK
+        INTEGER user_to_id FK
+        TEXT status
+    }
+
+    avatars {
+        INTEGER id PK
+        INTEGER user_id FK
+        TEXT location
+    }
+
+    users ||--o{ user_games : "plays"
+    games ||--o{ user_games : "has"
+    users ||--o{ friendships : "from"
+    users ||--o{ friendships : "to"
+    users ||--o| avatars : "has"
+```
 **Key Relationships:**
 ```
 users
@@ -180,10 +230,27 @@ Handles user authentication, sessions and OAuth.
 
 **Tables:**
 
-| Table | Primary Key | Columns | Description |
-|-------|-------------|---------|-------------|
-| **auth_users** | `id` (AUTO_INCREMENT) | `id` (INT), `user_id` (INT, UNIQUE), `user_name` (TEXT, UNIQUE), `email` (TEXT, UNIQUE), `passwd` (TEXT), `oauth_id` (INT, UNIQUE) | Authentication credentials with optional OAuth ID; requires either `user_name` or `email` to be NOT NULL |
-| **sessions** | Composite (auth_id, user_id) | `auth_id` (INT), `user_id` (INT, UNIQUE), `token` (TEXT), `expires_in` (INT), `created_at` (INT) | Active user sessions with JWT tokens and expiration times |
+```mermaid
+erDiagram
+    auth_users {
+        INTEGER id PK
+        INTEGER user_id UK
+        TEXT user_name UK
+        TEXT email UK
+        TEXT passwd
+        INTEGER oauth_id UK
+    }
+
+    sessions {
+        INTEGER auth_id FK
+        INTEGER user_id FK, UK
+        TEXT token
+        INTEGER expires_in
+        INTEGER created_at
+    }
+
+    auth_users ||--o| sessions : "has"
+```
 
 **Key Relationships:**
 ```
@@ -197,10 +264,33 @@ Tracks player statistics, rankings, and match history.
 
 **Tables:**
 
-| Table | Primary Key | Columns | Description |
-|-------|-------------|---------|-------------|
-| **user_stats** | `user_id` (INT) | `user_id` (INT), `wins` (INT, default=0), `losses` (INT, default=0), `streak` (INT, default=0), `total_points` (INT, default=0), `highest_score` (INT, default=0), `rank` (INT, default=0) | Aggregated player statistics and leaderboard rankings |
-| **match_history** | `match_id` (AUTO_INCREMENT) | `match_id` (INT), `timestamp` (INT), `player_one_id` (INT), `player_two_id` (INT), `winner_id` (INT), `p1_score` (INT), `p2_score` (INT), `match_duration` (INT, default=0) | Complete match records with player scores and timestamps |
+```mermaid
+erDiagram
+    user_stats {
+        INTEGER user_id PK
+        INTEGER wins
+        INTEGER rank
+        INTEGER losses
+        INTEGER total_points
+        INTEGER highest_score
+        INTEGER streak
+    }
+
+    match_history {
+        INTEGER match_id PK
+        INTEGER timestamp
+        INTEGER player_one_id FK
+        INTEGER player_two_id FK
+        INTEGER winner_id FK
+        INTEGER match_duration
+        INTEGER p1_score
+        INTEGER p2_score
+    }
+
+    user_stats ||--o{ match_history : "player_one"
+    user_stats ||--o{ match_history : "player_two"
+    user_stats ||--o{ match_history : "winner"
+```
 
 **Key Relationships:**
 ```

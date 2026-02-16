@@ -1,0 +1,87 @@
+```mermaid
+graph TD
+    Client["🌐 CLIENT &lpar;Web Browser&rpar;"]
+    NGINX["NGINX @ localhost:8443"]
+
+    Client --> NGINX
+    NGINX --> ApiGateway["ApiGateway @ api:3000"]
+    NGINX --> SvelteKit["SvelteKit @ frontend:3000"]
+
+    %% API Gateway routes to backend microservices
+    ApiGateway --> AuthService["AuthService @ auth:3002"]
+    ApiGateway --> UserService["UserService @ user:3001"]
+    ApiGateway --> GameStatsService["GameStatsService @ stats:3003"]
+
+    %% Frontend serves SPA and handles SSR
+    SvelteKit --> SvelteSPA["Svelte SPA files"]
+    SvelteKit --> SvelteServer["SvelteKit Server"]
+
+    %% Auth Service details
+    subgraph auth_box["AuthService — Prefix: /api/"]
+        direction TB
+        AuthService
+        AuthRoutes["Routes: /api/*
+        ─────────────────
+        • Routes all traffic to backend services
+        • Validates protected route authenticity
+        • Two-factor authentication"]
+    end
+    AuthService --> AuthDB[("SQLite DB
+    Auth users
+    Credentials
+    2FA status & secrets")]
+
+    %% User Service details
+    subgraph user_box["UserService — Prefix: /user/"]
+        direction TB
+        UserService
+        UserRoutes["Routes: /user/new · delete · update · all
+        /user/friends/request · accept · remove · online
+        /user/avatar/
+        ─────────────────
+        • Store app users & manage profiles
+        • Manage friendships & online status
+        • Store avatars"]
+    end
+    UserService --> UserDB[("SQLite DB
+    App users
+    Friendships
+    Avatar relations")]
+
+    %% GameStats Service details
+    subgraph stats_box["GameStatsService — Prefix: /stats/"]
+        direction TB
+        GameStatsService
+        StatsRoutes["Routes: /game_stats/user/ · /history/
+        /leaderboard · /match
+        ─────────────────
+        • Record match history
+        • Store match results
+        • Simple ranking system
+        • Global leaderboard"]
+    end
+    GameStatsService --> StatsDB[("SQLite DB
+    Match history
+    User stats
+    Leaderboard")]
+
+    %% SPA details
+    subgraph spa_box["Svelte SPA"]
+        direction TB
+        SvelteSPA
+        SPARoutes["Routes: /auth · /profile · /game · /stats · /friends
+        ─────────────────
+        • Authentication & playing games
+        • Edit profile & credentials
+        • Manage friendships
+        • View game stats"]
+    end
+
+    %% SvelteKit Server details
+    subgraph server_box["SvelteKit Server"]
+        direction TB
+        SvelteServer
+        ServerInfo["• Serves all frontend files
+        • Auth status checks during navigation"]
+    end
+```
