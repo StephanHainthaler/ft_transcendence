@@ -1,94 +1,224 @@
 services:
   frontend:
     container_name: transcendence_frontend
-
     build:
       context: .
       dockerfile: frontend/Dockerfile
-
     ports:
       - "3000"
-
     networks:
       transcendence_network:
-
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    stop_grace_period: 10s
+    security_opt:
+      - no-new-privileges:true
 
   nginx:
     container_name: transcendence_nginx
-
     build:
       context: .
       dockerfile: services/nginx/Dockerfile
-
     ports:
       - "8443:443"
-
     networks:
       transcendence_network:
+    restart: unless-stopped
+    depends_on:
+      frontend:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:443"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
 
   api:
     container_name: transcendence_api
-
     build:
       context: .
       dockerfile: services/api/Dockerfile
-
     env_file:
-        - env/prod/.env.api
+      - env/prod/.env.api
     environment:
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
       - "3000"
-
     networks:
       transcendence_network:
+    restart: unless-stopped
+    depends_on:
+      user:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
+      stats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:3000/health/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    stop_grace_period: 10s
+    security_opt:
+      - no-new-privileges:true
 
   user:
     container_name: transcendence_user
-
     build:
       context: .
       dockerfile: services/user/Dockerfile
-
     env_file:
-        - env/prod/.env.user
+      - env/prod/.env.user
     ports:
       - "3001"
-
     networks:
       transcendence_network:
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    stop_grace_period: 10s
+    # volumes:
+    #   - user_db:/app/db
+    #   - user_data:/app/data
+    security_opt:
+      - no-new-privileges:true
 
   auth:
     container_name: transcendence_auth
-
     build:
       context: .
       dockerfile: services/auth/Dockerfile
-
     env_file:
-        - env/prod/.env.auth
+      - env/prod/.env.auth
     environment:
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
       - "3002"
-
     networks:
       transcendence_network:
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:3002/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    stop_grace_period: 10s
+    # volumes:
+    #   - auth_db:/app/db
+    security_opt:
+      - no-new-privileges:true
 
   stats:
     container_name: transcendence_stats
-
     build:
       context: .
       dockerfile: services/game_stats/Dockerfile
-
     env_file:
-        - env/prod/.env.game_stats
+      - env/prod/.env.game_stats
     ports:
       - "3003"
-
     networks:
       transcendence_network:
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:3003/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    stop_grace_period: 10s
+    # volumes:
+    #   - stats_db:/app/db
+    security_opt:
+      - no-new-privileges:true
+
+# volumes:
+#   auth_db:
+#   user_db:
+#   user_data:
+#   stats_db:
 
 networks:
   transcendence_network:

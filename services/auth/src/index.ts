@@ -55,6 +55,15 @@ export function buildAuth(dbPath?: string, options?: FastifyServerOptions) {
 async function startAuth() {
   try {
     const fastify = buildAuth();
+
+    const shutdown = async () => {
+      fastify.log.info('Shutting down gracefully...');
+      await fastify.close();
+      process.exit(0);
+    };
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
+
     await fastify.listen({ host: '0.0.0.0', port: 3002 });
   } catch (e: any){
     console.error(e);
