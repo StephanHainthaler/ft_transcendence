@@ -8,7 +8,7 @@ import type { OAuthCallBackBody } from "@shared/api";
 import { acceptFriendRequest, checkFriendsOnlineStatus, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
-import { AppError, isAppError } from "$lib/types/error";
+import { type AppError, isAppError } from "$lib/types/error";
 
 
 export type ApiError = {
@@ -232,8 +232,14 @@ export class ApiClient {
       this.userStore.set(response.user);
       this.loggedIn = true;
     } catch (e: any) {
+      console.error(`Login Failed: ${e.message || e}`);
+      if (isAppError(e))
+      {
+        console.error(`Login Failed: 1`);
+        throw e;
+      }
+      console.error(`Login Failed: 2`);
       const error = new Error(`Login Failed: ${e.message || e}`)
-      //toast.error(error.message);
       throw error;
     }
   }
@@ -288,7 +294,7 @@ export class ApiClient {
     email?: string, user_name?: string, passwd?: string
   }) {
     if (!email && !user_name && !passwd) {
-      throw new Error("No Credentials to update!");
+      throw new Error("auth_missing_credentials"), {isAppError: true} as AppError;
     }
     try {
       const authResponse = await updateRequest({
@@ -296,7 +302,10 @@ export class ApiClient {
       });
       this.authStore.set(authResponse.auth)
     } catch (e: any) {
+      if (isAppError(e))
+        throw e;
       const error = new Error(`${e.message || e}`)
+      console.error(`${e.message || e}`);
       throw error;
     }
   }

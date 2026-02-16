@@ -9,6 +9,8 @@ import { parseJWT } from "@shared/api";
 import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
+import { isAppError } from "@lib/types/error";
+import type { AppError } from "@lib/types/error";
 
 export type ApiError = {
   code: number,
@@ -171,6 +173,8 @@ export class ApiClient {
         this.userStore.set(response.user);
       }
     } catch (e: any) {
+      if (isAppError(e))
+        throw e;
       const error = new Error(`Login Failed: ${e.message || e}`)
       console.error(error);
       throw error;
@@ -233,7 +237,7 @@ export class ApiClient {
     }
     try {
       const authResponse = await updateRequest(this.accessToken, {
-        email, username, passwd
+        email, username, passw
       });
       this.authStore.set(authResponse.auth)
     } catch (e: any) {

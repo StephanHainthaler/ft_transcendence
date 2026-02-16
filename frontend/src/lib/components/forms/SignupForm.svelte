@@ -1,12 +1,13 @@
 <script lang="ts">
   import { client } from "@lib/api/index.svelte";
-  import { validateInputThrow } from "@lib/validation/inputValidation.svelte.svelte";
+  import { validateInputThrow } from "@lib/validation/inputValidation";
   import { goto } from "$app/navigation";
   import Label from "../ui/label/label.svelte";
   import Input from "../ui/input/input.svelte";
   import Button from "../ui/button/button.svelte";
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
   import {t, currentLocale} from "@lib/i18n/i18n";
+    import { isAppError, type AppError } from "@lib/types/error";
 
   let user_nameBuffer = $state('');
   let emailBuffer = $state('');
@@ -26,7 +27,7 @@
       validateInputThrow(userPasswordBuffer, { type: 'password' });
 
       if (userPasswordBuffer !== userPasswordRepeatBuffer) {
-        throw new Error("Passwords don't match");
+        throw new Error("pass_mismatch"), {isAppError: true} as AppError;
       }
 
       await client.signup({
@@ -37,7 +38,10 @@
 
       await goto('/');
     } catch (e: any) {
-      errorMessage = e.message || e.error || JSON.stringify(e);
+      if (isAppError(e))
+        errorMessage = $t('error.', e.message) || $t('error.general');
+      else
+        errorMessage = e.message || e.error || JSON.stringify(e);
     } finally {
       isLoading = false;
     }

@@ -11,6 +11,7 @@
   import { Trash } from "@lucide/svelte";
   import { toast } from "svelte-sonner";
   import { validateInputThrow, validateAvatarFile } from "@lib/validation/inputValidation.svelte";
+    import { isAppError } from "@lib/types/error";
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -100,7 +101,10 @@
         error: (e) => `Failed to update Account: ${e}`,
       });
     } catch (e: any) {
-      toast.error(e.message || e);
+      if (isAppError(e))
+        toast.error($t('error.', e.message)
+        || $t('error.general', 'Something went wrong'));
+      toast.error($t('error.general', 'Something went wrong'));
     }
   };
 

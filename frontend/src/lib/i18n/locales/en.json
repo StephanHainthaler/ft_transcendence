@@ -26,8 +26,7 @@
     "pass_repeat": "Repeat your password",
     "pass_confirm": "Confirm your password",
     "loading": "Signing up...",
-    "pass_no_match": "Passwords don't match",
-    "signup_fail": 
+    "pass_no_match": "Passwords don't match"
   },
   "OAuth": {
     "oauth": "OAuth",
@@ -199,6 +198,7 @@
   },
 
   "error": {
+    "general": "Something went wrong",
     "404": "Not Found",
     "bannerError": "Error loading banner image",
     "common": {
@@ -211,6 +211,8 @@
     "missing_pass": "Missing Password!",
     "missing_OAuth_code": "Missing OAuth Code!",
     "delete_acc_fail": "Failed to Delete Account",
-    "log_out_fail": "Failed to log out"
+    "log_out_fail": "Failed to log out",
+    "signup_fail": "",
+    "pass_mismatch": "Passwords don't match"
   }
 }

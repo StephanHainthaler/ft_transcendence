@@ -1,12 +1,13 @@
 <script lang="ts">
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
   import { client } from "$lib/api/index.svelte";
-  import { validateInput } from "@lib/validation/inputValidation.svelte.svelte";
+  import { validateInput } from "@lib/validation/inputValidation";
   import Label from "$lib/components/ui/label/label.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import { goto } from "$app/navigation";
   import { t } from "@lib/i18n/i18n";
+    import { isAppError } from "@lib/types/error";
 
   const handleLoginFormSubmit = async (e: Event) => {
     e.preventDefault();
@@ -25,7 +26,10 @@
 
       goto('/');
     } catch (e: any) {
-      errorMessage = e.message || e.toString();
+      if (isAppError(e))
+        errorMessage = $t('error.', e.message);
+      else
+        errorMessage = e.message || e.toString();
     }
   }
 

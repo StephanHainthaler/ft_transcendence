@@ -19,6 +19,7 @@ export async function request(req: Request): Promise<any> {
     let error: AppError = {
       message: data.message || 'An error occurred',
       code: data.code || response.status,
+      isAppError: false,
       extra: data.extra || null,
     };
     throw error;
