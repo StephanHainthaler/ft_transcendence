@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession, getSessions } from "./dbHandlers";
+import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession, getSessions, refreshTokenLifetime } from "./dbHandlers";
 import { deleteUser } from "@server/user/api";
 import { AuthUserClient, } from "@shared/user";
 import type { AuthDeleteRequest, AuthGetUserRequest, AuthLoginReply, AuthLogoutRequest, AuthOAuthRequest, AuthSessionRequest, AuthSignUpRequest, AuthUpdateRequest, AuthValidateRequest } from "@shared/api/authReply";
@@ -91,12 +91,14 @@ export function authRoutes(fastify: FastifyInstance) {
           .setCookie("access_token", session.accessToken.raw, {
             httpOnly: true,
             path: '/',
+            expires: new Date(session.accessToken.payload.iat + session.accessToken.payload.exp),
             sameSite: 'strict',
             secure: 'auto'
           })
           .setCookie('refresh_token', session.refreshToken, {
             httpOnly: true,
             path: '/',
+            expires: new Date(Date.now() + refreshTokenLifetime),
             sameSite: 'strict',
             secure: 'auto'
           })
