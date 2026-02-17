@@ -25,6 +25,8 @@ _This project has been created as part of the 42 curriculum by vvobis, shaintha,
 
 The project's goal is to enhance skills in full-stack development, team organization, project management, and establishing roles within the team.
 
+We called our project KhukVvobisPgoberShainthaJuitz - a mix of our intra names.
+
 ## Features & Modules
 
 | **Module**           | **Sub Module**            |**Technologies / Frameworks**| **Assignee**    | **Type**| **Points** | **Feature Description (if applicable)** |  **Why we chose it**            |
