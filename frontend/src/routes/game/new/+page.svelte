@@ -23,8 +23,8 @@
   let pointsToWin = $state(10);
   let matchDurationInMinutes = $state(5);
   let AIdifficulty = $state(2);
-  let pongRef: PongGame | undefined = $state(undefined);
 
+  let pongRef: PongGame | undefined = $state(undefined);
   let dialogOpen = $state(false);
   let gameState: 'setup' | 'running' | 'result' = $state('setup');
   let isAi = $state(false);
@@ -48,13 +48,6 @@
       toast.error(`Failed to load Page Data: ${e.message || e}`)
     }
   }
-
-  async function startRematch()
-  {
-    pongRef?.resetPong();
-    gameState = 'running';
-    await tick();
-  };
 
   const challengeUser = async (selectedUser: AppUser) =>
   {
@@ -86,46 +79,49 @@
     gameState = 'setup'
   };
 
+  async function startRematch()
+  {
+    pongRef?.resetPong();
+    console.log('rematching')
+    gameState = 'running';
+    await tick();
+  };
+
   loadPageData();
 
   const userSelectionCallback = (u: AppUser) => {
     isAi = false;
-    selectUser(u);
-  }
-
-  const challengeAICallback = () => {
-    isAi = true;
-    selectUser(aiUser);
-  }
-
-  const selectUser = (u: AppUser) => {
     challengedUser = u;
     dialogOpen = true;
   }
 
+  const challengeAICallback = () => {
+    isAi = true;
+    userSelectionCallback(aiUser);
+  }
+
 </script>
 
-{#key isAi}
-  <MatchStartDialog
-    bind:dialogOpen={dialogOpen}
-    paragraphRecords={{
-        '1': $t('game.howToPlay'),
-        '2': $t('game.howToWin')
-    }}
-    labelRecords={{
-          [$t('game.pointsToWin')]: String(pointsToWin),
-          [$t('game.matchDuration')]: `${matchDurationInMinutes} ${$t('game.minutes')}`,
-          [$t('game.leftPlayer')]: client.user!.name,
-          [$t('game.rightPlayer')]: isAi ? $t('game.aiOpponent') : challengedUser.name,
-          ...(isAi ? { [$t('game.AIdifficulty')]: AIdifficulty === 1 ? $t('game.easy') : AIdifficulty === 2 ? $t('game.medium') : $t('game.hard') } : {}),
-    }}
-    confirmCallBack={async () => await challengeUser(challengedUser)}
-  />
-{/key}
+<MatchStartDialog
+  bind:dialogOpen={dialogOpen}
+  paragraphRecords={{
+      '1': $t('game.howToPlay'),
+      '2': $t('game.howToWin')
+  }}
+  labelRecords={{
+        [$t('game.leftPlayer')]: client.user!.name,
+        [$t('game.rightPlayer')]: isAi ? $t('game.aiOpponent') : challengedUser.name,
+        [$t('game.pointsToWin')]: String(pointsToWin),
+        [$t('game.matchDuration')]: `${matchDurationInMinutes} ${$t('game.minutes')}`,
+        ...(isAi ? { [$t('game.AIdifficulty')]: AIdifficulty === 1 ? $t('game.easy') : AIdifficulty === 2 ? $t('game.medium') : $t('game.hard') } : {}),
+  }}
+  confirmCallBack={async () => await challengeUser(challengedUser)}
+/>
 
 <Card.Root class="size-full">
   <Card.Content class="flex flex-col gap-4 size-full overflow-hidden">
     {#if gameState === 'setup'}
+
       <div class="grid grid-cols-2 gap-4 min-h-[30%]">
         <RulesSetup
           bind:matchDurationInMinutes={matchDurationInMinutes}
@@ -153,7 +149,6 @@
 
     {:else if gameState === 'running'}
       <PongGame bind:this={pongRef} player1={challengingUser} player2={challengedUser} {onGameEnd} {matchDurationInMinutes} {pointsToWin} {AIdifficulty}/>
-
     {:else if gameState === 'result'}
 
       <MatchResult
@@ -163,7 +158,7 @@
       >
         {#snippet actions()}
           <Button onclick={ returnToChallengePage }>{$t('game.return')}</Button>
-          <Button onclick={ startRematch }>{$t('game.rematch')}</Button>
+          <Button onclick={async () => await startRematch() }>{$t('game.rematch')}</Button>
         {/snippet}
       </MatchResult>
 

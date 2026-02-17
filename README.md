@@ -21,42 +21,35 @@ _This project has been created as part of the 42 curriculum by vvobis, shaintha,
 
 ## Description
 
-**ft_transcendence** is the final project of Coding School 42. It is a full-stack web application where players can play Pong with features including user authentication, real-time multiplayer games, tournament systems, leaderboards, and AI opponents.
+**ft_transcendence** is the final project of Coding School 42. It is a full-stack web application where players can play Pong with features including user authentication, real-time multiplayer games, tournament systems and AI opponents.
 
 The project emphasizes full-stack development, team organization, project management, and establishing roles within the team.
 
 ## Features & Modules
 
-#### Status Legend
-| **Abbreviation**     | **Meaning**                  |
-|:----------           |:------------------           |
-|  ✅                 | Done                         |
-|  🚧                 | In progress                  |
-|  ❌                 | Cancelled                    |
-
 | **Module**           | **Sub Module**            |**Technologies / Frameworks**| **Assignee**    | **Type**| **Points** | **Status** |  **Why we chose it**            |
 | :---                 | :---                      |  :---              | :---            | :---    | :---       | :---       |   :---                    |
 | **Web**              |                           |                    |                 |         |            |            |                           |
-| `-`                  | Frontend Framework        | - Svelte<br> - Vite<br> - TypeScript<br> - Tailwind CSS<br> - shadcn/svelte | everyone        | Minor   | 1          | ✅        |  - Svelte is simple & fast<br> - Vite makes development quick with instant updates<br> - TypeScript catches bugs early<br> - Tailwind for styling<br> - shadcn/svelte provides pre-built components |
-| `-`                  | Backend Framework         | - Fastify<br> - TypeScript<br> - Node.js | everyone        | Minor   | 1          | ✅        |  - Fastify is quick & good for building separate services<br> - TypeScript helps avoid mistakes with data types |
-| `-`                  | ORM Database              | - Custom ORM<br> - SQLite via better-sqlite3 | vvobis          | Minor   | 1          | ✅        |  - Custom ORM keeps us in control & type-safe<br> - SQLite is simple to use & works everywhere |
+| `-`                  | Frontend Framework        | - [Svelte](https://svelte.dev/)<br> - [Vite](https://vite.dev/guide/)<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Tailwind CSS](https://v2.tailwindcss.com/docs)<br> - [shadcn-Svelte](https://www.shadcn-svelte.com/) | everyone        | Minor   | 1          | ✅        |  - Svelte is simple & fast<br> - Vite makes development quick with instant updates<br> - TypeScript catches bugs early<br> - Tailwind for styling<br> - shadcn/svelte provides pre-built components |
+| `-`                  | Backend Framework         | - [Fastify](https://fastify.dev/docs/latest/)<br> -[TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Node.js](https://nodejs.org/docs/latest/api/) | everyone        | Minor   | 1          | ✅        |  - Fastify is quick & good for building separate services<br> - TypeScript helps avoid mistakes with data types |
+| `-`                  | ORM Database              | - Custom ORM<br> - [SQLite](https://www.sqlite.org/docs.html) via better-sqlite3 | vvobis          | Minor   | 1          | ✅        |  - Custom ORM keeps us in control & type-safe<br> - SQLite is simple to use & works everywhere |
 | **Accessibility**    |                           |                    |                 |         |            |            |                           |
-| `-`                  | Language Support          | - i18n library (TBD)<br> - shadcn/svelte localization support | khuk            | Minor   | 1          | ✅        |  - Multi-lingual team |
-| `-`                  | Browser compatibility       | - cross-browser CSS | everyone        | Minor   | 1          | ✅        |  - Vite handles older browsers automatically<br> - Tailwind CSS works the same everywhere |
+| `-`                  | Language Support          | - [shadcn-Svelte](https://www.shadcn-svelte.com/) localization support | khuk            | Minor   | 1          | ✅        |  - Multi-lingual team |
+| `-`                  | Browser compatibility       | - worked automatically | everyone        | Minor   | 1          | ✅        |  - Vite handles older browsers automatically<br> - Tailwind CSS works the same everywhere |
 | **User Management**  |                           |                    |                 |         |            |            |                           |
-| `-`                  | Standard user management  | - SQLite<br> - REST API (Fastify)<br> - TypeScript | vvobis          | Major   | 2          | ✅        |  - SQLite keeps data safe & consistent<br> - REST API is simple to use<br> - TypeScript prevents errors when handling user data |
-| `-`                  | Game stats                | - SQLite (Game Stats Service)<br>- Leaderboard logic | khuk            | Minor   | 1          | ✅        |  - Separate database for stats so the user service doesn't get slowed down |
-| `-`                  | Remote authentication     | - OAuth 2.0 (GitHub)<br> - JWT tokens<br> - bcrypt password hashing | pgober          | Minor   | 1          | ✅        |  - GitHub OAuth makes login easier for users<br> - JWT tokens work across all services<br> - bcrypt keeps passwords safe |
-| `-`                  | JWT & 2FA               | - JWT (RS256 signing)<br> - 2FA<br>-Secure session storage | vvobis & juitz  | Minor   | 1          | ✅        |  - JWT lets services talk to each other without a shared database<br> - 2FA adds extra security when needed |
+| `-`                  | Standard user management  | - [SQLite](https://www.sqlite.org/docs.html)<br> - REST API ([Fastify](https://fastify.dev/docs/latest/Reference/))<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) | vvobis          | Major   | 2          | ✅        |  - SQLite keeps data safe & consistent<br> - REST API is simple to use<br> - TypeScript prevents errors when handling user data |
+| `-`                  | Game stats                | - [SQLite](https://www.sqlite.org/docs.html) (Game Stats Service) | khuk            | Minor   | 1          | ✅        |  - Separate database for stats so the user service doesn't get slowed down |
+| `-`                  | Remote authentication     | - [OAuth 2.0 (GitHub)](https://docs.github.com/en/apps/oauth-apps) | pgober          | Minor   | 1          | ✅        |  - GitHub OAuth makes login easier for users<br> |
+| `-`                  | JWT & 2FA               | - [JWT](https://www.jwt.io/) (RS256 signing)<br> - [2FA](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication) | vvobis & juitz  | Minor   | 1          | ✅        |  - JWT lets services talk to each other without a shared database<br> - 2FA adds extra security when needed |
 |**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
 | `-`                  | AI Opponent               | - Mathematical Algorithm | pgober          | Major   | 2          | ✅        |  - Math-based AI is simple & fair<br> -  no need for complex ML |
 | **Gaming**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Web-based game            | - Canvas API<br> - WebSocket (real-time communication) | shaintha & juitz| Major   | 2          | ✅        |  - Canvas is the standard way to draw games in browsers<br> -  WebSocket keeps the game smooth for both players |
-| `-`                  | Tournament system         | - SQLite storage<br>-REST API<br> - Real-time WebSocket updates | vvobis          | Minor   | 1          | ✅        |  - Automatic bracket generation handles any number of players<br> - WebSocket keeps everyone updated as the tournament progresses |
+| `-`                  | Web-based game            | - [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)<br> - [WebSocket](https://websocket.org/reference/websocket-api/) | shaintha & juitz| Major   | 2          | ✅        |  - Canvas is the standard way to draw games in browsers<br> -  WebSocket keeps the game smooth for both players |
+| `-`                  | Tournament system         | - [SQLite](https://www.sqlite.org/docs.html) storage<br> | vvobis          | Minor   | 1          | ✅        |  - Automatic bracket generation handles any number of players<br> - WebSocket keeps everyone updated as the tournament progresses |
 | **DevOps**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Backend as microservices  | - Nginx reverse proxy<br> - Fastify services | everyone        | Major   | 2          | ✅        |  - Microservices let each person work on their own part independently<br> - Nginx puts everything together |
+| `-`                  | Backend as microservices  | - [Nginx](https://nginx.org/en/docs/) reverse proxy<br> - [Fastify](https://fastify.dev/docs/latest/Reference/) services | everyone        | Major   | 2          | ✅        |  - Microservices let each person work on their own part independently<br> - Nginx puts everything together |
 | **Modules of Choice**|                           |                    |                 |         |            |            |                           |
-| `-`                  | Custom ORM                | - TypeScript generics<br> - SQLite bindings | vvobis          | Minor   | 1          | ✅        |  - Custom ORM gives us type safety without being complicated |
+| `-`                  | Custom ORM                | - [SQLite](https://www.sqlite.org/docs.html) bindings | vvobis          | Minor   | 1          | ✅        |  - Custom ORM gives us type safety without being complicated |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
 #### Decision against certain Modules
@@ -71,11 +64,11 @@ The project emphasizes full-stack development, team organization, project manage
   
 | **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
 |:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | - ORM type safety<br> > TypeScript generics<br> - JWT cross-service auth<br> > RS256 asymmetric signing<br> - Tournament byes<br> > auto-advance unpaired players |
-| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics | - Game sync between clients<br> > server-authoritative loop<br> - Canvas performance<br> > optimized render pipeline |
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | - ORM type safety<br> > TypeScript generics<br> - JWT cross-service auth<br> > RS256 asymmetric signing<br> |
+| shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics |  |
 | khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | - Stats isolation<br> > separate microservice |
 | pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure<br> > env variables<br> - AI fairness<br> > mathematical algorithm vs ML complexity |
-| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation<br> > algorithm without external libs<br> - Real-time sync<br> > WebSocket frame throttling |
+| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation<br> > algorithm without external libs |
 
 For more information on the individual contributions, you can also check the Modules table above.
 
@@ -473,6 +466,7 @@ Workflow:
 #### Svelte
 - [Svelte](https://svelte.dev/)
 - [shadcn-Svelte](https://www.shadcn-svelte.com/)
+- [Svelte/store](https://svelte.dev/docs/svelte/svelte-store)
 
 #### OAuth
 - [Authorizing OAuth apps in GitHub](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow)

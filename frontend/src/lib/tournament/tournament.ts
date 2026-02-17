@@ -1,26 +1,27 @@
 import type { AppUser } from "@lib/api/appUser";
+import { aiUser } from "@lib/game";
 import type { Game } from "@shared/user";
 
 export class Tournament {
+  private originalPlayers: AppUser[];
   private currentPlayers: AppUser[] = [];
   private nextRoundPlayers: AppUser[] = [];
   private currentGame?: Game;
-  private isRunning: boolean = false;
-  inGame: boolean = false;
 
   constructor(players?: AppUser[]) {
     this.currentPlayers = players ?? [];
   }
 
   setPlayers(players: AppUser[]) {
+    this.originalPlayers = players;
     this.currentPlayers = players;
+    if (this.currentPlayers.length % 4 !== 0) {
+      const playerDiff = this.currentPlayers.length % 4;
+      this.currentPlayers.push(...Array(playerDiff).fill(aiUser));
+    }
   }
 
   finish() {
-
-  }
-
-  private reportTournament() {
 
   }
 
@@ -30,25 +31,6 @@ export class Tournament {
 
   get nextPlayers(): AppUser[] {
     return this.nextRoundPlayers;
-  }
-
-  get running() {
-    return this.isRunning;
-  }
-
-  stop() {
-    this.isRunning = false;
-  }
-
-  start() {
-    this.isRunning = true;
-  }
-
-  private fixUnevenPlayers() {
-    if (this.currentPlayers.length % 2 !== 0) {
-      const player = this.currentPlayers.pop();
-      if (player) this.nextRoundPlayers.push(player);
-    }
   }
 
   nextGame() {
@@ -70,7 +52,7 @@ export class Tournament {
     const player = this.currentPlayers.find(u => u.id === id);
     if (player) {
       this.nextRoundPlayers.push(player)
-      this.currentPlayers = this.currentPlayers.filter(u => u.id !== id);
+      this.currentPlayers = this.currentPlayers.splice(0, 2);
     }
   }
 
@@ -88,7 +70,6 @@ export class Tournament {
 
   getSchedule(): Game[] {
     let games: Game[] = [];
-    this.fixUnevenPlayers();
     for (let i = 0; i < this.currentPlayers.length; i += 2) {
       const newGame = {
         id: 0,

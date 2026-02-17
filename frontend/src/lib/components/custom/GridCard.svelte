@@ -21,7 +21,7 @@
     buttonDesc?: string,
     avatarUrl?: string,
     extraBtn?: Snippet,
-    callback: () => void
+    callback: (u?: any) => void
   } = $props();
 
 </script>
