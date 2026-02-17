@@ -102,7 +102,7 @@
       });
     } catch (e: any) {
       if (isAppError(e))
-        toast.error($t('error.', e.message)
+        toast.error($t('error.'+ e.message)
         || $t('error.general', 'Something went wrong'));
       toast.error($t('error.general', 'Something went wrong'));
     }

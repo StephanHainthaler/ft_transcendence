@@ -7,9 +7,11 @@ import { Writable } from '$lib/types/writable';
 import { get } from 'svelte/store';
 
 export const localeSettings = new Writable<string>('app_locale');
+const savedLocale = typeof window !== 'undefined' ? localStorage.getItem('app_locale') : 'en';
+
 
 i18next.init({
-  lng: localeSettings.get() || 'en',
+  lng: savedLocale || 'en',
   fallbackLng: 'en',
   resources: {
     en: { translation: en },
@@ -44,6 +46,8 @@ const createI18nStore = () => {
     subscribe,
     changeLanguage: async (lang: string) => {
       await i18next.changeLanguage(lang);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('app_locale', lang);}
       set(safeT()); 
       currentLocale.set(lang);
     }

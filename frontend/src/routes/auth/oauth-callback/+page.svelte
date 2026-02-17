@@ -43,8 +43,8 @@
       toast.error(errorMessage);
       throw consoleError;
     }
-    goto("/");
     toast.success($t('OAuth.success') || 'OAuth Successful');
+    goto("/");
   }
   
   

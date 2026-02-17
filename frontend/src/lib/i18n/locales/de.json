@@ -3,64 +3,64 @@
   "menu": "Menü",
   "welcome": "Willkommen",
   "play": "Spielen",
-  "moto": "ARENA_BEREIT: VERBINDE DEIN PADDLE MIT DEM NETZ",
+  "moto": "ARENA_READY: VERBINDE DEIN PADDLE MIT DEM GRID",
   "login": {
     "login": "Anmelden",
     "username": "E-Mail oder Benutzername",
-    "username_ph": "E-Mail oder Benutzername eingeben",
+    "username_ph": "E-Mail oder Benutzernamen eingeben",
     "password": "Passwort",
     "password_ph": "Passwort eingeben",
     "signin": "Einloggen",
     "logout": "Erfolgreich abgemeldet",
-    "logout_fail": "Failed to log out"
+    "logout_fail": "Abmeldung fehlgeschlagen"
   },
   "signup": {
     "signup": "Registrieren",
     "register": "Registrieren",
     "username": "Benutzername",
-    "username_ph": "Benutzername wählen",
+    "username_ph": "Benutzernamen wählen",
     "email": "E-Mail",
-    "email_ph": "E-Mail eingeben",
+    "email_ph": "E-Mail-Adresse eingeben",
     "password": "Passwort",
     "password_ph": "Passwort erstellen",
     "pass_repeat": "Passwort wiederholen",
     "pass_confirm": "Passwort bestätigen",
-    "loading": "Registrierung...",
+    "loading": "Registrierung läuft...",
     "pass_no_match": "Passwörter stimmen nicht überein"
   },
   "OAuth": {
     "oauth": "OAuth",
     "oauth_gh": "OAuth mit GitHub",
     "error": "Etwas ist schiefgelaufen",
-    "error2": "Fehler aufgetreten...",
+    "error2": "Etwas ist schiefgelaufen...",
     "redirect": "OAuth-Weiterleitung",
     "go_back": "Zurückgehen...",
     "wait": "Bitte warten...",
     "success": "Erfolgreich via OAuth authentifiziert",
-    "loading": "GitHub OAuth wird abgeschlossen..."
+    "loading": "GitHub-OAuth wird abgeschlossen..."
   },
   "sidebar": {
-    "login": "Anmelden",
+    "login": "Login",
     "routes": "Navigation",
     "profile": "Profil",
     "game": "Spiel",
     "tournament": "Turnier",
     "friends": "Freunde",
-    "statistics": "Statistik",
+    "statistics": "Statistiken",
     "account": "Konto",
     "logout": "Abmelden",
     "language": "Sprache"
   },
   "stats": {
-    "title": "Spielerstatistik",
-    "my_statistics": "Meine Statistik",
+    "title": "Spielerstatistiken",
+    "my_statistics": "Meine Statistiken",
     "leaderboard": "Bestenliste",
-    "your_rank": "Ihr Rang",
+    "your_rank": "Dein Rang",
     "wins": "Siege",
     "losses": "Niederlagen",
     "total_points": "Gesamtpunkte",
     "streak": "Serie",
-    "highest_score": "Highscore",
+    "highest_score": "Höchstpunktzahl",
     "match_history": "Spielverlauf",
     "no_matches": "Keine Spiele im Verlauf gefunden",
     "opponent": "Gegner",
@@ -88,7 +88,7 @@
   "buttons": {
     "next": "Weiter",
     "previous": "Zurück"
-  },
+  }, 
   "friends": {
     "card_title": "Freunde",
     "send": "Senden",
@@ -102,10 +102,10 @@
     "game": "Spiel",
     "settings": "Spieleinstellungen",
     "aiOpponent": "KI-Gegner",
-    "challenge": "Herausfordern",
-    "pointsToWin": "Punkte zum Gewinnen",
-    "matchDuration": "Spielzeit",
-    "matchDurationInMinutes": "Spielzeit (in Minuten)",
+    "challenge": "Herausforderung",
+    "pointsToWin": "Punkte zum Sieg",
+    "matchDuration": "Spieldauer",
+    "matchDurationInMinutes": "Spieldauer (in Minuten)",
     "minutes": "Minuten",
     "AIdifficulty": "KI-Schwierigkeit",
     "easy": "Einfach",
@@ -113,9 +113,9 @@
     "hard": "Schwer",
     "challengeAI": "KI herausfordern",
     "rules": "Regeln & Anweisungen",
-    "rulesDescription": "Das Spiel beginnt nach dem Drücken der Schaltfläche 'Spiel starten'.",
-    "howToPlay": "Wie man spielt: Reflektieren Sie den Ball mit Ihrem Paddel am Paddel Ihres Gegners vorbei, um einen Punkt zu erzielen. Der linke Spieler benutzt die W/S-Tasten und der rechte Spieler benutzt die Pfeiltasten nach oben/unten, um das Paddel nach oben oder unten zu bewegen.",
-    "howToWin": "Wie man gewinnt: Der erste Spieler, der die Punkte zum Gewinnen erreicht oder der am meisten Punkte hat, wenn die Zeit abläuft, gewinnt!",
+    "rulesDescription": "Das Spiel beginnt nach dem Drücken der Starttaste.",
+    "howToPlay": "So wird gespielt: Spiele den Ball mit deinem Paddle am Gegner vorbei, um einen Punkt zu erzielen. Der linke Spieler nutzt W/S, der rechte Spieler die Pfeiltasten (Oben/Unten), um das Paddle zu bewegen.",
+    "howToWin": "So gewinnst du: Erreiche als Erster die Zielpunktzahl oder habe die meisten Punkte, wenn die Zeit abläuft!",
     "leftPlayer": "Linker Spieler",
     "rightPlayer": "Rechter Spieler",
     "cancel": "Abbrechen",
@@ -123,22 +123,22 @@
     "paused": "Pausiert",
     "overtime": "Verlängerung",
     "summary": "Spielzusammenfassung",
-    "win": "Gewonnen",
-    "lose": "Verloren",
-    "duration": "Spielzeit",
+    "win": "Sieg",
+    "lose": "Niederlage",
+    "duration": "Spieldauer",
     "noMatchData": "Keine Spieldaten verfügbar.",
     "rematch": "Revanche",
     "return": "Zurück zur Herausforderungsseite",
     "match_results_sent": "Spielergebnisse erfolgreich übermittelt.",
     "match_history_load_error": "Fehler beim Laden des Spielverlaufs.",
-    "user_stats_load_error": "Fehler beim Laden der Benutzerstatistik.",
+    "user_stats_load_error": "Fehler beim Laden der Spielerstatistiken.",
     "leaderboard_load_error": "Fehler beim Laden der Bestenliste.",
     "match_record_error": "Fehler beim Aufzeichnen der Spielergebnisse.",
-    "end": "Beenden"
+    "end": "Ende"
   },
   "profile": {
     "profile": "Profil",
-    "pers_info": "Persönliche Infos",
+    "pers_info": "Persönliche Informationen",
     "disp_name": "Anzeigename",
     "credentials": "Zugangsdaten",
     "username": "Benutzername",
@@ -152,7 +152,7 @@
     "update_err": "Fehler beim Aktualisieren des Profils",
     "loading": "Änderungen werden gespeichert...",
     "delete_account": "Konto wird gelöscht, bitte warten...",
-    "delete_confirm": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Dies kann nicht rückgängig gemacht werden.",
+    "delete_confirm": "Bist du sicher, dass du dein Konto löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
     "deleting": "Konto wird gelöscht...",
     "delete_success": "Konto erfolgreich gelöscht! Weiterleitung...",
     "yes": "Ja",
@@ -166,24 +166,55 @@
     "selected": "Ausgewählte Spieler",
     "choose": "Wählen",
     "winn_is": "Und der Gewinner ist...",
-    "start": "Starten"
+    "start": "Start"
   },
-  "error": {
-    "db": {
-      "already_exists": "Datensatz existiert bereits.",
-      "referenced_not_found": "Referenzierte Ressource nicht gefunden.",
-      "missing_fields": "Erforderliche Felder fehlen.",
-      "invalid_format": "Ungültiges Datenformat.",
-      "permission_denied": "Datenbankzugriff verweigert.",
-      "service_unavailable": "Dienst der Datenbank ist vorübergehend nicht verfügbar.",
-      "storage_error": "Speicherfehler oder Laufwerk ist voll.",
-      "too_large": "Eingabedaten sind zu groß.",
-      "comparison_mismatch": "String-Kollation stimmt nicht überein.",
-      "unexpected": "Unerwarteter Datenbankfehler."
+  "validation": {
+    "username": {
+      "required":  "Benutzername ist erforderlich",
+      "max_len": "Benutzername darf maximal 20 Zeichen lang sein",
+      "symbols": "Benutzername darf nur Kleinbuchstaben, Ziffern, Punkte und Unterstriche enthalten",
+      "end_dot": "Benutzername darf nicht mit einem Punkt oder Unterstrich beginnen oder enden",
+      "con_sep": "Benutzername darf keine aufeinanderfolgenden Trennzeichen enthalten"
     },
-    "404": "Nicht gefunden",
-    "common": {
-      "validation_failed": "Bitte überprüfen Sie die Formularfelder auf Richtigkeit.",
-      "unexpected": "Ein Fehler ist beim Verarbeiten Ihrer Anfrage aufgetreten."  
+    "email": {
+      "required": "E-Mail ist erforderlich",
+      "invalid": "Ungültige E-Mail-Adresse"
+    },
+    "password": {
+      "required": "Passwort ist erforderlich",
+      "min_len": "Passwort muss mindestens 8 Zeichen lang sein",
+      "upper": "Passwort muss mindestens einen Großbuchstaben enthalten",
+      "lower": "Passwort muss mindestens einen Kleinbuchstaben enthalten",
+      "digit": "Passwort muss mindestens eine Ziffer enthalten"
+    },
+    "display": {
+      "required": "Anzeigename ist erforderlich",
+      "min_len": "Anzeigename darf maximal 20 Zeichen lang sein"
+    },
+    "avatar": {
+      "mime": "Ungültiger Dateityp. Erlaubt: PNG, JPEG, WebP",
+      "size": "Datei zu groß. Maximale Größe ist 5 MB"
     }
-}}
+  },
+
+  "error": {
+    "general": "Etwas ist schiefgelaufen",
+    "404": "Nicht gefunden",
+    "bannerError": "Fehler beim Laden des Bannerbildes",
+    "common": {
+      "unauthorized": "Du bist nicht berechtigt, diese Aktion auszuführen.",
+      "validation_failed": "Bitte überprüfe die Formularfelder auf Korrektheit.",
+      "unexpected": "Ein Fehler ist bei der Bearbeitung deiner Anfrage aufgetreten."
+    },
+    "auth_missing_credentials": "Keine Zugangsdaten zum Aktualisieren vorhanden!",
+    "invalid_user_credentials": "Ungültige Zugangsdaten",
+    "missing_email_or_username": "E-Mail oder Benutzername fehlt!",
+    "missing_pass": "Passwort fehlt!",
+    "missing_OAuth_code": "OAuth-Code fehlt!",
+    "delete_acc_fail": "Löschen des Kontos fehlgeschlagen",
+    "log_out_fail": "Abmeldung fehlgeschlagen",
+    "signup_fail": "Registrierung fehlgeschlagen",
+    "pass_mismatch": "Passwörter stimmen nicht überein",
+    "user_not_found": "Benutzer nicht gefunden"
+  }
+}
