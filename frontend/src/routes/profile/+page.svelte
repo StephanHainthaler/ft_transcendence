@@ -10,7 +10,7 @@
   import * as Dialog from "$lib/components/ui/dialog";
   import { Trash } from "@lucide/svelte";
   import { toast } from "svelte-sonner";
-  import { validateInputThrow, validateAvatarFile } from "@lib/validation/inputValidation.svelte";
+  import { validateInputThrow, validateAvatarFile } from "@lib/validation/inputValidation";
     import { isAppError } from "@lib/types/error";
 
   type ProfilePageData = {

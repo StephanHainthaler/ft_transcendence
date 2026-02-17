@@ -11,8 +11,8 @@ export async function updateRequest({
 }) {
   if (!email && !user_name && !passwd) {
     
-    throw new Error("auth_missing_credentials"), { 
-    isAppError: true } as AppError;
+    throw Object.assign(new Error("auth_missing_credentials"), { 
+    isAppError: true }) as AppError;
   }
   const req = new Request(`${import.meta.env.VITE_API_URL}/auth/update`, {
     method: 'PATCH',
@@ -30,10 +30,10 @@ export async function updateRequest({
 export async function signupRequest(
   info: SignupRequestBody, ): Promise<AuthResponseSuccess> {
   if (!info.user_name || !info.email)
-    throw new Error("missing_email_or_username"), { 
-    isAppError: true } as AppError;
-  if (!info.passwd) throw new Error("missing_pass"), { 
-    isAppError: true } as AppError;
+    throw Object.assign(new Error("missing_email_or_username"), { 
+    isAppError: true }) as AppError;
+  if (!info.passwd) throw Object.assign(new Error("missing_pass"), { 
+    isAppError: true }) as AppError;
 
   const signupReq = new Request(`${import.meta.env.VITE_API_URL}/auth/sign-up`, {
     method: 'POST',
@@ -50,11 +50,12 @@ export async function signupRequest(
 
 export async function loginRequest(
   info: LoginRequestBody, ): Promise<AuthResponseSuccess> {
-  if ((!info.user_name && !info.email))
-    throw new Error("missing_email_or_username"), { 
-    isAppError: true } as AppError;
-  if (!info.passwd) throw new Error("missing_pass"), { 
-    isAppError: true } as AppError;
+  if ((!info.user_name && !info.email)){
+    throw Object.assign(new Error("missing_email_or_username"), { 
+    isAppError: true }) as AppError;}
+  if (!info.passwd) {
+    throw Object.assign(new Error("missing_pass"), { 
+    isAppError: true }) as AppError;}
 
   const login: Request = new Request(`${import.meta.env.VITE_API_URL}/auth/login`, {
     method: 'POST',
@@ -72,8 +73,8 @@ export async function loginRequest(
 export async function oauthRequest(
   info: OAuthCallBackBody, ): Promise<AuthResponseSuccess> {
   if (!info.code)
-    throw new Error("missing_OAuth_code"), { 
-    isAppError: true } as AppError;
+    throw Object.assign(new Error("missing_OAuth_code"), { 
+    isAppError: true }) as AppError;
 
   const oauth: Request = new Request(`${import.meta.env.VITE_API_URL}/auth/github-oauth`, {
     method: 'POST',

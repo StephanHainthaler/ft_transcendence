@@ -226,19 +226,24 @@ export class ApiClient {
 
   async login(info: LoginRequestBody) {
     try {
-      const authResponse = await loginRequest(info);
-      this.authStore.set(authResponse.auth)
-      const response = await getUser()
-      this.userStore.set(response.user);
+      try {
+        const authResponse = await loginRequest(info);
+        this.authStore.set(authResponse.auth)
+        const response = await getUser();
+        this.userStore.set(response.user);
+      } catch (e: any) {
+        if (isAppError(e))
+          throw e;
+        throw Object.assign(new Error("invalid_user_credentials"), { 
+          isAppError: true} as AppError)
+      }
       this.loggedIn = true;
     } catch (e: any) {
-      console.error(`Login Failed: ${e.message || e}`);
       if (isAppError(e))
       {
-        console.error(`Login Failed: 1`);
+        console.error(`Login Failed: `, e.message);
         throw e;
       }
-      console.error(`Login Failed: 2`);
       const error = new Error(`Login Failed: ${e.message || e}`)
       throw error;
     }

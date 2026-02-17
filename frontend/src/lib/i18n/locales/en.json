@@ -207,12 +207,14 @@
       "unexpected": "An error occurred while processing your request."
     },
     "auth_missing_credentials": "No Credentials to update!",
+    "invalid_user_credentials": "Invalid user credentials",
     "missing_email_or_username": "Missing Email or Username!",
     "missing_pass": "Missing Password!",
     "missing_OAuth_code": "Missing OAuth Code!",
     "delete_acc_fail": "Failed to Delete Account",
     "log_out_fail": "Failed to log out",
     "signup_fail": "",
-    "pass_mismatch": "Passwords don't match"
+    "pass_mismatch": "Passwords don't match",
+    "user_not_found": "User not found"
   }
 }

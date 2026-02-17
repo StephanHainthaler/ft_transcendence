@@ -27,7 +27,8 @@
       validateInputThrow(userPasswordBuffer, { type: 'password' });
 
       if (userPasswordBuffer !== userPasswordRepeatBuffer) {
-        throw new Error("pass_mismatch"), {isAppError: true} as AppError;
+        throw Object.assign(new Error("pass_mismatch"),
+        {isAppError: true}) as AppError;
       }
 
       await client.signup({
@@ -39,7 +40,7 @@
       await goto('/');
     } catch (e: any) {
       if (isAppError(e))
-        errorMessage = $t('error.', e.message) || $t('error.general');
+        errorMessage = $t('error.'+ e.message) || $t('error.general');
       else
         errorMessage = e.message || e.error || JSON.stringify(e);
     } finally {

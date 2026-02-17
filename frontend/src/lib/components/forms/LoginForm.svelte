@@ -7,7 +7,11 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import { goto } from "$app/navigation";
   import { t } from "@lib/i18n/i18n";
-    import { isAppError } from "@lib/types/error";
+  import { isAppError } from "@lib/types/error";
+
+  let user_nameBuffer = $state("");
+  let userPasswordBuffer = $state("");
+  let errorMessage = $state("");
 
   const handleLoginFormSubmit = async (e: Event) => {
     e.preventDefault();
@@ -27,15 +31,11 @@
       goto('/');
     } catch (e: any) {
       if (isAppError(e))
-        errorMessage = $t('error.', e.message);
+        errorMessage = $t('error.' + e.message);
       else
         errorMessage = e.message || e.toString();
     }
   }
-
-  let user_nameBuffer = $state("");
-  let userPasswordBuffer = $state("");
-  let errorMessage = $state("");
 
 </script>
 
