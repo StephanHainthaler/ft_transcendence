@@ -5,7 +5,7 @@ export function sqliteErrorToApiError(error: unknown): ApiError {
     const code = (error as any).code as string;
     const message = (error as any).message || 'Database error';
 
-    console.error(error);
+    if (error instanceof ApiError) return error;
 
     switch (code) {
       case 'SQLITE_CONSTRAINT':

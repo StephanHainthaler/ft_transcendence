@@ -20,7 +20,7 @@ async function start()
 {
 	try {
 		// Initializing the database
-		initDB('./db/game_stats.db'); 
+		initDB('./db/game_stats.db');
 
 		server.setErrorHandler((error, request, reply) =>
 		{
@@ -47,6 +47,7 @@ async function start()
 		// Register Health Check
 		server.register(registerHealthRoute);
 
+		// Register routes with prefix /v1
 		server.register(gameStatsRoutes, { prefix: '/v1' });
 
 		// Start the server

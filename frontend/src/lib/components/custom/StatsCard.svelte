@@ -3,7 +3,7 @@
   let { label, value } = $props();
 </script>
 
-<Card.Root class="relative overflow-hidden border-border bg-card/30 backdrop-blur-md group hover:border-primary/50 transition-all duration-500">
+<Card.Root class="relative overflow-hidden border-border bg-card/30 backdrop-blur-md group hover:border-primary/50 transition-all duration-500 justify-between">
   <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
   
   <Card.Header class="p-4 pb-0"> 

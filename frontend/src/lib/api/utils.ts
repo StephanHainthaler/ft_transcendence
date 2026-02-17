@@ -1,8 +1,12 @@
 export async function request(req: Request): Promise<any> {
-  const response = await fetch(req);
-
-  const data = await response.json();
-  if (!response.ok)
+  const response = await fetch(req, {
+  credentials: 'include',
+});
+  let data;
+  try {
+    data = await response.json();
+  } catch {}
+  if (!response.ok && data)
     throw data;
   return data;
 }

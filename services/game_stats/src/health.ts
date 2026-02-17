@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 
 async function handleHealthCheck()
 {
-	return {status: "ok"};
+	return { status: "healthy" };
 }
 
 export async function registerHealthRoute(app: FastifyInstance)
