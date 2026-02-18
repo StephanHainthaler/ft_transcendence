@@ -4,6 +4,7 @@
   "welcome": "Welcome",
   "play": "Play",
   "moto": "ARENA_READY: LINK YOUR PADDLE TO THE GRID",
+  "healthcheck": "Check Connection",
   "login": {
     "login": "Login",
     "username": "Email or Username",
@@ -26,7 +27,8 @@
     "pass_repeat": "Repeat your password",
     "pass_confirm": "Confirm your password",
     "loading": "Signing up...",
-    "pass_no_match": "Passwords don't match"
+    "pass_no_match": "Passwords don't match",
+    "username_taken": "Username or Email already taken"
   },
   "OAuth": {
     "oauth": "OAuth",
@@ -96,7 +98,12 @@
     "remove": "Remove",
     "cancel": "Cancel",
     "accept": "Accept",
-    "reject": "Reject"
+    "reject": "Reject",
+    "remove_fail": "Failed to remove friendship",
+    "accept_fail": "Failed to accept friendship",
+    "send_fail": "Failed to send friendship request",
+    "doesnt_exist": "Person doesn't exist",
+    "load_fail": "Failed to load friends"
   },
   "game": {
     "game": "Game",
@@ -144,6 +151,7 @@
     "username": "Username",
     "email": "Email",
     "password": "Password",
+    "new_pass": "new-password",
     "pass_repeat": "Repeat Password",
     "save": "Save Changes",
     "cancel": "Cancel",
@@ -158,7 +166,8 @@
     "yes": "Yes",
     "no": "No",
     "delete_err": "Error deleting account",
-    "avatar_btn": "Upload Avatar"
+    "avatar_btn": "Upload Avatar",
+    "loading2": "Loading..."
   },
   "tournament": {
     "tournament": "Tournament",
@@ -166,7 +175,10 @@
     "selected": "Selected Players",
     "choose": "Choose",
     "winn_is": "And the Winner is...",
-    "start": "Start"
+    "start": "Start",
+    "inval_user_count": "Invalid User count!",
+    "description": "Please select an even number or Participants",
+    "remove": "Remove"
   },
   "validation": {
     "username": {
@@ -213,8 +225,9 @@
     "missing_OAuth_code": "Missing OAuth Code!",
     "delete_acc_fail": "Failed to Delete Account",
     "log_out_fail": "Failed to log out",
-    "signup_fail": "",
+    "signup_fail": "Failed to sign up",
     "pass_mismatch": "Passwords don't match",
+    "pass_required": "Password is required",
     "user_not_found": "User not found"
   }
 }

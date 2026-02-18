@@ -237,7 +237,7 @@ export function authRoutes(fastify: FastifyInstance) {
           .code(409)
           .send({
             success: false,
-            message: "Username or Email already taken"
+            message: "signup.username_taken"
         });
 
       const tempAuthUser: Partial<AuthUser> = { user_name: user_name, email };

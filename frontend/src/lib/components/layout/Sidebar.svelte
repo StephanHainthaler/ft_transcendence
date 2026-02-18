@@ -8,8 +8,8 @@
 
   const isLoggedIn = $derived(client.loggedIn);
 
-  const handleLogout = () => {
-    client.logout();
+  const handleLogout = async ()  => {
+    await client.logout();
     toast.success($t('login.logout') || 'Successfully logged out');
   };
 

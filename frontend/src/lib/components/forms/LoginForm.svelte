@@ -7,7 +7,7 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import { goto } from "$app/navigation";
   import { t } from "@lib/i18n/i18n";
-  import { isAppError } from "@lib/types/error";
+  import { isAppError, type AppError } from "@lib/types/error";
 
   let user_nameBuffer = $state("");
   let userPasswordBuffer = $state("");
@@ -18,7 +18,8 @@
     e.stopPropagation();
 
     try {
-      if (!userPasswordBuffer) throw new Error('Password is required');
+      if (!userPasswordBuffer)
+        throw Object.assign(new Error('pass_required'), {isAppError: true}) as AppError;
       const email = validateInput(user_nameBuffer, { type: 'email' }).input;
       const user_name = validateInput(user_nameBuffer, { type: 'username' }).input;
 

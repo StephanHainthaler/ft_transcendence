@@ -9,6 +9,7 @@
   import { client } from "@lib/api/index.svelte";
   import { goto } from "$app/navigation";
 
+  // Перевірка авторизації при завантаженні
   if (client.loggedIn) {
     goto('/');
   }
@@ -19,25 +20,32 @@
 <div class="w-full flex items-center justify-center p-4">
   <Tabs.Root value="login" class="w-full max-w-md">
     <Tabs.List class="grid w-full grid-cols-3">
-      <Tabs.Trigger value="login">{$t('login.login')}</Tabs.Trigger>
-      <Tabs.Trigger value="register">{$t('signup.register')}</Tabs.Trigger>
-      <Tabs.Trigger value="oauth">{$t('OAuth.oauth')}</Tabs.Trigger>
+      <Tabs.Trigger value="login">
+        {$t('login.login', 'Login')}
+      </Tabs.Trigger>
+      <Tabs.Trigger value="register">
+        {$t('signup.register', 'Register')}
+      </Tabs.Trigger>
+      <Tabs.Trigger value="oauth">
+        {$t('OAuth.oauth', 'OAuth')}
+      </Tabs.Trigger>
     </Tabs.List>
-    <Card.Root class="w-full max-w-md shadow-xl">
+    
+    <Card.Root class="w-full max-w-md shadow-xl mt-2">
       <Card.Content class="pt-6 w-full">
         <Tabs.Content value="login">
           <LoginForm />
         </Tabs.Content>
 
-          <Tabs.Content value="register">
-            <SignupForm />
-          </Tabs.Content>
+        <Tabs.Content value="register">
+          <SignupForm />
+        </Tabs.Content>
 
-          <Tabs.Content value="oauth">
-            <OAuthForm />
-          </Tabs.Content>
-        </Card.Content>
-      </Card.Root>
-    </Tabs.Root>
-  </div>
+        <Tabs.Content value="oauth">
+          <OAuthForm />
+        </Tabs.Content>
+      </Card.Content>
+    </Card.Root>
+  </Tabs.Root>
+</div>
 {/if}

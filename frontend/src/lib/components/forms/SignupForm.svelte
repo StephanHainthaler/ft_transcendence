@@ -42,7 +42,11 @@
       if (isAppError(e))
         errorMessage = $t('error.'+ e.message) || $t('error.general');
       else
-        errorMessage = e.message || e.error || JSON.stringify(e);
+      {
+        const rawError = e.message || e.error || String(e);
+        const translationKey = rawError.includes('.') ? `${rawError}` : null;
+        errorMessage = translationKey ? $t(translationKey) : rawError;
+      }
     } finally {
       isLoading = false;
     }
