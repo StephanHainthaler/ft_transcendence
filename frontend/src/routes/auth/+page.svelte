@@ -5,12 +5,12 @@
   import SignupForm from "@lib/components/forms/SignupForm.svelte";
   import OAuthForm from "@lib/components/forms/OAuthForm.svelte";
   import { t } from "@lib/i18n/i18n";
-
+  import { browser } from "$app/environment";
   import { client } from "@lib/api/index.svelte";
   import { goto } from "$app/navigation";
 
   // Перевірка авторизації при завантаженні
-  if (client.loggedIn) {
+if (browser && client.loggedIn) {
     goto('/');
   }
 

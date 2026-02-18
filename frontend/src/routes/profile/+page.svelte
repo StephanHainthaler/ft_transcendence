@@ -81,18 +81,12 @@
         passwd = session.passwd;
       }
 
-      const updatePromise = client.updateUserInfo(session.user, session.avatarFile);
-      toast.promise(updatePromise, {
-        success: () => {
-          editMode = false;
-          return $t('profile.updated', 'Updated successfully');
-        },
-        loading: $t('profile.loading2', 'Loading...'),
-        error: (e) => $t('profile.update_err', 'Error updating profile'),
-      });
+      const combinedUpdatePromise = Promise.all([
+        client.updateUserInfo(session.user, session.avatarFile),
+        client.updateCredentials({ email, user_name, passwd })
+      ]);
 
-      const updateAuthPromise = client.updateCredentials({ email, user_name, passwd });
-      toast.promise(updateAuthPromise, {
+      toast.promise(combinedUpdatePromise, {
         success: () => {
           editMode = false;
           return $t('profile.updated', 'Updated successfully');
@@ -101,10 +95,16 @@
         error: (e) => $t('profile.update_err', 'Error updating profile'),
       });
     } catch (e: any) {
+      let errorMessage = '';
       if (isAppError(e))
-        toast.error($t('error.'+ e.message)
-        || $t('error.general', 'Something went wrong'));
-      toast.error($t('error.general', 'Something went wrong'));
+        errorMessage = $t('error.'+ e.message) || $t('error.general');
+      else
+      {
+        const rawError = e.message || e.error || String(e);
+        const translationKey = rawError.includes('.') ? `${rawError}` : null;
+        errorMessage = translationKey ? $t(translationKey) : rawError ? rawError : $t('profile.update_err', 'Error updating profile');
+      }
+      toast.error(errorMessage);
     }
   };
 

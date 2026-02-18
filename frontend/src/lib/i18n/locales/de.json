@@ -4,8 +4,9 @@
   "welcome": "Willkommen",
   "play": "Spielen",
   "moto": "ARENA_READY: VERBINDE DEIN PADDLE MIT DEM GRID",
+  "healthcheck": "Verbindung prüfen",
   "login": {
-    "login": "Anmelden",
+    "login": "Anmeldung",
     "username": "E-Mail oder Benutzername",
     "username_ph": "E-Mail oder Benutzernamen eingeben",
     "password": "Passwort",
@@ -15,7 +16,7 @@
     "logout_fail": "Abmeldung fehlgeschlagen"
   },
   "signup": {
-    "signup": "Registrieren",
+    "signup": "Registrierung",
     "register": "Registrieren",
     "username": "Benutzername",
     "username_ph": "Benutzernamen wählen",
@@ -31,14 +32,14 @@
   },
   "OAuth": {
     "oauth": "OAuth",
-    "oauth_gh": "OAuth mit GitHub",
+    "oauth_gh": "Mit GitHub anmelden",
     "error": "Etwas ist schiefgelaufen",
     "error2": "Ein Fehler ist aufgetreten...",
     "redirect": "OAuth-Weiterleitung",
     "go_back": "Zurückgehen...",
     "wait": "Bitte warten...",
-    "success": "Erfolgreich via OAuth authentifiziert",
-    "loading": "GitHub-OAuth wird abgeschlossen..."
+    "success": "OAuth-Autorisierung erfolgreich",
+    "loading": "GitHub-Autorisierung wird abgeschlossen..."
   },
   "sidebar": {
     "login": "Login",
@@ -60,8 +61,8 @@
     "wins": "Siege",
     "losses": "Niederlagen",
     "total_points": "Gesamtpunkte",
-    "streak": "Serie",
-    "highest_score": "Höchstpunktzahl",
+    "streak": "Siegesserie",
+    "highest_score": "Beste Punktzahl",
     "match_history": "Spielverlauf",
     "no_matches": "Keine Spiele gefunden",
     "opponent": "Gegner",
@@ -99,10 +100,10 @@
     "accept": "Annehmen",
     "reject": "Ablehnen",
     "remove_fail": "Löschen der Freundschaft fehlgeschlagen",
-    "accept_fail": "Annehmen der Freundschaft fehlgeschlagen",
+    "accept_fail": "Annehmen der Anfrage fehlgeschlagen",
     "send_fail": "Senden der Anfrage fehlgeschlagen",
-    "doesnt_exist": "Person existiert nicht",
-    "load_fail": "Fehler beim Laden der Freunde"
+    "doesnt_exist": "Benutzer existiert nicht",
+    "load_fail": "Fehler beim Laden der Freundesliste"
   },
   "game": {
     "game": "Spiel",
@@ -119,14 +120,14 @@
     "hard": "Schwer",
     "challengeAI": "KI herausfordern",
     "rules": "Regeln & Anweisungen",
-    "rulesDescription": "Das Spiel beginnt nach dem Starten des Matches.",
-    "howToPlay": "Spielweise: Schlage den Ball mit dem Paddle am Gegner vorbei. Links: W/S, Rechts: Pfeiltasten Oben/Unten.",
-    "howToWin": "Gewinnen: Erreiche zuerst die Zielpunktzahl oder habe bei Zeitablauf die meisten Punkte!",
+    "rulesDescription": "Das Spiel beginnt nach dem Drücken der Starttaste.",
+    "howToPlay": "Spielweise: Schlage den Ball am Gegner vorbei. Linker Spieler: W/S, Rechter Spieler: Pfeiltasten Oben/Unten.",
+    "howToWin": "Gewinnen: Erreiche zuerst das Punktelimit oder habe bei Zeitablauf mehr Punkte!",
     "leftPlayer": "Linker Spieler",
     "rightPlayer": "Rechter Spieler",
     "cancel": "Abbrechen",
     "startMatch": "Match starten",
-    "paused": "Pausiert",
+    "paused": "Pause",
     "overtime": "Verlängerung",
     "summary": "Zusammenfassung",
     "win": "Sieg",
@@ -157,10 +158,10 @@
     "edit": "Bearbeiten",
     "updated": "Erfolgreich aktualisiert",
     "update_err": "Fehler beim Aktualisieren des Profils",
-    "loading": "Speichere Änderungen...",
-    "delete_account": "Konto löschen, bitte warten...",
+    "loading": "Speichern...",
+    "delete_account": "Kontolöschung, bitte warten...",
     "delete_confirm": "Möchten Sie Ihr Konto wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
-    "deleting": "Lösche Konto...",
+    "deleting": "Löschen...",
     "delete_success": "Konto gelöscht! Weiterleitung...",
     "yes": "Ja",
     "no": "Nein",
@@ -173,7 +174,7 @@
     "available": "Verfügbare Spieler",
     "selected": "Ausgewählte Spieler",
     "choose": "Wählen",
-    "winn_is": "Und der Gewinner ist...",
+    "winn_is": "Der Gewinner ist...",
     "start": "Starten",
     "inval_user_count": "Ungültige Spieleranzahl!",
     "description": "Bitte wählen Sie eine gerade Anzahl an Teilnehmern",
@@ -183,13 +184,13 @@
     "username": {
       "required": "Benutzername erforderlich",
       "max_len": "Maximal 20 Zeichen",
-      "symbols": "Nur Kleinbuchstaben, Ziffern, Punkte und Unterstriche",
+      "symbols": "Darf nur Kleinbuchstaben, Ziffern, Punkte und Unterstriche enthalten",
       "end_dot": "Darf nicht mit Punkt oder Unterstrich beginnen/enden",
-      "con_sep": "Keine aufeinanderfolgenden Trennzeichen"
+      "con_sep": "Darf keine aufeinanderfolgenden Trennzeichen enthalten"
     },
     "email": {
       "required": "E-Mail erforderlich",
-      "invalid": "Ungültige E-Mail-Adresse"
+      "invalid": "Ungültiges E-Mail-Format"
     },
     "password": {
       "required": "Passwort erforderlich",
@@ -223,8 +224,9 @@
     "missing_OAuth_code": "OAuth-Code fehlt!",
     "delete_acc_fail": "Löschen fehlgeschlagen",
     "log_out_fail": "Abmeldung fehlgeschlagen",
-    "signup_fail": "Registrierung fehlgeschlagen",
+    "signup_fail": "Registrierungsfehler",
     "pass_mismatch": "Passwörter stimmen nicht überein",
+    "pass_required": "Passwort erforderlich",
     "user_not_found": "Benutzer nicht gefunden"
   }
 }

@@ -10,7 +10,7 @@
 
   const handleLogout = async ()  => {
     await client.logout();
-    toast.success($t('login.logout') || 'Successfully logged out');
+    toast.success($t('login.logout', 'Successfully logged out') || 'Successfully logged out');
   };
 
  </script>
@@ -31,7 +31,7 @@
 
       <span class="transition-all duration-300
                text-sm tracking-tight sm:text-base group-hover:translate-x-0.5 truncate shadow-sm">
-        {$t('main_name')}
+        {$t('main_name', 'Transcendence')}
       </span>
     </a>
     </h1>
@@ -41,7 +41,7 @@
     {#if isLoggedIn}
     <Sidebar.Group>
       <Sidebar.GroupLabel class="px-4 py-3 text-[11px] font-black uppercase text-primary/40">
-        {$t('sidebar.routes')}
+        {$t('sidebar.routes', 'Routes')}
       </Sidebar.GroupLabel>
       
       <Sidebar.GroupContent>
@@ -74,7 +74,7 @@
 
     <Sidebar.Group>
       <Sidebar.GroupLabel class="px-4 text-[11px] font-black uppercase text-primary/40">
-        {$t('sidebar.account')}
+        {$t('sidebar.account', 'Account')}
       </Sidebar.GroupLabel>
       <Sidebar.GroupContent>
         <Sidebar.Menu>
@@ -84,7 +84,7 @@
               onclick={isLoggedIn ? handleLogout : () => goto('/auth')}
             >
               <span class="font-bold uppercase tracking-widest text-[11px]">
-                {isLoggedIn ? $t('sidebar.logout') : $t('sidebar.login')}
+                {isLoggedIn ? $t('sidebar.logout', 'Logout') : $t('sidebar.login', 'Login')}
               </span>
             </Sidebar.MenuButton>
           </Sidebar.MenuItem>
