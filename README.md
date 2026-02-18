@@ -1,4 +1,10 @@
-_This project has been created as part of the 42 curriculum by vvobis, shaintha, khuk, pgober, juitz._
+<div align="center">
+
+![ft_transcendence banner](frontend/src/lib/assets/Banner.png)
+
+_This project has been created as part of the 42 curriculum by [vvobis](https://github.com/vman101), [shaintha](https://github.com/StephanHainthaler), [khuk](https://github.com/catherine21550), [pgober](https://github.com/krissiliv), [juitz](https://github.com/JayuSC2)._
+
+</div>
 
 ## Table of Contents
 
@@ -31,8 +37,9 @@ The project emphasizes full-stack development, team organization, project manage
 | :---                 | :---                      |  :---              | :---            | :---    | :---       | :---       |   :---                    |
 | **Web**              |                           |                    |                 |         |            |            |                           |
 | `-`                  | Frontend Framework        | - [Svelte](https://svelte.dev/)<br> - [Vite](https://vite.dev/guide/)<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Tailwind CSS](https://v2.tailwindcss.com/docs)<br> - [shadcn-Svelte](https://www.shadcn-svelte.com/) | everyone        | Minor   | 1          | ✅        |  - Svelte is simple & fast<br> - Vite makes development quick with instant updates<br> - TypeScript catches bugs early<br> - Tailwind for styling<br> - shadcn/svelte provides pre-built components |
-| `-`                  | Backend Framework         | - [Fastify](https://fastify.dev/docs/latest/)<br> -[TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Node.js](https://nodejs.org/docs/latest/api/) | everyone        | Minor   | 1          | ✅        |  - Fastify is quick & good for building separate services<br> - TypeScript helps avoid mistakes with data types |
+| `-`                  | Backend Framework         | - [Fastify](https://fastify.dev/docs/latest/)<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Node.js](https://nodejs.org/docs/latest/api/) | everyone        | Minor   | 1          | ✅        |  - Fastify is quick & good for building separate services<br> - TypeScript helps avoid mistakes with data types |
 | `-`                  | ORM Database              | - Custom ORM<br> - [SQLite](https://www.sqlite.org/docs.html) via better-sqlite3 | vvobis          | Minor   | 1          | ✅        |  - Custom ORM keeps us in control & type-safe<br> - SQLite is simple to use & works everywhere |
+| `-`                  | Custom-made design system              | - [shadcn-Svelte](https://www.shadcn-svelte.com/)<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Tailwind CSS](https://v2.tailwindcss.com/docs)<br> - [Lucide Icons](https://lucide.dev/)<br> - [Inkscape](https://inkscape.org/)<br> | khuk          | Minor   | 1          | ✅        |  - Provides a consistent visual language with accessible, reusable components and unified iconography |
 | **Accessibility**    |                           |                    |                 |         |            |            |                           |
 | `-`                  | Language Support          | - [shadcn-Svelte](https://www.shadcn-svelte.com/) localization support | khuk            | Minor   | 1          | ✅        |  - Multi-lingual team |
 | `-`                  | Browser compatibility       | - worked automatically | everyone        | Minor   | 1          | ✅        |  - Vite handles older browsers automatically<br> - Tailwind CSS works the same everywhere |
@@ -50,7 +57,7 @@ The project emphasizes full-stack development, team organization, project manage
 | `-`                  | Backend as microservices  | - [Nginx](https://nginx.org/en/docs/) reverse proxy<br> - [Fastify](https://fastify.dev/docs/latest/Reference/) services | everyone        | Major   | 2          | ✅        |  - Microservices let each person work on their own part independently<br> - Nginx puts everything together |
 | **Modules of Choice**|                           |                    |                 |         |            |            |                           |
 | `-`                  | Custom ORM                | - [SQLite](https://www.sqlite.org/docs.html) bindings | vvobis          | Minor   | 1          | ✅        |  - Custom ORM gives us type safety without being complicated |
-| **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
+| **TOTAL**            |                           |                    |                 |         | _19_       |            |                           |
 
 #### Decision against certain Modules
 
@@ -64,9 +71,9 @@ The project emphasizes full-stack development, team organization, project manage
   
 | **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
 |:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | - ORM type safety<br> > TypeScript generics<br> - JWT cross-service auth<br> > RS256 asymmetric signing<br> |
+| vvobis     | Product Owner / Technical Lead / Full-stack Developer, DevOps Engineer | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA, Global Error Handling, Containerization & Deployment | - ORM type safety<br> > TypeScript generics<br> - JWT cross-service auth<br> > RS256 asymmetric signing<br> |
 | shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics, Game Pages Design | - game physics (velocity & collision with paddles)<br> > proper entity collisions & checks before movement<br> - design of user interface of the game associated pages<br> > usage of GridCards, Dialogues and tables |
-| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | - Stats isolation<br> > separate microservice |
+| khuk       | Full-stack Developer   | Write code for assigned features, Testing. Design and implementation of analytical services | Game Stats Microservice, Leaderboard ranking, Persistent Language Support (UKR/EN/DE), UI/UX Stability logic, Global Error Handling & ORM utility enhancements | - Stats isolation<br> > separate microservice<br> - UX Persistence<br> - UI Fallbacks<br> > centralized error interceptors & default i18n values |
 | pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure<br> > env variables<br> - AI fairness<br> > mathematical algorithm vs ML complexity |
 | juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation<br> > algorithm without external libs |
 
@@ -383,22 +390,17 @@ Workflow:
 - [Users via GitHub API](https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28)
 - [Scopes for OAuth apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps)
 
-#### Project-Specific
-- [Example of transcendence from the internet](https://gitlab.com/sada-sil/ft-transcendence)
 
 #### Tools / Frameworks / etc.
 - [The TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-
+- [Inkscape](https://inkscape.org/) — Open-source professional vector graphics software for UI design elements
 - [Fastify Documentation](https://fastify.dev/docs/latest/)
 - [Fastify Getting-Started](https://fastify.dev/docs/latest/Guides/Getting-Started/)
 - [Fastify: Hooks](https://fastify.dev/docs/latest/Reference/Hooks/)
 - [Fastify Route Parameters](https://fastify.dev/docs/latest/Reference/Routes/)
-
 - [Node.js SQLite Tutorial](https://www.sqlitetutorial.net/sqlite-nodejs/)
-
 - [Using fetch with TypeScript](https://kentcdodds.com/blog/using-fetch-with-type-script)
-
-- [OLD points calculator](https://tcdmodules.vercel.app/v14.1?state=48535607)
+- [MDN: HTTP Response Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) — Reference for the global error interceptors
 
 
 #### AI Usage
