@@ -1,0 +1,25 @@
+erDiagram
+    user_stats {
+        INTEGER user_id PK
+        INTEGER wins
+        INTEGER rank
+        INTEGER losses
+        INTEGER total_points
+        INTEGER highest_score
+        INTEGER streak
+    }
+
+    match_history {
+        INTEGER match_id PK
+        INTEGER timestamp
+        INTEGER player_one_id FK
+        INTEGER player_two_id FK
+        INTEGER winner_id FK
+        INTEGER match_duration
+        INTEGER p1_score
+        INTEGER p2_score
+    }
+
+    user_stats ||--o{ match_history : "player_one"
+    user_stats ||--o{ match_history : "player_two"
+    user_stats ||--o{ match_history : "winner"

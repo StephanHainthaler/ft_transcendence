@@ -4,9 +4,6 @@
   import { CircleAlertIcon } from "@lucide/svelte";
   import {t} from "@lib/i18n/i18n";
 
-  // see https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#web-application-flow
-  // https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-github-api-818383862591
-
   let errorMessage: Error | null = $state(null);
   let userError = $state('');
 
@@ -14,10 +11,10 @@
     return crypto.randomUUID();
   }
 
-  // (2) Redirect user to GitHub
   async function GithubRedirect(info: Record<string, string>) {
+    // Внутрішня технічна помилка (для розробника)
     if (!info.client_id || !info.redirect_uri || !info.state) {
-      throw new Error("Missing OAuth information!");
+      throw new Error("Missing OAuth configuration. Check your .env file!");
     }
     try {
       const params = new URLSearchParams(info);
@@ -25,53 +22,50 @@
 
       window.location.href = oauthUrl;
     } catch (e: any) {
-      errorMessage = new Error(`OAuth Failed: ${e.message || e}`)
-      userError = $t('OAuth.error') || 'OAuth Failed';
+      errorMessage = new Error(`OAuth Failed: ${e.message || e}`);
+      // Користувацька помилка з дефолтом
+      userError = $t('OAuth.error', 'Authentication failed. Please try again.');
       console.error(errorMessage);
       throw errorMessage;
     }
   }
 
-  // (1) create a request
   const handleOAuthRequest = async (e: Event) => {
     e.preventDefault();
     e.stopPropagation();
 
     const state = generateState();
-    console.log(state); // OK
-
-    sessionStorage.setItem("oauth_state", state); // safe it in session
+    sessionStorage.setItem("oauth_state", state);
 
     const info = {
       client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
-      redirect_uri: "http://localhost:8080/auth/oauth-callback", // frontend route for redirection
-      // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
-      state, // create a CSRF token
+      redirect_uri: import.meta.env.VITE_GITHUB_REDIRECT_URL,
+      state,
       allow_signup: 'true',
-      scope: 'read:user user:email' // https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
+      scope: 'read:user user:email'
     };
 
     try {
       await GithubRedirect(info);
     } catch (e: any) {
-      errorMessage = new Error(`GH Redirect Failed: ${e.message || e}`)
-      userError = $t('OAuth.error1') || 'GitHub Redirect Failed';
+      errorMessage = new Error(`GH Redirect Failed: ${e.message || e}`);
+      userError = $t('OAuth.error1', $t('OAuth.error', 'GitHub redirection failed.'));
       console.error(errorMessage);
     }
-
   };
 </script>
 
 <form onsubmit={handleOAuthRequest}>
   <Button type="submit" class="w-full">
-    {$t('OAuth.oauth_gh')}
+    {$t('OAuth.oauth_gh', 'Sign in with GitHub')}
   </Button>
+  
   {#if errorMessage}
-  <Alert.Root variant='destructive'>
+  <Alert.Root variant='destructive' class="mt-4">
     <CircleAlertIcon />
-    <Alert.Title>{$t('OAuth.error')}</Alert.Title>
+    <Alert.Title>{$t('OAuth.error', 'Error')}</Alert.Title>
     <Alert.Description>
-      <p>{userError || 'Something went wrong...'}</p>
+      <p>{userError || $t('error.general', 'Something went wrong...')}</p>
     </Alert.Description>
   </Alert.Root>
   {/if}

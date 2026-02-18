@@ -12,7 +12,6 @@
 
   let isLoading = $state(true);
   let errorMessage = $state('');
-  let consoleError = $state('');
 
   // (3) function will be called /oauth-callback
   // It will extract the code and state out of redirect_uri
@@ -39,13 +38,13 @@
     } catch (e: any) {
       const consoleError = new Error(`OAuth Failed: ${e.message || e}`)
       console.error(consoleError);
-      errorMessage = $t('OAuth.error2')|| (e.message || e);
+      errorMessage = $t('OAuth.error2', (e.message || e));
       isLoading = false;
       toast.error(errorMessage);
       throw consoleError;
     }
+    toast.success($t('OAuth.success', 'OAuth Successful'));
     goto("/");
-    toast.success($t('OAuth.success') || 'OAuth Successful');
   }
   
   
@@ -60,24 +59,24 @@
 <div class="w-full flex items-center justify-center p-4">
   <Card.Root class="w-full max-w-md shadow-xl">
     <Card.Header>
-      <Card.Title>{$t('OAuth.redirect')}</Card.Title>
+      <Card.Title>{$t('OAuth.redirect', 'OAuth Redirect')}</Card.Title>
     </Card.Header>
     <Card.Content class="pt-6 w-full flex flex-col gap-4">
       {#if !isLoading}
         <Alert.Root variant='destructive'>
           <CircleAlertIcon />
-          <Alert.Title>{$t('OAuth.error2')}</Alert.Title>
+          <Alert.Title>{$t('OAuth.error2', 'Something went wrong...')}</Alert.Title>
           <Alert.Description>
             {errorMessage}
           </Alert.Description>
         </Alert.Root>
-        <a class={`pr-4 ${buttonVariants({ variant: 'outline' })}`} href="/auth">{$t('OAuth.error2')}</a>
+        <a class={`pr-4 ${buttonVariants({ variant: 'outline' })}`} href="/auth">{$t('OAuth.error2', 'Something went wrong...')}</a>
       {:else}
         <Alert.Root variant='default'>
           <CircleIcon />
-          <Alert.Title>{$t('OAuth.wait') || 'Waiting for OAuth completion'}</Alert.Title>
+          <Alert.Title>{$t('OAuth.wait', 'Waiting for OAuth completion') || 'Waiting for OAuth completion'}</Alert.Title>
           <Alert.Description>
-            {$t('OAuth.loading')}
+            {$t('OAuth.loading', 'Completing GitHub OAuth...')}
           </Alert.Description>
         </Alert.Root>
       {/if}

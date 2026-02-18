@@ -3,5 +3,5 @@
 </script>
 
 <div>
-  {$t('error.404') || "404 not found"}
+  {$t('error.404', '404 not found') || "404 not found"}
 </div>

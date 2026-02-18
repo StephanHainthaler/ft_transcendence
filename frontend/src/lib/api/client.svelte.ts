@@ -5,11 +5,11 @@ import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authR
 import { fetchUserStats, fetchMatchHistory, fetchLeaderboard, sendMatchResults } from "@lib/api/gameStats";
 import type { UserStats, MatchHistoryEntry, MatchSubmissionData } from "@shared/game_stats";
 import type { OAuthCallBackBody } from "@shared/api";
-import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
+import { acceptFriendRequest, checkFriendsOnlineStatus, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
-import { toast } from "svelte-sonner";
-import type { AppError } from "@lib/types/error";
+import { type AppError, isAppError } from "$lib/types/error";
+
 
 export type ApiError = {
   code: number,
@@ -25,6 +25,8 @@ export class ApiClient {
   private readonly userStore: Writable<User | null> = new Writable('user');
   private readonly authStore: Writable<AuthUserClient | null> = new Writable('auth');
   private avatarUrl?: string = $state(undefined);
+  private currentOnlineFriends: number[] = $state([]);
+  private onlineInterval: ReturnType<typeof setInterval> | null = null;
   loggedIn: boolean = $state(false);
   status: 'ready' | 'loading' | 'error' = $state('loading');
 
@@ -88,6 +90,10 @@ export class ApiClient {
 
   set auth(val: AuthUserClient | null) {
     this.authStore.set(val);
+  }
+
+  get onlineFriends(): number[] {
+    return this.currentOnlineFriends;
   }
 
   get isLoggedIn(): boolean {
@@ -177,8 +183,16 @@ export class ApiClient {
     await removeFriendship(friendshipId);
   }
 
+  checkOnlineStatus = async () => {
+    try {
+      if (!this.isLoggedIn) return;
+      const data = await checkFriendsOnlineStatus();
+      this.currentOnlineFriends = data.sessions
+    } catch {}
+  }
+
   /* USER STATS */
-  async getUserStats(userId: number, page: number = 1): Promise<UserStats | null> {
+  async getUserStats(userId: number): Promise<UserStats | null> {
     return await fetchUserStats(userId);
   }
 
@@ -193,7 +207,6 @@ export class ApiClient {
   async sendMatchResults(matchData: MatchSubmissionData) {
     return await sendMatchResults(matchData);
   }
-  
 
   /* AUTH API */
 
@@ -205,23 +218,33 @@ export class ApiClient {
       this.user = userResponse.user;
       this.loggedIn = true;
     } catch (e: any) {
-      const error = new Error(`Signup Failed: ${e.message || e}`)
-      //toast.error(error.message);
-      throw error;
+      console.error("Signup Failed:", e);
+      throw e;
     }
   }
 
 
   async login(info: LoginRequestBody) {
     try {
-      const authResponse = await loginRequest(info);
-      this.authStore.set(authResponse.auth)
-      const response = await getUser()
-      this.userStore.set(response.user);
+      try {
+        const authResponse = await loginRequest(info);
+        this.authStore.set(authResponse.auth)
+        const response = await getUser();
+        this.userStore.set(response.user);
+      } catch (e: any) {
+        if (isAppError(e))
+          throw e;
+        throw Object.assign(new Error("invalid_user_credentials"), { 
+          isAppError: true} as AppError)
+      }
       this.loggedIn = true;
     } catch (e: any) {
+      if (isAppError(e))
+      {
+        console.error(`Login Failed: `, e.message);
+        throw e;
+      }
       const error = new Error(`Login Failed: ${e.message || e}`)
-      //toast.error(error.message);
       throw error;
     }
   }
@@ -256,6 +279,10 @@ export class ApiClient {
     this.userStore.delete();
     this.authStore.delete();
     this.loggedIn = false;
+    if (this.onlineInterval) {
+      clearInterval(this.onlineInterval);
+      this.onlineInterval = null;
+    }
   }
 
   async delete() {
@@ -272,7 +299,7 @@ export class ApiClient {
     email?: string, user_name?: string, passwd?: string
   }) {
     if (!email && !user_name && !passwd) {
-      throw new Error("No Credentials to update!");
+      throw new Error("auth_missing_credentials"), {isAppError: true} as AppError;
     }
     try {
       const authResponse = await updateRequest({
@@ -280,7 +307,10 @@ export class ApiClient {
       });
       this.authStore.set(authResponse.auth)
     } catch (e: any) {
+      if (isAppError(e))
+        throw e;
       const error = new Error(`${e.message || e}`)
+      console.error(`${e.message || e}`);
       throw error;
     }
   }
@@ -295,19 +325,4 @@ export class ApiClient {
     return data.user;
   }
 
-  // handleError(error: any) {
-  //   const e = error as AppError;
-  //   console.error('API Error:', e.code, '\n', e.message || 'An error occurred');
-  //   switch (e.code)
-  //   {
-  //     case 401:
-  //       this.clearSession();
-  //       toast.error('Session expired. Please log in again.');
-  //       goto('/auth');
-  //       break;
-  //     case 403:
-
-  //     default:
-  //       toast.error(e.message || 'An error occurred');
-  //   }
 }

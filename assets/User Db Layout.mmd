@@ -1,0 +1,40 @@
+erDiagram
+    users {
+        INTEGER id PK
+        TEXT name
+        TEXT user_name UK
+    }
+
+    games {
+        INTEGER id PK
+        INTEGER player1
+        INTEGER player2
+        INTEGER score1
+        INTEGER score2
+        TEXT duration
+        TEXT date
+    }
+
+    user_games {
+        INTEGER game_id FK
+        INTEGER user_id FK
+    }
+
+    friendships {
+        INTEGER id PK
+        INTEGER user_from_id FK
+        INTEGER user_to_id FK
+        TEXT status
+    }
+
+    avatars {
+        INTEGER id PK
+        INTEGER user_id FK
+        TEXT location
+    }
+
+    users ||--o{ user_games : "plays"
+    games ||--o{ user_games : "has"
+    users ||--o{ friendships : "from"
+    users ||--o{ friendships : "to"
+    users ||--o| avatars : "has"

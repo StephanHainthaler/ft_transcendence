@@ -17,9 +17,16 @@
   });
 
   onMount(async () => {
-    console.log("The status of the user. IsLoggedIn:  ", data.loggedIn);
-    if (client.loggedIn && client.status !== 'ready')
-      await client.init();
+      console.log("Checking session status...");
+      try {
+        if (client.loggedIn && client.status !== 'ready')
+          await client.init();
+      } catch (err) {
+        console.error("Session invalid on backend. Logging out...");
+        client.loggedIn = false;
+        client.user = null;
+        goto('/auth', { replaceState: true });
+      }
   })
 
   beforeNavigate((nav) => {

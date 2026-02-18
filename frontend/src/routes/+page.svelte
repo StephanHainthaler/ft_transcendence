@@ -74,7 +74,7 @@ const userName = $derived.by(() => {
         </div>
         <div class="md:table-cell text-left max-w-[250px] align-middle truncate pr-2">
           <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tighter italic group-hover:text-accent">
-            {$t('tournament.tournament') || "Tournament"}
+            {$t('tournament.tournament', 'Tournament') || "Tournament"}
           </h2>
         </div>
       </div>

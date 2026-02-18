@@ -7,12 +7,19 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import { goto } from "$app/navigation";
   import { t } from "@lib/i18n/i18n";
+  import { isAppError, type AppError } from "@lib/types/error";
+
+  let user_nameBuffer = $state("");
+  let userPasswordBuffer = $state("");
+  let errorMessage = $state("");
 
   const handleLoginFormSubmit = async (e: Event) => {
     e.preventDefault();
     e.stopPropagation();
 
     try {
+      if (!userPasswordBuffer)
+        throw Object.assign(new Error('pass_required'), {isAppError: true}) as AppError;
       const email = validateInput(user_nameBuffer, { type: 'email' }).input;
       const user_name = validateInput(user_nameBuffer, { type: 'username' }).input;
 
@@ -24,13 +31,12 @@
 
       goto('/');
     } catch (e: any) {
-      errorMessage = e.message || e.toString();
+      if (isAppError(e))
+        errorMessage = $t('error.' + e.message);
+      else
+        errorMessage = e.message || e.toString();
     }
   }
-
-  let user_nameBuffer = $state("");
-  let userPasswordBuffer = $state("");
-  let errorMessage = $state("");
 
 </script>
 

@@ -21,12 +21,12 @@
 
   const historyHeaders = $derived([
     { label: "#ID", class: "w-16 text-center opacity-50" },
-    { label: $t('stats.played'), class: "text-center hidden md:table-cell" },
-    { label: $t('stats.opponent'), class: "text-left hidden md:table-cell" },
-    { label: $t('stats.nickname'), class: "text-left hidden md:table-cell" },
-    { label: $t('stats.score'), class: "text-center" },
-    { label: $t('stats.duration'), class: "text-center hidden md:table-cell" },
-    { label: $t('stats.result'), class: "text-right pr-8" }
+    { label: $t('stats.played', 'Played'), class: "text-center hidden md:table-cell" },
+    { label: $t('stats.opponent', 'Opponent'), class: "text-left hidden md:table-cell" },
+    { label: $t('stats.nickname', 'Nickname'), class: "text-left hidden md:table-cell" },
+    { label: $t('stats.score', 'Score'), class: "text-center" },
+    { label: $t('stats.duration', 'Duration'), class: "text-center hidden md:table-cell" },
+    { label: $t('stats.result', 'Result'), class: "text-right pr-8" }
   ]);
 
   function formatDuration(durationMs: number) {
@@ -117,33 +117,33 @@
 
   <div class="flex items-center gap-4 mb-8 justify-center">
     <Button variant="tab" data-active={activeTab === 'stats'} onclick={() => { activeTab = 'stats'; loadData(1); }}>
-      {$t('stats.my_statistics')}
+      {$t('stats.my_statistics', 'My Statistics')}
     </Button>
     <Button variant="tab" data-active={activeTab === 'leaderboard'} onclick={() => { activeTab = 'leaderboard'; loadData(1); }}>
-      {$t('stats.leaderboard')}
+      {$t('stats.leaderboard', 'Leaderboard')}
     </Button>
   </div>
 
   <div class="px-4 max-w-6xl mx-auto space-y-8"> 
     <h1 class="text-4xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_var(--my-primary)]">
-      {activeTab === 'stats' ? $t('stats.title') : $t('leaderboard.title')}
+      {activeTab === 'stats' ? $t('stats.title', 'Player Statistics') : $t('leaderboard.title', 'Global Leaderboard')}
     </h1>
 
     {#if isLoading}
-    <div class="text-center py-20 font-mono animate-pulse text-primary">_ {$t('stats.loading')}</div>
+    <div class="text-center py-20 font-mono animate-pulse text-primary">_ {$t('stats.loading', 'Loading...')}</div>
     {:else}
       {#if activeTab === 'stats'}
         <div class="grid grid-cols-2 sm:grid-cols-6 gap-4">        
-          <StatsCard label={$t('stats.your_rank')} value={stats?.rank} />
-          <StatsCard label={$t('stats.wins')} value={stats?.wins} />
-          <StatsCard label={$t('stats.losses')} value={stats?.losses} />
-          <StatsCard label={$t('stats.total_points')} value={stats?.total_points} />
-          <StatsCard label={$t('stats.streak')} value={stats?.streak} />
-          <StatsCard label={$t('stats.highest_score')} value={stats?.highest_score} />
+          <StatsCard label={$t('stats.your_rank', 'Your Rank')} value={stats?.rank} />
+          <StatsCard label={$t('stats.wins', 'Wins')} value={stats?.wins} />
+          <StatsCard label={$t('stats.losses', 'Losses')} value={stats?.losses} />
+          <StatsCard label={$t('stats.total_points', 'Total Points')} value={stats?.total_points} />
+          <StatsCard label={$t('stats.streak', 'Streak')} value={stats?.streak} />
+          <StatsCard label={$t('stats.highest_score', 'Highest Score')} value={stats?.highest_score} />
         </div>
 
         <h2 class="text-4xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_var(--my-primary)]">
-          {$t('stats.match_history')}
+          {$t('stats.match_history', 'Match History')}
         </h2>
 
     <CyberTable headers={historyHeaders}>
@@ -165,7 +165,7 @@
 
           <td class="p-4 hidden md:table-cell">
             <span class="font-bold text-xs text-white uppercase tracking-wider hidden md:table-cell">
-              {$t('stats.user')} {opponentId}
+              {$t('stats.user', 'User')} {opponentId}
             </span>
           </td>
 
@@ -192,7 +192,7 @@
           <td class="p-4 text-right pr-8">
             <ResultBadge 
               type={isWin ? 'win' : (isDraw ? 'draw' : 'loss')} 
-              label={isWin ? $t('stats.victory') : (isDraw ? $t('stats.draw') : $t('stats.defeat'))} 
+              label={isWin ? $t('stats.victory', 'Victory') : (isDraw ? $t('stats.draw', 'Draw') : $t('stats.defeat', 'Defeat'))} 
             />
           </td>
         </tr>
@@ -202,7 +202,7 @@
           <div class="flex flex-col items-center gap-3 animate-pulse">
             <span class="text-4xl opacity-20 filter grayscale">🎮</span>
             <p class="text-muted-foreground font-mono tracking-widest uppercase text-xs">
-              {$t('stats.no_matches')}
+              {$t('stats.no_matches', 'No matches found in your history')}
             </p>
             <div class="w-16 h-[1px] bg-primary/30"></div>
           </div>
@@ -213,13 +213,13 @@
 
       {:else if activeTab === 'leaderboard'}
         <CyberTable headers={[
-          { label: $t('leaderboard.rank'), class: "w-20 text-center opacity-50" },
-          { label: $t('leaderboard.player_id'), class: "text-left hidden md:table-cell" },
-          { label: $t('leaderboard.nickname'), class: "text-left min-w-[100px]" },
-          { label: $t('leaderboard.games_played'), class: "text-center hidden md:table-cell"},
-          { label: $t('stats.wins'), class: "text-center" },
-          { label: $t('stats.losses'), class: "text-center" },
-          { label: $t('leaderboard.points'), class: "text-center pr-8" }
+          { label: $t('leaderboard.rank', 'Rank'), class: "w-20 text-center opacity-50" },
+          { label: $t('leaderboard.player_id', 'Player ID'), class: "text-left hidden md:table-cell" },
+          { label: $t('leaderboard.nickname', 'Nickname'), class: "text-left min-w-[100px]" },
+          { label: $t('leaderboard.games_played', 'Games played'), class: "text-center hidden md:table-cell"},
+          { label: $t('stats.wins', 'Wins'), class: "text-center" },
+          { label: $t('stats.losses', 'Losses'), class: "text-center" },
+          { label: $t('leaderboard.points', 'Points'), class: "text-center pr-8" }
         ]}>
           {#each leaderboard.filter(player => player.user_id !== 0) as player}
             {#if player.user_id !== 0}
@@ -230,7 +230,7 @@
                 </span>
               </td>
               <td class="p-4 hidden md:table-cell">
-                <span class="font-bold text-xs text-white text-center uppercase tracking-wider hidden md:table-cell">{$t('stats.user')} {player.user_id}</span>
+                <span class="font-bold text-xs text-white text-center uppercase tracking-wider hidden md:table-cell">{$t('stats.user', 'User')} {player.user_id}</span>
               </td>
               <td class="p-4 max-w-[100px] md:max-w-[200px]">
                 <span class="font-black text-sm text-white uppercase tracking-wider group-hover:text-primary transition-colors block truncate">
@@ -251,7 +251,7 @@
               <div class="w-full flex flex-col items-center justify-center gap-3 animate-pulse">
                 <span class="text-4xl opacity-20 filter grayscale">🎮</span>
                 <p class="text-muted-foreground text-center font-mono tracking-widest uppercase text-xs">
-                  {$t('stats.no_matches')}
+                  {$t('stats.no_matches', 'No matches found in your history')}
                 </p>
                 <div class="w-16 h-[1px] bg-primary/30"></div>
               </div>
@@ -264,7 +264,7 @@
       <div class="flex justify-center items-center mt-10 gap-6">
         <Button variant="tab" size="tab" disabled={currentPage <= 1} onclick={() => loadData(currentPage - 1)}>◂</Button>
         <div class="flex flex-col items-center">
-          <span class="text-[10px] uppercase font-black text-muted-foreground">{$t('stats.page')}</span>
+          <span class="text-[10px] uppercase font-black text-muted-foreground">{$t('stats.page', 'Page')}</span>
           <span class="font-mono text-xl font-bold text-primary">{currentPage.toString().padStart(2, '0')}</span>
         </div>
         <Button variant="tab" size="tab" onclick={() => loadData(currentPage + 1)}>▸</Button>
