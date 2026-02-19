@@ -6,6 +6,7 @@ import { eq } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
 import { getUsers } from "./dbHandlers";
 import { AUTH_URL } from "./";
+import { sqliteErrorToApiError } from "@server/orm/error"
 
 function safeParseInt(value: any, name: string, min: number = 0): number {
   const nb = parseInt(value);
@@ -18,7 +19,8 @@ const handleRouteError = (e: any, repl: FastifyReply) => {
   if (e instanceof ApiError || (e.code && typeof e.code === 'number')) {
     return repl.code(e.code).send({ success: false, message: e.message || String(e) });
   }
-  return repl.code(400).send({ success: false, message: e.message || 'Invalid request' });
+  const error = sqliteErrorToApiError(e);
+  return repl.code(error.code).send({ success: false, message: error.message || 'Invalid request' });
 };
 
 const getFriendships = (userId: number) => {
