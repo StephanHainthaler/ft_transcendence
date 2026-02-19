@@ -6,6 +6,7 @@
   import Label from "@lib/components/ui/label/label.svelte";
   import * as Card from "@lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
+  import TwoFactorSetup from "@lib/components/TwoFactorSetup.svelte";
   import { t } from "@lib/i18n/i18n";
   import * as Dialog from "$lib/components/ui/dialog";
   import { Trash } from "@lucide/svelte";
@@ -278,5 +279,11 @@
         </div>
       {/if}
     </form>
+
+    <!-- 2FA Section -->
+    <div class="mt-8">
+      <Separator class="mb-6" />
+      <TwoFactorSetup />
+    </div>
   </Card.Content>
 </Card.Root>

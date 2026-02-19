@@ -131,6 +131,7 @@ export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ use
   const user = { name: authUser.user_name };
   const { user: newUser } = await createUser(user);
   authUser.user_id = newUser.id;
+  authUser.two_fa_enabled = authUser.two_fa_enabled ?? 0;
 
   if (!authUser.passwd) throw new ApiError({ code: 404, message: "Password missing" });
   authUser.passwd = await hashPassword(authUser.passwd);

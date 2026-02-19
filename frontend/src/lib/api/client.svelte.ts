@@ -224,11 +224,16 @@ export class ApiClient {
   }
 
 
-  async login(info: LoginRequestBody) {
+  async login(info: LoginRequestBody & { totp_token?: string }): Promise<{ requires_2fa?: boolean }> {
     try {
       try {
         const authResponse = await loginRequest(info);
-        this.authStore.set(authResponse.auth)
+  
+      if (authResponse.requires_2fa) {
+        return { requires_2fa: true };
+      }
+
+      this.authStore.set(authResponse.auth)
         const response = await getUser();
         this.userStore.set(response.user);
       } catch (e: any) {
@@ -238,6 +243,7 @@ export class ApiClient {
           isAppError: true} as AppError)
       }
       this.loggedIn = true;
+      return {};
     } catch (e: any) {
       if (isAppError(e))
       {
