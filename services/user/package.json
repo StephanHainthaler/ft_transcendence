@@ -3,24 +3,28 @@
   "version": "1.0.0",
   "description": "user service",
   "scripts": {
-    "dev": "tsx watch --env-file=../../env/.env.user ./src/index.ts",
+    "build": "tsc && tsc-alias --dir dist/services/user",
+    "prebuild": "mkdirp db data data/avatar",
+    "dev": "tsx watch --env-file=../../env/dev/.env.user ./src/index.ts",
     "predev": "mkdirp db data data/avatar",
-    "test": "tsx --tsconfig=./tsconfig.json --env-file=../../env/.env.user --test ./tests/*.test.ts"
+    "test": "tsx --tsconfig=./tsconfig.json --env-file=../../env/dev/.env.user --test ./tests/*.test.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
+    "@fastify/multipart": "^9.4.0",
     "@libsql/client": "^0.15.15",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.10.0",
     "better-sqlite3": "^12.4.1",
     "dotenv": "^17.2.3",
     "fastify": "^5.6.2",
+    "pino-pretty": "^13.1.2",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "pino-pretty": "^13.1.2",
     "tsx": "^4.20.6"
   }
 }

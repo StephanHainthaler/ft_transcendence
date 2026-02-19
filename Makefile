@@ -5,7 +5,7 @@ FRONTEND := ./frontend
 BACKEND := ./services
 API_DIR := $(BACKEND)/api
 
-dev:
+dev: install
 	@npm run dev
 
 frontend:
@@ -14,7 +14,7 @@ frontend:
 api:
 	@cd ${API_DIR} && npm run dev
 
-install:
+install: package.json
 	@npm install
 
 clean:
@@ -32,7 +32,7 @@ test-frontend:
 prod: up
 
 up:
-	@docker compose up --build
+	@docker compose up --build -d
 
 down:
 	@docker compose down -v
