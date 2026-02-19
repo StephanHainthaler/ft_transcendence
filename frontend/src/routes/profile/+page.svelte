@@ -6,11 +6,13 @@
   import Label from "@lib/components/ui/label/label.svelte";
   import * as Card from "@lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
-  import {t} from "@lib/i18n/i18n";
+  import TwoFactorSetup from "@lib/components/TwoFactorSetup.svelte";
+  import { t } from "@lib/i18n/i18n";
   import * as Dialog from "$lib/components/ui/dialog";
   import { Trash } from "@lucide/svelte";
   import { toast } from "svelte-sonner";
-  import { validateInputThrow } from "@lib/validation/inputValidation";
+  import { validateInputThrow, validateAvatarFile } from "@lib/validation/inputValidation";
+    import { isAppError } from "@lib/types/error";
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -48,6 +50,12 @@
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) {
+      const avatarError = validateAvatarFile(file);
+      if (avatarError) {
+        toast.error(avatarError);
+        input.value = '';
+        return;
+      }
       session.avatarFile = file;
       if (currentAvatarEl && input.files?.[0]) {
         const url = URL.createObjectURL(file);
@@ -60,39 +68,44 @@
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
-    console.log(session);
-    const updatePromise = client.updateUserInfo(session.user, session.avatarFile);
-    toast.promise(updatePromise, {
-      success: () => {
-        editMode = false;
-        return 'Updated successfully!'
-      },
-      loading: 'Loading...',
-      error: (e) => `Failed to update Account: ${e}`,
-    });
     try {
+      validateInputThrow(session.user.name, { type: 'displayName' });
       const user_name = validateInputThrow(session.auth.user_name, { type: 'username' });
       const email = validateInputThrow(session.auth.email, { type: 'email' });
 
       let passwd;
       if (session.passwd.length > 0) {
+        validateInputThrow(session.passwd, { type: 'password' });
         if (session.passwd !== session.passwdRepeat) {
-          throw new Error("Passwords don't match");
-        } else {
-          passwd = session.passwd;
+          throw Object.assign(new Error("pass_mismatch"), {isAppError: true});
         }
+        passwd = session.passwd;
       }
-      const updateAuthPromise = client.updateCredentials({ email, user_name, passwd });
-      toast.promise(updateAuthPromise, {
+
+      const combinedUpdatePromise = Promise.all([
+        client.updateUserInfo(session.user, session.avatarFile),
+        client.updateCredentials({ email, user_name, passwd })
+      ]);
+
+      toast.promise(combinedUpdatePromise, {
         success: () => {
           editMode = false;
-          return 'Updated successfully!'
+          return $t('profile.updated', 'Updated successfully');
         },
-        loading: 'Loading...',
-        error: (e) => `Failed to update Account: ${e}`,
+        loading: $t('profile.loading2', 'Loading...'),
+        error: (e) => $t('profile.update_err', 'Error updating profile'),
       });
     } catch (e: any) {
-      toast.error(e.message || e);
+      let errorMessage = '';
+      if (isAppError(e))
+        errorMessage = $t('error.'+ e.message) || $t('error.general');
+      else
+      {
+        const rawError = e.message || e.error || String(e);
+        const translationKey = rawError.includes('.') ? `${rawError}` : null;
+        errorMessage = translationKey ? $t(translationKey) : rawError ? rawError : $t('profile.update_err', 'Error updating profile');
+      }
+      toast.error(errorMessage);
     }
   };
 
@@ -103,9 +116,9 @@
     deleteState = 'running';
     const deletePromise = client.delete();
     toast.promise(deletePromise, {
-      success: () => { return 'Deleted successfully!' },
-      loading: 'Loading...',
-      error: (e) => `Failed to delete Account: ${e}`,
+      success: () => { return $t('profile.delete_success', 'Account deleted successfully!') },
+      loading: $t('profile.loading', 'Loading...'),
+      error: (e) => `${$t('profile.delete_err', 'Error deleting account')}: ${e}`,
     });
   }
 
@@ -114,25 +127,25 @@
 <Dialog.Root open={deleteDialogOpen}>
   <Dialog.Content>
     <Dialog.Header>
-      <Dialog.Title>{$t('profile.delete_account')}</Dialog.Title>
+      <Dialog.Title>{$t('profile.delete_account', 'Delete Account')}</Dialog.Title>
     </Dialog.Header>
     <div class="flex flex-col gap-4">
       {#if deleteState === 'none'}
-      <p>{$t('profile.delete_confirm')}</p>
+      <p>{$t('profile.delete_confirm', 'Are you sure you want to delete your account? This action cannot be undone.')}</p>
       <div class="flex gap-4 w-full">
         <Button onclick={async () => { await handleDelete(); deleteDialogOpen = false } }>
-          {$t('profile.yes')}
+          {$t('profile.yes', 'Yes')}
         </Button>
         <Button onclick={() => {
           deleteDialogOpen = false;
         }}>
-          {$t('profile.cancel')}
+          {$t('profile.cancel', 'Cancel')}
         </Button>
       </div>
       {:else if deleteState === 'running' }
-        <p>{$t('profile.deleting')}</p>
+        <p>{$t('profile.deleting', 'Deleting account...')}</p>
       {:else}
-        <p>{$t('profile.delete_success')}</p>
+        <p>{$t('profile.delete_success', 'Account deleted successfully!')}</p>
       {/if}
     </div>
   </Dialog.Content>
@@ -147,8 +160,7 @@
         size="sm"
         onclick={toggleEditMode}
       >
-        {editMode ? $t('profile.cancel') : $t('profile.edit')}
-      </Button>
+        {editMode ? $t('profile.cancel', 'Cancel') : $t('profile.edit', 'Edit')}      </Button>
       <Button
         variant={editMode ? "secondary" : "outline"}
         size="sm"
@@ -156,7 +168,7 @@
       >
         <Trash size='sm'/>
       </Button>
-    </Card.Action>   <Card.Title class="text-3xl">{$t('profile.profile')}</Card.Title>
+    </Card.Action>   <Card.Title class="text-3xl">{$t('profile.profile', 'Profile')}</Card.Title>
   </Card.Header>
   <Card.Content>
     <form class="space-y-6" onsubmit={handleSubmit}>
@@ -184,11 +196,11 @@
 
         {#if editMode}
           <div class="flex-1">
-            <Label for="avatar">{$t('profile.avatar_btn')}</Label>
+            <Label for="avatar">{$t('profile.avatar_btn', 'Upload Avatar')}</Label>
             <Input
               id="avatar"
               type="file"
-              accept="image/*"
+              accept="image/png,image/jpeg,image/webp"
               class="mt-2"
               onchange={handleFileChange}
             />
@@ -200,11 +212,11 @@
 
       <div class="space-y-4">
         <div class="flex justify-between items-center">
-          <h2 class="text-xl font-semibold">{$t('profile.pers_info')}</h2>
+          <h2 class="text-xl font-semibold">{$t('profile.pers_info', 'Personal Info')}</h2>
         </div>
         <Separator />
         <div class="space-y-2">
-          <Label for="display-name">{$t('profile.disp_name')}</Label>
+          <Label for="display-name">{$t('profile.disp_name', 'Display Name')}</Label>
           <Input
             id="display-name"
             bind:value={session.user.name}
@@ -216,11 +228,11 @@
       <Separator />
 
       <div class="space-y-4">
-        <h2 class="text-xl font-semibold">{$t('profile.credentials')}</h2>
+        <h2 class="text-xl font-semibold">{$t('profile.credentials', 'Credentials')}</h2>
         <Separator />
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-2">
-            <Label for="username">{$t('profile.username')}</Label>
+            <Label for="username">{$t('profile.username', 'Username')}</Label>
             <Input
               id="username"
               bind:value={session.auth.user_name}
@@ -228,7 +240,7 @@
             />
           </div>
           <div class="space-y-2">
-            <Label for="email">{$t('profile.email')}</Label>
+            <Label for="email">{$t('profile.email', 'Email')}</Label>
             <Input
               id="email"
               type="email"
@@ -237,7 +249,7 @@
             />
           </div>
           <div class="space-y-2">
-            <Label for="password">{$t('profile.password')}</Label>
+            <Label for="password">{$t('profile.password', 'Password')}</Label>
             <Input
               id="password"
               type="password"
@@ -248,7 +260,7 @@
             />
           </div>
           <div class="space-y-2">
-            <Label for="password-repeat">{$t('profile.pass_repeat')}</Label>
+            <Label for="password-repeat">{$t('profile.pass_repeat', 'Repeat Password')}</Label>
             <Input
               id="password-repeat"
               type="password"
@@ -263,9 +275,15 @@
 
       {#if editMode}
         <div class="flex justify-end pt-4">
-          <Button type="submit">{$t('profile.save')}</Button>
+          <Button type="submit">{$t('profile.save', 'Save Changes')}</Button>
         </div>
       {/if}
     </form>
+
+    <!-- 2FA Section -->
+    <div class="mt-8">
+      <Separator class="mb-6" />
+      <TwoFactorSetup />
+    </div>
   </Card.Content>
 </Card.Root>

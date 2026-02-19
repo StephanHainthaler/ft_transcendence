@@ -22,10 +22,10 @@ async function checkServiceHealth(url?: string): Promise<HealthResponse> {
     response = await fetch(`${url}/health`);
     json = await response.json();
   } catch (e) {
-    return { serviceName: url, status: 'unhealty' };
+    return { serviceName: url, status: 'unhealthy' };
   }
 
-  return { serviceName: 'userService', status: json.status };
+  return { serviceName: url, status: json.status };
 }
 
 export async function healthRoutes(fastify: FastifyInstance) {

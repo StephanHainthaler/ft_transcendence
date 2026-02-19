@@ -5,7 +5,6 @@ import path from 'path';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
-  envDir: '../',
   resolve: {
     alias: {
       '@lib': path.resolve(__dirname, './src/lib'),
@@ -30,8 +29,8 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'dist',
     target: 'esnext',
+    sourcemap: 'inline',
   },
   logLevel: 'error',
 });

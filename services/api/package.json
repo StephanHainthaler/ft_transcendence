@@ -1,14 +1,16 @@
 {
   "name": "@ft_transcendence/api",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsx watch --env-file=../../env/.env.api src/index.ts"
+    "build": "tsc && tsc-alias",
+    "dev": "tsx watch --env-file=../../env/dev/.env.api src/index.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
     "@fastify/http-proxy": "^11.3.0",
     "@types/node": "^24.10.0",
     "fastify": "^5.6.1",
+    "fastify-pino-pretty": "^5.2.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3"
   }
 }

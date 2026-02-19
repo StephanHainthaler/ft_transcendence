@@ -33,11 +33,14 @@ export type AuthValidateRequest = AuthRequestHeader & {
 }
 
 export type AuthLoginReply = {
-  Reply: AuthReplyBasic
+  Reply: AuthReplyBasic & {
+    202: { success: boolean, requires_2fa: boolean, message: string }
+  }
   Body: {
     user_name?: string,
     email?: string,
-    passwd: string
+    passwd: string,
+    totp_token?: string,
   }
 }
 
@@ -77,6 +80,17 @@ export type AuthUpdateRequest = AuthRequestHeader & {
 export type AuthDeleteRequest = AuthRequestHeader & {
   Reply: {
     200: { success: true },
+    '4xx': ErrorResponse,
+    500: ErrorResponse
+  }
+}
+
+export type AuthSessionRequest = {
+  Body: {
+    ids: number[]
+  },
+  Reply: {
+    200: { success: true, sessions: number[] },
     '4xx': ErrorResponse,
     500: ErrorResponse
   }

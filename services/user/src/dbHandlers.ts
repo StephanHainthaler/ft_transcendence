@@ -2,6 +2,7 @@ import { Avatar, User } from "@shared/user";
 import { db } from "./db";
 import { eq, IN } from "@server/orm";
 import { sqliteErrorToApiError } from "@server/orm/error"
+import { ApiError } from "@server/error/apiError";
 import { writeFile, unlink } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -98,7 +99,8 @@ async function storeAvatar(userId: number, avatar: { buffer: Buffer, mimetype: s
         .from('avatars')
         .insert({ user_id: userId, location: newLocation })
         .select('*')
-        .single()!;
+        .single();
+      if (!newAvatar) throw new ApiError({ code: 500, message: 'Failed to store avatar' });
 
       return newAvatar;
     } else {
@@ -106,7 +108,8 @@ async function storeAvatar(userId: number, avatar: { buffer: Buffer, mimetype: s
       const newAvatar = db.from('avatars')
         .insert({ user_id: userId, location: newLocation })
         .select('*')
-        .single()!;
+        .single();
+      if (!newAvatar) throw new ApiError({ code: 500, message: 'Failed to store avatar' });
       return newAvatar;
     }
   } catch (e: any) {
@@ -120,7 +123,8 @@ export async function createUser(user: User, oauthAvatarUrl?: string): Promise<{
       .from('users')
       .insert(user)
       .select('*')
-      .single()!;
+      .single();
+    if (!newUser) throw new ApiError({ code: 500, message: 'Failed to create user' });
 
     let newAvatar: Avatar | null = null;
     if (oauthAvatarUrl) {
@@ -178,9 +182,10 @@ export async function updateUser(id: number, user: Partial<User>, avatar: { buff
     const updatedUser = db
       .from('users')
       .update(user)
-      .where(eq('id', user.id))
+      .where(eq('id', id))
       .select('*')
-      .single()!;
+      .single();
+    if (!updatedUser) throw new ApiError({ code: 404, message: 'User not found' });
 
     let updatedAvatar = null;
     if (avatar) {
@@ -189,7 +194,7 @@ export async function updateUser(id: number, user: Partial<User>, avatar: { buff
       updatedAvatar = db
         .from('avatars')
         .select('*')
-        .where(eq('user_id', user.id))
+        .where(eq('user_id', id))
         .single();
     }
 

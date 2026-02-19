@@ -2,7 +2,7 @@ import { request } from "./utils";
 import type { User } from "@shared/user";
 
 export const getUser = async () => {
-  const req = new Request(`/api/user`, {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user`, {
     method: "GET",
   });
 
@@ -12,7 +12,7 @@ export const getUser = async () => {
 }
 
 export const getUsers = async () => {
-  const req = new Request('/api/user/all', {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user/all`, {
     method: 'get',
   })
 
@@ -28,7 +28,7 @@ export const updateUser = async (user: Partial<User>, avatar?: File) => {
     userForm.append('avatar', avatar)
   userForm.append('user', JSON.stringify(user));
 
-  const req = new Request('/api/user/update', {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user/update`, {
     method: 'post',
     body: userForm
   });
@@ -39,7 +39,7 @@ export const updateUser = async (user: Partial<User>, avatar?: File) => {
 }
 
 export const getFriends = async () => {
-  const req = new Request('/api/user/friend/', {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user/friend`, {
     method: 'get',
   })
 
@@ -49,7 +49,7 @@ export const getFriends = async () => {
 }
 
 export const acceptFriendRequest = async (reqId: number) => {
-  const req = new Request(`/api/user/friend/accept/${reqId}`, {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user/friend/accept/${reqId}`, {
     method: 'post',
   });
 
@@ -58,8 +58,16 @@ export const acceptFriendRequest = async (reqId: number) => {
   return data;
 }
 
+export const checkFriendsOnlineStatus = async () => {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user/friend/online`)
+
+  const data = await request(req);
+
+  return data;
+}
+
 export const sendFriendRequest = async (friendId: number) => {
-  const req = new Request(`/api/user/friend/request/${friendId}`, {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user/friend/request/${friendId}`, {
     method: 'post',
   });
 
@@ -69,7 +77,7 @@ export const sendFriendRequest = async (friendId: number) => {
 }
 
 export const removeFriendship = async (friendshipId: number) => {
-  const req = new Request(`/api/user/friend/remove/${friendshipId}`, {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/user/friend/remove/${friendshipId}`, {
     method: 'delete',
   });
 
