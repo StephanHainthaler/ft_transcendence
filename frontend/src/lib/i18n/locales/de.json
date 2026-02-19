@@ -205,7 +205,10 @@
     "start": "Starten",
     "inval_user_count": "Ungültige Spieleranzahl!",
     "description": "Bitte wählen Sie eine gerade Anzahl an Teilnehmern",
-    "remove": "Entfernen"
+    "remove": "Entfernen",
+    "failed": "Seitendaten konnten nicht geladen werden",
+    "no_users": "Keine Benutzer gefunden!",
+    "no_users_desc": "Es gibt keine anderen Benutzer zum Herausfordern. Lade Freunde ein!"
   },
   "validation": {
     "username": {

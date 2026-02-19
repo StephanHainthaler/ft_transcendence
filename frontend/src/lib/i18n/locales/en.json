@@ -205,7 +205,10 @@
     "start": "Start",
     "inval_user_count": "Invalid player count!",
     "description": "Please select an even number of participants",
-    "remove": "Remove"
+    "remove": "Remove",
+    "failed": "Failed to load Page Data",
+    "no_users": "No users found!",
+    "no_users_desc": "There are no other users to challenge. Invite your friends to play!"
   },
   "validation": {
     "username": {

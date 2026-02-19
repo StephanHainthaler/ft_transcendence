@@ -17,6 +17,7 @@
   import { aiUser } from "@lib/game";
   import PongGame from "@lib/components/game/PongGame.svelte";
   import { Tournament } from "@lib/tournament/tournament";
+    import { isAppError } from "../../lib/types/error";
 
   let availableUsers: AppUser[] = $state([]);
   let selectedUsers: AppUser[] = $state([]);
@@ -46,7 +47,6 @@
   }
 
   const startTournament = () => {
-    // Додаємо дефолтні повідомлення для тостів
     if (selectedUsers.length % 2 !== 0) {
       toast.error($t('tournament.inval_user_count', 'Invalid player count!'), {
         description: $t('tournament.description', 'Please select an even number of participants.')
@@ -69,15 +69,24 @@
       const data = await client.getUsers();
       console.log(data);
       availableUsers = data;
-
+      if (!availableUsers || availableUsers.length === 0) {
+        throw Object.assign(new Error($t('tournament.no_users', 'No users found!')), {isAppError: true}, {
+          description: $t('tournament.no_users_desc', 'There are no other users to challenge. Invite your friends to play!')
+        });
+      }
       // filter out current user
       if (client.user)
         availableUsers = availableUsers.filter((u) => u.id !== client.user!.id);
-
     }
     catch (e: any)
     {
-      toast.error(`Failed to load Page Data: ${e.message || e}`)
+      if (isAppError(e)) {
+        toast.error(e.message, {
+          description: e.description || $t('tournament.load_err_desc', 'Failed to load users for tournament. Please try again later.')
+        });
+      } else {
+        toast.error($t(tournament.failed, 'Failed to load Page Data'));
+      }
     }
   }
 
@@ -139,15 +148,15 @@
 <MatchStartDialog
   bind:dialogOpen={dialogOpen}
   paragraphRecords={{
-      '1': $t('game.howToPlay'),
-      '2': $t('game.howToWin')
+      '1': $t('game.howToPlay', 'How to Play: Reflect the ball past your opponent. Left player: W/S, Right player: Up/Down arrows.'),
+      '2': $t('game.howToWin', 'How to Win: Be the first to reach the point limit or have more points when time runs out!')
   }}
   labelRecords={{
-        [$t('game.leftPlayer')]: client.user!.name,
-        [$t('game.rightPlayer')]: isAi ? $t('game.aiOpponent') : challengedUser.name,
-        [$t('game.pointsToWin')]: String(pointsToWin),
-        [$t('game.matchDuration')]: `${matchDurationInMinutes} ${$t('game.minutes')}`,
-        ...(isAi ? { [$t('game.AIdifficulty')]: AIdifficulty === 1 ? $t('game.easy') : AIdifficulty === 2 ? $t('game.medium') : $t('game.hard') } : {}),
+        [$t('game.leftPlayer', 'Left Player')]: client.user!.name,
+        [$t('game.rightPlayer', 'Right Player')]: isAi ? $t('game.aiOpponent', 'AI Opponent') : challengedUser.name,
+        [$t('game.pointsToWin', 'Points to Win')]: String(pointsToWin),
+        [$t('game.matchDuration', 'Match Duration')]: `${matchDurationInMinutes} ${$t('game.minutes', 'minutes')}`,
+        ...(isAi ? { [$t('game.AIdifficulty', 'AI Difficulty')]: AIdifficulty === 1 ? $t('game.easy', 'Easy') : AIdifficulty === 2 ? $t('game.medium', 'Medium') : $t('game.hard', 'Hard') } : {}),
   }}
   confirmCallBack={async () => await challengeUser(challengedUser)}
 />
@@ -167,7 +176,7 @@
         >
           {#snippet button()}
             <Button onclick={challengeAICallback}>
-              {$t('game.challengeAI')}
+              {$t('game.challengeAI', 'Challenge AI')}
             </Button>
           {/snippet}
         </AiSetup>
@@ -205,8 +214,8 @@
         {challengingUser}
       >
         {#snippet actions()}
-          <Button size="sm" onclick={ returnToChallengePage }>{$t('game.return')}</Button>
-          <Button size="sm" onclick={ startNextMatch }>{$t('game.rematch')}</Button>
+          <Button size="sm" onclick={ returnToChallengePage }>{$t('game.return', 'Return to Challenge Page')}</Button>
+          <Button size="sm" onclick={ startNextMatch }>{$t('game.rematch', 'Rematch')}</Button>
         {/snippet}
       </MatchResult>
 
