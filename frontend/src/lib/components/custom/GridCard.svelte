@@ -38,9 +38,9 @@
       <Item.Title>
         <h3 class="text-white text-lg font-medium">{title}</h3>
         {#if isOnline === true}
-          <Badge>{$t('online')}</Badge>
+          <Badge>{$t('online', 'Online')}</Badge>
         {:else if isOnline === false}
-          <Badge variant='destructive'>{$t('offline')}</Badge>
+          <Badge variant='destructive'>{$t('offline', 'Offline')}</Badge>
         {/if}
       </Item.Title>
     </Item.Header>
@@ -56,7 +56,7 @@
       onclick={callback}
       class="min-w-24 transition-colors"
     >
-      {buttonDesc || $t('tournament.choose')}
+      {buttonDesc || $t('tournament.choose', 'Choose')}
     </Button>
     {@render extraBtn?.()}
   </Item.Actions>

@@ -6,5 +6,9 @@ export class ApiError extends Error {
     super(message);
     this.code = code;
     this.message = message;
+    this.name = 'ApiError';
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ApiError);
+    }
   }
 }

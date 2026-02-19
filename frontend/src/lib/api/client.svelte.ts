@@ -8,7 +8,8 @@ import type { OAuthCallBackBody } from "@shared/api";
 import { acceptFriendRequest, checkFriendsOnlineStatus, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
-import { toast } from "svelte-sonner";
+import { type AppError, isAppError } from "$lib/types/error";
+
 
 export type ApiError = {
   code: number,
@@ -27,27 +28,46 @@ export class ApiClient {
   private currentOnlineFriends: number[] = $state([]);
   private onlineInterval: ReturnType<typeof setInterval> | null = null;
   loggedIn: boolean = $state(false);
+  status: 'ready' | 'loading' | 'error' = $state('loading');
 
   constructor() {}
 
   async init() {
-    try {
-      if (!!(this.user && this.auth)) {
-        const userResponse = await this.getUser();
-        const authResponse = await this.getAuth();
-        this.userStore.set(userResponse.user);
-        this.authStore.set(authResponse.auth);
-        this.loggedIn = true;
-      } else {
-        this.loggedIn = false;
-      }
-      this.onlineInterval = setInterval(async () => {
-        await this.checkOnlineStatus()
-      }, 10 * 1000);
-    } catch (e: any) {
-      toast.error(e.message || e);
+    if (!this.user || !this.auth)
+    {
+      this.loggedIn = false;
+      this.status = 'ready';
+      return (this);
     }
-    return this;
+    try
+    {
+      this.status = 'loading';
+      const [userResponse, authResponse] = await Promise.all([
+              this.getUser(),
+              this.getAuth()
+            ]);
+      this.userStore.set(userResponse.user);
+      this.authStore.set(authResponse.auth);
+      this.loggedIn = true;
+      this.status = 'ready';
+    } catch (e: any)
+    {
+      if (e.code === 401 || e.status  === 401) {
+        this.clearSession();
+        this.avatarUrl = undefined;
+        this.loggedIn = false;
+        this.status = 'ready';
+        if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/auth'))
+          {
+            console.log("Session expired or missing. Redirecting to /auth...");
+            goto('/auth');
+          }
+        } 
+        else {
+          this.status = 'error';
+        }
+      }
+    return (this);
   }
 
   /* FRONTEND USAGE */
@@ -177,23 +197,39 @@ export class ApiClient {
       this.user = userResponse.user;
       this.loggedIn = true;
     } catch (e: any) {
-      const error = new Error(`Signup Failed: ${e.message || e}`)
-      toast.error(error.message);
-      throw error;
+      console.error("Signup Failed:", e);
+      throw e;
     }
   }
 
 
-  async login(info: LoginRequestBody) {
+  async login(info: LoginRequestBody & { totp_token?: string }): Promise<{ requires_2fa?: boolean }> {
     try {
-      const authResponse = await loginRequest(info);
+      try {
+        const authResponse = await loginRequest(info);
+  
+      if (authResponse.requires_2fa) {
+        return { requires_2fa: true };
+      }
+
       this.authStore.set(authResponse.auth)
-      const response = await getUser()
-      this.userStore.set(response.user);
+        const response = await getUser();
+        this.userStore.set(response.user);
+      } catch (e: any) {
+        if (isAppError(e))
+          throw e;
+        throw Object.assign(new Error("invalid_user_credentials"), { 
+          isAppError: true} as AppError)
+      }
       this.loggedIn = true;
+      return { requires_2fa: false };
     } catch (e: any) {
+      if (isAppError(e))
+      {
+        console.error(`Login Failed: `, e.message);
+        throw e;
+      }
       const error = new Error(`Login Failed: ${e.message || e}`)
-      toast.error(error.message);
       throw error;
     }
   }
@@ -248,7 +284,7 @@ export class ApiClient {
     email?: string, user_name?: string, passwd?: string
   }) {
     if (!email && !user_name && !passwd) {
-      throw new Error("No Credentials to update!");
+      throw new Error("auth_missing_credentials"), {isAppError: true} as AppError;
     }
     try {
       const authResponse = await updateRequest({
@@ -256,7 +292,10 @@ export class ApiClient {
       });
       this.authStore.set(authResponse.auth)
     } catch (e: any) {
+      if (isAppError(e))
+        throw e;
       const error = new Error(`${e.message || e}`)
+      console.error(`${e.message || e}`);
       throw error;
     }
   }
@@ -270,4 +309,5 @@ export class ApiClient {
     this.userStore.set(data.user);
     return data.user;
   }
+
 }

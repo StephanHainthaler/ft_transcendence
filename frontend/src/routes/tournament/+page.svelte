@@ -46,13 +46,14 @@
   }
 
   const startTournament = () => {
+    // Додаємо дефолтні повідомлення для тостів
     if (selectedUsers.length % 2 !== 0) {
-      toast.error('Invalid User count!', {
-        description: "Please select an even number or Participants"
+      toast.error($t('tournament.inval_user_count', 'Invalid player count!'), {
+        description: $t('tournament.description', 'Please select an even number of participants.')
       });
     } else if (selectedUsers.length === 0) {
-      toast.error(`Invalid User Count!`, {
-        description: "Please Select at least 2 participants"
+      toast.error($t('tournament.inval_user_count', 'Invalid player count!'), {
+        description: $t('tournament.description', 'Please select at least two participants.')
       });
     } else {
       tournament.setPlayers(selectedUsers)
@@ -173,20 +174,24 @@
       </div>
 
       <div class="grid grid-cols-2 gap-4 size-full">
-        <Grid title={$t('tournament.available')}>
+        <Grid title={$t('tournament.available', 'Available Players')}>
           {#each availableUsers as u}
             <GridCard title={u.name} avatarUrl={u.avatarUrl ?? undefined} callback={() => toggleUserSelected(u)}/>
           {/each}
         </Grid>
-        <Grid title={$t('tournament.selected')}>
+        <Grid title={$t('tournament.selected', 'Selected Players')}>
           {#each selectedUsers as u}
-            <GridCard title={u.name} callback={() => toggleUserSelected(u)} buttonDesc='Remove'/>
+            <GridCard 
+                title={u.name} 
+                callback={() => toggleUserSelected(u)} 
+                buttonDesc={$t('tournament.remove', 'Remove')} 
+            />
           {/each}
         </Grid>
       </div>
       <div class="w-full flex justify-end">
         <Button>
-          {$t('game.startTournament')}
+          {$t('game.startTournament', 'Start Tournament')}
         </Button>
       </div>
 

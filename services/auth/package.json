@@ -16,6 +16,8 @@
     "fastify-pino-pretty": "^5.2.0",
     "tsc-alias": "^1.8.16",
     "mkdirp": "^3.0.1",
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0",
     "typescript": "^5.9.3"
   }
 }

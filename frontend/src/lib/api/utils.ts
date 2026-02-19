@@ -1,3 +1,4 @@
+import type { AppError } from "$lib/types/error";
 import { client } from "./index.svelte";
 
 export async function request(req: Request): Promise<any> {
@@ -8,12 +9,20 @@ export async function request(req: Request): Promise<any> {
   let data;
   try {
     data = await response.json();
-  } catch {}
-  if (!response.ok) {
-    if (response.status == 401) {
-      try { client.clearSession()} catch {}
+  } catch {
+    data = null;
+  }
+  if (!response.ok)
+  {
+    if (response.status === 401) 
+      client.clearSession();
+    let error: AppError = {
+      message: data.message || 'An error occurred',
+      code: data.code || response.status,
+      isAppError: false,
+      extra: data.extra || null,
     };
-    throw data ?? { message: `Request failed with status ${response.status}` };
+    throw error;
   }
   return data;
 }
