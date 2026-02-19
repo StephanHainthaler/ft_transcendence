@@ -10,9 +10,9 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@shared/*": ["../../shared/*"],
-      "@server/*": ["../shared-server/*"]
+        "@shared/*": ["../../shared/*"],
+        "@server/*": ["../../services/shared-server/*"]
     }
   },
-  "include": ["src/**/*", "../../shared/**/*"]
+  "include": ["src/**/*", "../shared-server/**/*", "../../shared/**/*"]
 }

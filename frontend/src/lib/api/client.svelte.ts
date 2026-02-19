@@ -5,7 +5,7 @@ import { type LoginRequestBody, type SignupRequestBody } from "@shared/api/authR
 import { fetchUserStats, fetchMatchHistory, fetchLeaderboard, sendMatchResults } from "@lib/api/gameStats";
 import type { UserStats, MatchHistoryEntry, MatchSubmissionData } from "@shared/game_stats";
 import type { OAuthCallBackBody } from "@shared/api";
-import { acceptFriendRequest, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
+import { acceptFriendRequest, checkFriendsOnlineStatus, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
 import { AppUser } from "./appUser";
 import { toast } from "svelte-sonner";
@@ -24,17 +24,26 @@ export class ApiClient {
   private readonly userStore: Writable<User | null> = new Writable('user');
   private readonly authStore: Writable<AuthUserClient | null> = new Writable('auth');
   private avatarUrl?: string = $state(undefined);
+  private currentOnlineFriends: number[] = $state([]);
+  private onlineInterval: ReturnType<typeof setInterval> | null = null;
   loggedIn: boolean = $state(false);
 
   constructor() {}
 
   async init() {
     try {
-      const userResponse = await this.getUser();
-      const authResponse = await this.getAuth();
-      this.userStore.set(userResponse.user);
-      this.authStore.set(authResponse.auth);
-      this.loggedIn = true;
+      if (!!(this.user && this.auth)) {
+        const userResponse = await this.getUser();
+        const authResponse = await this.getAuth();
+        this.userStore.set(userResponse.user);
+        this.authStore.set(authResponse.auth);
+        this.loggedIn = true;
+      } else {
+        this.loggedIn = false;
+      }
+      this.onlineInterval = setInterval(async () => {
+        await this.checkOnlineStatus()
+      }, 10 * 1000);
     } catch (e: any) {
       toast.error(e.message || e);
     }
@@ -61,6 +70,10 @@ export class ApiClient {
 
   set auth(val: AuthUserClient | null) {
     this.authStore.set(val);
+  }
+
+  get onlineFriends(): number[] {
+    return this.currentOnlineFriends;
   }
 
   get isLoggedIn(): boolean {
@@ -129,8 +142,16 @@ export class ApiClient {
     await removeFriendship(friendshipId);
   }
 
+  checkOnlineStatus = async () => {
+    try {
+      if (!this.isLoggedIn) return;
+      const data = await checkFriendsOnlineStatus();
+      this.currentOnlineFriends = data.sessions
+    } catch {}
+  }
+
   /* USER STATS */
-  async getUserStats(userId: number, page: number = 1): Promise<UserStats | null> {
+  async getUserStats(userId: number): Promise<UserStats | null> {
     return await fetchUserStats(userId);
   }
 
@@ -145,7 +166,6 @@ export class ApiClient {
   async sendMatchResults(matchData: MatchSubmissionData) {
     return await sendMatchResults(matchData);
   }
-  
 
   /* AUTH API */
 
@@ -214,6 +234,10 @@ export class ApiClient {
     this.userStore.delete();
     this.authStore.delete();
     this.loggedIn = false;
+    if (this.onlineInterval) {
+      clearInterval(this.onlineInterval);
+      this.onlineInterval = null;
+    }
   }
 
   async delete() {

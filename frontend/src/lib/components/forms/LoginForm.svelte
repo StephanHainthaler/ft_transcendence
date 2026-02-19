@@ -19,8 +19,9 @@
     e.stopPropagation();
 
     try {
-      const email = validateInput(usernameBuffer, { type: 'email' }).input;
-      const user_name = validateInput(usernameBuffer, { type: 'username' }).input;
+      if (!userPasswordBuffer) throw new Error('Password is required');
+      const email = validateInput(user_nameBuffer, { type: 'email' }).input;
+      const user_name = validateInput(user_nameBuffer, { type: 'username' }).input;
 
       const result = await client.login({
         user_name,

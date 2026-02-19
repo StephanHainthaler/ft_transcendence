@@ -2,9 +2,17 @@ import { FastifyInstance } from "fastify";
 import { extractJWTFromHeader } from "@server/jwt/validate";
 import { Avatar, Friendship, User } from "@shared/user";
 import { db } from "./db";
-import { eq, IN } from "@server/orm";
+import { eq } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
 import { getUsers } from "./dbHandlers";
+import { AUTH_URL } from "./";
+
+function safeParseInt(value: any, name: string, min: number = 0): number {
+  const nb = parseInt(value);
+  if (isNaN(nb) || nb < min)
+    throw new ApiError({ code: 400, message: `Invalid parameter: ${name}` });
+  return nb;
+}
 
 const getFriendships = (userId: number): { friends: { user: User, avatar: Avatar | null }[], friendships: Friendship[] } => {
   const friendships = db
@@ -36,10 +44,13 @@ const acceptFriendRequestFromReqId = (toId: number, reqId: number) => {
   db.from('friendships').update({ status: 'accepted' }).where(eq('id', reqId)).and(eq('user_to_id', toId)).run();
 }
 
-const removeFriendship = (reqId: number) => {
-  const q = db.from('friendships').delete().where(eq('id', reqId));
-  console.log(q.stringify());
-  q.run();
+const removeFriendship = (userId: number, reqId: number) => {
+  const friendship = db.from('friendships').select('*').where(eq('id', reqId)).single();
+  if (!friendship)
+    throw new ApiError({ code: 404, message: 'Friendship not found' });
+  if (friendship.user_from_id !== userId && friendship.user_to_id !== userId)
+    throw new ApiError({ code: 403, message: 'Not authorized to remove this friendship' });
+  db.from('friendships').delete().where(eq('id', reqId)).run();
 }
 
 export function friendRoutes(fastify: FastifyInstance) {
@@ -55,12 +66,10 @@ export function friendRoutes(fastify: FastifyInstance) {
       const { friends, friendships } = getFriendships(jwt.payload.sub);
       repl.code(200).send({ success: true, friends, friendships });
     } catch (e: any) {
-      const code = e.code;
-      if (code) {
-        console.error(e);
+      console.error(e);
+      if (typeof e.code === 'number') {
         repl.code(e.code).send({ success: false, message: e.message});
       } else {
-        console.error(e);
         repl.code(500).send({ success: false, message: 'Internal Server Error' });
       }
     }
@@ -78,13 +87,13 @@ export function friendRoutes(fastify: FastifyInstance) {
   }>('/request/:toId', (req, repl) => {
     try {
       const jwt = extractJWTFromHeader(req.cookies.access_token);
-      const toId = req.params.toId;
+      const toId = safeParseInt(req.params.toId, 'toId');
       const friendship = registerFriendRequest(jwt.payload.sub, toId);
       if (!friendship) throw new ApiError({ code: 500, message: 'Failed to create friendship' });
       repl.code(200).send({ success: true, friendship });
     } catch(e: any) {
       console.error(e);
-      if (e.code) {
+      if (typeof e.code === 'number') {
         repl.code(e.code).send({ success: false, message: e.message });
       } else {
         repl.code(500).send({ success: false, message: `Internal Server Error ${e}` });
@@ -104,12 +113,12 @@ export function friendRoutes(fastify: FastifyInstance) {
   }>('/accept/:reqId', (req, repl) => {
     try {
       const jwt = extractJWTFromHeader(req.cookies.access_token);
-      const reqId = req.params.reqId;
+      const reqId = safeParseInt(req.params.reqId, 'reqId');
       acceptFriendRequestFromReqId(jwt.payload.sub, reqId);
       repl.code(200).send({ success: true })
     } catch (e: any) {
       console.error(e);
-      if (e.code) {
+      if (typeof e.code === 'number') {
         repl.code(e.code).send({ success: false, message: e.message });
       } else {
         repl.code(500).send({ success: false, message: "Internal Server Error" });
@@ -129,13 +138,39 @@ export function friendRoutes(fastify: FastifyInstance) {
   }>('/remove/:reqId', (req, repl) => {
     try {
       const jwt = extractJWTFromHeader(req.cookies.access_token);
-      const reqId = req.params.reqId;
-      console.log(jwt, reqId);
-      removeFriendship(reqId);
+      const reqId = safeParseInt(req.params.reqId, 'reqId');
+      removeFriendship(jwt.payload.sub, reqId);
       repl.code(200).send({ success: true });
     } catch (e: any) {
       console.error(e);
-      if (e.code) {
+      if (typeof e.code === 'number') {
+        repl.code(e.code).send({ success: false, message: e.message || e });
+      } else {
+        repl.code(500).send({ success: false, message: 'Internal Server Error' });
+      }
+    }
+  })
+
+  fastify.get('/online', async (req, repl) => {
+    try {
+      const jwt = extractJWTFromHeader(req.cookies.access_token);
+      const friendships = getFriendships(jwt.payload.sub);
+      const friendsIds = friendships.friends.map(f => f.user.id);
+
+      const response = await fetch(`${AUTH_URL}/sessions`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ids: friendsIds }),
+        method: "POST"
+      });
+
+      const data = await response.json();
+      return data;
+
+    } catch (e: any) {
+      console.error(e);
+      if (typeof e.code === 'number') {
         repl.code(e.code).send({ success: false, message: e.message || e });
       } else {
         repl.code(500).send({ success: false, message: 'Internal Server Error' });

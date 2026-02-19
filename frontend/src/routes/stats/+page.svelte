@@ -7,8 +7,7 @@
   import StatsCard from "$lib/components/custom/StatsCard.svelte";
   import CyberTable from "$lib/components/custom/CyberTable.svelte";
   import ResultBadge from "$lib/components/custom/ResultBadge.svelte";
-    import type { ApiClient } from '@lib/api/client.svelte';
-    import type { AppUser } from '@lib/api/appUser';
+  import type { AppUser } from '@lib/api/appUser';
 
   let stats = $state<UserStats | null>(null);
   let history = $state<MatchHistoryEntry[]>([]);
@@ -17,8 +16,6 @@
   let isLoading = $state(true);
   let currentPage = $state(1);
   let usernames = $state<Record<number, string>>({});
-  
-
 
   const historyHeaders = [
     { label: "#ID", class: "w-16 text-center opacity-50" },
@@ -53,7 +50,7 @@ async function loadData(page: number = 1)
     if (activeTab === 'leaderboard')
     {
       const l = await client.getLeaderboard(page);
-      const data = Array.isArray(l) !== null ? l : l?.matches;
+      const data = Array.isArray(l) ? l : l?.matches;
       if (!data || data.length === 0)
       {
         if (page === 1)
@@ -72,7 +69,7 @@ async function loadData(page: number = 1)
         client.getUserStats(userId),
         client.getMatchHistory(userId, page)
       ]);
-      const data = Array.isArray(h) !== null ? h : h?.matches;
+      const data = Array.isArray(h) ? h : h?.matches;
       if (!data || data.length === 0)
       {
         if (page === 1)
@@ -134,7 +131,7 @@ onMount(async() => {
   <div class="text-center py-20 font-mono animate-pulse text-primary">_ {$t('stats.loading')}</div>
   {:else}
     {#if activeTab === 'stats'}
-      <div class="grid grid-cols-2 sm:grid-cols-6 gap-4">        
+      <div class="grid grid-cols-2 sm:grid-cols-6 gap-4">
         <StatsCard label={$t('stats.your_rank')} value={stats?.rank} />
         <StatsCard label={$t('stats.wins')} value={stats?.wins} />
         <StatsCard label={$t('stats.losses')} value={stats?.losses} />
@@ -192,14 +189,14 @@ onMount(async() => {
 
         <td class="p-4 text-right pr-8">
           <ResultBadge 
-            type={isWin ? 'win' : (isDraw ? 'draw' : 'loss')} 
+            type={isWin ? 'win' : (isDraw ? 'draw' : 'loss')}
             label={isWin ? $t('stats.victory') : (isDraw ? $t('stats.draw') : $t('stats.defeat'))} 
           />
         </td>
       </tr>
     {:else}
     <tr>
-      <td colspan="6" class="p-12 text-center bg-primary/5 border-t border-border/30">
+      <td colspan={historyHeaders.length} class="p-12 text-center bg-primary/5 border-t border-border/30">
         <div class="flex flex-col items-center gap-3 animate-pulse">
           <span class="text-4xl opacity-20 filter grayscale">🎮</span>
           <p class="text-muted-foreground font-mono tracking-widest uppercase text-xs">
@@ -233,7 +230,7 @@ onMount(async() => {
             <td class="p-4 hidden md:table-cell">
               <span class="font-bold text-xs text-white text-center uppercase tracking-wider hidden md:table-cell">{$t('stats.user')} {player.user_id}</span>
             </td>
-            <td class="p-4 max-w-[100px] md:max-w-[200px]">
+            <td class="p-4 w-full">
               <span class="font-black text-sm text-white uppercase tracking-wider group-hover:text-primary transition-colors block truncate">
                 {usersFindUsername(player.user_id)}
               </span>
@@ -263,12 +260,12 @@ onMount(async() => {
     {/if}
 
     <div class="flex justify-center items-center mt-10 gap-6">
-      <Button variant="tab" size="tab" disabled={currentPage <= 1} onclick={() => loadData(currentPage - 1)}>◂</Button>
+      <Button variant="tab" size="sm" disabled={currentPage <= 1} onclick={() => loadData(currentPage - 1)}>◂</Button>
       <div class="flex flex-col items-center">
         <span class="text-[10px] uppercase font-black text-muted-foreground">{$t('stats.page')}</span>
         <span class="font-mono text-xl font-bold text-primary">{currentPage.toString().padStart(2, '0')}</span>
       </div>
-      <Button variant="tab" size="tab" onclick={() => loadData(currentPage + 1)}>▸</Button>
+      <Button variant="tab" size="sm" onclick={() => loadData(currentPage + 1)}>▸</Button>
     </div>
   {/if}
 </div>

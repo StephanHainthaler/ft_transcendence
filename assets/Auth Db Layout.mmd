@@ -1,0 +1,19 @@
+erDiagram
+    auth_users {
+        INTEGER id PK
+        INTEGER user_id UK
+        TEXT user_name UK
+        TEXT email UK
+        TEXT passwd
+        INTEGER oauth_id UK
+    }
+
+    sessions {
+        INTEGER auth_id FK
+        INTEGER user_id FK, UK
+        TEXT token
+        INTEGER expires_in
+        INTEGER created_at
+    }
+
+    auth_users ||--o| sessions : "has"

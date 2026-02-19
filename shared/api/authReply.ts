@@ -84,3 +84,14 @@ export type AuthDeleteRequest = AuthRequestHeader & {
     500: ErrorResponse
   }
 }
+
+export type AuthSessionRequest = {
+  Body: {
+    ids: number[]
+  },
+  Reply: {
+    200: { success: true, sessions: number[] },
+    '4xx': ErrorResponse,
+    500: ErrorResponse
+  }
+}
