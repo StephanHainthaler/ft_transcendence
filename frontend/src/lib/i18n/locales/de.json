@@ -168,7 +168,9 @@
     "user_stats_load_error": "Fehler beim Laden der Statistiken.",
     "leaderboard_load_error": "Bestenliste konnte nicht geladen werden.",
     "match_record_error": "Fehler beim Speichern der Ergebnisse.",
-    "end": "Ende"
+    "end": "Ende",
+    "aiSettings": "KI-Einstellungen",
+    "startTournament": "Turnier starten"
   },
   "profile": {
     "profile": "Profil",

@@ -58,7 +58,6 @@
     const gameWinnerId = game.score1 > game.score2 ? game.player1 : game.player2;
     tournament.registerWin(gameWinnerId);
     currentGame = null;
-    // Автоматично не запускаємо, щоб дати юзеру натиснути "Next" між матчами
   }
 
 </script>

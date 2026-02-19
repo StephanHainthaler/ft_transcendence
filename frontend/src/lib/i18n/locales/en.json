@@ -168,7 +168,9 @@
     "user_stats_load_error": "Error loading user stats.",
     "leaderboard_load_error": "Error loading leaderboard.",
     "match_record_error": "Error recording results.",
-    "end": "End"
+    "end": "End",
+    "aiSettings": "AI Settings",
+    "startTournament": "Start Tournament"
   },
   "profile": {
     "profile": "Profile",

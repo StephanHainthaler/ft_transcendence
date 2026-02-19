@@ -19,25 +19,15 @@ i18next.init({
     de: { translation: de }
   },
   interpolation: { escapeValue: false },
-  parseMissingKeyHandler: (key) => {
+  parseMissingKeyHandler: (key, defaultValue) => {
     console.warn(`Missing translation key: ${key}`);
-    return "";
+    return defaultValue || key;
   }
 });
 
 const createI18nStore = () => {
   const safeT = () => (key: string, options?: string) => {
-    let res;
-
-    if (typeof options === 'string')
-      res = i18next.t(key, { defaultValue: options });
-    else
-      res = i18next.t(key, options);
-    if (res === key) {
-      console.warn(`Missing translation for key: ${key}`);
-      return options ? options : "";
-    }
-    return res;
+      return i18next.t(key, options as any);
   };
 
   const { subscribe, set } = writable(safeT());
