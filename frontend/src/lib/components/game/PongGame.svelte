@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Pong } from "@lib/game/pong";
-  import { AppUser } from "$lib/api/appUser";
+  import { AppUser } from "@shared/user";
   import type { MatchSubmissionData } from "@shared/game_stats";
   import { onMount, tick } from "svelte";
 

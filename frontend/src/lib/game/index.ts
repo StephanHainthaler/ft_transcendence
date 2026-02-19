@@ -1,6 +1,9 @@
-import { AppUser } from "@lib/api/appUser";
+import { AppUser } from "@shared/user";
+import { uniqueNamesGenerator, adjectives, colors, starWars } from "unique-names-generator";
 
-export const aiUser = new AppUser({
-  id: 0, //0 to indicate AI user
-  name: "AI Opponent",
-}, null);
+export const aiUser = () => {
+  return new AppUser({
+    id: 0,
+    name: uniqueNamesGenerator({ dictionaries: [adjectives, colors, starWars], style: 'capital', separator: ' ' }),
+  }, null);
+}

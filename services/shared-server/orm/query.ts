@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import { Table } from './table';
+import { table } from 'node:console';
 
 /** The result object returned by Database.run() for INSERT/UPDATE/DELETE queries. */
 export type RunResult = Database.RunResult;
@@ -270,7 +271,7 @@ INSERT INTO "${this.table.name}" (${keys.join(',')})
         return {
           sql: `
 UPDATE "${this.table.name}"
-  SET ${keys.map(k => `${k} = ?`).join(', ')}
+  SET ${keys.map(k => `${k} = ?`).join(', ')} ${this.table.has('updated_at') ? ', updated_at = CURRENT_TIMESTAMP' : ''}
   ${this.constraints.length > 0 ? this.stringifyContraints(this.constraints) : ''}
   ${this.queryTargets ? `RETURNING ${this.queryTargets.join(',')}` : ''}`,
           params: [...values, ...params]
@@ -282,7 +283,7 @@ UPDATE "${this.table.name}"
           .filter(c => c.kind !== 'is' && c.kind !== 'nis')
           .flatMap(p => Array.isArray(p.arg) ? p.arg : [p.arg]);
 
-        const isSoftDelete = this.table.has(['deleted_at']);
+        const isSoftDelete = this.table.has('deleted_at');
         return {
           sql: isSoftDelete
             ? `UPDATE "${this.table.name}" SET deleted_at = CURRENT_TIMESTAMP ${this.stringifyContraints(this.constraints)}`
@@ -323,7 +324,6 @@ UPDATE "${this.table.name}"
    */
   run(): Database.RunResult {
     const { sql, params } = this.stringify();
-    console.log(sql);
     return this.db.prepare(sql).run(...params);
   }
 
@@ -333,7 +333,6 @@ UPDATE "${this.table.name}"
    */
   get(): SelectedRow[] | null {
     const { sql, params } = this.stringify();
-    console.log(sql);
     const ret = this.db.prepare<Argument[], SelectedRow[]>(sql).get(...params);
     return ret || null;
   }
@@ -344,7 +343,6 @@ UPDATE "${this.table.name}"
    */
   single(): SelectedRow | null {
     const { sql, params } = this.stringify();
-    console.log(sql);
     const ret = this.db.prepare<Argument[], SelectedRow[]>(sql).get(...params);
     if (ret && Array.isArray(ret))
       return [...ret][0]
@@ -359,7 +357,6 @@ UPDATE "${this.table.name}"
   //  this.limitCount = undefined;//it broke the limit functionality together with offset
     const { sql, params } = this.stringify();
 
-    console.log(sql);
 
     const rows = this.db.prepare<Argument[], SelectedRow>(sql).all(...params);
 

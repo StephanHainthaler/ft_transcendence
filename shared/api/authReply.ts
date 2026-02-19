@@ -33,11 +33,14 @@ export type AuthValidateRequest = AuthRequestHeader & {
 }
 
 export type AuthLoginReply = {
-  Reply: AuthReplyBasic
+  Reply: AuthReplyBasic & {
+    202: { success: boolean, requires_2fa: boolean, message: string }
+  }
   Body: {
     user_name?: string,
     email?: string,
-    passwd: string
+    passwd: string,
+    totp_token?: string,
   }
 }
 

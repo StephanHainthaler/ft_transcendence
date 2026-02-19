@@ -6,60 +6,105 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import { goto } from "$app/navigation";
-  import {t} from "@lib/i18n/i18n";
+  import { t } from "@lib/i18n/i18n";
+  import { isAppError, type AppError } from "@lib/types/error";
+
+  let usernameBuffer = $state("");
+  let userPasswordBuffer = $state("");
+  let totpToken = $state("");
+  let errorMessage = $state("");
+  let requires2FA = $state(false);
 
   const handleLoginFormSubmit = async (e: Event) => {
     e.preventDefault();
     e.stopPropagation();
 
     try {
-      if (!userPasswordBuffer) throw new Error('Password is required');
-      const email = validateInput(user_nameBuffer, { type: 'email' }).input;
-      const user_name = validateInput(user_nameBuffer, { type: 'username' }).input;
+      if (!userPasswordBuffer)
+        throw Object.assign(new Error('pass_required'), {isAppError: true}) as AppError;
+      const email = validateInput(usernameBuffer, { type: 'email' }).input;
+      const user_name = validateInput(usernameBuffer, { type: 'username' }).input;
 
-      await client.login({
+      const result = await client.login({
         user_name,
         email,
         passwd: userPasswordBuffer,
+        totp_token: requires2FA ? totpToken : undefined,
       });
+
+      // Check if 2FA is required
+      if (result?.requires_2fa) {
+        requires2FA = true;
+        errorMessage = "";
+        return;
+      }
 
       goto('/');
     } catch (e: any) {
-      errorMessage = e.message || e.toString();
+      if (isAppError(e))
+        errorMessage = $t('error.' + e.message, 'An error occurred during authentication');
+      else
+        errorMessage = e.message || e.toString();
     }
   }
-
-  let user_nameBuffer = $state("");
-  let userPasswordBuffer = $state("");
-  let errorMessage = $state("");
 
 </script>
 
 <form class="space-y-6" onsubmit={handleLoginFormSubmit}>
   <div class="space-y-4">
-    <h2 class="text-2xl font-bold text-center">{$t('login.singin')}</h2>
+    <h2 class="text-2xl font-bold text-center">
+      {requires2FA ? $t('login.enter_2fa', 'Two-Factor Authentication') : $t('login.signin', 'Sign In')}
+    </h2>
 
-    <div class="space-y-2">
-      <Label for="username">{$t('login.username')}</Label>
-      <Input 
-        id="user_name"
-        type="text"
-        bind:value={user_nameBuffer}
-        placeholder={$t('login.username_ph')}
-        required
-      />
-    </div>
+    {#if !requires2FA}
+      <div class="space-y-2">
+        <Label for="username">{$t('login.username', 'Username or Email')}</Label>
+        <Input 
+          id="username"
+          type="text"
+          bind:value={usernameBuffer}
+          placeholder={$t('login.username_ph', 'Enter your username or email')}
+          required
+        />
+      </div>
 
-    <div class="space-y-2">
-      <Label for="password">{$t('login.password')}</Label>
-      <Input 
-        id="password"
-        type="password"
-        bind:value={userPasswordBuffer}
-        placeholder={$t('login.password_ph')}
-        required
-      />
-    </div>
+      <div class="space-y-2">
+        <Label for="password">{$t('login.password', 'Password')}</Label>
+        <Input 
+          id="password"
+          type="password"
+          bind:value={userPasswordBuffer}
+          placeholder={$t('login.password_ph', 'Enter your password')}
+          required
+        />
+      </div>
+    {:else}
+      <p class="text-sm text-center text-muted-foreground">
+        {$t('login.enter_2fa_code')}
+      </p>
+      <div class="space-y-2">
+        <Label for="totp">{$t('login.auth_code', 'Authentication Code')}</Label>
+        <Input 
+          id="totp"
+          type="text"
+          bind:value={totpToken}
+          placeholder="000000"
+          maxlength={6}
+          pattern="[0-9]*"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          required
+        />
+      </div>
+      <Button 
+        type="button" 
+        variant="ghost" 
+        class="w-full"
+        onclick={() => { requires2FA = false; totpToken = ''; }}
+      >
+        ← {$t('login.back_to_login', 'Back to login')}
+      </Button>
+    {/if}
   </div>
 
   {#if errorMessage}
@@ -69,6 +114,6 @@
   {/if}
 
   <Button type="submit" class="w-full">
-    {$t('login.signin')}
+    {requires2FA ? $t('login.verify', 'Verify') : $t('login.signin', 'Sign In')}
   </Button>
 </form>

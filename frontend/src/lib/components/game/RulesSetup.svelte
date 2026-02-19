@@ -16,7 +16,7 @@
 </script>
 
 <Grid title={$t('game.settings')}>
-  <div class="w-full justify-center grid grid-cols-1 md:grid-cols-2 gap-2">
+  <div class="w-full justify-evenly grid grid-cols-1 md:grid-cols-2 gap-2">
     <Label class="font-bold text-l md:text-xl">
       {$t('game.pointsToWin')}:
     </Label>

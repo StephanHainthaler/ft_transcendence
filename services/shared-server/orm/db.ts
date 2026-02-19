@@ -54,10 +54,17 @@ export class DB<Schema extends Record<string, any>> {
    */
   create(newTables: Table | Table[]) {
     if (!this.db) throw new Error("No Database provided");
+
     let tables: Table[] = [];
     if (Array.isArray(newTables)) {
+      if (this.tables.some(t => newTables.some(nt => nt.name === t.name))) {
+        throw new Error('Duplicate Table name detected');
+      }
       tables = [...newTables];
     } else {
+      if (this.tables.some(t => newTables.name === t.name)) {
+        throw new Error('Duplicate Table name detected');
+      }
       tables = [newTables];
     }
     const tx = this.db.transaction(() => {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { AppUser } from "@lib/api/appUser";
+  import type { AppUser } from "@shared/user";
   import * as Card from "@lib/components/ui/card";
   import { t } from "@lib/i18n/i18n";
   import type { MatchSubmissionData } from "@shared/game_stats";
@@ -10,11 +10,13 @@
     challengedUser,
     challengingUser,
     actions,
+    nextMatch,
   }: {
     matchData: MatchSubmissionData | null,
     challengedUser: AppUser,
     challengingUser: AppUser,
-    actions: Snippet
+    actions: Snippet,
+    nextMatch?: Snippet
   } = $props();
 
   function formatDuration(durationMs: number) {
@@ -24,13 +26,13 @@
 
 </script>
 
-<Card.Root class="flex-1 min-h-0 flex flex-col">
+<Card.Root class="flex flex-1 min-h-0 flex flex-col size-full">
   <Card.Header>
     <Card.Title class="text-white text-center text-2xl md:text-3xl font-extrabold uppercase drop-shadow-[0_0_10px_var(--my-primary)]">{$t('game.summary')}</Card.Title>
   </Card.Header>
-  <Card.Content class="flex-1 min-h-0 overflow-hidden">
+  <Card.Content class="flex flex-col flex-1 min-h-0 overflow-hidden size-full">
     {#if matchData}
-      <div class="w-full flex justify-center mt-2">
+      <div class="w-full flex flex-col gap-4 justify-center mt-2">
         <table class="w-full text-center text-lg max-w-xl border-collapse mx-auto">
           <colgroup>
             <col style="width:50%;"/>
@@ -45,8 +47,8 @@
               </td>
             </tr>
             <tr>
-              <th class="text-white text-center text-xl font-semibold p-3">{matchData.player_one_id === 0 ? $t('game.aiOpponent') : challengingUser.name}</th>
-              <th class="text-white text-center text-xl font-semibold p-3 ">{matchData.player_two_id === 0 ? $t('game.aiOpponent') : challengedUser.name}</th>
+              <th class="text-white text-center text-xl font-semibold p-3">{challengingUser.name}</th>
+              <th class="text-white text-center text-xl font-semibold p-3 ">{challengedUser.name}</th>
             </tr>
             <tr>
               <td class="text-white text-center text-2xl font-bold p-3">{matchData.p1_score}</td>
@@ -59,6 +61,7 @@
             </tr>
           </tbody>
         </table>
+        {@render nextMatch?.()}
         <style>
           table { border: 1px solid #e5e7eb; border-collapse: collapse; }
           td, th { padding: 0.75rem; }
@@ -69,7 +72,8 @@
     {:else}
       <p>{$t('game.noMatchData')}</p>
     {/if}
-    <div class="w-full flex justify-center gap-4 mt-3">
+    <div class="flex flex-grow"></div>
+    <div class="w-full flex justify-end gap-4 mt-3">
       {@render actions()}
     </div>
   </Card.Content>

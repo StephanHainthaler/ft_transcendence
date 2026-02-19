@@ -19,7 +19,7 @@ export type Check = { col: string, notNull?: boolean, chainOp?: CheckOperator}
  * Represents a database table with columns and constraints
  */
 export class Table {
-  private tableColumns: Model & Record<string, Column> = modelDefinition();
+  private tableColumns;
   private tableName;
   private checks: Check[] = [];
 
@@ -30,7 +30,7 @@ export class Table {
    * @param checks - Optional array of CHECK constraints
    */
   constructor(tableColumns: Record<string, Column>, tableName: string, checks?: Check[]) {
-    Object.assign(this.tableColumns, tableColumns)
+    this.tableColumns = tableColumns;
     this.tableName = tableName;
     if (checks) this.checks = checks;
   }
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS ${this.name} (
     }
     for (const f of fields) {
       if (!Object.keys(this.tableColumns).includes(f)) {
-        throw new Error(`SQL: Table ${this.name} does not include column ${f}`);
+        return false;
       }
     }
     return true;

@@ -9,6 +9,7 @@ import { extractJWTFromHeader } from "@server/jwt/validate";
 import { ApiError } from "@server/error/apiError";
 import { validateUsername, validateEmail, validatePassword } from "@shared/validation";
 import { GITHUB_REDIRECT_URL, HTTP } from "./";
+import { setupTotp, enableTotp, verifyTotp, is2FAEnabled } from "./totpHandlers";
 
 const secret = process.env.AUTH_HMAC_SECRET!;
 
@@ -56,6 +57,7 @@ export function authRoutes(fastify: FastifyInstance) {
         if (!authUser)
           return reply.code(400).send({ message: 'Invalid User', success: false });
 
+        validateRefreshToken({ id: authUser.id }, refresh_token);
         deleteSession({ authId: authUser.id });
         const newSession = createSession(authUser, secret);
 
@@ -71,54 +73,111 @@ export function authRoutes(fastify: FastifyInstance) {
             refresh_token: newSession.refreshToken,
           });
       } catch (e: any) {
+        console.log("Refresh token validation failed", e.message || e);
         request.log.error(e);
-        return reply.status(401).send({ success: false, message: 'Unauthenticated' });
+        return reply.status(e.code || 401).send({ success: false, message: e.message || 'Unauthenticated' });
       }
     }
   });
 
   fastify.post<AuthLoginReply>('/login', async (request, reply) => {
     try {
-      const { passwd, user_name, email } = request.body;
+      const { passwd, user_name, email, totp_token } = request.body;
 
       const requestAuthUser = { passwd, user_name, email };
       const verifiedAuthUser = await verifyUserCredentials(requestAuthUser);
+
+      if (is2FAEnabled(verifiedAuthUser)) {
+        if (!totp_token) {
+          return reply.status(202).send({
+            success: true,
+            requires_2fa: true,
+            message: '2FA verification required',
+          });
+        }
+
+        if (!verifyTotp(verifiedAuthUser, totp_token)) {
+          return reply.status(401).send({
+            success: false,
+            message: 'Invalid 2FA token',
+          });
+        }
+      }
 
       const authUserClient: AuthUserClient = {
         user_name: verifiedAuthUser.user_name,
         email: verifiedAuthUser.email,
       };
 
-      try {
-        const session = createSession(verifiedAuthUser, secret);
+      const session = createSession(verifiedAuthUser, secret);
 
-        return reply
-          .setCookie("access_token", session.accessToken.raw, {
-            httpOnly: true,
-            path: '/',
+      return reply
+        .setCookie("access_token", session.accessToken.raw, {
+          httpOnly: true,
+          path: '/',
             expires: new Date(session.accessToken.payload.iat + session.accessToken.payload.exp),
-            sameSite: 'strict',
-            secure: 'auto'
-          })
-          .setCookie('refresh_token', session.refreshToken, {
-            httpOnly: true,
-            path: '/',
+          sameSite: 'strict',
+          secure: 'auto'
+        })
+        .setCookie('refresh_token', session.refreshToken, {
+          httpOnly: true,
+          path: '/',
             expires: new Date(Date.now() + refreshTokenLifetime),
-            sameSite: 'strict',
-            secure: 'auto'
-          })
-          .code(200).send({
-            success: true,
-            auth: authUserClient,
-          });
+          sameSite: 'strict',
+          secure: 'auto'
+        })
+        .code(200).send({
+          success: true,
+          auth: authUserClient,
+        });
 
-      } catch (e: any) {
-        request.log.error(e);
-        return reply.code(e.code || 500).send({ success: false, message: e.message || e });
-      }
     } catch (e: any) {
       request.log.error(e);
       return reply.status(401).send({ success: false, message: 'Invalid user credentials' });
+    }
+  });
+
+  fastify.post('/2fa/setup', async (request, reply) => {
+    try {
+      const token = extractJWTFromHeader(request.cookies.access_token);
+      const authUser =
+        getAuthUser({ authId: token.payload.sub })
+        ?? getAuthUser({ userId: token.payload.sub });
+      if (!authUser)
+        return reply.code(404).send({ success: false, message: 'No Such User' });
+
+      if (is2FAEnabled(authUser))
+        return reply.code(409).send({ success: false, message: '2FA already enabled for this User' });
+
+      const result = await setupTotp(authUser);
+      return reply.code(200).send(result);
+    } catch (e: any) {
+      request.log.error(e);
+      return reply.code(e.code || 401).send({ success: false, message: e.message || 'Unauthenticated' });
+    }
+  });
+
+  fastify.post('/2fa/enable', async (request, reply) => {
+    try {
+      const token = extractJWTFromHeader(request.cookies.access_token);
+      const authUser =
+        getAuthUser({ authId: token.payload.sub })
+        ?? getAuthUser({ userId: token.payload.sub });
+      if (!authUser)
+        return reply.code(404).send({ success: false, message: 'No Such User' });
+
+      const body = request.body as { token?: string };
+      if (!body.token)
+        return reply.code(400).send({ success: false, message: 'Missing 2FA token' });
+
+      const ok = enableTotp(authUser, body.token);
+      if (!ok)
+        return reply.code(401).send({ success: false, message: 'Invalid 2FA token' });
+
+      return reply.code(200).send({ success: true, message: '2FA enabled successfully' });
+    } catch (e: any) {
+      request.log.error(e);
+      return reply.code(e.code || 401).send({ success: false, message: e.message || 'Unauthenticated' });
     }
   });
 
@@ -241,7 +300,7 @@ export function authRoutes(fastify: FastifyInstance) {
           .code(409)
           .send({
             success: false,
-            message: "Username or Email already taken"
+            message: "signup.username_taken"
         });
 
       const tempAuthUser: Partial<AuthUser> = { user_name: user_name, email };

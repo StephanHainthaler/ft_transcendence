@@ -14,7 +14,7 @@ export type Session = ModelCols & {
   minted_at: number,
 }
 
-export type AuthUser = { id: number, user_id: number, user_name?: string, email?: string, passwd: string, oauth_id: number};
+export type AuthUser = { id: number, user_id: number, user_name?: string, email?: string, passwd: string, oauth_id: number, totp_secret?: string, two_fa_enabled?: number, backup_codes?: string };
 
 export const db = new DB<Schema>();
 
@@ -26,6 +26,10 @@ const authUsers = defineTable(
     email: text().unique(),
     passwd: text().notNull(),
     oauth_id: int().unique(), // null fo rnormal signup
+    // TOTP/2FA fields
+    totp_secret: text(),
+    two_fa_enabled: int().notNull().default(0),
+    backup_codes: text(),
   },
   { col: 'user_name', notNull: true, chainOp: 'or' },
   { col: 'email', notNull: true }

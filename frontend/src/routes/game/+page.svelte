@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { AppUser } from "@lib/api/appUser";
-  import Grid from "@lib/components/custom/Grid.svelte";
+  import { AppUser } from "@shared/user";
   import { client } from "@lib/api/index.svelte";
-  import GridCard from "@lib/components/custom/GridCard.svelte";
   import * as Card from "$lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
   import { tick } from 'svelte';
@@ -15,7 +13,7 @@
   import MatchResult from "@lib/components/game/MatchResult.svelte";
   import { aiUser } from "@lib/game";
   import PongGame from "@lib/components/game/PongGame.svelte";
-    import UserChallenge from "@lib/components/game/UserChallenge.svelte";
+  import UserChallenge from "@lib/components/game/UserChallenge.svelte";
 
   let users: AppUser[] = $state([]);
   let friends: AppUser[] = $state([]);
@@ -99,7 +97,7 @@
 
   const challengeAICallback = () => {
     isAi = true;
-    selectUser(aiUser);
+    selectUser(aiUser());
   }
 
   const selectUser = (u: AppUser) => {
@@ -120,7 +118,7 @@
           [$t('game.pointsToWin')]: String(pointsToWin),
           [$t('game.matchDuration')]: `${matchDurationInMinutes} ${$t('game.minutes')}`,
           [$t('game.leftPlayer')]: client.user!.name,
-          [$t('game.rightPlayer')]: isAi ? $t('game.aiOpponent') : challengedUser.name,
+          [$t('game.rightPlayer')]: challengedUser.name,
           ...(isAi ? { [$t('game.AIdifficulty')]: AIdifficulty === 1 ? $t('game.easy') : AIdifficulty === 2 ? $t('game.medium') : $t('game.hard') } : {}),
     }}
     confirmCallBack={async () => await challengeUser(challengedUser)}
