@@ -1,4 +1,10 @@
-_This project has been created as part of the 42 curriculum by vvobis, shaintha, khuk, pgober, juitz._
+<div align="center">
+
+![ft_transcendence banner](frontend/src/lib/assets/Banner.png)
+
+_This project has been created as part of the 42 curriculum by [vvobis](https://github.com/vman101), [shaintha](https://github.com/StephanHainthaler), [khuk](https://github.com/catherine21550), [pgober](https://github.com/krissiliv), [juitz](https://github.com/JayuSC2)._
+
+</div>
 
 ## Table of Contents
 
@@ -52,7 +58,8 @@ We called our project KhukVvobisPgoberShainthaJuitz - a mix of our intra names.
 | `-`                  | Backend as microservices  | - [Nginx](https://nginx.org/en/docs/) reverse proxy<br> - [Fastify](https://fastify.dev/docs/latest/Reference/) services | everyone        | Major   | 2          | n.a.        |  - Microservices let each person work on their own part independently<br> - Nginx puts everything together |
 | **Modules of Choice**|                           |                    |                 |         |            |            |                           |
 | `-`                  | Custom ORM                | - [SQLite](https://www.sqlite.org/docs.html) bindings | vvobis          | Minor   | 1          | n.a.        |  - Custom ORM gives us type safety without being complicated<br>- Handles Table creation, deletion, query, insert and update |
-| **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
+| **TOTAL**            |                           |                    |                 |         | _19_       |            |                           |
+
 
 #### Decision against certain Modules
 
@@ -66,9 +73,9 @@ We called our project KhukVvobisPgoberShainthaJuitz - a mix of our intra names.
   
 | **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
 |:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA |   |
+| vvobis     | Product Owner / Technical Lead / Full-stack Developer, DevOps Engineer | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA, Global Error Handling, Containerization & Deployment | - ORM type safety<br> > TypeScript generics<br> - JWT cross-service auth<br> > RS256 asymmetric signing<br> |
 | shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics, Game Pages Design | - game physics (velocity & collision with paddles)<br> > proper entity collisions & checks before movement<br> - design of user interface of the game associated pages<br> > usage of GridCards, Dialogues and tables |
-| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support |   |
+| khuk       | Full-stack Developer   | Write code for assigned features, Testing. Design and implementation of analytical services | Game Stats Microservice, Leaderboard ranking, Persistent Language Support (UKR/EN/DE), UI/UX Stability logic, Global Error Handling & ORM utility enhancements | - Stats isolation<br> > separate microservice<br> - UX Persistence<br> - UI Fallbacks<br> > centralized error interceptors & default i18n values |
 | pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure<br> > env variables<br> - AI fairness<br> > mathematical algorithm vs ML complexity |
 | juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA |  |
 
@@ -472,22 +479,17 @@ Workflow:
 - [Users via GitHub API](https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28)
 - [Scopes for OAuth apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps)
 
-#### Project-Specific
-- [Example of transcendence from the internet](https://gitlab.com/sada-sil/ft-transcendence)
 
 #### Tools / Frameworks / etc.
 - [The TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-
+- [Inkscape](https://inkscape.org/) — Open-source professional vector graphics software for UI design elements
 - [Fastify Documentation](https://fastify.dev/docs/latest/)
 - [Fastify Getting-Started](https://fastify.dev/docs/latest/Guides/Getting-Started/)
 - [Fastify: Hooks](https://fastify.dev/docs/latest/Reference/Hooks/)
 - [Fastify Route Parameters](https://fastify.dev/docs/latest/Reference/Routes/)
-
 - [Node.js SQLite Tutorial](https://www.sqlitetutorial.net/sqlite-nodejs/)
-
 - [Using fetch with TypeScript](https://kentcdodds.com/blog/using-fetch-with-type-script)
-
-- [OLD points calculator](https://tcdmodules.vercel.app/v14.1?state=48535607)
+- [MDN: HTTP Response Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) — Reference for the global error interceptors
 
 
 #### AI Usage
