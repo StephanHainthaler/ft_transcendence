@@ -44,8 +44,8 @@ export async function signupRequest(
 }
 
 export async function loginRequest(
-  info: LoginRequestBody,
-): Promise<AuthResponseSuccess> {
+  info: LoginRequestBody & { totp_token?: string },
+): Promise<AuthResponseSuccess & { requires_2fa?: boolean }> {
   if ((!info.user_name && !info.email))
     throw new Error("Missing Email of Username!");
   if (!info.passwd) throw new Error("Missing Password!");
@@ -58,7 +58,15 @@ export async function loginRequest(
     body: JSON.stringify(info),
   });
 
-  const data = await request(login);
+  const response = await fetch(login);
+  const data = await response.json();
+
+  // 202 means 2FA is required
+  if (response.status === 202 && data.requires_2fa)
+    return { ...data, requires_2fa: true };
+
+  if (!response.ok)
+    throw data;
 
   return data;
 }
@@ -114,4 +122,26 @@ export async function getAuth() {
   const data = await request(req);
 
   return data;
+}
+
+// 2FA Functions
+
+export async function setup2FA(): Promise<{ secret: string; qrCodeUrl: string }> {
+  const req = new Request('/api/auth/2fa/setup', {
+    method: 'POST',
+  });
+
+  return await request(req);
+}
+
+export async function enable2FA(totpToken: string): Promise<{ success: boolean; message: string }> {
+  const req = new Request('/api/auth/2fa/enable', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token: totpToken }),
+  });
+
+  return await request(req);
 }

@@ -164,13 +164,19 @@ export class ApiClient {
   }
 
 
-  async login(info: LoginRequestBody) {
+  async login(info: LoginRequestBody & { totp_token?: string }): Promise<{ requires_2fa?: boolean }> {
     try {
       const authResponse = await loginRequest(info);
+
+      if (authResponse.requires_2fa) {
+        return { requires_2fa: true };
+      }
+
       this.authStore.set(authResponse.auth)
       const response = await getUser()
       this.userStore.set(response.user);
       this.loggedIn = true;
+      return {};
     } catch (e: any) {
       const error = new Error(`Login Failed: ${e.message || e}`)
       toast.error(error.message);
