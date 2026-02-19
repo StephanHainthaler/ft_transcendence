@@ -23,33 +23,35 @@ _This project has been created as part of the 42 curriculum by vvobis, shaintha,
 
 **ft_transcendence** is the final project of Coding School 42. It is a full-stack web application where players can play Pong with features including user authentication, real-time multiplayer games, tournament systems and AI opponents.
 
-The project emphasizes full-stack development, team organization, project management, and establishing roles within the team.
+The project's goal is to enhance skills in full-stack development, team organization, project management, and establishing roles within the team.
+
+We called our project KhukVvobisPgoberShainthaJuitz - a mix of our intra names.
 
 ## Features & Modules
 
-| **Module**           | **Sub Module**            |**Technologies / Frameworks**| **Assignee**    | **Type**| **Points** | **Status** |  **Why we chose it**            |
+| **Module**           | **Sub Module**            |**Technologies / Frameworks**| **Assignee**    | **Type**| **Points** | **Feature Description (if applicable)** |  **Why we chose it**            |
 | :---                 | :---                      |  :---              | :---            | :---    | :---       | :---       |   :---                    |
 | **Web**              |                           |                    |                 |         |            |            |                           |
-| `-`                  | Frontend Framework        | - [Svelte](https://svelte.dev/)<br> - [Vite](https://vite.dev/guide/)<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Tailwind CSS](https://v2.tailwindcss.com/docs)<br> - [shadcn-Svelte](https://www.shadcn-svelte.com/) | everyone        | Minor   | 1          | ✅        |  - Svelte is simple & fast<br> - Vite makes development quick with instant updates<br> - TypeScript catches bugs early<br> - Tailwind for styling<br> - shadcn/svelte provides pre-built components |
-| `-`                  | Backend Framework         | - [Fastify](https://fastify.dev/docs/latest/)<br> -[TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Node.js](https://nodejs.org/docs/latest/api/) | everyone        | Minor   | 1          | ✅        |  - Fastify is quick & good for building separate services<br> - TypeScript helps avoid mistakes with data types |
-| `-`                  | ORM Database              | - Custom ORM<br> - [SQLite](https://www.sqlite.org/docs.html) via better-sqlite3 | vvobis          | Minor   | 1          | ✅        |  - Custom ORM keeps us in control & type-safe<br> - SQLite is simple to use & works everywhere |
+| `-`                  | Frontend Framework        | - [Svelte](https://svelte.dev/)<br> - [Vite](https://vite.dev/guide/)<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Tailwind CSS](https://v2.tailwindcss.com/docs)<br> - [shadcn-Svelte](https://www.shadcn-svelte.com/) | everyone        | Minor   | 1          | n.a.        |  - Svelte is simple & fast<br> - Vite makes development quick with instant updates<br> - TypeScript catches bugs early<br> - Tailwind for styling<br> - shadcn/svelte provides pre-built components |
+| `-`                  | Backend Framework         | - [Fastify](https://fastify.dev/docs/latest/)<br> -[TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)<br> - [Node.js](https://nodejs.org/docs/latest/api/) | everyone        | Minor   | 1          | n.a.        |  - Fastify is quick & good for building separate services<br> - TypeScript helps avoid mistakes with data types |
+| `-`                  | ORM Database              | - Custom ORM<br> - [SQLite](https://www.sqlite.org/docs.html) via better-sqlite3 | vvobis          | Minor   | 1          | n.a.        |  - Custom ORM keeps us in control & type-safe<br> - SQLite is simple to use & works everywhere|
 | **Accessibility**    |                           |                    |                 |         |            |            |                           |
-| `-`                  | Language Support          | - [shadcn-Svelte](https://www.shadcn-svelte.com/) localization support | khuk            | Minor   | 1          | ✅        |  - Multi-lingual team |
-| `-`                  | Browser compatibility       | - worked automatically | everyone        | Minor   | 1          | ✅        |  - Vite handles older browsers automatically<br> - Tailwind CSS works the same everywhere |
+| `-`                  | Language Support          | - [shadcn-Svelte](https://www.shadcn-svelte.com/) localization support | khuk            | Minor   | 1          | n.a.        |  - Multi-lingual team |
+| `-`                  | Browser compatibility       | - worked automatically | everyone        | Minor   | 1          | n.a.        |  - Vite handles older browsers automatically<br> - Tailwind CSS works the same everywhere |
 | **User Management**  |                           |                    |                 |         |            |            |                           |
-| `-`                  | Standard user management  | - [SQLite](https://www.sqlite.org/docs.html)<br> - REST API ([Fastify](https://fastify.dev/docs/latest/Reference/))<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) | vvobis          | Major   | 2          | ✅        |  - SQLite keeps data safe & consistent<br> - REST API is simple to use<br> - TypeScript prevents errors when handling user data |
-| `-`                  | Game stats                | - [SQLite](https://www.sqlite.org/docs.html) (Game Stats Service) | khuk            | Minor   | 1          | ✅        |  - Separate database for stats so the user service doesn't get slowed down |
-| `-`                  | Remote authentication     | - [OAuth 2.0 (GitHub)](https://docs.github.com/en/apps/oauth-apps) | pgober          | Minor   | 1          | ✅        |  - GitHub OAuth makes login easier for users<br> |
-| `-`                  | JWT & 2FA               | - [JWT](https://www.jwt.io/) (RS256 signing)<br> - [2FA](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication) | vvobis & juitz  | Minor   | 1          | ✅        |  - JWT lets services talk to each other without a shared database<br> - 2FA adds extra security when needed |
+| `-`                  | Standard user management  | - [SQLite](https://www.sqlite.org/docs.html)<br> - REST API ([Fastify](https://fastify.dev/docs/latest/Reference/))<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) | vvobis          | Major   | 2          | n.a.        |  - SQLite keeps data safe & consistent<br> - REST API is simple to use<br> - TypeScript prevents errors when handling user data<br>- Avatar Upload<br>- Profile Management|
+| `-`                  | Game stats                | - [SQLite](https://www.sqlite.org/docs.html) (Game Stats Service) | khuk            | Minor   | 1          | n.a.        |  - Separate database for stats so the user service doesn't get slowed down |
+| `-`                  | Remote authentication     | - [OAuth 2.0 (GitHub)](https://docs.github.com/en/apps/oauth-apps) | pgober          | Minor   | 1          | n.a.        |  - GitHub OAuth makes login easier for users<br> |
+| `-`                  | JWT & 2FA               | - [JWT](https://www.jwt.io/) (RS256 signing)<br> - [2FA](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication) | vvobis & juitz  | Minor   | 1          | n.a.        |  - Encodes User Information as JWT in cookie for authentication<br> - 2FA adds extra security when needed |
 |**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
-| `-`                  | AI Opponent               | - Mathematical Algorithm | pgober          | Major   | 2          | ✅        |  - Math-based AI is simple & fair<br> -  no need for complex ML |
+| `-`                  | AI Opponent               | - Mathematical Algorithm | pgober          | Major   | 2          | difficulty can be chosen in game settings        |  - Math-based AI is simple & fair<br> -  no need for complex ML |
 | **Gaming**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Web-based game            | - [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)<br> - [WebSocket](https://websocket.org/reference/websocket-api/) | shaintha & juitz| Major   | 2          | ✅        |  - Canvas is the standard way to draw games in browsers<br> -  WebSocket keeps the game smooth for both players |
-| `-`                  | Tournament system         | - [SQLite](https://www.sqlite.org/docs.html) storage<br> | vvobis          | Minor   | 1          | ✅        |  - Automatic bracket generation handles any number of players<br> - WebSocket keeps everyone updated as the tournament progresses |
+| `-`                  | Web-based game            | - [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)<br> | shaintha & juitz| Major   | 2          | simple 2-player implementation of a PONG game with setable score & duration  |  - Canvas is the standard way to draw games in browsers<br> |
+| `-`                  | Tournament system         | - [SQLite](https://www.sqlite.org/docs.html) storage<br> | vvobis          | Minor   | 1          | n.a.        |  - Automatic bracket generation handles any number of even players<br>- Local tournament matches |
 | **DevOps**           |                           |                    |                 |         |            |            |                           |
-| `-`                  | Backend as microservices  | - [Nginx](https://nginx.org/en/docs/) reverse proxy<br> - [Fastify](https://fastify.dev/docs/latest/Reference/) services | everyone        | Major   | 2          | ✅        |  - Microservices let each person work on their own part independently<br> - Nginx puts everything together |
+| `-`                  | Backend as microservices  | - [Nginx](https://nginx.org/en/docs/) reverse proxy<br> - [Fastify](https://fastify.dev/docs/latest/Reference/) services | everyone        | Major   | 2          | n.a.        |  - Microservices let each person work on their own part independently<br> - Nginx puts everything together |
 | **Modules of Choice**|                           |                    |                 |         |            |            |                           |
-| `-`                  | Custom ORM                | - [SQLite](https://www.sqlite.org/docs.html) bindings | vvobis          | Minor   | 1          | ✅        |  - Custom ORM gives us type safety without being complicated |
+| `-`                  | Custom ORM                | - [SQLite](https://www.sqlite.org/docs.html) bindings | vvobis          | Minor   | 1          | n.a.        |  - Custom ORM gives us type safety without being complicated<br>- Handles Table creation, deletion, query, insert and update |
 | **TOTAL**            |                           |                    |                 |         | _18_       |            |                           |
 
 #### Decision against certain Modules
@@ -57,18 +59,18 @@ The project emphasizes full-stack development, team organization, project manage
 | Category | Notes |
 |--------|-------|
 | Web | - Blockchain too much of a hassle to learn (I think) |
-| Gaming | - Remote players works well with server-side Pong<br> - Customization could be fairly easy, but maybe annoying as well<br> - Live chat seems very complicated, but also very interesting<br> - **NOTE:** Game might be best done by one person, except live chat maybe |
+| Gaming | - Customization could be fairly easy, but maybe annoying as well<br> - Live chat seems very complicated, but also very interesting<br> - **NOTE:** Game might be best done by one person, except live chat maybe |
 | DevOps | - Other modules too much |
 
 ## Roles, Team Information & Individual Contributions
   
 | **Person** | **Role**                                    | **Responsibilities**                        | **Individual Contributions** | **Challenges & Solutions** |
 |:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
-| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA | - ORM type safety<br> > TypeScript generics<br> - JWT cross-service auth<br> > RS256 asymmetric signing<br> |
+| vvobis     | Product Owner / Technical Lead / Developer  | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA |   |
 | shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics, Game Pages Design | - game physics (velocity & collision with paddles)<br> > proper entity collisions & checks before movement<br> - design of user interface of the game associated pages<br> > usage of GridCards, Dialogues and tables |
-| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support | - Stats isolation<br> > separate microservice |
+| khuk       | Developer                                   | Write code for assigned features, Testing  | Game Stats Service, Leaderboard ranking, Language Support |   |
 | pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure<br> > env variables<br> - AI fairness<br> > mathematical algorithm vs ML complexity |
-| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - 2FA implementation<br> > algorithm without external libs |
+| juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA |  |
 
 For more information on the individual contributions, you can also check the Modules table above.
 
@@ -215,9 +217,7 @@ erDiagram
     users ||--o{ friendships : "from"
     users ||--o{ friendships : "to"
     users ||--o| avatars : "has"
-
 ```
-
 **Key Relationships:**
 ```
 users
@@ -334,21 +334,14 @@ cd ft_transcendence
 
 #### Step 2: Create .env Files
 
-Create a folder called `env` at the root of the repository:
+Create the following .env files with the specified variables in both `env/dev/` and `env/prod/` directories:
 
-```sh
-mkdir env
-```
-
-Create the following .env files with the specified variables:
-| Filename   | Description | Variables |
-|:-----------| :---------- |:----------|
-| .env.api | API Gateway service (Port: 3000) | <ul><li>PORT</li><li>API_URL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li><li>SERVER_PONG_URL</li></ul> |
-| .env.auth | Authentication (Port: 3001) | <ul><li>PORT</li><li>DB_FILE_PATH</li><li>USER_API_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li></ul> |
-| .env.user | User Service (Port: 3002) | <ul><li>PORT</li><li>DB_FILE_PATH</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
-| .env.game | Game Service (Port: 3003) | <ul><li>PORT</li><li>USER_URL</li></ul> |
-| .env.game_stats | Game Stats Service (Port: 3004) | <ul><li>PORT</li><li>HOST</li></ul> |
-| .env.development | Frontend development (Vite Port: 5173) | <ul><li>VITE_API_URL</li><li>USER_API_URL</li><li>GAME_STATS_SERVICE_URL</li><li>VITE_SERVER_GAME_WS_URL</li><li>VITE_GITHUB_CLIENT_ID</li></ul> |
+| Filename | Directory | Description | Variables |
+|:---------|:----------|:------------|:----------|
+| .env.api | env/dev/, env/prod/ | API Gateway service (Port: 3000) | <ul><li>HTTP_PROTOCOL</li><li>USER_SERVICE_URL</li><li>AUTH_SERVICE_URL</li><li>GAME_STATS_SERVICE_URL</li></ul> |
+| .env.auth | env/dev/, env/prod/ | Authentication (Port: 3002) | <ul><li>HTTP_PROTOCOL</li><li>DB_PATH</li><li>USER_SERVICE_URL</li><li>GITHUB_APP_CLIENT_ID</li><li>GITHUB_APP_CLIENT_SECRET</li><li>GITHUB_REDIRECT_URL</li></ul> |
+| .env.user | env/dev/, env/prod/ | User Service (Port: 3001) | <ul><li>HTTP_PROTOCOL</li><li>DB_PATH</li><li>AUTH_SERVICE_URL</li><li>DATA_DIR</li><li>AVATAR_DIR</li></ul> |
+| .env.game_stats | env/dev/, env/prod/ | Game Stats Service (Port: 3003) | <ul><li>HOST</li><li>PORT</li><li>DB_PATH</li></ul> |
 
 
 #### Step 3: GitHub OAuth Configuration
@@ -417,7 +410,11 @@ make
 This will:
 - Start **Vite** development server for the frontend at **http://localhost:8080**
 - Hot Module Replacement (HMR) enabled for instant code updates
-- Start all backend services in development mode with auto-restart on file changes
+- Start all backend services in development mode with auto-restart on file changes:
+  - API Gateway at `http://localhost:3000`
+  - User Service at `http://localhost:3001`
+  - Auth Service at `http://localhost:3002`
+  - Game Stats Service at `http://localhost:3003`
 - Transpile TypeScript to JavaScript automatically
 - Compile Tailwind CSS utilities dynamically
 
