@@ -8,7 +8,7 @@ export interface Schema {
 }
 
 export const user_stats_table = defineTable('user_stats', {
-	user_id: int().primarykey(), 
+	user_id: int().primarykey(),
 	wins: int().notNull().default(0),
 	rank: int().notNull().default(0),
 	losses: int().notNull().default(0),
@@ -24,7 +24,7 @@ export const match_history_table = defineTable('match_history', {
 	player_two_id: int().notNull().references(() => user_stats_table.columns.user_id),
 	winner_id: int().notNull().references(() => user_stats_table.columns.user_id),
 	match_duration: int().default(0),
-	p1_score: int().notNull(), 
+	p1_score: int().notNull(),
   p2_score: int().notNull()
 });
 

@@ -164,6 +164,35 @@
     "winn_is": "And the Winner is...",
     "start": "Start"
   },
+  "validation": {
+    "username": {
+      "required":  "Username is required",
+      "max_len": "Username must be at most 20 characters",
+      "symbols": "Username may only contain lowercase letters, digits, dots and underscores",
+      "end_dot": "Username must not start or end with a dot or underscore",
+      "con_sep": "Username must not contain consecutive separators"
+    },
+    "email": {
+      "required": "Email is required",
+      "invalid": "Invalid email address"
+    },
+    "password": {
+      "required": "Password is required",
+      "min_len": "Password must be at least 8 characters",
+      "upper": "Password must contain at least one uppercase letter",
+      "lower": "Password must contain at least one lowercase letter",
+      "digit": "Password must contain at least one digit"
+    },
+    "display": {
+      "required": "Display name is required",
+      "min_len": "Display name must be at most 20 characters"
+    },
+    "avatar": {
+      "mime": "Invalid file type. Allowed: PNG, JPEG, WebP",
+      "size": "File too large. Maximum size is MB"
+    }
+  },
+
   "error": {
     "404": "404 not found"
   }

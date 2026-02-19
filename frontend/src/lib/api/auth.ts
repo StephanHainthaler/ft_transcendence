@@ -1,4 +1,5 @@
 import type { SignupRequestBody, LoginRequestBody, AuthResponseSuccess, OAuthCallBackBody } from "@shared/api/authRequest";
+
 import { request } from './utils';
 import { toast } from "svelte-sonner";
 
@@ -10,7 +11,7 @@ export async function updateRequest({
   if (!email && !user_name && !passwd) {
     throw new Error("No Credentials to update!");
   }
-  const req = new Request('/api/auth/update', {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/auth/update`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -30,7 +31,7 @@ export async function signupRequest(
     throw new Error("Missing Email or Username!");
   if (!info.passwd) throw new Error("Missing Password!");
 
-  const signupReq = new Request('/api/auth/sign-up', {
+  const signupReq = new Request(`${import.meta.env.VITE_API_URL}/auth/sign-up`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -50,7 +51,7 @@ export async function loginRequest(
     throw new Error("Missing Email of Username!");
   if (!info.passwd) throw new Error("Missing Password!");
 
-  const login: Request = new Request('/api/auth/login', {
+  const login: Request = new Request(`${import.meta.env.VITE_API_URL}/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -69,7 +70,7 @@ export async function oauthRequest(
   if (!info.code)
     throw new Error("Missing OAuth Code!");
 
-  const oauth: Request = new Request('/api/auth/github-oauth', {
+  const oauth: Request = new Request(`${import.meta.env.VITE_API_URL}/auth/github-oauth`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -83,7 +84,7 @@ export async function oauthRequest(
 }
 
 export async function deleteRequest() {
-  const req = new Request('/api/auth/delete', {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/auth/delete`, {
     method: 'delete',
   });
 
@@ -95,7 +96,7 @@ export async function deleteRequest() {
 }
 
 export async function logoutRequest() {
-  const req = new Request('/api/auth/logout', {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/auth/logout`, {
     method: 'post',
   });
 
@@ -107,7 +108,7 @@ export async function logoutRequest() {
 }
 
 export async function getAuth() {
-  const req = new Request('/api/auth', {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/auth`, {
     method: 'get',
   });
 

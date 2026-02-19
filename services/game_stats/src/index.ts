@@ -1,12 +1,13 @@
-import Fastify from "fastify";
-import { initDB } from './database'; 
+import { initDB } from './database';
 import { registerHealthRoute } from './health';
 import { gameStatsRoutes } from './routes';
+import { createServer } from "@server/fastify/createServer";
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001; 
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 const HOST = process.env.HOST ? process.env.HOST : "0.0.0.0";
+const DB_PATH = process.env.DB_PATH;
 
-const server = Fastify({ logger: true, });
+const server = createServer();
 
 function getErrorMessage(e: unknown): string {
 	if (e instanceof Error)
@@ -19,8 +20,11 @@ function getErrorMessage(e: unknown): string {
 async function start()
 {
 	try {
-		// Initializing the database
-		initDB('./db/game_stats.db');
+    if (!DB_PATH) {
+      throw new Error("Missing Database Path environment variable");
+    }
+	 	// Initializing the database
+		initDB(DB_PATH);
 
 		server.setErrorHandler((error, request, reply) =>
 		{
@@ -50,10 +54,18 @@ async function start()
 		// Register routes with prefix /v1
 		server.register(gameStatsRoutes, { prefix: '/v1' });
 
+		const shutdown = async () => {
+			server.log.info('Shutting down gracefully...');
+			await server.close();
+			process.exit(0);
+		};
+		process.on('SIGTERM', shutdown);
+		process.on('SIGINT', shutdown);
+
 		// Start the server
 		await server.listen({ port: PORT, host: HOST });
 		server.log.info(`Server listening on ${HOST}:${PORT}`);
-		
+
 	} catch (err) {
 		server.log.error(err);
 		process.exit(1);

@@ -41,7 +41,7 @@
 
     const info = {
       client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
-      redirect_uri: "http://localhost:8080/auth/oauth-callback", // frontend route for redirection
+      redirect_uri: import.meta.env.VITE_GITHUB_REDIRECT_URL, // frontend route for redirection
       // Cross-site request forgery (CSRF) is an attack that forces authenticated users to submit a request to a web application against which they are currently authenticated
       state, // create a CSRF token
       allow_signup: 'true',

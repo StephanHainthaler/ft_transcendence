@@ -1,3 +1,5 @@
+!env
+.claude/
 *node_modules
 *.nfs*
 dist
@@ -7,5 +9,4 @@ build/
 *.db
 **/*.db
 services/**/db/
-.env*
 frontend/.vscode/

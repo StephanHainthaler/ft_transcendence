@@ -6,11 +6,11 @@
 
 </script>
 
-<Card.Root>
+<Card.Root class="size-full overflow-hidden">
   <Card.Header>
-  <Card.Title>{title}</Card.Title>
+    <Card.Title>{title}</Card.Title>
   </Card.Header>
-  <Card.Content class="size-full flex flex-col gap-2">
+  <Card.Content class="size-full flex flex-col">
     {@render children()}
   </Card.Content>
 </Card.Root>

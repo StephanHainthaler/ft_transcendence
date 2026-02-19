@@ -62,6 +62,7 @@ describe('Game Stats Logic Tests', () => {
 		p1_score: 5,
 		p2_score: 3,
 		duration: 120,
+    timestamp: 0,
 	};
 
 	const MATCH_DATA_B_WINS: MatchSubmissionData = {
@@ -71,6 +72,7 @@ describe('Game Stats Logic Tests', () => {
 		p1_score: 1,
 		p2_score: 5,
 		duration: 60,
+    timestamp: 0,
 	};
 
 	const MATCH_DATA_HIGH_SCORE: MatchSubmissionData = {
@@ -80,6 +82,7 @@ describe('Game Stats Logic Tests', () => {
 		p1_score: 100,
 		p2_score: 50,
 		duration: 300,
+    timestamp: 0,
 	};
 
 
