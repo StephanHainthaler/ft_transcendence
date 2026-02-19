@@ -10,7 +10,7 @@
   import Alert from "@lib/components/ui/alert/alert.svelte";
   import AlertDescription from "@lib/components/ui/alert/alert-description.svelte";
   import { toast } from 'svelte-sonner';
-  import {t} from "@lib/i18n/i18n";
+  import { t } from "@lib/i18n/i18n";
 
   let availableUsers: AppUser[] = $state([]);
   let selectedUsers: AppUser[] = $state([]);
@@ -35,36 +35,40 @@
   }
 
   const startTournament = () => {
+    // Додаємо дефолтні повідомлення для тостів
     if (selectedUsers.length % 2 !== 0) {
-      toast.error('Invalid User count!', {
-        description: "Please select an even number or Participants"
+      toast.error($t('tournament.inval_user_count', 'Invalid player count!'), {
+        description: $t('tournament.description', 'Please select an even number of participants.')
       });
     } else if (selectedUsers.length === 0) {
-      toast.error(`Invalid User Count!`, {
-        description: "Please Select at least 2 participants"
+      toast.error($t('tournament.inval_user_count', 'Invalid player count!'), {
+        description: $t('tournament.description', 'Please select at least two participants.')
       });
     } else {
       running = true;
     }
   }
-
 </script>
 
 <Card.Root class="h-full">
   <Card.Header>
-    <Card.Title>{$t('tournament.tournament')}</Card.Title>
+    <Card.Title>{$t('tournament.tournament', 'Tournament')}</Card.Title>
   </Card.Header>
   <Card.Content class="flex flex-col gap-4 h-full">
     {#if !running}
       <div class='flex flex-col justify-evenly overflow-y-scroll md:grid md:grid-cols-2 gap-4 h-full'>
-        <Grid title={$t('tournament.available')}>
+        <Grid title={$t('tournament.available', 'Available Players')}>
           {#each availableUsers as u}
             <GridCard title={u.name} avatarUrl={u.avatarUrl ?? undefined} callback={() => toggleUserSelected(u)}/>
           {/each}
         </Grid>
-        <Grid title={$t('tournament.selected')}>
+        <Grid title={$t('tournament.selected', 'Selected Players')}>
           {#each selectedUsers as u}
-            <GridCard title={u.name} callback={() => toggleUserSelected(u)} buttonDesc='Remove'/>
+            <GridCard 
+                title={u.name} 
+                callback={() => toggleUserSelected(u)} 
+                buttonDesc={$t('tournament.remove', 'Remove')} 
+            />
           {/each}
         </Grid>
         {#if error}
@@ -79,7 +83,9 @@
       </div>
       <Separator />
       <div class='flex w-full justify-end'>
-        <Button size='lg' onclick={startTournament}>{$t('tournament.start')}</Button>
+        <Button size='lg' onclick={startTournament}>
+            {$t('tournament.start', 'Start Tournament')}
+        </Button>
       </div>
     {:else}
       <Tournament players={selectedUsers} />

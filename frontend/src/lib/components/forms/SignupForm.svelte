@@ -7,6 +7,7 @@
   import Button from "../ui/button/button.svelte";
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
   import {t, currentLocale} from "@lib/i18n/i18n";
+    import { isAppError, type AppError } from "@lib/types/error";
 
   let user_nameBuffer = $state('');
   let emailBuffer = $state('');
@@ -23,9 +24,11 @@
     try {
       const user_name = validateInputThrow(user_nameBuffer, { type: 'username' });
       const email = validateInputThrow(emailBuffer, { type: 'email' });
+      validateInputThrow(userPasswordBuffer, { type: 'password' });
 
       if (userPasswordBuffer !== userPasswordRepeatBuffer) {
-        throw new Error("Passwords don't match");
+        throw Object.assign(new Error("pass_mismatch"),
+        {isAppError: true}) as AppError;
       }
 
       await client.signup({
@@ -36,7 +39,14 @@
 
       await goto('/');
     } catch (e: any) {
-      errorMessage = e.message || e.error || JSON.stringify(e);
+      if (isAppError(e))
+        errorMessage = $t('error.'+ e.message) || $t('error.general');
+      else
+      {
+        const rawError = e.message || e.error || String(e);
+        const translationKey = rawError.includes('.') ? `${rawError}` : null;
+        errorMessage = translationKey ? $t(translationKey) : rawError;
+      }
     } finally {
       isLoading = false;
     }
@@ -100,7 +110,7 @@
   </div>
 
   {#if errorMessage}
-    <Alert variant="destructive">
+    <Alert class="bg-red-400/50">
       <AlertDescription>{errorMessage}</AlertDescription>
     </Alert>
   {/if}

@@ -4,13 +4,16 @@
   "welcome": "Welcome",
   "play": "Play",
   "moto": "ARENA_READY: LINK YOUR PADDLE TO THE GRID",
+  "healthcheck": "Check Connection",
   "login": {
     "login": "Login",
-    "username": "Email or Username",
-    "username_ph": "Enter your email or username",
+    "username": "Email or username",
+    "username_ph": "Enter email or username",
     "password": "Password",
-    "password_ph": "Enter your password",
+    "password_ph": "Enter password",
     "signin": "Sign In",
+    "logout": "Successfully logged out",
+    "logout_fail": "Failed to log out",
     "enter_2fa": "Enter 2FA Code",
     "enter_2fa_code": "Enter the 6-digit code from your authenticator app",
     "auth_code": "Authentication Code",
@@ -40,7 +43,7 @@
     "error_invalid_token": "Invalid 2FA token"
   },
   "signup": {
-    "signup": "Sign up",
+    "signup": "Registration",
     "register": "Register",
     "username": "Username",
     "username_ph": "Choose a username",
@@ -48,19 +51,22 @@
     "email_ph": "Enter your email",
     "password": "Password",
     "password_ph": "Create a password",
-    "pass_repeat": "Repeat your password",
-    "pass_confirm": "Confirm your password",
-    "loading": "Signing up...",
-    "pass_no_match": "Passwords don't match"
+    "pass_repeat": "Repeat password",
+    "pass_confirm": "Confirm password",
+    "loading": "Registering...",
+    "pass_no_match": "Passwords do not match",
+    "username_taken": "Username is already taken"
   },
   "OAuth": {
     "oauth": "OAuth",
-    "oauth_gh": "OAuth with GitHub",
+    "oauth_gh": "Sign in with GitHub",
     "error": "Something went wrong",
-    "error2": "Something went wrong...",
+    "error2": "An error occurred...",
     "redirect": "OAuth Redirect",
     "go_back": "Go back...",
-    "loading": "Completing GitHub OAuth..."
+    "wait": "Please wait...",
+    "success": "OAuth authorization successful",
+    "loading": "Completing GitHub authorization..."
   },
   "sidebar": {
     "login": "Login",
@@ -82,10 +88,10 @@
     "wins": "Wins",
     "losses": "Losses",
     "total_points": "Total Points",
-    "streak": "Streak",
-    "highest_score": "Highest Score",
+    "streak": "Win Streak",
+    "highest_score": "Best Score",
     "match_history": "Match History",
-    "no_matches": "No matches found in your history",
+    "no_matches": "No matches found",
     "opponent": "Opponent",
     "score": "Score",
     "duration": "Duration",
@@ -106,7 +112,7 @@
     "nickname": "Nickname",
     "games_played": "Games played",
     "points": "Points",
-    "no_players": "No players found in the leaderboard"
+    "no_players": "No players found"
   },
   "buttons": {
     "next": "Next",
@@ -119,7 +125,12 @@
     "remove": "Remove",
     "cancel": "Cancel",
     "accept": "Accept",
-    "reject": "Reject"
+    "reject": "Reject",
+    "remove_fail": "Failed to remove friend",
+    "accept_fail": "Failed to accept request",
+    "send_fail": "Failed to send request",
+    "doesnt_exist": "User does not exist",
+    "load_fail": "Failed to load friends list"
   },
   "game": {
     "game": "Game",
@@ -128,17 +139,17 @@
     "challenge": "Challenge",
     "pointsToWin": "Points to Win",
     "matchDuration": "Match Duration",
-    "matchDurationInMinutes": "Match Duration (in minutes)",
-    "minutes": "minutes",
+    "matchDurationInMinutes": "Duration (minutes)",
+    "minutes": "min",
     "AIdifficulty": "AI Difficulty",
     "easy": "Easy",
     "medium": "Medium",
     "hard": "Hard",
     "challengeAI": "Challenge AI",
     "rules": "Rules & Instructions",
-    "rulesDescription": "The game will start after pressing the start match button.",
-    "howToPlay": "How to Play: Reflect the ball with your paddle past your opponent's paddle to score a point. Left player uses the W/S keys and right player uses the Up/Down keys to move the paddle up and down.",
-    "howToWin": "How to Win: First to reach the points to win or have the most points when time runs out wins!",
+    "rulesDescription": "The game will start after pressing the start button.",
+    "howToPlay": "How to Play: Reflect the ball past your opponent. Left player: W/S, Right player: Up/Down arrows.",
+    "howToWin": "How to Win: Be the first to reach the point limit or have more points when time runs out!",
     "leftPlayer": "Left Player",
     "rightPlayer": "Right Player",
     "cancel": "Cancel",
@@ -146,52 +157,103 @@
     "paused": "Paused",
     "overtime": "Overtime",
     "summary": "Match Summary",
-    "win": "Win",
-    "lose": "Lose",
-    "duration": "Match Duration",
+    "win": "Victory",
+    "lose": "Defeat",
+    "duration": "Duration",
     "noMatchData": "No match data available.",
     "rematch": "Rematch",
-    "return": "Return to Challenge Page",
-    "match_results_sent": "Match results submitted successfully.",
-    "match_history_load_error": "Error loading match history.",
-    "user_stats_load_error": "Error loading user statistics.",
+    "return": "Return to Challenges",
+    "match_results_sent": "Results submitted successfully.",
+    "match_history_load_error": "Error loading history.",
+    "user_stats_load_error": "Error loading user stats.",
     "leaderboard_load_error": "Error loading leaderboard.",
-    "match_record_error": "Error recording match results.",
+    "match_record_error": "Error recording results.",
     "end": "End"
   },
   "profile": {
     "profile": "Profile",
     "pers_info": "Personal Info",
     "disp_name": "Display Name",
-    "credentials": "Credentials",
+    "credentials": "Login Credentials",
     "username": "Username",
     "email": "Email",
     "password": "Password",
-    "pass_repeat": "Repeat Password",
-    "save": "Save Changes",
+    "new_pass": "new-password",
+    "pass_repeat": "Repeat password",
+    "save": "Save changes",
     "cancel": "Cancel",
     "edit": "Edit",
     "updated": "Updated successfully",
     "update_err": "Error updating profile",
-    "loading": "Saving changes...",
-    "delete_account": "Delete Account, please wait...",
+    "loading": "Saving...",
+    "delete_account": "Account deletion, please wait...",
     "delete_confirm": "Are you sure you want to delete your account? This action cannot be undone.",
-    "deleting": "Deleting account...",
-    "delete_success": "Account deleted successfully! Redirecting...",
+    "deleting": "Deleting...",
+    "delete_success": "Account deleted! Redirecting...",
     "yes": "Yes",
     "no": "No",
     "delete_err": "Error deleting account",
-    "avatar_btn": "Upload Avatar"
+    "avatar_btn": "Upload Avatar",
+    "loading2": "Loading..."
   },
   "tournament": {
     "tournament": "Tournament",
     "available": "Available Players",
     "selected": "Selected Players",
     "choose": "Choose",
-    "winn_is": "And the Winner is...",
-    "start": "Start"
+    "winn_is": "The winner is...",
+    "start": "Start",
+    "inval_user_count": "Invalid player count!",
+    "description": "Please select an even number of participants",
+    "remove": "Remove"
+  },
+  "validation": {
+    "username": {
+      "required": "Username is required",
+      "max_len": "Username max 20 characters",
+      "symbols": "Username must contain only lowercase letters, digits, dots, and underscores",
+      "end_dot": "Username cannot start or end with a dot or underscore",
+      "con_sep": "Username cannot contain two consecutive separators"
+    },
+    "email": {
+      "required": "Email is required",
+      "invalid": "Invalid email format"
+    },
+    "password": {
+      "required": "Password is required",
+      "min_len": "Password must be at least 8 characters",
+      "upper": "Password must contain at least one uppercase letter",
+      "lower": "Password must contain at least one lowercase letter",
+      "digit": "Password must contain at least one digit"
+    },
+    "display": {
+      "required": "Display name is required",
+      "min_len": "Max 20 characters"
+    },
+    "avatar": {
+      "mime": "Invalid file type. Allowed: PNG, JPEG, WebP",
+      "size": "File is too large"
+    }
   },
   "error": {
-    "404": "404 not found"
+    "general": "Something went wrong",
+    "404": "Not Found",
+    "bannerError": "Error loading banner",
+    "common": {
+      "unauthorized": "You don't have permission for this action.",
+      "validation_failed": "Please check if the fields are filled correctly.",
+      "unexpected": "An unexpected error occurred."
+    },
+    "auth_missing_credentials": "No data to update!",
+    "invalid_user_credentials": "Invalid user credentials",
+    "missing_email_or_username": "Missing Email or Username!",
+    "missing_pass": "Missing password!",
+    "missing_OAuth_code": "Missing OAuth code!",
+    "delete_acc_fail": "Failed to delete account",
+    "log_out_fail": "Failed to log out",
+    "signup_fail": "Registration error",
+    "pass_mismatch": "Passwords do not match",
+    "pass_required": "Password is required",
+    "user_not_found": "User not found"
   }
 }

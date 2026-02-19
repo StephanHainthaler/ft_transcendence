@@ -1,38 +1,46 @@
-import Fastify, { FastifyServerOptions } from 'fastify'
+import { FastifyServerOptions } from 'fastify'
 import { userRoutes } from './userRoutes';
 import { initDB } from './db';
 import { healthRoute } from './health';
 import { friendRoutes } from './friendRoutes';
 import multipart from "@fastify/multipart";
+import { AVATAR_MAX_BYTES } from '@shared/validation';
 import { avatarRoutes } from './avatarRoutes';
 import fastifyCookie from '@fastify/cookie';
+import { createServer } from '@server/fastify/createServer';
 
-const DB_PATH = process.env.DB_FILE_PATH;
-console.log(process.env.DB_FILE_PATH);
+const DB_PATH = process.env.DB_PATH;
 
-if (!DB_PATH) throw new Error("Missing Database path");
+export const HTTP = process.env.HTTP_PROTOCOL;
+if (!HTTP) {
+  console.error("Missing Protocol env Vairable! Exiting...");
+  process.exit(1);
+}
+
+const authUrl = process.env.AUTH_SERVICE_URL;
+if (!authUrl) {
+  console.error("Missing AUTH_SERVICE_URL env Vairable! Exiting...");
+  process.exit(1);
+}
+export const AUTH_URL = `${HTTP}://${authUrl}`;
+
 
 export async function buildApp(dbPath?: string, options?: FastifyServerOptions) {
-  initDB(dbPath || process.env.DB_FILE_PATH!);
+  if (!dbPath && !DB_PATH)
+    throw new Error("Missing Database Path environment variable");
 
-  const fastify = Fastify({
-    logger: {
-      transport: {
-        target: 'pino-pretty'
-      },
-      level: 'info',
-    },
-    disableRequestLogging: true,
-    ...options
-  });
+  initDB(dbPath || DB_PATH!);
 
+  const fastify = createServer(options);
   fastify.register(fastifyCookie);
-  fastify.register(multipart);
+  fastify.register(multipart, {
+    limits: { fileSize: AVATAR_MAX_BYTES, files: 1, fields: 10 }
+  });
   fastify.register(avatarRoutes);
   fastify.register(userRoutes);
   fastify.register(healthRoute);
   fastify.register(friendRoutes, {
-    prefix: '/friend/',
+    prefix: '/friend',
   });
 
   fastify.addHook('onResponse', async (request, reply) => {
@@ -41,7 +49,6 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
         req: request,
         res: reply,
         err: reply.raw.statusMessage,
-
       }, 'request completed');
     }
   });
@@ -52,7 +59,16 @@ export async function buildApp(dbPath?: string, options?: FastifyServerOptions) 
 export async function startService() {
   try {
     const fastify = await buildApp();
-    await fastify.listen({ port: 3001 });
+
+    const shutdown = async () => {
+      fastify.log.info('Shutting down gracefully...');
+      await fastify.close();
+      process.exit(0);
+    };
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
+
+    await fastify.listen({ host: '0.0.0.0', port: 3001 });
   } catch (e: any) {
     console.error(e);
   }

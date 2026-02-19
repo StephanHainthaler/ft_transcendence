@@ -1,12 +1,12 @@
 import { db } from "./db";
 import { AuthUser, Session } from "./db";
 import { AuthUserClient, User } from "@shared/user"
-import { createUser } from "@ft_transcendence/user/src/api"
+import { createUser } from "@server/user/api"
 import argon2 from "argon2";
 import { generateJWT } from "./jwt";
 import crypto from "crypto";
 import { JWT } from "@shared/api";
-import { eq } from "@server/orm";
+import { eq, IN } from "@server/orm";
 import { sqliteErrorToApiError } from "@server/orm/error";
 import { ApiError } from "@server/error/apiError";
 
@@ -57,8 +57,8 @@ export function getAuthUser({
     throw sqliteErrorToApiError(e);
   }
 
-  if (!userId && !user_name && !authId && !oauthId) {
-    throw new Error("Missing fields: need either user_name, authid or userid");
+  if (!userId && !email && !user_name && !authId && !oauthId) {
+    throw new ApiError({ message: "Missing fields: need either email, user_name, authid or userid", code: 400 });
   }
 
   return null;
@@ -99,13 +99,13 @@ export async function verifyUserCredentials({
 }: {
   email?: string, user_name?: string, passwd?: string
 }): Promise<AuthUser> {
-  if (!email && !user_name) throw new Error("Missing email or user_name");
-  if (!passwd) throw new Error("Missing password");
+  if (!email && !user_name) throw new ApiError({ message: "Missing email or user_name", code: 400 });
+  if (!passwd) throw new ApiError({ message: "Missing password", code: 400 });
 
   const user = getAuthUser({ user_name, email });
 
-  if (!user) throw new Error("Invalid credentials");
-  if (!await argon2.verify(user.passwd, passwd)) throw new Error("Invalid user password");
+  if (!user) throw new ApiError({ message: "Invalid credentials", code: 401 });
+  if (!await argon2.verify(user.passwd, passwd)) throw new ApiError({ message: "Invalid credentials", code: 401 });
 
   return user;
 }
@@ -154,7 +154,7 @@ export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ use
 export const refreshTokenLifetime = 1000 * 60 * 60 * 24 * 10;
 
 export function createSession(user: AuthUser, secret: string): { accessToken: JWT, refreshToken: string } {
-  const accessToken = generateJWT({ id: user.id }, secret)
+  const accessToken = generateJWT({ id: user.user_id }, secret)
   const refreshToken = generateRefreshToken();
 
   const tokenHash = hashRefreshToken(refreshToken);
@@ -247,6 +247,33 @@ export function getSession({
     }
   } else {
     throw new ApiError({ code: 401, message: 'Invalid session query data'});
+  }
+}
+
+export function deleteExpiredSessions() {
+  const now = Date.now();
+  db.from('sessions')
+    .select('*')
+    .all()
+    .filter(s => (s.created_at + s.expires_in) <= now)
+    .forEach(s => {
+      db.from('sessions').delete().where(eq('user_id', s.user_id)).run();
+    });
+}
+
+export function getSessions(ids: number[]) {
+  try {
+    deleteExpiredSessions();
+
+    const sessions = db.from('sessions')
+      .select('user_id')
+      .where(IN('user_id', ids))
+      .all()
+
+    return sessions.map(s => s.user_id);
+  } catch (e: any) {
+    console.error(e);
+    throw sqliteErrorToApiError(e)
   }
 }
 
