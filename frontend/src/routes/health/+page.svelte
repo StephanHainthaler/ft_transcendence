@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
+    import { t } from "@lib/i18n/i18n";
 
   let message = '';
   let success = false;
@@ -18,7 +19,8 @@
         throw new Error(`${response.status}`)
       }
     } catch (e: any) {
-      message = e.message || e;
+      message = e.message || 'Connection failed';
+      success = false;
     }
   }
 
@@ -29,7 +31,7 @@
   </Card.Header>
   <Card.Content>
     <div class="flex gap-4 flex-1 items-center">
-      <Button onclick={healthCheckBtnEvent}>Health Check</Button>
+      <Button onclick={healthCheckBtnEvent}>{$t('healthcheck', 'Check Connection')}</Button>
       <div class={`p-4 ${ message.length > 0 ? success ? 'bg-green-300' : 'bg-red-300' : ''}` }>
         {message}
       </div>

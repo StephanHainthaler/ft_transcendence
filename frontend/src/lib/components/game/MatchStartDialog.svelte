@@ -28,9 +28,9 @@
 <Dialog.Root open={dialogOpen} onOpenChange={() => dialogOpen = false}>
   <Dialog.Content class="flex flex-col justify-between h-[60%] min-w-[90%] md:min-w-[60%] p-12">
     <Dialog.Header>
-      <Dialog.Title>{$t('game.rules')}</Dialog.Title>
+      <Dialog.Title>{$t('game.rules', 'Game Rules')}</Dialog.Title>
       <Dialog.Description>
-        {$t('game.rulesDescription')}
+        {$t('game.rulesDescription', 'These are the rules of the game.')}
       </Dialog.Description>
     </Dialog.Header>
     <div class="flex flex-col justify-between items-center">
@@ -45,8 +45,8 @@
         {@render tournamentParticipents?.()}
     </div>
     <Dialog.Footer class="align-center">
-      <Dialog.Close class={buttonVariants({ variant: "outline" })}>{$t('game.cancel')}</Dialog.Close>
-      <Button onclick={() => confirmCallBack()}>{$t('game.startMatch')}</Button>
+      <Dialog.Close class={buttonVariants({ variant: "outline" })}>{$t('game.cancel', 'Cancel')}</Dialog.Close>
+      <Button onclick={() => confirmCallBack()}>{$t('game.startMatch', 'Start Match')}</Button>
     </Dialog.Footer>
   </Dialog.Content>
 </Dialog.Root>

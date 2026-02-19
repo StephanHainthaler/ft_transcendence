@@ -6,7 +6,8 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import { goto } from "$app/navigation";
-  import {t, currentLocale} from "@lib/i18n/i18n";
+  import { t } from "@lib/i18n/i18n";
+  import { isAppError, type AppError } from "@lib/types/error";
 
   let usernameBuffer = $state("");
   let userPasswordBuffer = $state("");
@@ -19,9 +20,10 @@
     e.stopPropagation();
 
     try {
-      if (!userPasswordBuffer) throw new Error('Password is required');
-      const email = validateInput(user_nameBuffer, { type: 'email' }).input;
-      const user_name = validateInput(user_nameBuffer, { type: 'username' }).input;
+      if (!userPasswordBuffer)
+        throw Object.assign(new Error('pass_required'), {isAppError: true}) as AppError;
+      const email = validateInput(usernameBuffer, { type: 'email' }).input;
+      const user_name = validateInput(usernameBuffer, { type: 'username' }).input;
 
       const result = await client.login({
         user_name,
@@ -39,36 +41,40 @@
 
       goto('/');
     } catch (e: any) {
-      errorMessage = e.message || e.toString();
+      if (isAppError(e))
+        errorMessage = $t('error.' + e.message, 'An error occurred during authentication');
+      else
+        errorMessage = e.message || e.toString();
     }
   }
+
 </script>
 
 <form class="space-y-6" onsubmit={handleLoginFormSubmit}>
   <div class="space-y-4">
     <h2 class="text-2xl font-bold text-center">
-      {requires2FA ? $t('login.enter_2fa') : $t('login.signin')}
+      {requires2FA ? $t('login.enter_2fa', 'Two-Factor Authentication') : $t('login.signin', 'Sign In')}
     </h2>
 
     {#if !requires2FA}
       <div class="space-y-2">
-        <Label for="username">{$t('login.username')}</Label>
+        <Label for="username">{$t('login.username', 'Username or Email')}</Label>
         <Input 
           id="username"
           type="text"
           bind:value={usernameBuffer}
-          placeholder={$t('login.username_ph')}
+          placeholder={$t('login.username_ph', 'Enter your username or email')}
           required
         />
       </div>
 
       <div class="space-y-2">
-        <Label for="password">{$t('login.password')}</Label>
+        <Label for="password">{$t('login.password', 'Password')}</Label>
         <Input 
           id="password"
           type="password"
           bind:value={userPasswordBuffer}
-          placeholder={$t('login.password_ph')}
+          placeholder={$t('login.password_ph', 'Enter your password')}
           required
         />
       </div>
@@ -77,7 +83,7 @@
         {$t('login.enter_2fa_code')}
       </p>
       <div class="space-y-2">
-        <Label for="totp">{$t('login.auth_code')}</Label>
+        <Label for="totp">{$t('login.auth_code', 'Authentication Code')}</Label>
         <Input 
           id="totp"
           type="text"
@@ -96,7 +102,7 @@
         class="w-full"
         onclick={() => { requires2FA = false; totpToken = ''; }}
       >
-        ← {$t('login.back_to_login')}
+        ← {$t('login.back_to_login', 'Back to login')}
       </Button>
     {/if}
   </div>
@@ -108,6 +114,6 @@
   {/if}
 
   <Button type="submit" class="w-full">
-    {requires2FA ? $t('login.verify') : $t('login.signin')}
+    {requires2FA ? $t('login.verify', 'Verify') : $t('login.signin', 'Sign In')}
   </Button>
 </form>

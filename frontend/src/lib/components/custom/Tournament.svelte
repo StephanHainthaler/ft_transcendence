@@ -20,8 +20,12 @@
   let winner: string | null = $state(null);
 
   onMount(() => {
-    tournament.setPlayers(players);
-    schedule = tournament.getSchedule();
+    try {
+      tournament.setPlayers(players);
+      schedule = tournament.getSchedule();
+    } catch (e: any) {
+      error = e.message || "Failed to initialize tournament";
+    }
   })
 
   const startNextGame = () => {
@@ -33,48 +37,73 @@
         return;
       }
       tournament.nextRound();
-      schedule = tournament.getSchedule()
+      schedule = tournament.getSchedule();
       startNextGame();
-      return ;
+      return;
     }
 
     const player1 = players.find((p) => p.id === game.player1);
     const player2 = players.find((p) => p.id === game.player2);
 
-    if (!player1) throw new Error(`Invalid Player id: ${game.player1}`);
-    if (!player2) throw new Error(`Invalid Player id: ${game.player2}`);
+    if (!player1 || !player2) {
+        error = $t('error.user_not_found', 'One of the players was not found.');
+        return;
+    }
+    
     console.log(`Next up: ${player1.name} vs. ${player2.name}`);
     currentGame = { player1, player2 };
   }
 
   const onGameEnd = (game: Game) => {
-    const winner = game.score1 > game.score2 ? game.player1 : game.player2;
-    tournament.registerWin(winner);
-    console.log('winner: ', players.find(p => p.id === winner)!.name)
+    const gameWinnerId = game.score1 > game.score2 ? game.player1 : game.player2;
+    tournament.registerWin(gameWinnerId);
     currentGame = null;
-    startNextGame();
   }
 
 </script>
 
-{#if currentGame}
-  <PongGame
-    player1={currentGame.player1}
-    player2={currentGame.player2}
-    {onGameEnd}
-  />
-{:else if error}
-  <Alert>
-    <AlertDescription>{error}</AlertDescription>
-  </Alert>
-{:else if winner}
-  <Alert>
-    <AlertDescription>{$t('tournament.winn_is')} {winner}</AlertDescription>
-  </Alert>
-{:else}
-  <Button
-    onclick={() => { startNextGame() }}
-  >
-    {$t('buttons.next')}
-  </Button>
-{/if}
+<div class="flex flex-col items-center justify-center gap-6 h-full w-full">
+  {#if currentGame}
+    <PongGame
+      player1={currentGame.player1}
+      player2={currentGame.player2}
+      {onGameEnd}
+    />
+  {:else if error}
+    <Alert variant="destructive" class="max-w-md">
+      <AlertDescription>
+        {$t('error.general', 'Something went wrong')}: {error}
+      </AlertDescription>
+    </Alert>
+  {:else if winner}
+    <div class="text-center space-y-4">
+        <h2 class="text-4xl font-bold animate-bounce text-yellow-500">🏆</h2>
+        <Alert class="border-yellow-500 bg-yellow-500/10">
+          <AlertDescription class="text-xl font-semibold text-white">
+            {$t('tournament.winn_is', 'And the Winner is...')} {winner}
+          </AlertDescription>
+        </Alert>
+        <Button variant="outline" onclick={() => window.location.reload()}>
+            {$t('game.return', 'Return to Challenge Page')}
+        </Button>
+    </div>
+  {:else}
+    <div class="flex flex-col items-center gap-4">
+        <h3 class="text-2xl font-medium text-white">
+            {$t('tournament.tournament', 'Tournament Mode')}
+        </h3>
+        <p class="text-zinc-400">
+            {schedule.length > 0 
+                ? $t('game.rulesDescription', 'The next match is ready.') 
+                : $t('tournament.start', 'Press the button to begin.')}
+        </p>
+        <Button
+          size="lg"
+          class="min-w-[200px] text-lg"
+          onclick={() => { startNextGame() }}
+        >
+          {$t('buttons.next', 'Next Match')}
+        </Button>
+    </div>
+  {/if}
+</div>

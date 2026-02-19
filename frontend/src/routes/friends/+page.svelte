@@ -9,14 +9,13 @@
   import {t} from "@lib/i18n/i18n";
   import type { AppUser } from "@lib/api/appUser";
   import { toast } from "svelte-sonner";
+  import { isAppError } from "@lib/types/error";
 
   const removeFriendship = async (friendShipId: number) => {
     try {
       await client.removeFriendship(friendShipId);
     } catch (e: any) {
-      toast.error(`Failed to remove friendship`, {
-        description: e.message || String(e)
-      });
+      toast.error($t('friends.remove_fail', 'Failed to remove friendship'));
     } finally {
       await loadPageData();
     }
@@ -28,25 +27,26 @@
       accepted = [...accepted, pendingRec.find(p => p.id === friendShipId)!];
       pendingRec = pendingRec.filter(p => p.id !== friendShipId);
     } catch(e: any) {
-      toast.error(`Failed to accept friendship`, {
-        description: e.message || String(e)
-      });
+      toast.error($t('friends.accept_fail', 'Failed to accept friendship'));
     }
   }
 
   const sendFriendRequest = async (friendId: number) => {
     try {
       const friend = users.find(f => f.id === friendId);
-      if (!friend) throw new Error('Person doenst exist');
+      if (!friend) throw Object.assign(new Error('doesnt_exist'), {isAppError: true});
       const friendship = await client.sendFriendRequest(friendId);
 
       friends.push(friend);
       users = users.filter(u => u.id !== friendId);
       pendingSend.push(friendship);
     } catch (e: any) {
-        toast.error(`Failed to send friendship request`, {
-        description: e.message || String(e)
+      if (isAppError(e))
+        toast.error($t('friends.send_fail', 'Failed to send friendship request'), {
+          description: $t('friends.' + e.message, e.message) || ""
         });
+      else
+        toast.error($t('friends.send_fail', 'Failed to send friendship request'));
     }
   }
 
@@ -70,7 +70,7 @@
       pendingSend = friendships.filter(f => f.status === 'pending' && f.user_from_id === client.user?.id);
       pendingRec = friendships.filter(f => f.status === 'pending' && f.user_to_id === client.user?.id);
     } catch {
-      toast.error("Failed to load friends");
+      toast.error($t('friends.load_fail', 'Failed to load friends'));
     }
   }
 
@@ -84,35 +84,54 @@
 
 <Card.Root class="flex-1 min-h-0 flex flex-col h-full">
   <Card.Header>
-    <Card.Title>{$t('friends.card_title')}</Card.Title>
+    <Card.Title>{$t('friends.card_title', 'Friends')}</Card.Title>
   </Card.Header>
   <Card.Content class="flex-1 min-h-0 overflow-hidden">
     <div class='h-full grid grid-cols-1 grid-rows-4 md:grid-rows-2 md:grid-cols-2 gap-2 p-2 md:p-8'>
-      <Grid title={$t('friends.send')}>
+      <Grid title={$t('friends.send', 'Send Requests')}>
         {#each users as u}
           {#if !friends.find(fr => fr.id === u.id)}
-            <GridCard title={u.name} buttonDesc={$t('friends.add')} callback={async () => await sendFriendRequest(u.id)}/>
+            <GridCard 
+              title={u.name} 
+              buttonDesc={$t('friends.add', 'Add Friend')} 
+              callback={async () => await sendFriendRequest(u.id)}
+            />
           {/if}
         {/each}
       </Grid>
 
-      <Grid title={$t('friends.card_title')}>
+      <Grid title={$t('friends.card_title', 'Friends List')}>
         {#each accepted as a}
-          <GridCard isOnline={!!client.onlineFriends.find(f => f !== client.user?.id && (a.user_to_id === f || a.user_from_id === f))} title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)?.name ?? '?'} buttonDesc={$t('friends.remove')} callback={async () => await removeFriendship(a.id)}/>
+          <GridCard 
+            isOnline={!!client.onlineFriends.find(f => f !== client.user?.id && (a.user_to_id === f || a.user_from_id === f))}
+            title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)?.name ?? '?'}
+            buttonDesc={$t('friends.remove', 'Remove')} 
+            callback={async () => await removeFriendship(a.id)}
+          />
         {/each}
       </Grid>
 
-      <Grid title={$t('friends.cancel')}>
+      <Grid title={$t('friends.cancel', 'Pending Sent')}>
         {#each pendingSend as p}
-          <GridCard title={friends.find(u => u.id === p.user_to_id)?.name ?? '?'} buttonDesc={'Cancel'} callback={async () => await removeFriendship(p.id)}/>
+          <GridCard 
+            title={friends.find(u => u.id === p.user_to_id)?.name ?? '?'} 
+            buttonDesc={$t('friends.cancel', 'Cancel Request')} 
+            callback={async () => await removeFriendship(p.id)}
+          />
         {/each}
       </Grid>
 
-      <Grid title={$t('friends.accept')}>
+      <Grid title={$t('friends.accept', 'Pending Received')}>
         {#each pendingRec as u}
-          <GridCard title={friends.find(fr => fr.id === u.user_from_id)?.name ?? '?'} buttonDesc={$t('friends.reject')} callback={async () => await removeFriendship(u.id)}>
+          <GridCard 
+            title={friends.find(fr => fr.id === u.user_from_id)?.name ?? '?'} 
+            buttonDesc={$t('friends.reject', 'Reject')} 
+            callback={async () => await removeFriendship(u.id)}
+          >
             {#snippet extraBtn()}
-              <Button class='btn primary sm' onclick={async () => await acceptFriendRequest(u.id)}>{$t('friends.accept')}</Button>
+              <Button class='btn primary sm' onclick={async () => await acceptFriendRequest(u.id)}>
+                {$t('friends.accept', 'Accept')}
+              </Button>
             {/snippet}
           </GridCard>
         {/each}

@@ -1,7 +1,8 @@
 import type { SignupRequestBody, LoginRequestBody, AuthResponseSuccess, OAuthCallBackBody } from "@shared/api/authRequest";
-
 import { request } from './utils';
 import { toast } from "svelte-sonner";
+import { t, get } from "@lib/i18n/i18n";
+import type { AppError } from "@lib/types/error";
 
 export async function updateRequest({
   email, user_name, passwd
@@ -9,7 +10,9 @@ export async function updateRequest({
   email?: string, user_name?: string, passwd?: string
 }) {
   if (!email && !user_name && !passwd) {
-    throw new Error("No Credentials to update!");
+    
+    throw Object.assign(new Error("auth_missing_credentials"), { 
+    isAppError: true }) as AppError;
   }
   const req = new Request(`${import.meta.env.VITE_API_URL}/auth/update`, {
     method: 'PATCH',
@@ -25,11 +28,12 @@ export async function updateRequest({
 }
 
 export async function signupRequest(
-  info: SignupRequestBody,
-): Promise<AuthResponseSuccess> {
+  info: SignupRequestBody, ): Promise<AuthResponseSuccess> {
   if (!info.user_name || !info.email)
-    throw new Error("Missing Email or Username!");
-  if (!info.passwd) throw new Error("Missing Password!");
+    throw Object.assign(new Error("missing_email_or_username"), { 
+    isAppError: true }) as AppError;
+  if (!info.passwd) throw Object.assign(new Error("missing_pass"), { 
+    isAppError: true }) as AppError;
 
   const signupReq = new Request(`${import.meta.env.VITE_API_URL}/auth/sign-up`, {
     method: 'POST',
@@ -45,11 +49,13 @@ export async function signupRequest(
 }
 
 export async function loginRequest(
-  info: LoginRequestBody & { totp_token?: string },
-): Promise<AuthResponseSuccess & { requires_2fa?: boolean }> {
-  if ((!info.user_name && !info.email))
-    throw new Error("Missing Email of Username!");
-  if (!info.passwd) throw new Error("Missing Password!");
+  info: LoginRequestBody & { totp_token?: string }, ): Promise<AuthResponseSuccess & { requires_2fa?: boolean }> {
+  if ((!info.user_name && !info.email)){
+    throw Object.assign(new Error("missing_email_or_username"), { 
+    isAppError: true }) as AppError;}
+  if (!info.passwd) {
+    throw Object.assign(new Error("missing_pass"), { 
+    isAppError: true }) as AppError;}
 
   const login: Request = new Request(`${import.meta.env.VITE_API_URL}/auth/login`, {
     method: 'POST',
@@ -73,10 +79,10 @@ export async function loginRequest(
 }
 
 export async function oauthRequest(
-  info: OAuthCallBackBody,
-): Promise<AuthResponseSuccess> {
+  info: OAuthCallBackBody, ): Promise<AuthResponseSuccess> {
   if (!info.code)
-    throw new Error("Missing OAuth Code!");
+    throw Object.assign(new Error("missing_OAuth_code"), { 
+    isAppError: true }) as AppError;
 
   const oauth: Request = new Request(`${import.meta.env.VITE_API_URL}/auth/github-oauth`, {
     method: 'POST',
@@ -99,7 +105,10 @@ export async function deleteRequest() {
   try {
     await request(req);
   } catch (e: any) {
-    toast.error('Failed to Delete Account');
+    const tr = get(t);
+    const message = tr('error.delete_acc_fail');
+    toast.error( message || 'Failed to Delete Account');
+    throw (e);
   }
 }
 
@@ -111,7 +120,10 @@ export async function logoutRequest() {
   try {
     await request(req);
   } catch (e) {
-    toast.error('Failed to log out');
+    const tr = get(t);
+    const message = tr('error.log_out_fail');
+    toast.error( message || 'Failed to log out');
+    throw (e);
   }
 }
 

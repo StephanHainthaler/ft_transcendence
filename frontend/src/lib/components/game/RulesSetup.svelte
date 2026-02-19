@@ -18,14 +18,14 @@
 <Grid title={$t('game.settings')}>
   <div class="w-full justify-center grid grid-cols-1 md:grid-cols-2 gap-2">
     <Label class="font-bold text-l md:text-xl">
-      {$t('game.pointsToWin')}:
+      {$t('game.pointsToWin', 'Points to Win')}:
     </Label>
     <div>
       <Input type="number" bind:value={pointsToWin} min="1" max="20"/>
       <Input type="range" bind:value={pointsToWin} min="1" max="20"/>
     </div>
     <Label class="font-bold text-l md:text-xl">
-      {$t('game.matchDurationInMinutes')}:
+      {$t('game.matchDurationInMinutes', 'Match Duration (minutes)')}:
     </Label>
     <div>
       <Input type="number" bind:value={matchDurationInMinutes} min="1" max="10"/>
