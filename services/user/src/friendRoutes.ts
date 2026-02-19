@@ -6,6 +6,7 @@ import { eq } from "@server/orm";
 import { ApiError } from "@server/error/apiError";
 import { getUsers } from "./dbHandlers";
 import { AUTH_URL } from "./";
+import { sqliteErrorToApiError } from "@server/orm/error";
 
 function safeParseInt(value: any, name: string, min: number = 0): number {
   const nb = parseInt(value);
@@ -15,42 +16,68 @@ function safeParseInt(value: any, name: string, min: number = 0): number {
 }
 
 const getFriendships = (userId: number): { friends: { user: User, avatar: Avatar | null }[], friendships: Friendship[] } => {
-  const friendships = db
-    .from('friendships')
-    .select('*')
-    .where(eq('user_from_id', userId))
-    .or(eq('user_to_id', userId))
-    .all();
+  try {
+    const friendshipsQuery = db
+      .from('friendships')
+      .select('*')
+      .where(eq('user_from_id', userId))
+      .or(eq('user_to_id', userId));
+    console.log("Friendships: ", friendshipsQuery.stringify());
 
-  const ids = [...friendships.map(f => f.user_from_id), ...friendships.map(f => f.user_to_id)];
+    const friendships = friendshipsQuery.all();
+    const ids = [...friendships.map(f => f.user_from_id), ...friendships.map(f => f.user_to_id)].filter(id => id !== userId);
 
-  const friends = getUsers(ids);
+    const friends = getUsers(ids);
 
-  return { friends, friendships };
+    return { friends, friendships };
+  } catch (e) {
+    throw sqliteErrorToApiError(e);
+  }
 }
 
 const registerFriendRequest = (fromId: number, toId: number) => {
-  const existing = db.from('friendships').select('*').where(eq('user_from_id', fromId)).and(eq('user_to_id', toId)).single();
-  if (existing)
-    throw new ApiError({ code: 409, message: 'Request already exists' });
-  console.log(`fromId: ${fromId}\ntoId: ${toId}`);
-  return db.from('friendships').insert({ user_from_id: fromId, user_to_id: toId, status: 'pending' }).select('*').single();
+  try {
+    const existing = db.from('friendships').select('*').withDeleted().where(eq('user_from_id', fromId)).and(eq('user_to_id', toId)).single();
+    if (existing) {
+      if (existing.deleted_at === null)
+        throw new ApiError({ code: 409, message: 'Request already exists' });
+      else {
+        return db.from('friendships').withDeleted().update({ status: 'pending', deleted_at: null }).where(eq('id', existing.id)).and(eq('user_to_id', toId)).select('*').single();
+      }
+    }
+    const counterOffer = db.from('friendships').select('*').where(eq('user_to_id', fromId)).and(eq('user_from_id', toId)).single();
+    if (counterOffer)
+      return acceptFriendRequestFromReqId(counterOffer.user_to_id, counterOffer.id);
+    console.log(`fromId: ${fromId}\ntoId: ${toId}`);
+    return db.from('friendships').insert({ user_from_id: fromId, user_to_id: toId, status: 'pending' }).select('*').single();
+  } catch (e) {
+    console.log(e);
+    throw sqliteErrorToApiError(e);
+  }
 }
 
 const acceptFriendRequestFromReqId = (toId: number, reqId: number) => {
-  const existing = db.from('friendships').select('*').where(eq('id', reqId)).and(eq('user_to_id', toId)).single();
-  if (!existing)
-    throw new ApiError({ code: 404, message: 'Request doesnt exist' });
-  db.from('friendships').update({ status: 'accepted' }).where(eq('id', reqId)).and(eq('user_to_id', toId)).run();
+  try {
+    const existing = db.from('friendships').select('*').where(eq('id', reqId)).and(eq('user_to_id', toId)).single();
+    if (!existing)
+      throw new ApiError({ code: 404, message: 'Request doesnt exist' });
+    return db.from('friendships').update({ status: 'accepted' }).where(eq('id', reqId)).and(eq('user_to_id', toId)).select('*').single();
+  } catch (e) {
+    throw sqliteErrorToApiError(e);
+  }
 }
 
 const removeFriendship = (userId: number, reqId: number) => {
-  const friendship = db.from('friendships').select('*').where(eq('id', reqId)).single();
-  if (!friendship)
-    throw new ApiError({ code: 404, message: 'Friendship not found' });
-  if (friendship.user_from_id !== userId && friendship.user_to_id !== userId)
-    throw new ApiError({ code: 403, message: 'Not authorized to remove this friendship' });
-  db.from('friendships').delete().where(eq('id', reqId)).run();
+  try {
+    const friendship = db.from('friendships').withDeleted().select('*').where(eq('id', reqId)).single();
+    if (!friendship)
+      throw new ApiError({ code: 404, message: 'Friendship not found' });
+    if (friendship.user_from_id !== userId && friendship.user_to_id !== userId)
+      throw new ApiError({ code: 403, message: 'Not authorized to remove this friendship' });
+    db.from('friendships').delete().where(eq('id', reqId)).run();
+  } catch (e) {
+    throw sqliteErrorToApiError(e);
+  }
 }
 
 export function friendRoutes(fastify: FastifyInstance) {

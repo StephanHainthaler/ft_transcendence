@@ -6,7 +6,7 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import { goto } from "$app/navigation";
-  import {t, currentLocale} from "@lib/i18n/i18n";
+  import {t} from "@lib/i18n/i18n";
 
   const handleLoginFormSubmit = async (e: Event) => {
     e.preventDefault();

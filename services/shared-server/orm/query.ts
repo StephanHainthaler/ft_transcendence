@@ -5,7 +5,7 @@ import { Table } from './table';
 export type RunResult = Database.RunResult;
 
 /** Valid argument types for SQL parameters */
-export type Argument = string | number | undefined;
+export type Argument = string | number | undefined | null;
 
 /**
  * Constraint definition for WHERE clauses
@@ -13,7 +13,7 @@ export type Argument = string | number | undefined;
  */
 type Constraint<K> = {
   /** Comparison operator kind */
-  kind: 'eq' | 'ne' | 'gt' | 'lt' | 'ge' | 'le' | 'in',
+  kind: 'eq' | 'ne' | 'gt' | 'lt' | 'ge' | 'le' | 'in' | 'is' | 'nis',
   /** Column to constrain */
   col: K,
   /** Value to compare against */
@@ -53,6 +53,7 @@ export class Query<Row, SelectedRow = Row> {
   private insertValues?: Record<string, Argument>;
   private type: 'select' | 'insert' | 'delete' | 'update' | '' = '';
   private hasWhereClause: boolean = false;
+  private ignoreDeleted: boolean = true;
 
   /**
    * Creates a new Query instance
@@ -64,6 +65,11 @@ export class Query<Row, SelectedRow = Row> {
     this.db = db;
   }
 
+  withDeleted(): Query<Row, SelectedRow> {
+    this.ignoreDeleted = false;
+    return this as any;
+  }
+
   /**
    * Inserts a new row into the table
    * @param values - Column-value pairs to insert
@@ -71,7 +77,7 @@ export class Query<Row, SelectedRow = Row> {
    * @example
    * query.insert({ name: 'John', age: 30 }).run();
    */
-  insert(values: Record<string, Argument>): Query<Row, SelectedRow> {
+  insert(values: Partial<{ [K in keyof Row]: Argument }>): Query<Row, SelectedRow> {
     let fields: string[] = Object.keys(values);
     if (this.table.has(fields)) {
       this.insertValues = values;
@@ -89,9 +95,9 @@ export class Query<Row, SelectedRow = Row> {
    * @example
    * query.update({ name: 'Jane' }).eq('id', 1).run();
    */
-  update(tableFields: Record<string, Argument>): Query<Row, SelectedRow> {
+  update(tableFields: Partial<{ [K in keyof Row]: Argument }>): Query<Row, SelectedRow> {
     let filteredValues = Object.entries(tableFields).filter(([_, v]) => v !== undefined )
-    tableFields = Object.fromEntries(filteredValues);
+    tableFields = Object.fromEntries(filteredValues) as Partial<{ [K in keyof Row]: Argument }>;
     let fields: string[] = Object.keys(tableFields);
     if (this.table.has(fields)) {
       this.insertValues = tableFields;
@@ -213,8 +219,11 @@ export class Query<Row, SelectedRow = Row> {
         let query = `SELECT ${cols} FROM "${this.table.name}"`;
 
         if (this.constraints.length > 0) {
-          query += stringifyContraints(this.constraints);
-          const newParams = this.constraints.map(c => Array.isArray(c.arg) ? c.arg : [c.arg]).flat();
+          query += this.stringifyContraints(this.constraints);
+          const newParams = this.constraints
+            .filter(c => c.kind !== 'is' && c.kind !== 'nis')
+            .map(c => Array.isArray(c.arg) ? c.arg : [c.arg])
+            .flat();
           params.push(...newParams);
         }
 
@@ -254,23 +263,30 @@ INSERT INTO "${this.table.name}" (${keys.join(',')})
         if (this.constraints.length === 0) throw new Error('Missing constraint for update!');
         const keys = Object.keys(this.insertValues);
         const values = Object.values(this.insertValues);
+        const params = this.constraints
+          .filter(c => c.kind !== 'is' && c.kind !== 'nis')
+          .map(c => Array.isArray(c.arg) ? c.arg : [c.arg])
+          .flat();
         return {
           sql: `
 UPDATE "${this.table.name}"
   SET ${keys.map(k => `${k} = ?`).join(', ')}
-  ${this.constraints.length > 0 ? stringifyContraints(this.constraints) : ''}
+  ${this.constraints.length > 0 ? this.stringifyContraints(this.constraints) : ''}
   ${this.queryTargets ? `RETURNING ${this.queryTargets.join(',')}` : ''}`,
-          params: [...values, ...this.constraints.map(c => (Array.isArray(c.arg) ? c.arg : [c.arg])).flat()]
+          params: [...values, ...params]
         };
       }
       case 'delete': {
-        if (this.constraints.length === 0) throw new Error('Missing constraint for update!');
-        const params = this.constraints.flatMap(p => p.arg);
+        if (this.constraints.length === 0) throw new Error('Missing constraint for delete!');
+        const params = this.constraints
+          .filter(c => c.kind !== 'is' && c.kind !== 'nis')
+          .flatMap(p => Array.isArray(p.arg) ? p.arg : [p.arg]);
+
+        const isSoftDelete = this.table.has(['deleted_at']);
         return {
-          sql: `
-DELETE FROM "${this.table.name}"
-  ${stringifyContraints(this.constraints)}
-`,
+          sql: isSoftDelete
+            ? `UPDATE "${this.table.name}" SET deleted_at = CURRENT_TIMESTAMP ${this.stringifyContraints(this.constraints)}`
+            : `DELETE FROM "${this.table.name}" ${this.stringifyContraints(this.constraints)}`,
           params,
         }
       }
@@ -279,12 +295,35 @@ DELETE FROM "${this.table.name}"
     }
   }
 
+  stringifyContraints = <K>(constraints: Constraint<K>[]): string => {
+    const conditions = constraints.map((c, i) => {
+      const op = getOperator(c.kind);
+      const chain = c.chainOp ? c.chainOp + ' ' : '';
+      if (c.kind === 'is' || c.kind === 'nis') {
+        return `${String(c.col)} ${op} ${c.arg} ${i === 0 && constraints.length === 1 ? '' : chain}`;
+      }
+      if (op === 'IN') {
+        return `${chain}${String(c.col)} IN (${(c.arg as Argument[]).map(() => '?').join(',')})`;
+      }
+      return `${chain}${String(c.col)} ${op} ?`;
+    }).join(' ');
+
+    if (!this.ignoreDeleted || !this.table.has('deleted_at')) {
+      return ` WHERE ${conditions}`;
+    }
+    return constraints.length > 0
+      ? ` WHERE (${conditions}) AND deleted_at IS NULL`
+      : ` WHERE deleted_at IS NULL`;
+  }
+
+
   /**
    * Executes the query without returning results
    * @returns better-sqlite3 RunResult
    */
   run(): Database.RunResult {
     const { sql, params } = this.stringify();
+    console.log(sql);
     return this.db.prepare(sql).run(...params);
   }
 
@@ -294,6 +333,7 @@ DELETE FROM "${this.table.name}"
    */
   get(): SelectedRow[] | null {
     const { sql, params } = this.stringify();
+    console.log(sql);
     const ret = this.db.prepare<Argument[], SelectedRow[]>(sql).get(...params);
     return ret || null;
   }
@@ -304,6 +344,7 @@ DELETE FROM "${this.table.name}"
    */
   single(): SelectedRow | null {
     const { sql, params } = this.stringify();
+    console.log(sql);
     const ret = this.db.prepare<Argument[], SelectedRow[]>(sql).get(...params);
     if (ret && Array.isArray(ret))
       return [...ret][0]
@@ -318,8 +359,10 @@ DELETE FROM "${this.table.name}"
   //  this.limitCount = undefined;//it broke the limit functionality together with offset
     const { sql, params } = this.stringify();
 
+    console.log(sql);
+
     const rows = this.db.prepare<Argument[], SelectedRow>(sql).all(...params);
-    
+
     this.limitCount = undefined;
     this.offsetCount = undefined;
     this.constraints = [];
@@ -330,23 +373,13 @@ DELETE FROM "${this.table.name}"
   }
 }
 
-
-const stringifyContraints = <K>(constraints: Constraint<K>[]): string => {
-  return ` WHERE ${constraints.map(c =>
-    `${c.chainOp ? c.chainOp + ' ' : ''}${String(c.col)} ${
-      getOperator(c.kind) === 'IN'
-        ? `IN (${(c.arg as Argument[]).map(() => '?').join(',')})`
-        : getOperator(c.kind) + ' ?'
-    }`
-  ).join(' ')}`;
-}
 /**
  * Converts constraint kind to SQL operator
  * @param kind - Constraint type
  * @returns SQL comparison operator
  */
 function getOperator(kind: Constraint<string>['kind']): string {
-  const ops = { eq: '=', ne: '!=', gt: '>', lt: '<', ge: '>=', le: '<=', in: 'IN' };
+  const ops = { eq: '=', ne: '!=', gt: '>', lt: '<', ge: '>=', le: '<=', in: 'IN', is: 'is', nis: 'is not' };
   return ops[kind];
 }
 
@@ -408,6 +441,14 @@ export const ge = <K>(col: K, arg: Argument): Constraint<K> => {
  */
 export const le = <K>(col: K, arg: Argument): Constraint<K> => {
   return ({kind: 'le', col, arg});
+}
+
+export const IS = <K>(col: K, arg: Argument): Constraint<K> => {
+  return { kind: "is", col, arg };
+}
+
+export const NIS = <K>(col: K, arg: Argument): Constraint<K> => {
+  return { kind: "nis", col, arg };
 }
 
 /**

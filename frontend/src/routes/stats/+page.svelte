@@ -154,7 +154,7 @@ onMount(async() => {
 
       <tr class="group hover:bg-primary/5 transition-all duration-300">
         <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-muted-foreground">
-          #{match.match_id}
+          #{match.id}
         </td>
 
         <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-white/70 hidden md:table-cell">
@@ -223,7 +223,7 @@ onMount(async() => {
           {#if player.user_id !== 0}
           <tr class="group hover:bg-primary/6 transition-all duration-300">
             <td class="p-4 text-center">
-              <span class="font-mono text-xl font-black {player.rank <= 3 ? 'text-primary drop-shadow-[0_0_5px_var(--my-primary)]' : 'text-white/20'}">
+              <span class="font-mono text-xl font-black {player?.rank ?? 0 <= 3 ? 'text-primary drop-shadow-[0_0_5px_var(--my-primary)]' : 'text-white/20'}">
                 #{player.rank}
               </span>
             </td>

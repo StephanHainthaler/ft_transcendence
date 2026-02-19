@@ -1,32 +1,31 @@
-import { DB } from "@server/orm";
-
-import { int, text, defineTable } from "@server/orm"
+import { DB, int, text, defineTable, modelDefinition } from "@server/orm"
 import { Game, User, UserGame, Friendship, Avatar } from "@shared/user";
+import { ModelCols } from "@shared/db";
 
 export interface Schema {
-  users: User,
-  games: Game,
-  avatars: Avatar,
-  user_games: UserGame,
-  friendships: Friendship,
+  users: ModelCols & User,
+  games: ModelCols & Game,
+  avatars: ModelCols & Avatar,
+  user_games: ModelCols & UserGame,
+  friendships: ModelCols & Friendship,
   date: string,
 };
 
 const users = defineTable('users', {
-  id: int().primarykey().autoIncrement().notNull(),
+  ...modelDefinition(),
   name: text().notNull(),
   user_name: text().unique(),
 });
 
 const avatars = defineTable('avatars', {
-  id: int().primarykey().autoIncrement().notNull(),
+  ...modelDefinition(),
   user_id: int().notNull().references(() => users.columns.id),
   location: text().notNull(),
 })
 
 // DEPRECATED
 const games = defineTable('games', {
-  id: int().primarykey().autoIncrement().notNull(),
+  ...modelDefinition(),
   player1: int().notNull(),
   player2: int().notNull(),
   score1: int().notNull(),
@@ -36,12 +35,13 @@ const games = defineTable('games', {
 });
 
 const user_games = defineTable('user_games', {
+  ...modelDefinition(),
   game_id: int().references(() => games.columns.id),
   user_id: int().references(() => users.columns.id),
 });
 
 const user_friends = defineTable('friendships', {
-  id: int().notNull().primarykey().autoIncrement(),
+  ...modelDefinition(),
   user_from_id: int().notNull().references(() => users.columns.id),
   user_to_id: int().notNull().references(() => users.columns.id),
   status: text().notNull(),

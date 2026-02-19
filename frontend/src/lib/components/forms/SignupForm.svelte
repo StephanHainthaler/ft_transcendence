@@ -101,7 +101,7 @@
   </div>
 
   {#if errorMessage}
-    <Alert class="bg-red-400/50">
+    <Alert variant="destructive">
       <AlertDescription>{errorMessage}</AlertDescription>
     </Alert>
   {/if}

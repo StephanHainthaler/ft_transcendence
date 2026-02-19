@@ -12,6 +12,7 @@
 
   const removeFriendship = async (friendShipId: number) => {
     try {
+      console.log('removing');
       await client.removeFriendship(friendShipId);
     } catch (e: any) {
       toast.error(`Failed to remove friendship`, {
@@ -25,28 +26,27 @@
   const acceptFriendRequest = async (friendShipId: number) => {
     try {
       await client.acceptFriendRequest(friendShipId);
-      accepted = [...accepted, pendingRec.find(p => p.id === friendShipId)!];
-      pendingRec = pendingRec.filter(p => p.id !== friendShipId);
     } catch(e: any) {
       toast.error(`Failed to accept friendship`, {
         description: e.message || String(e)
       });
+    } finally {
+      await loadPageData();
     }
   }
 
   const sendFriendRequest = async (friendId: number) => {
     try {
       const friend = users.find(f => f.id === friendId);
-      if (!friend) throw new Error('Person doenst exist');
-      const friendship = await client.sendFriendRequest(friendId);
-
-      friends.push(friend);
-      users = users.filter(u => u.id !== friendId);
-      pendingSend.push(friendship);
+      if (!friend)
+        throw new Error('Person doenst exist');
+      await client.sendFriendRequest(friendId);
     } catch (e: any) {
         toast.error(`Failed to send friendship request`, {
         description: e.message || String(e)
-        });
+      });
+    } finally {
+      await loadPageData();
     }
   }
 
@@ -98,7 +98,11 @@
 
       <Grid title={$t('friends.card_title')}>
         {#each accepted as a}
-          <GridCard isOnline={!!client.onlineFriends.find(f => f !== client.user?.id && (a.user_to_id === f || a.user_from_id === f))} title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)?.name ?? '?'} buttonDesc={$t('friends.remove')} callback={async () => await removeFriendship(a.id)}/>
+          <GridCard
+            isOnline={!!client.onlineFriends.find(f => f !== client.user?.id && (a.user_to_id === f || a.user_from_id === f))}
+            title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)?.name ?? '?'}
+            buttonDesc={$t('friends.remove')}
+            callback={async () => await removeFriendship(a.id)}/>
         {/each}
       </Grid>
 

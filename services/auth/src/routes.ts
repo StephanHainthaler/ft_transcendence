@@ -33,13 +33,18 @@ export function authRoutes(fastify: FastifyInstance) {
     try {
       const token = extractJWTFromHeader(request.cookies.access_token);
 
+      const session = getSession({ userId: token.payload.sub });
+      if (!session) {
+        throw new ApiError({ message: 'Unauthenticated', code: 401 });
+      }
+
       validateJWT(token, secret);
       return reply.code(200).send({ success: true });
     } catch (e) {
       try {
         const refresh_token = request.cookies.refresh_token;
         if (!refresh_token)
-        throw new ApiError({ message: "Unauthenticated", code: 401 });
+          throw new ApiError({ message: "Unauthenticated", code: 401 });
 
         const session = getSession({ token: refresh_token });
         if (!session) {

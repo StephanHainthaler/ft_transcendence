@@ -1,4 +1,4 @@
-import { getDb, setDb, user_stats_table, match_history_table } from './database';
+import { getDb } from './database';
 import { eq } from '@server/orm';
 import { UserStats, MatchHistoryEntry, MatchSubmissionData } from '@shared/game_stats';
 import { ApiError } from '@server/error/apiError';
@@ -60,7 +60,7 @@ export function getMatchStats(MatchID: number): MatchHistoryEntry | null
 		let match = getDb()
 		.from<'match_history'>('match_history')
 		.select('*')
-		.where(eq('match_id', MatchID))
+		.where(eq('id', MatchID))
 		.single();
 		return match as MatchHistoryEntry;
 	} catch (e)

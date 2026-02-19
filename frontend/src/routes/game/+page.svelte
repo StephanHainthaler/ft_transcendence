@@ -15,8 +15,10 @@
   import MatchResult from "@lib/components/game/MatchResult.svelte";
   import { aiUser } from "@lib/game";
   import PongGame from "@lib/components/game/PongGame.svelte";
+    import UserChallenge from "@lib/components/game/UserChallenge.svelte";
 
   let users: AppUser[] = $state([]);
+  let friends: AppUser[] = $state([]);
   let matchData: MatchSubmissionData | null = $state(null);
   let challengingUser = $state({} as AppUser);
   let challengedUser = $state({} as AppUser);
@@ -35,8 +37,10 @@
     try
     {
       const data = await client.getUsers();
+      const friendsData = await client.getFriends();
       console.log(data);
       users = data;
+      friends = friendsData.friends;
 
       // filter out current user
       if (client.user)
@@ -143,13 +147,9 @@
         </AiSetup>
       </div>
 
-      <div class="col-span-2 size-full">
-        <Grid title={$t('game.challenge')}>
-          {#each users as user}
-            <GridCard title={user.name} avatarUrl={user.avatarUrl} buttonDesc={$t('game.challenge')} callback={() => userSelectionCallback(user)}/>
-          {/each}
-        </Grid>
-      </div>
+    <div class="col-span-2 size-full">
+      <UserChallenge {users} {friends} {userSelectionCallback}/>
+    </div>
 
     {:else if gameState === 'running'}
       <PongGame bind:this={pongRef} player1={challengingUser} player2={challengedUser} {onGameEnd} {matchDurationInMinutes} {pointsToWin} {AIdifficulty}/>
@@ -166,7 +166,6 @@
           <Button onclick={ startRematch }>{$t('game.rematch')}</Button>
         {/snippet}
       </MatchResult>
-
     {/if}
   </Card.Content>
 </Card.Root>

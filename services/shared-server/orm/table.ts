@@ -1,3 +1,4 @@
+import { Model, modelDefinition } from "./column";
 import { Column } from "./column";
 
 /** Record mapping column names to their Column definitions */
@@ -18,7 +19,7 @@ export type Check = { col: string, notNull?: boolean, chainOp?: CheckOperator}
  * Represents a database table with columns and constraints
  */
 export class Table {
-  private tableColumns;
+  private tableColumns: Model & Record<string, Column> = modelDefinition();
   private tableName;
   private checks: Check[] = [];
 
@@ -29,7 +30,7 @@ export class Table {
    * @param checks - Optional array of CHECK constraints
    */
   constructor(tableColumns: Record<string, Column>, tableName: string, checks?: Check[]) {
-    this.tableColumns = tableColumns;
+    Object.assign(this.tableColumns, tableColumns)
     this.tableName = tableName;
     if (checks) this.checks = checks;
   }
