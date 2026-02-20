@@ -4,6 +4,7 @@
   import Grid from "@lib/components/custom/Grid.svelte";
   import { Label } from "../ui/label";
   import { Input } from "../ui/input";
+    import NeonHeader from "../custom/NeonHeader.svelte";
 
   let {
     pointsToWin = $bindable(),
@@ -15,7 +16,14 @@
 
 </script>
 
-<Grid title={$t('game.settings')}>
+<Grid title="">
+  <div class="-mt-8 mb-4">
+    <NeonHeader
+      text={$t('game.settings', 'Game Settings')} 
+      size="x1" 
+      level="h1" 
+    />
+  </div>
   <div class="w-full justify-center grid grid-cols-1 md:grid-cols-2 gap-2">
     <Label class="font-bold text-l md:text-xl">
       {$t('game.pointsToWin', 'Points to Win')}:

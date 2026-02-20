@@ -8,6 +8,7 @@
   import CyberTable from "$lib/components/custom/CyberTable.svelte";
   import ResultBadge from "$lib/components/custom/ResultBadge.svelte";
   import type { AppUser } from '@lib/api/appUser';
+    import NeonHeader from '@lib/components/custom/NeonHeader.svelte';
 
   let stats = $state<UserStats | null>(null);
   let history = $state<MatchHistoryEntry[]>([]);
@@ -125,9 +126,10 @@
   </div>
 
   <div class="px-4 max-w-6xl mx-auto space-y-8"> 
-    <h1 class="text-4xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_var(--my-primary)]">
-      {activeTab === 'stats' ? $t('stats.title', 'Player Statistics') : $t('leaderboard.title', 'Global Leaderboard')}
-    </h1>
+    <NeonHeader 
+      size="4xl"
+      text={activeTab === 'stats' ? $t('stats.title', 'Player Statistics') : $t('leaderboard.title', 'Global Leaderboard')} 
+    />
 
     {#if isLoading}
     <div class="text-center py-20 font-mono animate-pulse text-primary">_ {$t('stats.loading', 'Loading...')}</div>
@@ -142,9 +144,10 @@
           <StatsCard label={$t('stats.highest_score', 'Highest Score')} value={stats?.highest_score} />
         </div>
 
-        <h2 class="text-4xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_var(--my-primary)]">
-          {$t('stats.match_history', 'Match History')}
-        </h2>
+        <NeonHeader 
+          size="4xl"
+          text={$t('stats.match_history', 'Match History')}
+        />
 
     <CyberTable headers={historyHeaders}>
       {#each history as match}
