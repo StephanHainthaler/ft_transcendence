@@ -4,7 +4,7 @@ What we need:
 
     -) Background:  black
     -) Players:     white
-    -) Ball:        red
+    -) Ball:        white
     -) U/L Borders: white
     -) Points:      white
     -) Middle line: white
@@ -14,7 +14,7 @@ What we need:
     -) Will be displayed via rectangles on the left and right halves of the screen. There may be space between the left/right screen borders and the players.
     -) The player on the left side will be considered player 1 and the one on the right side will be considered player 2.
     -) Can ONLY move vertically between the upper and lower borders.
-    -) When playing locally against an opponent, moving will be done via keys 'W' or 'ARROW_UP' for moving up and 'S' or 'ARROW_DOWN' for moving down for player 1 and players 2 respectively.
+    -) When playing locally against an opponent, moving will be done via keys 'W' or 'ARROW_UP' for moving up and 'S' or 'ARROW_DOWN' for moving down for player 1 and player 2 respectively.
     -) When playing against an AI opponent, moving will be done via keys 'W' for moving up and 'S' for moving down.
 
 3.) Ball:

@@ -18,6 +18,7 @@ export class Pong
 	private _player2: Player;
 	private _ball: Ball;
 	private _maxPlayerScore: number = 10;
+	private _preMatchDuration: number = 3000; // 3 seconds in ms
 	private _maxMatchDuration: number = 300000; // 5 min in ms
 	private _currentMatchDuration: number = 0;
 	private _matchStartTime: number = 0;
@@ -38,7 +39,7 @@ export class Pong
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
 		this._maxPlayerScore = pointsToWin;
-		this._maxMatchDuration = matchDurationInMinutes * 60000;
+		this._maxMatchDuration = matchDurationInMinutes * 60000 + this._preMatchDuration;
 		this._onGameEnd = _onGameEnd;
 		this.resizeCanvas();
 
@@ -146,7 +147,7 @@ export class Pong
 		// clamp to max 3 to prevent huge jumps after tab switch
 		const delta = Math.min(elapsed / TARGET_FRAME_TIME, 3);
 
-		this.moveBall(delta); 
+		this.moveBall(delta);
 		this.movePlayer(this._player1, delta);
 		this.movePlayer(this._player2, delta);
 		this.drawGame();
@@ -198,7 +199,7 @@ export class Pong
 		this._context.textAlign = "center";
 		
 		// set color depending on the game state
-		if (this._isPaused == true)
+		if (this._isPaused == true || this._currentMatchDuration < this._preMatchDuration)
 			this._context.fillStyle = "rgb(170, 170, 170)";
 		else
 			this._context.fillStyle = "rgb(255, 255, 255)";
@@ -223,7 +224,11 @@ export class Pong
 		this._context.fillRect(this._ball.getOrigin().x, this._ball.getOrigin().y, this._ball.getWidth(), this._ball.getHeight());
 
 		// draw match timer
-		let currentCountdown = Math.round((this._maxMatchDuration - this._currentMatchDuration) / 1000);
+		let currentCountdown;
+		if (this._currentMatchDuration < this._preMatchDuration)
+			currentCountdown = Math.ceil((this._preMatchDuration - this._currentMatchDuration) / 1000);
+		else
+			currentCountdown = Math.ceil((this._maxMatchDuration - this._currentMatchDuration) / 1000);
 		if (currentCountdown < 10)
 		{
 			if (this._isPaused == true)
@@ -255,14 +260,14 @@ export class Pong
 
 	public	moveBall(delta: number): void
 	{
-		if (this._isPaused == true)
+		if (this._isPaused == true || this._currentMatchDuration < this._preMatchDuration)
 			return ;
 		this._ball.move(this._player1, this._player2, delta);
 	}
 
 	public	movePlayer(player: Player, delta: number)
 	{
-		if (this._isPaused == true)
+		if (this._isPaused == true || this._currentMatchDuration < this._preMatchDuration)
 			return ;
 		if (player.isAI() == false)
 			player.move(delta);
@@ -282,7 +287,7 @@ export class Pong
 			matchData.winner_id = matchData.player_one_id;
 		else
 			matchData.winner_id = matchData.player_two_id;
-		matchData.duration = new Date().getTime() - this._matchStartTime - this._pauseDuration;
+		matchData.duration = new Date().getTime() - this._matchStartTime - this._pauseDuration - this._preMatchDuration;
 		matchData.timestamp = this._matchStartTime;
 		return (matchData);
 	}
