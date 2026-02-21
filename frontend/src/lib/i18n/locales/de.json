@@ -5,13 +5,19 @@
   "play": "Spielen",
   "moto": "ARENA_READY: VERBINDE DEIN PADDLE MIT DEM GRID",
   "healthcheck": "Verbindung prüfen",
+  "moto": "ARENA_READY: VERBINDE DEIN PADDLE MIT DEM GRID",
+  "healthcheck": "Verbindung prüfen",
   "login": {
     "login": "Anmeldung",
+    "login": "Anmeldung",
     "username": "E-Mail oder Benutzername",
+    "username_ph": "E-Mail oder Benutzernamen eingeben",
     "username_ph": "E-Mail oder Benutzernamen eingeben",
     "password": "Passwort",
     "password_ph": "Passwort eingeben",
     "signin": "Einloggen",
+    "logout": "Erfolgreich abgemeldet",
+    "logout_fail": "Abmeldung fehlgeschlagen",
     "logout": "Erfolgreich abgemeldet",
     "logout_fail": "Abmeldung fehlgeschlagen",
     "enter_2fa": "2FA-Code eingeben",
@@ -44,8 +50,10 @@
   },
   "signup": {
     "signup": "Registrierung",
+    "signup": "Registrierung",
     "register": "Registrieren",
     "username": "Benutzername",
+    "username_ph": "Benutzernamen wählen",
     "username_ph": "Benutzernamen wählen",
     "email": "E-Mail",
     "email_ph": "E-Mail eingeben",
@@ -56,14 +64,21 @@
     "loading": "Registrierung...",
     "pass_no_match": "Passwörter stimmen nicht überein",
     "username_taken": "Benutzername ist bereits vergeben"
+    "pass_no_match": "Passwörter stimmen nicht überein",
+    "username_taken": "Benutzername ist bereits vergeben"
   },
   "OAuth": {
     "oauth": "OAuth",
     "oauth_gh": "Mit GitHub anmelden",
+    "oauth_gh": "Mit GitHub anmelden",
     "error": "Etwas ist schiefgelaufen",
+    "error2": "Ein Fehler ist aufgetreten...",
     "error2": "Ein Fehler ist aufgetreten...",
     "redirect": "OAuth-Weiterleitung",
     "go_back": "Zurückgehen...",
+    "wait": "Bitte warten...",
+    "success": "OAuth-Autorisierung erfolgreich",
+    "loading": "GitHub-Autorisierung wird abgeschlossen..."
     "wait": "Bitte warten...",
     "success": "OAuth-Autorisierung erfolgreich",
     "loading": "GitHub-Autorisierung wird abgeschlossen..."

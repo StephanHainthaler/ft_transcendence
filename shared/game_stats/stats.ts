@@ -9,7 +9,7 @@ export interface UserStats {
 }
 
 export interface MatchHistoryEntry {
-	match_id: number;
+	id: number;
 	timestamp: number; //Unix-time??
 	player_one_id: number;
 	player_two_id: number;

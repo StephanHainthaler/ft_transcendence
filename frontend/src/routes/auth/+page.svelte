@@ -9,7 +9,6 @@
   import { client } from "@lib/api/index.svelte";
   import { goto } from "$app/navigation";
 
-  // Перевірка авторизації при завантаженні
 if (browser && client.loggedIn) {
     goto('/');
   }

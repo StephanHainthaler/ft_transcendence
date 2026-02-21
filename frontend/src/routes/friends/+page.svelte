@@ -7,12 +7,13 @@
   import { onDestroy, onMount } from "svelte";
   import * as Card from "@lib/components/ui/card";
   import {t} from "@lib/i18n/i18n";
-  import type { AppUser } from "@lib/api/appUser";
+  import type { AppUser } from "@shared/user";
   import { toast } from "svelte-sonner";
   import { isAppError } from "@lib/types/error";
 
   const removeFriendship = async (friendShipId: number) => {
     try {
+      console.log('removing');
       await client.removeFriendship(friendShipId);
     } catch (e: any) {
       toast.error($t('friends.remove_fail', 'Failed to remove friendship'));
@@ -24,10 +25,10 @@
   const acceptFriendRequest = async (friendShipId: number) => {
     try {
       await client.acceptFriendRequest(friendShipId);
-      accepted = [...accepted, pendingRec.find(p => p.id === friendShipId)!];
-      pendingRec = pendingRec.filter(p => p.id !== friendShipId);
     } catch(e: any) {
       toast.error($t('friends.accept_fail', 'Failed to accept friendship'));
+    } finally {
+      await loadPageData();
     }
   }
 
@@ -47,6 +48,8 @@
         });
       else
         toast.error($t('friends.send_fail', 'Failed to send friendship request'));
+    } finally {
+      await loadPageData();
     }
   }
 
@@ -102,7 +105,7 @@
 
       <Grid title={$t('friends.card_title', 'Friends List')}>
         {#each accepted as a}
-          <GridCard 
+          <GridCard
             isOnline={!!client.onlineFriends.find(f => f !== client.user?.id && (a.user_to_id === f || a.user_from_id === f))}
             title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)?.name ?? '?'}
             buttonDesc={$t('friends.remove', 'Remove')} 

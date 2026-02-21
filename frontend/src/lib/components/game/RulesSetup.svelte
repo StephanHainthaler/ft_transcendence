@@ -4,7 +4,7 @@
   import Grid from "@lib/components/custom/Grid.svelte";
   import { Label } from "../ui/label";
   import { Input } from "../ui/input";
-    import NeonHeader from "../custom/NeonHeader.svelte";
+  import NeonHeader from "../custom/NeonHeader.svelte";
 
   let {
     pointsToWin = $bindable(),

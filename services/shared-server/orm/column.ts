@@ -4,6 +4,23 @@ export type Type = 'integer' | 'text';
 /** Valid default value types for columns */
 export type DefaultValue = number | string | 'CURRENT_TIME' | 'CURRENT_DATE' | 'CURRENT_TIMESTAMP';
 
+export type Model = {
+  id: Column,
+  created_at: Column,
+  updated_at: Column,
+  deleted_at: Column
+}
+
+export const modelDefinition = (): Model => {
+  return {
+    id: int().notNull().primarykey().autoIncrement(),
+    created_at: text().notNull().default("CURRENT_TIMESTAMP"),
+    updated_at: text().notNull().default("CURRENT_TIMESTAMP"),
+    deleted_at: text()
+  }
+}
+
+
 /**
  * Represents a database column with chainable constraint methods
  */

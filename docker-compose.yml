@@ -9,17 +9,17 @@ services:
     networks:
       transcendence_network:
     restart: unless-stopped
-    # healthcheck:
-    #   test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000"]
-    #   interval: 30s
-    #   timeout: 5s
-    #   retries: 3
-    #   start_period: 15s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 256M
-    #       cpus: "0.5"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
     logging:
       driver: json-file
       options:
@@ -77,34 +77,29 @@ services:
       dockerfile: services/api/Dockerfile
     env_file:
       - env/prod/.env.api
-    environment:
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
       - "3000"
     networks:
       transcendence_network:
     restart: unless-stopped
     depends_on:
-      - user
-      - auth
-      - stats
-    #   user:
-    #     condition: service_healthy
-    #   auth:
-    #     condition: service_healthy
-    #   stats:
-    #     condition: service_healthy
-    # healthcheck:
-    #   test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:3000/health/"]
-    #   interval: 30s
-    #   timeout: 5s
-    #   retries: 3
-    #   start_period: 15s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 512M
-    #       cpus: "1.0"
+      user:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
+      stats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://127.0.0.1:3000/health/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
     logging:
       driver: json-file
       options:
@@ -127,7 +122,7 @@ services:
       transcendence_network:
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:3001/health"]
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://127.0.0.1:3001/health"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -156,15 +151,13 @@ services:
       dockerfile: services/auth/Dockerfile
     env_file:
       - env/prod/.env.auth
-    environment:
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
       - "3002"
     networks:
       transcendence_network:
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:3002/health"]
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://127.0.0.1:3002/health"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -198,7 +191,7 @@ services:
       transcendence_network:
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:3003/health"]
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://127.0.0.1:3003/health"]
       interval: 30s
       timeout: 5s
       retries: 3

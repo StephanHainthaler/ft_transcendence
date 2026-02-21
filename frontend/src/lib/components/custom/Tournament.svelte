@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { AppUser } from "@lib/api/appUser";
-  import { Tournament } from "@lib/tournament/tournament";
+  import type { AppUser } from "@shared/user";
+  import { Tournament } from "@lib/tournament/tournament.svelte";
   import type { Game } from "@shared/user";
-  import PongGame from "./PongGame.svelte";
+  import PongGame from "$lib/components/game/PongGame.svelte";
   import Alert from "../ui/alert/alert.svelte";
   import AlertDescription from "../ui/alert/alert-description.svelte";
   import Button from "../ui/button/button.svelte";
@@ -26,6 +26,12 @@
     } catch (e: any) {
       error = e.message || "Failed to initialize tournament";
     }
+    try {
+      tournament.setPlayers(players);
+      schedule = tournament.getSchedule();
+    } catch (e: any) {
+      error = e.message || "Failed to initialize tournament";
+    }
   })
 
   const startNextGame = () => {
@@ -36,7 +42,6 @@
         winner = tournament.nextPlayers[0].name;
         return;
       }
-      tournament.nextRound();
       schedule = tournament.getSchedule();
       startNextGame();
       return;

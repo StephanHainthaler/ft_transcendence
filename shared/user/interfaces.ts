@@ -1,15 +1,17 @@
+import { AppUser } from "./appUser"
+
 export interface User extends Record<string, string | number | undefined> {
   id: number,
   name: string,
   user_name?: string,
 }
 
-export interface Game extends Record<string, string | number | undefined> {
-  id: number,
-  player1: number,
-  player2: number,
+export interface Game {
+  player1: AppUser,
+  player2: AppUser,
   score1: number,
   score2: number
+  duration?: number,
 }
 
 /* Junction table between users and played games */

@@ -7,7 +7,7 @@ import type { UserStats, MatchHistoryEntry, MatchSubmissionData } from "@shared/
 import type { OAuthCallBackBody } from "@shared/api";
 import { acceptFriendRequest, checkFriendsOnlineStatus, getFriends, getUser, getUsers, removeFriendship, sendFriendRequest, updateUser } from "./user";
 import { goto } from "$app/navigation";
-import { AppUser } from "./appUser";
+import { AppUser } from "@shared/user";
 import { type AppError, isAppError } from "$lib/types/error";
 
 
@@ -28,6 +28,7 @@ export class ApiClient {
   private currentOnlineFriends: number[] = $state([]);
   private onlineInterval: ReturnType<typeof setInterval> | null = null;
   loggedIn: boolean = $state(false);
+  status: 'ready' | 'loading' | 'error' = $state('loading');
   status: 'ready' | 'loading' | 'error' = $state('loading');
 
   constructor() {}
@@ -52,7 +53,7 @@ export class ApiClient {
       this.status = 'ready';
     } catch (e: any)
     {
-      if (e.code === 401 || e.status  === 401) {
+      if (e.code === 401 || e.status === 401) {
         this.clearSession();
         this.avatarUrl = undefined;
         this.loggedIn = false;
@@ -62,7 +63,7 @@ export class ApiClient {
             console.log("Session expired or missing. Redirecting to /auth...");
             goto('/auth');
           }
-        } 
+        }
         else {
           this.status = 'error';
         }

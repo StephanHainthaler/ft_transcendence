@@ -160,37 +160,46 @@ export function createSession(user: AuthUser, secret: string): { accessToken: JW
   const tokenHash = hashRefreshToken(refreshToken);
 
   const session: Session = {
+    deleted_at: null,
     auth_id: user.id,
     user_id: user.user_id,
     token: tokenHash,
-    created_at: Date.now(),
+    minted_at: Date.now(),
     expires_in: refreshTokenLifetime,
   };
 
-  let currentSession;
+  console.log(user);
+
+  let currentSession: Session | null;
   try {
     currentSession = db
       .from('sessions')
       .select('*')
+      .withDeleted()
       .where(eq('auth_id', user.id))
       .single();
   } catch (e: any) {
     throw sqliteErrorToApiError(e);
   }
+
   try {
     if (currentSession) {
+      console.log('updateing session: ', session)
       db
         .from('sessions')
-        .update(session)
-        .where(eq('auth_id', user.id))
+        .withDeleted()
+        .update({ deleted_at: null, ...session })
+        .where(eq('id', currentSession.id))
         .run();
     } else {
+      console.log('inserting session: ', session)
       db
         .from('sessions')
         .insert(session)
         .run();
     }
   } catch (e) {
+    console.log(e);
     throw sqliteErrorToApiError(e);
   }
 
@@ -201,7 +210,7 @@ export function getSession({
   authId, userId,  token,
 }: {
   authId?: number, userId?: number, token?: string
-}): Session | null{
+}): Session | null {
   if (userId) {
     try {
       const session = db
@@ -255,7 +264,7 @@ export function deleteExpiredSessions() {
   db.from('sessions')
     .select('*')
     .all()
-    .filter(s => (s.created_at + s.expires_in) <= now)
+    .filter(s => (s.minted_at + s.expires_in) <= now)
     .forEach(s => {
       db.from('sessions').delete().where(eq('user_id', s.user_id)).run();
     });

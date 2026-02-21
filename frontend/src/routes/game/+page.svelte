@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { AppUser } from "@lib/api/appUser";
-  import Grid from "@lib/components/custom/Grid.svelte";
+  import { AppUser } from "@shared/user";
   import { client } from "@lib/api/index.svelte";
-  import GridCard from "@lib/components/custom/GridCard.svelte";
   import * as Card from "$lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
   import { tick } from 'svelte';
@@ -15,9 +13,11 @@
   import MatchResult from "@lib/components/game/MatchResult.svelte";
   import { aiUser } from "@lib/game";
   import PongGame from "@lib/components/game/PongGame.svelte";
-    import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
+  import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
+  import UserChallenge from "@lib/components/game/UserChallenge.svelte";
 
   let users: AppUser[] = $state([]);
+  let friends: AppUser[] = $state([]);
   let matchData: MatchSubmissionData | null = $state(null);
   let challengingUser = $state({} as AppUser);
   let challengedUser = $state({} as AppUser);
@@ -36,6 +36,7 @@
     try
     {
       const data = await client.getUsers();
+      const friendsData = await client.getFriends();
       console.log(data);
       users = data;
       if (!users || users.length === 0) {
@@ -106,7 +107,7 @@
 
   const challengeAICallback = () => {
     isAi = true;
-    selectUser(aiUser);
+    selectUser(aiUser());
   }
 
   const selectUser = (u: AppUser) => {
@@ -187,7 +188,11 @@
       </div>
 
     {:else if gameState === 'result'}
-      <MatchResult matchData={matchData} {challengedUser} {challengingUser}>
+      <MatchResult 
+        matchData={matchData}
+        {challengedUser}
+        {challengingUser}
+      >
         {#snippet actions()}
           <Button onclick={returnToChallengePage}>{$t('game.return', 'Return to Challenge Page')}</Button>
           <Button onclick={startRematch}>{$t('game.rematch', 'Rematch')}</Button>
