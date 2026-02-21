@@ -2,8 +2,8 @@
   import { t } from "@lib/i18n/i18n";
   import Grid from "@lib/components/custom/Grid.svelte";
   import { Button } from "../ui/button";
-    import type { Snippet } from "svelte";
-    import NeonHeader from "../custom/NeonHeader.svelte";
+  import type { Snippet } from "svelte";
+  import NeonHeader from "../custom/NeonHeader.svelte";
 
   let { 
     AIdifficulty = $bindable(0),
@@ -12,6 +12,13 @@
     AIdifficulty: number,
     button: Snippet
   } = $props();
+
+const diffStyles = {
+  1: "bg-easy text-white shadow-[0_0_25px_var(--chart-2)] opacity-100 hover:shadow-[0_0_35px_var(--chart-2)] hover:brightness-110", 
+  2: "bg-medium text-black shadow-[0_0_25px_var(--chart-3)] opacity-100 hover:brightness-110",
+  3: "bg-hard text-white shadow-[0_0_25px_var(--chart-1)] opacity-100 hover:bg-hard/90 hover:shadow-[0_0_35px_var(--chart-1)] hover:brightness-110"
+};
+
 </script>
 
 <Grid title="">
@@ -30,35 +37,41 @@
         <div class="flex flex-row gap-4 w-full items-center justify-center">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <Button 
-              class="transition-all duration-300 {AIdifficulty === 1 
-                ? 'bg-primary text-black shadow-[0_0_20px_rgba(var(--accent),0.4)]' 
-                : 'bg-primary/5 text-primary border border-primary/20 hover:bg-primary/20'}" 
+              variant="easy"
+              class="transition-all duration-300 uppercase font-black text-xs sm:text-sm overflow-hidden
+                {AIdifficulty === 1 
+                  ? diffStyles[1] 
+                  : 'bg-chart-2/40 text-white hover:bg-chart-2 hover:text-white opacity-100'}"
               onclick={() => (AIdifficulty = 1)}
             >
               {$t('game.easy', 'Easy')}
             </Button>
 
             <Button 
-              class="transition-all duration-300 {AIdifficulty === 2 
-                ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)]' 
-                : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white'}" 
+              class="transition-all duration-300 uppercase font-black text-xs md:text-sm overflow-hidden
+                {AIdifficulty === 2 
+                  ? diffStyles[2] 
+                  : 'bg-chart-3/40 text-white hover:bg-chart-3 hover:text-white opacity-100'}"
               onclick={() => (AIdifficulty = 2)}
             >
               {$t('game.medium', 'Medium')}
             </Button>
 
             <Button 
-              class="transition-all duration-300 {AIdifficulty === 3 
-                ? 'bg-secondary text-white shadow-[0_0_20px_rgba(var(--secondary-rgb),0.4)]' 
-                : 'bg-secondary/5 text-secondary border border-secondary/20 hover:bg-secondary/20'}" 
+            variant="hard"
+              class="transition-all duration-300 uppercase font-black text-xs sm:text-sm overflow-hidden
+                {AIdifficulty === 3 
+                  ? diffStyles[3] 
+                  : 'bg-chart-1/40 text-white hover:bg-chart-1 hover:text-white opacity-100'}"
               onclick={() => (AIdifficulty = 3)}
             >
               {$t('game.hard', 'Hard')}
             </Button>
+
           </div>
         </div>
       </div>
-      <div class="flex items-center justify-center size-full">
+      <div class="flex items-center justify-center size-full uppercase">
       {@render button()}
       </div>
     </div>

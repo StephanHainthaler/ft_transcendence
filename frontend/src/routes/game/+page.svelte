@@ -15,6 +15,7 @@
   import MatchResult from "@lib/components/game/MatchResult.svelte";
   import { aiUser } from "@lib/game";
   import PongGame from "@lib/components/game/PongGame.svelte";
+    import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
 
   let users: AppUser[] = $state([]);
   let matchData: MatchSubmissionData | null = $state(null);
@@ -133,50 +134,66 @@
   />
 {/key}
 
-<Card.Root class="size-full">
-  <Card.Content class="flex flex-col gap-4 size-full overflow-hidden">
+<div class="flex flex-col h-full min-h-[90vh] bg-card/50 border border-border rounded-xl p-6 shadow-2xl overflow-hidden">
+<Card.Root class="h-full border-none bg-transparent shadow-none">
+  <Card.Content class="flex flex-col h-full p-4 gap-6">
     {#if gameState === 'setup'}
-      <div class="grid grid-cols-2 gap-4 min-h-[30%]">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 shrink-0">
         <RulesSetup
           bind:matchDurationInMinutes={matchDurationInMinutes}
           bind:pointsToWin={pointsToWin}
         />
 
-        <AiSetup
-          bind:AIdifficulty={AIdifficulty}
-        >
+        <AiSetup bind:AIdifficulty={AIdifficulty}>
           {#snippet button()}
-            <Button onclick={challengeAICallback}>
-              {$t('game.challengeAI', 'Challenge AI')}
-            </Button>
+            <div class="mt-4 w-full flex justify-center">
+              <Button 
+                class="w-full transition-all duration-300 uppercase font-black text-xs sm:text-sm"
+                onclick={challengeAICallback}>
+                {$t('game.challengeAI', 'Challenge AI')}
+              </Button>
+            </div>
           {/snippet}
         </AiSetup>
       </div>
 
-      <div class="col-span-2 size-full">
-        <Grid title={$t('game.challenge', 'Challenge Players')}>
-          {#each users as user}
-            <GridCard title={user.name} avatarUrl={user.avatarUrl} buttonDesc={$t('game.challenge', 'Challenge')} callback={() => userSelectionCallback(user)}/>
-          {/each}
+      <div class="flex-1 flex flex-col min-h-0">
+        <Grid title="">
+          <div class="-mt-8 mb-4">
+            <NeonHeader
+              text={$t('game.challenge', 'Challenge AI')}
+              size="x1" 
+              level="h1" 
+            />
+          </div>
+          <div class="overflow-y-auto h-full pr-2 custom-scrollbar">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {#each users as user}
+                <GridCard 
+                  title={user.name} 
+                  avatarUrl={user.avatarUrl} 
+                  buttonDesc={$t('game.challenge', 'Challenge')} 
+                  callback={() => userSelectionCallback(user)}
+                />
+              {/each}
+            </div>
+          </div>
         </Grid>
       </div>
 
     {:else if gameState === 'running'}
-      <PongGame bind:this={pongRef} player1={challengingUser} player2={challengedUser} {onGameEnd} {matchDurationInMinutes} {pointsToWin} {AIdifficulty}/>
+      <div class="flex-1 min-h-0">
+        <PongGame bind:this={pongRef} player1={challengingUser} player2={challengedUser} {onGameEnd} {matchDurationInMinutes} {pointsToWin} {AIdifficulty}/>
+      </div>
 
     {:else if gameState === 'result'}
-
-      <MatchResult
-        matchData={matchData}
-        {challengedUser}
-        {challengingUser}
-      >
+      <MatchResult matchData={matchData} {challengedUser} {challengingUser}>
         {#snippet actions()}
-          <Button onclick={ returnToChallengePage }>{$t('game.return', 'Return to Challenge Page')}</Button>
-          <Button onclick={ startRematch }>{$t('game.rematch', 'Rematch')}</Button>
+          <Button onclick={returnToChallengePage}>{$t('game.return', 'Return to Challenge Page')}</Button>
+          <Button onclick={startRematch}>{$t('game.rematch', 'Rematch')}</Button>
         {/snippet}
       </MatchResult>
-
     {/if}
   </Card.Content>
 </Card.Root>
+</div>

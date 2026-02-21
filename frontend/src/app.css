@@ -64,9 +64,9 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-1: oklch(41.222% 0.17508 328.178);
+  --chart-2: oklch(51.976% 0.17685 142.511);
+  --chart-3: oklch(82.37% 0.14063 194.807);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.208 0.042 265.755);
@@ -143,7 +143,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-
+  
   --color-background: var(--my-background);
   --color-foreground: var(--my-foreground);
   --color-card: var(--my-card);
@@ -162,15 +162,21 @@
   --color-border: var(--my-border);
   --color-input: var(--my-border);
   --color-ring: var(--my-primary);
-
+  
   --color-sidebar: var(--my-background);
   --color-sidebar-foreground: var(--my-foreground);
   --color-sidebar-primary: var(--my-primary);
   --color-sidebar-border: var(--my-border);
   --color-sidebar-accent: var(--my-card);
-
+  
   --shadow-neon: var(--my-neon-glow);
   --neon-glow: var(--my-neon-glow);
+  --color-easy: var(--chart-2);    /* Green */
+  --color-medium: var(--chart-3);  /* Cyan */
+  --color-hard: var(--chart-1);    /* Purple */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
 }
 
 @layer base {

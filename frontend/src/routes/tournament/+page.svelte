@@ -18,6 +18,7 @@
   import PongGame from "@lib/components/game/PongGame.svelte";
   import { Tournament } from "@lib/tournament/tournament";
     import { isAppError } from "../../lib/types/error";
+    import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
 
   let availableUsers: AppUser[] = $state([]);
   let selectedUsers: AppUser[] = $state([]);
@@ -161,34 +162,51 @@
   confirmCallBack={async () => await challengeUser(challengedUser)}
 />
 
-<Card.Root class="size-full">
-  <Card.Content class="flex flex-col gap-4 size-full overflow-hidden">
+<div class="flex flex-col h-full min-h-[90vh] bg-card/50 border border-border rounded-xl p-6 shadow-2xl overflow-hidden">
+<Card.Root class="h-full border-none bg-transparent shadow-none">
+  <Card.Content class="flex flex-col h-full p-4 gap-6">
     {#if gameState === 'setup'}
 
-      <div class="grid grid-cols-2 gap-4 min-h-[30%]">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 shrink-0">
         <RulesSetup
           bind:matchDurationInMinutes={matchDurationInMinutes}
           bind:pointsToWin={pointsToWin}
         />
 
-        <AiSetup
-          bind:AIdifficulty={AIdifficulty}
-        >
+        <AiSetup bind:AIdifficulty={AIdifficulty}>
           {#snippet button()}
-            <Button onclick={challengeAICallback}>
-              {$t('game.challengeAI', 'Challenge AI')}
-            </Button>
+            <div class="mt-4 w-full flex justify-center">
+              <Button 
+                class="w-full transition-all duration-300 uppercase font-black text-xs sm:text-sm"
+                onclick={challengeAICallback}>
+                {$t('game.challengeAI', 'Challenge AI')}
+              </Button>
+            </div>
           {/snippet}
         </AiSetup>
       </div>
 
       <div class="grid grid-cols-2 gap-4 size-full">
-        <Grid title={$t('tournament.available', 'Available Players')}>
+        <Grid title="">
+          <div class="-mt-8 mb-4">
+            <NeonHeader
+              text={$t('tournament.available', 'Available Players')}
+              size="x1" 
+              level="h1" 
+            />
+          </div>
           {#each availableUsers as u}
             <GridCard title={u.name} avatarUrl={u.avatarUrl ?? undefined} callback={() => toggleUserSelected(u)}/>
           {/each}
         </Grid>
-        <Grid title={$t('tournament.selected', 'Selected Players')}>
+        <Grid title="">
+          <div class="-mt-8 mb-4">
+            <NeonHeader
+              text={$t('tournament.selected', 'Selected Players')}
+              size="x1" 
+              level="h1" 
+            />
+          </div>
           {#each selectedUsers as u}
             <GridCard 
                 title={u.name} 
@@ -199,7 +217,7 @@
         </Grid>
       </div>
       <div class="w-full flex justify-end">
-        <Button>
+        <Button class="w-full transition-all duration-300 uppercase font-black text-xs sm:text-sm">
           {$t('game.startTournament', 'Start Tournament')}
         </Button>
       </div>
@@ -222,3 +240,4 @@
     {/if}
   </Card.Content>
 </Card.Root>
+</div>
