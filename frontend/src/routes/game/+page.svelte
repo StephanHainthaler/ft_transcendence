@@ -14,6 +14,7 @@
   import { aiUser } from "@lib/game";
   import PongGame from "@lib/components/game/PongGame.svelte";
   import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
+  import Grid from "@lib/components/custom/Grid.svelte";
   import UserChallenge from "@lib/components/game/UserChallenge.svelte";
 
   let users: AppUser[] = $state([]);

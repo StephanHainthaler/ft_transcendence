@@ -9,11 +9,10 @@
   import { Toaster } from '@lib/components/ui/sonner';
   import { onMount } from 'svelte';
 
-  let { data, children } = $props();
+  let { children } = $props();
   let sidebarOpen = $state(false);
 
   onMount(async () => {
-    client.loggedIn = data.loggedIn;
     try {
       if (client.loggedIn && client.status !== 'ready')
         await client.init();

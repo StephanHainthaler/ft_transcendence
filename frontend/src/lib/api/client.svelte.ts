@@ -29,7 +29,6 @@ export class ApiClient {
   private onlineInterval: ReturnType<typeof setInterval> | null = null;
   loggedIn: boolean = $state(false);
   status: 'ready' | 'loading' | 'error' = $state('loading');
-  status: 'ready' | 'loading' | 'error' = $state('loading');
 
   constructor() {}
 

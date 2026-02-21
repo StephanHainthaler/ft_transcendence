@@ -3,8 +3,6 @@ import { request } from './utils';
 import { toast } from "svelte-sonner";
 import { t, get } from "@lib/i18n/i18n";
 import type { AppError } from "@lib/types/error";
-import { t, get } from "@lib/i18n/i18n";
-import type { AppError } from "@lib/types/error";
 
 export async function updateRequest({
   email, user_name, passwd

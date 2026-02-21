@@ -3,13 +3,7 @@ import { writable } from 'svelte/store';
 import en from './locales/en.json';
 import ukr from './locales/ukr.json';
 import de from './locales/de.json';
-import { Writable } from '$lib/types/writable';
-import { get } from 'svelte/store';
-
-export const localeSettings = new Writable<string>('app_locale');
-const savedLocale = typeof window !== 'undefined' ? localStorage.getItem('app_locale') : 'en';
-
-import { Writable } from '$lib/types/writable';
+import { Writable } from "@lib/types/writable";
 import { get } from 'svelte/store';
 
 export const localeSettings = new Writable<string>('app_locale');

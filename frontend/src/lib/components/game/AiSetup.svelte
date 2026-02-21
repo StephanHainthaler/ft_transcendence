@@ -72,7 +72,7 @@ const diffStyles = {
         </div>
       </div>
       <div class="flex items-center justify-center size-full uppercase">
-      {@render button()}
+      {@render button?.()}
       </div>
     </div>
     </div>
