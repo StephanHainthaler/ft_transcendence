@@ -1,4 +1,4 @@
-import type { Avatar, User } from "@shared/user";
+import type { Avatar, User } from "./index";
 
 export class AppUser {
   constructor(public user: User, public avatar: Avatar | null) {}

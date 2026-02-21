@@ -21,16 +21,16 @@
     buttonDesc?: string,
     avatarUrl?: string,
     extraBtn?: Snippet,
-    callback: () => void
+    callback: (u?: any) => void
   } = $props();
 
 </script>
 
-<Item.Root variant="outline" class="group hover:border-zinc-700 transition-colors">
+<Item.Root variant="outline" class="group hover:border-zinc-700 transition-colors overflow-hidden">
   <Item.Media>
     <Avatar.Root>
       <Avatar.Image src={avatarUrl} />
-      <Avatar.Fallback>{title[0].toUpperCase()}</Avatar.Fallback>
+      <Avatar.Fallback>{title[0]?.toUpperCase() || ':)'}</Avatar.Fallback>
     </Avatar.Root>
   </Item.Media>
   <Item.Content class="gap-2">

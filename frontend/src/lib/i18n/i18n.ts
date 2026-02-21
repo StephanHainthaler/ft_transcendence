@@ -19,9 +19,9 @@ i18next.init({
     de: { translation: de }
   },
   interpolation: { escapeValue: false },
-  parseMissingKeyHandler: (key) => {
+  parseMissingKeyHandler: (key, def) => {
     console.warn(`Missing translation key: ${key}`);
-    return "";
+    return def;
   }
 });
 

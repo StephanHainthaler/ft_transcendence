@@ -1,3 +1,4 @@
+import { Model, modelDefinition } from "./column";
 import { Column } from "./column";
 
 /** Record mapping column names to their Column definitions */
@@ -60,7 +61,7 @@ CREATE TABLE IF NOT EXISTS ${this.name} (
     }
     for (const f of fields) {
       if (!Object.keys(this.tableColumns).includes(f)) {
-        throw new Error(`SQL: Table ${this.name} does not include column ${f}`);
+        return false;
       }
     }
     return true;

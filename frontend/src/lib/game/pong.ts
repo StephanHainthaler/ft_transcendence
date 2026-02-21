@@ -1,4 +1,4 @@
-import { AppUser} from "../api/appUser";
+import { AppUser} from "@shared/user";
 import { Player } from "./player";
 import { Ball } from "./ball";
 import type { MatchSubmissionData } from '@shared/game_stats';

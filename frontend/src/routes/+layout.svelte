@@ -9,12 +9,8 @@
   import { Toaster } from '@lib/components/ui/sonner';
   import { onMount } from 'svelte';
 
-  let { data, children } = $props();
+  let { children } = $props();
   let sidebarOpen = $state(false);
-
-  $effect(() => {
-    client.loggedIn = data.loggedIn;
-  });
 
   onMount(async () => {
       console.log("Checking session status...");

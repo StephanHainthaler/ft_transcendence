@@ -8,16 +8,19 @@ interface Schema {
 
 let db: DB<Schema>;
 let table = defineTable('test_table', {
-  id: int().primarykey().notNull().autoIncrement(),
+  id: int().notNull().autoIncrement().primarykey(),
   name: text().notNull()
 });
 
 beforeEach(() => {
-  db = new DB<Schema>();
-  db.open(':memory:');
-  db.create(table);
-  db.from(table).insert({name: 'first-test-user'}).run();
-  db.from(table).insert({name: 'second-test-user'}).run();
+  try {
+    db = new DB<Schema>(":memory:");
+    db.create(table);
+    db.from("test_table").insert({name: 'first-test-user'}).run();
+    db.from("test_table").insert({name: 'second-test-user'}).run();
+  } catch (e){
+    console.log(e);
+  }
 })
 
 test('select-empty', () => {
@@ -49,7 +52,7 @@ test('insert-invalid', () => {
   assert.throws(() => {
     const query = db.from(table).insert({
       bless: 'you',
-    });
+    } as any);
     query.run();
   })
 })

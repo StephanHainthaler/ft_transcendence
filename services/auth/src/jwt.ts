@@ -45,7 +45,7 @@ export function validateRefreshToken(user: Partial<AuthUser>, refreshToken: stri
   const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
   if (tokenHash !== session.token)
     throw new ApiError({ message: 'Invalid session Token', code: 401 });
-  if (Date.now() > session.created_at + session.expires_in) {
+  if (Date.now() > session.minted_at + session.expires_in) {
     throw new ApiError({ message: 'Session expired', code: 401 });
   }
 }

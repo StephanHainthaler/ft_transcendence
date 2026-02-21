@@ -10,8 +10,7 @@ export async function updateRequest({
   email?: string, user_name?: string, passwd?: string
 }) {
   if (!email && !user_name && !passwd) {
-    
-    throw Object.assign(new Error("auth_missing_credentials"), { 
+    throw Object.assign(new Error("auth_missing_credentials"), {
     isAppError: true }) as AppError;
   }
   const req = new Request(`${import.meta.env.VITE_API_URL}/auth/update`, {
@@ -30,9 +29,9 @@ export async function updateRequest({
 export async function signupRequest(
   info: SignupRequestBody, ): Promise<AuthResponseSuccess> {
   if (!info.user_name || !info.email)
-    throw Object.assign(new Error("missing_email_or_username"), { 
+    throw Object.assign(new Error("missing_email_or_username"), {
     isAppError: true }) as AppError;
-  if (!info.passwd) throw Object.assign(new Error("missing_pass"), { 
+  if (!info.passwd) throw Object.assign(new Error("missing_pass"), {
     isAppError: true }) as AppError;
 
   const signupReq = new Request(`${import.meta.env.VITE_API_URL}/auth/sign-up`, {

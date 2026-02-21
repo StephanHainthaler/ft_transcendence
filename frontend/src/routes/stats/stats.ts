@@ -1,4 +1,4 @@
-import type { AppUser } from '@lib/api/appUser';
+import type { AppUser } from '@shared/user';
 import { client } from "@lib/api/index.svelte";
 
 let usernames = $state<Record<number, string>>({});
