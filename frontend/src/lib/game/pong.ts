@@ -1,9 +1,9 @@
 import { AppUser} from "../api/appUser";
 import { Player } from "./player";
 import { Ball } from "./ball";
-import type { MatchSubmissionData } from '@shared/game_stats';
 import { get } from "svelte/store";
 import { t } from "../../lib/i18n/i18n";
+import type { MatchSubmissionData } from '@shared/game_stats';
 
 const TARGET_FPS = 60;
 const TARGET_FRAME_TIME = 1000 / TARGET_FPS; // ~16.67ms
@@ -17,15 +17,15 @@ export class Pong
 	private _player1: Player;
 	private _player2: Player;
 	private _ball: Ball;
-	private _maxPlayerScore: number = 10;
-	private _preMatchDuration: number = 3000; // 3 seconds in ms
+	private _maxPlayerScore: number = 5;
 	private _maxMatchDuration: number = 300000; // 5 min in ms
+	private _preMatchDuration: number = 3000; // 3 seconds in ms
 	private _currentMatchDuration: number = 0;
 	private _matchStartTime: number = 0;
 	private _pauseStartTime: number = 0;
 	private _pauseDuration: number = 0;
-	private _isPaused: boolean = true;
 	private _lastFrameTime: number = 0;
+	private _isPaused: boolean = true;
 
 	private _mousedownEventListener! : EventListener;
 	private _keydownEventListener!: EventListener;
@@ -36,26 +36,31 @@ export class Pong
 
 	public	constructor(player1: AppUser, player2: AppUser, canvas: HTMLCanvasElement, pointsToWin: number, matchDurationInMinutes: number, AIdifficulty: number, _onGameEnd:(Data: MatchSubmissionData) => void)
 	{
+		// initialize canvas and context and set match parameters
 		this._canvas = canvas;
 		this._context = this._canvas.getContext("2d") as CanvasRenderingContext2D;
 		this._maxPlayerScore = pointsToWin;
 		this._maxMatchDuration = matchDurationInMinutes * 60000 + this._preMatchDuration;
 		this._onGameEnd = _onGameEnd;
 		this.resizeCanvas();
+		this.setupEvents();
 
+		// initialize players and ball
 		this._player1 = new Player(this, player1, 1, this._canvas.width * 0.1, this._canvas.height * 0.445, AIdifficulty);
 		this._player2 = new Player(this, player2, 2, this._canvas.width * 0.9, this._canvas.height * 0.445, AIdifficulty);
 		this._ball = new Ball(this, this._player1, this._player2);
 
-		this.setupEvents();
+		// set match timer
 		this._matchStartTime = new Date().getTime();
+
+		// start frame requesting loop
 		this._isPaused = false;
 		window.requestAnimationFrame((time) => this.updatePong(time));
 	}
 
 	public	setupEvents() : void
 	{
-		// event for clicking the canvas
+		// event for clicking on the canvas
 		this._mousedownEventListener = () => this._canvas.focus();
 
 		// event for holding the key
@@ -108,6 +113,7 @@ export class Pong
 
 	public	removeEvents(): void
 	{
+		// remove event listeners
 		this._canvas.removeEventListener('mousedown', this._mousedownEventListener);
 		this._canvas.removeEventListener('keydown', this._keydownEventListener);
 		this._canvas.removeEventListener('keyup', this._keyupEventListener);
@@ -118,10 +124,11 @@ export class Pong
 	public	updatePong = (currentTime: number = 0) =>
 	{
 		// get current match duration
+		const now = new Date().getTime();
 		if (this._isPaused == true)
-			this._currentMatchDuration = new Date().getTime() - this._matchStartTime - this._pauseDuration - (new Date().getTime() - this._pauseStartTime);
+			this._currentMatchDuration = now - this._matchStartTime - this._pauseDuration - (now - this._pauseStartTime);
 		else
-			this._currentMatchDuration = new Date().getTime() - this._matchStartTime - this._pauseDuration;
+			this._currentMatchDuration = now - this._matchStartTime - this._pauseDuration;
 
 		// check for match end conditions
 		if (this._currentMatchDuration >= this._maxMatchDuration
@@ -147,11 +154,13 @@ export class Pong
 		// clamp to max 3 to prevent huge jumps after tab switch
 		const delta = Math.min(elapsed / TARGET_FRAME_TIME, 3);
 
+		// update entities and draw the game
 		this.moveBall(delta);
 		this.movePlayer(this._player1, delta);
 		this.movePlayer(this._player2, delta);
 		this.drawGame();
 
+		// request next frame
 		window.requestAnimationFrame((time) => this.updatePong(time));
 	};
 
@@ -166,7 +175,6 @@ export class Pong
 			height = window.innerHeight * 0.8;
 			width = height * aspectRatio;
 		}
-
 		this._canvas.width = width;
 		this._canvas.height = height;
 	}
@@ -193,8 +201,8 @@ export class Pong
 	public	drawGame() : void
 	{
 		// clear canvas and set font and alignment
-		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
 		const fontSize = Math.round(this._canvas.height * (60 / 720));
+		this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
 		this._context.font = `${fontSize}px Arial`;
 		this._context.textAlign = "center";
 		
@@ -210,17 +218,15 @@ export class Pong
 
 		// draw middle line
 		for (let i = this._canvas.height * 0.1; i < this._canvas.height * 0.9; i += this._canvas.height * 0.03)
-			this._context.fillRect(this._canvas.width * 0.5, i, this._canvas.width * 0.005, this._canvas.height * 0.01);
+			this._context.fillRect(this._canvas.width * 0.5, i, this._canvas.width * 0.0025, this._canvas.height * 0.01);
 
 		// draw player scores
 		this._context.fillText(this._player1.getScore().toString(), this._canvas.width * 0.45, this._canvas.height * 0.075);
 		this._context.fillText(this._player2.getScore().toString(), this._canvas.width * 0.55, this._canvas.height * 0.075);
 
-		// draw player paddles
+		// draw player paddles and ball
 		this._context.fillRect(this._player1.getOrigin().x, this._player1.getOrigin().y, this._player1.getWidth(), this._player1.getHeight());
 		this._context.fillRect(this._player2.getOrigin().x - this._player2.getWidth(), this._player2.getOrigin().y, this._player2.getWidth(), this._player2.getHeight());
-
-		// draw ball
 		this._context.fillRect(this._ball.getOrigin().x, this._ball.getOrigin().y, this._ball.getWidth(), this._ball.getHeight());
 
 		// draw match timer
@@ -239,7 +245,7 @@ export class Pong
 		if (currentCountdown < 0)
 			this._context.fillText(get(t)('game.overtime'), this._canvas.width * 0.5, this._canvas.height * 0.985);
 		else
-			this._context.fillText(currentCountdown.toString(), this._canvas.width * 0.5, this._canvas.height * 0.98)
+			this._context.fillText(currentCountdown.toString(), this._canvas.width * 0.5, this._canvas.height * 0.985)
 
 		// draw pause screen if paused
 		if (this._isPaused == true)
@@ -313,9 +319,10 @@ export class Pong
 		this._currentMatchDuration = 0;
 		this._pauseDuration = 0;
 		this._pauseStartTime = 0;
-		this._matchStartTime = new Date().getTime();
 		this._lastFrameTime = 0;
+		this._matchStartTime = new Date().getTime();
 
+		// restart loop
 		this._isPaused = false;
 		window.requestAnimationFrame((time) => this.updatePong(time));
 	}
