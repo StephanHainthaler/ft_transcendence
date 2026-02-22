@@ -36,6 +36,7 @@ const publicRoutes = [
   '/user/avatar',
   '/stats',
   '/auth/github-oauth',
+  '/health',
 ];
 
 async function startApiGateway() {

@@ -12,5 +12,4 @@ export const load: LayoutServerLoad = async ({cookies, url}) =>
     if (url.pathname !== '/')
       throw redirect(302, '/auth');
   }
-  return {loggedIn: !!token};
 }

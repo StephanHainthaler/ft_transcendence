@@ -1,14 +1,16 @@
-import { DB } from "@server/orm";
+import { DB, modelDefinition } from "@server/orm";
 import { int, defineTable } from "@server/orm";
 import { UserStats, MatchHistoryEntry } from "@shared/game_stats";
+import { ModelCols } from "@shared/db";
 
 export interface Schema {
-	user_stats: UserStats;
-	match_history: MatchHistoryEntry;
+	user_stats: ModelCols & UserStats;
+	match_history: ModelCols & MatchHistoryEntry;
 }
 
 export const user_stats_table = defineTable('user_stats', {
-	user_id: int().primarykey(),
+  ...modelDefinition(),
+	user_id: int().notNull().unique(),
 	wins: int().notNull().default(0),
 	rank: int().notNull().default(0),
 	losses: int().notNull().default(0),
@@ -18,7 +20,7 @@ export const user_stats_table = defineTable('user_stats', {
 });
 
 export const match_history_table = defineTable('match_history', {
-	match_id: int().primarykey().autoIncrement().notNull(),
+  ...modelDefinition(),
 	timestamp: int().notNull(), //Unix-time??
 	player_one_id: int().notNull().references(() => user_stats_table.columns.user_id),
 	player_two_id: int().notNull().references(() => user_stats_table.columns.user_id),

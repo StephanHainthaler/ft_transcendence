@@ -7,7 +7,7 @@
   import StatsCard from "$lib/components/custom/StatsCard.svelte";
   import CyberTable from "$lib/components/custom/CyberTable.svelte";
   import ResultBadge from "$lib/components/custom/ResultBadge.svelte";
-  import type { AppUser } from '@lib/api/appUser';
+  import type { AppUser } from '@shared/user';
 
   let stats = $state<UserStats | null>(null);
   let history = $state<MatchHistoryEntry[]>([]);
@@ -154,10 +154,10 @@
         {@const isWin = match.winner_id === userId}
         {@const isDraw = match.winner_id === null}
 
-        <tr class="group hover:bg-primary/5 transition-all duration-300">
-          <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-muted-foreground">
-            #{match.match_id}
-          </td>
+      <tr class="group hover:bg-primary/5 transition-all duration-300">
+        <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-muted-foreground">
+          #{match.id}
+        </td>
 
           <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-white/70 hidden md:table-cell">
             {new Date(match.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -211,34 +211,34 @@
       {/each}
     </CyberTable>
 
-      {:else if activeTab === 'leaderboard'}
-        <CyberTable headers={[
-          { label: $t('leaderboard.rank', 'Rank'), class: "w-20 text-center opacity-50" },
-          { label: $t('leaderboard.player_id', 'Player ID'), class: "text-left hidden md:table-cell" },
-          { label: $t('leaderboard.nickname', 'Nickname'), class: "text-left min-w-[100px]" },
-          { label: $t('leaderboard.games_played', 'Games played'), class: "text-center hidden md:table-cell"},
-          { label: $t('stats.wins', 'Wins'), class: "text-center" },
-          { label: $t('stats.losses', 'Losses'), class: "text-center" },
-          { label: $t('leaderboard.points', 'Points'), class: "text-center pr-8" }
-        ]}>
-          {#each leaderboard.filter(player => player.user_id !== 0) as player}
-            {#if player.user_id !== 0}
-            <tr class="group hover:bg-primary/6 transition-all duration-300">
-              <td class="p-4 text-center">
-                <span class="font-mono text-xl font-black {player.rank <= 3 ? 'text-primary drop-shadow-[0_0_5px_var(--my-primary)]' : 'text-white/20'}">
-                  #{player.rank}
-                </span>
-              </td>
-              <td class="p-4 hidden md:table-cell">
-                <span class="font-bold text-xs text-white text-center uppercase tracking-wider hidden md:table-cell">{$t('stats.user', 'User')} {player.user_id}</span>
-              </td>
-              <td class="p-4 max-w-[100px] md:max-w-[200px]">
-                <span class="font-black text-sm text-white uppercase tracking-wider group-hover:text-primary transition-colors block truncate">
-                  {usersFindUsername(player.user_id)}
-                </span>
-              </td>
-              <td class="p-4 text-center font-mono text-white/60 hidden md:table-cell">
-                {player.wins + player.losses}
+    {:else if activeTab === 'leaderboard'}
+      <CyberTable headers={[
+        { label: $t('leaderboard.rank', 'Rank'), class: "w-20 text-center opacity-50" },
+        { label: $t('leaderboard.player_id', 'Player ID'), class: "text-left hidden md:table-cell" },
+        { label: $t('leaderboard.nickname', 'Nickname'), class: "text-left min-w-[100px]" },
+        { label: $t('leaderboard.games_played', 'Games played'), class: "text-center hidden md:table-cell"},
+        { label: $t('stats.wins', 'Wins'), class: "text-center" },
+        { label: $t('stats.losses', 'Losses'), class: "text-center" },
+        { label: $t('leaderboard.points', 'Points'), class: "text-center pr-8" }
+      ]}>
+        {#each leaderboard.filter(player => player.user_id !== 0) as player}
+          {#if player.user_id !== 0}
+          <tr class="group hover:bg-primary/6 transition-all duration-300">
+            <td class="p-4 text-center">
+              <span class="font-mono text-xl font-black {player?.rank ?? 0 <= 3 ? 'text-primary drop-shadow-[0_0_5px_var(--my-primary)]' : 'text-white/20'}">
+                #{player.rank}
+              </span>
+            </td>
+            <td class="p-4 hidden md:table-cell">
+              <span class="font-bold text-xs text-white text-center uppercase tracking-wider hidden md:table-cell">{$t('stats.user')} {player.user_id}</span>
+            </td>
+            <td class="p-4 w-full">
+              <span class="font-black text-sm text-white uppercase tracking-wider group-hover:text-primary transition-colors block truncate">
+                {usersFindUsername(player.user_id)}
+              </span>
+            </td>
+            <td class="p-4 text-center font-mono text-white/60 hidden md:table-cell">
+              {player.wins + player.losses}
               </td>
               <td class="p-4 text-center font-mono text-white/80">{player.wins}</td>
               <td class="p-4 text-center font-mono text-white/80">{player.losses}</td>
@@ -256,6 +256,9 @@
                 <div class="w-16 h-[1px] bg-primary/30"></div>
               </div>
             </td>
+            <td class="p-4 text-center font-mono text-white/80">{player.wins}</td>
+            <td class="p-4 text-center font-mono text-white/80">{player.losses}</td>
+            <td class="p-4 text-center pr-8 font-mono text-primary font-bold">{player.total_points}</td>
           </tr>
           {/each}
         </CyberTable>
