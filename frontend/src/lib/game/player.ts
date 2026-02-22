@@ -71,7 +71,7 @@ export class Player
 		const scaledVelocity = this._velocity * scale * delta;
 
 		// if the ball is going away from the AI opponent go to the middle
-		// or if the ball moving towards AI + ball is   canvas width/3 * AIdifficulty    away from AI
+		// or if the ball moving towards AI + ball is (this._canvas.width / 3 * AIdifficulty) away from AI
 		if (ball.getDirection().x < 0 || 
 			(ball.getDirection().x > 0 && (ball.getOrigin().x < (this._game.getCanvas().width - (this._game.getCanvas().width / 4 * this._AIdifficulty) ))))
 		{

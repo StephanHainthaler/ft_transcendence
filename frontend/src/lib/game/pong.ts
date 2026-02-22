@@ -217,8 +217,8 @@ export class Pong
 		this._context.fillRect(0, this._canvas.height * 0.9, this._canvas.width, this._canvas.height * 0.01);
 
 		// draw middle line
-		for (let i = this._canvas.height * 0.1; i < this._canvas.height * 0.9; i += this._canvas.height * 0.03)
-			this._context.fillRect(this._canvas.width * 0.5, i, this._canvas.width * 0.0025, this._canvas.height * 0.01);
+		for (let i = this._canvas.height * 0.105; i < this._canvas.height * 0.9; i += this._canvas.height * 0.03)
+			this._context.fillRect(this._canvas.width * 0.49875, i, this._canvas.width * 0.0025, this._canvas.height * 0.01);
 
 		// draw player scores
 		this._context.fillText(this._player1.getScore().toString(), this._canvas.width * 0.45, this._canvas.height * 0.075);
