@@ -135,6 +135,7 @@
     "game": "Game",
     "settings": "Game Settings",
     "aiOpponent": "AI Opponent",
+    "aiSettings": "AI Settings",
     "challenge": "Challenge",
     "to_challenge": "Challenge",
     "pointsToWin": "Points to Win",
@@ -172,7 +173,8 @@
     "friends": "Friends",
     "users": "Users",
     "no_friends": "Your friends list is empty",
-    "no_users": "No users available"
+    "no_users": "No users available",
+    "no_chosen_users": "No chosen users"
   },
   "profile": {
     "profile": "Profile",
@@ -209,7 +211,9 @@
     "start": "Start",
     "inval_user_count": "Invalid User count!",
     "description": "Please select an even number or Participants",
-    "remove": "Remove"
+    "remove": "Remove",
+    "description2": "The tournament bracket will be filled with {{n}} AI Opponents",
+    "description2_no_players": "The tournament bracket will be filled with AI Opponents"
   },
   "error": {
     "general": "Something went wrong",

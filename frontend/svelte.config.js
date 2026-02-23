@@ -32,6 +32,10 @@ const config = {
       emptyOutDir: true,
       sourcemap: true,
     },
+    server: {
+      port: 8080,
+      host: "0.0.0.0",
+    },
   }),
 };
 

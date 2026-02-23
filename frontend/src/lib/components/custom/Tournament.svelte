@@ -77,7 +77,7 @@
   {:else if error}
     <Alert variant="destructive" class="max-w-md">
       <AlertDescription>
-        {$t('error.general', 'Something went wrong')}: {error}
+        {$t('error.general', 'Something went wrong')}
       </AlertDescription>
     </Alert>
   {:else if winner}
@@ -104,7 +104,7 @@
         </p>
         <Button
           size="lg"
-          class="min-w-[200px] text-lg"
+          class="min-w-[200px] text-lg font-black"
           onclick={() => { startNextGame() }}
         >
           {$t('buttons.next', 'Next Match')}

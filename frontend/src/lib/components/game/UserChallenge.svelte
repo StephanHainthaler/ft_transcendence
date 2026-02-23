@@ -8,39 +8,64 @@
   import NeonHeader from "../custom/NeonHeader.svelte";
   import { Users, UserRoundX } from "lucide-svelte";
 
-  const {
-    users,
-    friends,
-    userSelectionCallback,
-  }: {
-    users: AppUser[],
-    friends: AppUser[],
-    userSelectionCallback: (u: AppUser) => void,
-  } = $props();
+  export let users: AppUser[];
+  export let friends: AppUser[];
+  export let userSelectionCallback: (u: AppUser) => void;
+
+  let activeTab: "users" | "friends" = "users";
+
+  const tabs = [
+    { value: "users", label: $t('game.users', 'Users') },
+    { value: "friends", label: $t('game.friends', 'Friends') },
+  ];
+
+  function selectTab(value: "users" | "friends") {
+    activeTab = value;
+  }
 </script>
 
-<Tabs.Root value="users" class="size-full overflow-y-auto">
-  <Grid 
-    class="overflow-y-auto"
-    title="">
+<Tabs.Root bind:value={activeTab} class="size-full">
+  <Grid title="">
     {#snippet head()}
-      <div class="flex items-start justify-between w-full -mt-2 mb-2 overflow-y-auto">
-        <div class="flex-shrink-0">
+      <div class="flex flex-wrap items-start justify-between gap-4 w-full -mt-2 mb-2">
+        <div class="flex-shrink-0 overflow-visible">
           <NeonHeader
             text={$t('game.challenge', 'Challenge')}
             size="x1"
             level="h1"
           />
         </div>
-        <Tabs.List>
-          <Tabs.Trigger value="users">{$t('game.users', 'Users')}</Tabs.Trigger>
-          <Tabs.Trigger value="friends">{$t('game.friends', 'Friends')}</Tabs.Trigger>
+
+        <!-- Desktop tabs -->
+        <Tabs.List class="hidden sm:flex space-x-0 mb-2">
+          {#each tabs as tab}
+            <Tabs.Trigger
+              value={tab.value}
+              class="px-4 py-2 rounded-md font-semibold cursor-pointer
+                data-[state=active]:bg-cyan-400 data-[state=active]:text-black
+                text-gray-400"
+            >
+              {tab.label}
+            </Tabs.Trigger>
+          {/each}
         </Tabs.List>
+
+        <!-- Mobile dots -->
+        <div class="flex sm:hidden justify-center space-x-2 mb-2 border border-gray-600 rounded-full px-3 py-1">
+          {#each tabs as tab}
+            <button
+              aria-label={tab.label}
+              class="w-3 h-3 rounded-full
+                {activeTab === tab.value ? 'bg-cyan-400' : 'bg-gray-600'}"
+              on:click={() => selectTab(tab.value)}
+            ></button>
+          {/each}
+        </div>
       </div>
     {/snippet}
 
     <Tabs.Content value="users" class="size-full flex flex-col gap-2">
-      {#each users as user}
+      {#each users as user (user.id)}
         <GridCard
           title={user.name}
           avatarUrl={user.avatarUrl}
@@ -56,7 +81,7 @@
     </Tabs.Content>
 
     <Tabs.Content value="friends" class="size-full flex flex-col gap-2">
-      {#each friends as friend}
+      {#each friends as friend (friend.id)}
         <GridCard
           isOnline={!!client.onlineFriends.find((f) => f === friend.id)}
           title={friend.name}
@@ -67,7 +92,7 @@
       {:else}
         <div class="flex flex-col items-center justify-center h-32 text-muted-foreground border border-dashed rounded-lg gap-2">
           <UserRoundX size={24} strokeWidth={1.5} />
-          <p class="text-sm">{$t('game.no_friends', 'Your friends list is empty')}</p>
+          <p class="text-sm justify-center overflow-hidden">{$t('game.no_friends', 'Your friends list is empty')}</p>
         </div>
       {/each}
     </Tabs.Content>

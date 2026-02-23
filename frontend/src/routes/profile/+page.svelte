@@ -6,13 +6,18 @@
   import Label from "@lib/components/ui/label/label.svelte";
   import * as Card from "@lib/components/ui/card";
   import Button from "@lib/components/ui/button/button.svelte";
-  import TwoFactorSetup from "@lib/components/TwoFactorSetup.svelte";
+  import TwoFactorSetup from "@lib/components/custom/TwoFactorSetup.svelte";
   import { t } from "@lib/i18n/i18n";
   import * as Dialog from "$lib/components/ui/dialog";
-  import { Trash } from "@lucide/svelte";
+  import { Eye, Trash } from "@lucide/svelte";
   import { toast } from "svelte-sonner";
   import { validateInputThrow, validateAvatarFile } from "@lib/validation/inputValidation";
-    import { isAppError } from "@lib/types/error";
+  import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
+  import { isAppError } from "@lib/types/error";
+    import { EyeOff } from "lucide-svelte";
+
+  let showPassword = $state(false);
+  let showPasswordRepeat = $state(false);
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -122,6 +127,14 @@
     });
   }
 
+  const togglePassword = () => {
+    showPassword = !showPassword;
+  };
+
+  const togglePasswordRepeat = () => {
+    showPasswordRepeat = !showPasswordRepeat;
+  };
+
 </script>
 
 <Dialog.Root open={deleteDialogOpen}>
@@ -168,7 +181,13 @@
       >
         <Trash size='sm'/>
       </Button>
-    </Card.Action>   <Card.Title class="text-3xl">{$t('profile.profile', 'Profile')}</Card.Title>
+    </Card.Action>
+      <Card.Title>
+        <NeonHeader
+          size="2xl"
+          level="h1"
+          text={$t('profile.profile', 'Profile')} />
+      </Card.Title>
   </Card.Header>
   <Card.Content>
     <form class="space-y-6" onsubmit={handleSubmit}>
@@ -250,17 +269,34 @@
           </div>
           <div class="space-y-2">
             <Label for="password">{$t('profile.password', 'Password')}</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="********"
-              bind:value={session.passwd}
-              autocomplete="new-password"
-              disabled={!editMode}
-            />
+            <div class="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="********"
+                bind:value={session.passwd}
+                autocomplete="new-password"
+                disabled={!editMode}
+                class="pr-10" 
+              />
+              <button
+                type="button"
+                class="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:text-foreground transition-colors z-10 cursor-pointer disabled:opacity-50"
+                onclick={togglePassword}
+                tabindex="-1"
+                disabled={!editMode}
+              >
+                {#if showPassword}
+                  <EyeOff size={20} />
+                {:else}
+                  <Eye size={20} />
+                {/if}
+              </button>
+            </div>
           </div>
           <div class="space-y-2">
-            <Label for="password-repeat">{$t('profile.pass_repeat', 'Repeat Password')}</Label>
+          <Label for="password-repeat">{$t('profile.pass_repeat', 'Repeat Password')}</Label>
+          <div class="relative"> 
             <Input
               id="password-repeat"
               type="password"
@@ -269,6 +305,20 @@
               autocomplete="new-password"
               disabled={!editMode}
             />
+                          <button
+                type="button"
+                class="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:text-foreground transition-colors z-10 cursor-pointer disabled:opacity-50"
+                onclick={togglePasswordRepeat}
+                tabindex="-1"
+                disabled={!editMode}
+              >
+                {#if showPasswordRepeat}
+                  <EyeOff size={20} />
+                {:else}
+                  <Eye size={20} />
+                {/if}
+              </button>
+            </div>
           </div>
         </div>
       </div>

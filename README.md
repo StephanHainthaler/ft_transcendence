@@ -480,18 +480,22 @@ Workflow:
 - [Users via GitHub API](https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28)
 - [Scopes for OAuth apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps)
 
-
-#### Tools / Frameworks / etc.
-- [The TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-- [Inkscape](https://inkscape.org/) — Open-source professional vector graphics software for UI design elements
+#### Fastify
 - [Fastify Documentation](https://fastify.dev/docs/latest/)
 - [Fastify Getting-Started](https://fastify.dev/docs/latest/Guides/Getting-Started/)
 - [Fastify: Hooks](https://fastify.dev/docs/latest/Reference/Hooks/)
 - [Fastify Route Parameters](https://fastify.dev/docs/latest/Reference/Routes/)
+
+#### Tools / Frameworks / etc.
+- [The TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [Node.js SQLite Tutorial](https://www.sqlitetutorial.net/sqlite-nodejs/)
 - [Using fetch with TypeScript](https://kentcdodds.com/blog/using-fetch-with-type-script)
 - [MDN: HTTP Response Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) — Reference for the global error interceptors
 
+#### Design tools
+- [Inkscape](https://inkscape.org/) — Open-source professional vector graphics software for UI design elements
+- [OKLCH Color Picker & Converter](https://oklch.com/)
+- [Lucide icons](https://lucide.dev/)
 
 #### AI Usage
 

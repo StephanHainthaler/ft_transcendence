@@ -39,10 +39,10 @@
           </colgroup>
           <tbody>
             <tr>
-              <td class={matchData.winner_id === matchData.player_one_id ? "text-green-700 text-center text-2xl md:text-3xl font-extrabold p-3" : "text-red-700 text-center text-2xl md:text-3xl font-extrabold p-3"}>
+              <td class={matchData.winner_id === matchData.player_one_id ? "text-easy uppercase text-center text-2xl md:text-3xl font-extrabold p-3 drop-shadow-[0_0_10px_var(--chart-2)]" : "text-hard uppercase text-center text-2xl md:text-3xl font-extrabold p-3 drop-shadow-[0_0_10px_var(--chart-1)]"}>
                 {matchData.winner_id === matchData.player_one_id ? $t('game.win', 'Win') : $t('game.lose', 'Lose')}
               </td>
-              <td class={matchData.winner_id === matchData.player_one_id ? "text-red-700 text-center text-2xl md:text-3xl font-extrabold p-3" : "text-green-700 text-center text-2xl md:text-3xl font-extrabold p-3"}>
+              <td class={matchData.winner_id === matchData.player_one_id ? "text-hard uppercase text-center text-2xl md:text-3xl font-extrabold p-3 drop-shadow-[0_0_10px_var(--chart-1)]" : "text-easy uppercase text-center text-2xl md:text-3xl font-extrabold p-3 drop-shadow-[0_0_10px_var(--chart-2)]"}>
                 {matchData.winner_id === matchData.player_one_id ? $t('game.lose', 'Lose') : $t('game.win', 'Win')}
               </td>
             </tr>
@@ -55,7 +55,7 @@
               <td class="text-white text-center text-2xl font-bold p-3">{matchData.p2_score}</td>
             </tr>
             <tr>
-              <td class="text-gray-600 text-center text-base md:text-lg lg:text-xl font-semibold p-3" colspan="2">
+              <td class="text-gray-400 text-center text-base md:text-lg lg:text-xl font-semibold p-3" colspan="2">
                 {$t('game.matchDuration', 'Match Duration')}: {formatDuration(matchData.duration ?? 0)}
               </td>
             </tr>

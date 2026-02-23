@@ -10,6 +10,7 @@
   import type { AppUser } from "@shared/user";
   import { toast } from "svelte-sonner";
   import { isAppError } from "@lib/types/error";
+    import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
 
   const removeFriendship = async (friendShipId: number) => {
     try {
@@ -87,7 +88,12 @@
 
 <Card.Root class="flex-1 min-h-0 flex flex-col h-full">
   <Card.Header>
-    <Card.Title>{$t('friends.card_title', 'Friends')}</Card.Title>
+    <Card.Title>
+      <NeonHeader
+        size="x1"
+        level="h1"
+        text={$t('friends.card_title', 'Friends')} />
+    </Card.Title>
   </Card.Header>
   <Card.Content class="flex-1 min-h-0 overflow-hidden">
     <div class='h-full grid grid-cols-1 grid-rows-4 md:grid-rows-2 md:grid-cols-2 gap-2 p-2 md:p-8'>

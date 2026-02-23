@@ -19,6 +19,7 @@
   import UserChallenge from "@lib/components/game/UserChallenge.svelte";
   import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
   import { isAppError } from "@lib/types/error";
+    import { Users } from "lucide-svelte";
 
   let availableUsers: AppUser[] = $state([]);
   let selectedUsers: AppUser[] = $state([]);
@@ -168,7 +169,10 @@
           bind:matchDurationInMinutes={matchDurationInMinutes}
           bind:pointsToWin={pointsToWin}
         />
-        <AiSetup bind:AIdifficulty={AIdifficulty} />
+        <AiSetup
+            bind:AIdifficulty={AIdifficulty}
+            page="tournament"
+            players=0/>
       </div>
 
       <div class="grid grid-cols-2 gap-4 size-full">
@@ -194,6 +198,11 @@
                 callback={() => toggleUserSelected(u)}
                 buttonDesc={$t('tournament.remove', 'Remove')}
               />
+            {:else}
+            <div class="flex flex-col items-center justify-center h-32 text-muted-foreground border border-dashed rounded-lg gap-2">
+              <Users size={24} strokeWidth={1.5} />
+              <p class="text-sm justify-center overflow-hidden">{$t('game.no_chosen_users', 'No chosen users')}</p>
+            </div>
             {/each}
           </div>
         </Grid>

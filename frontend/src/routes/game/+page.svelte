@@ -16,6 +16,8 @@
   import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
   import Grid from "@lib/components/custom/Grid.svelte";
   import UserChallenge from "@lib/components/game/UserChallenge.svelte";
+  import GridCard from "@lib/components/custom/GridCard.svelte";
+    import { Users } from "lucide-svelte";
 
   let users: AppUser[] = $state([]);
   let friends: AppUser[] = $state([]);
@@ -169,14 +171,19 @@
             />
           </div>
           <div class="overflow-y-auto h-full pr-2 custom-scrollbar">
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1">
               {#each users as user}
-                <GridCard 
+                <GridCard
                   title={user.name} 
                   avatarUrl={user.avatarUrl} 
                   buttonDesc={$t('game.challenge', 'Challenge')} 
                   callback={() => userSelectionCallback(user)}
                 />
+              {:else}
+              <div class="flex flex-col items-center justify-center h-32 text-muted-foreground border border-dashed rounded-lg">
+                <Users size={24} strokeWidth={1.5} />
+                <p class="text-sm">{$t('game.no_users', 'No users available')}</p>
+              </div>
               {/each}
             </div>
           </div>

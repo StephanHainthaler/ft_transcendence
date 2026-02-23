@@ -5,6 +5,7 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import Label from "$lib/components/ui/label/label.svelte";
+  import { ShieldCheck, KeyIcon, KeyRound } from "lucide-svelte";
 
   let step: 'idle' | 'setup' | 'verify' | 'done' = $state('idle');
   let qrCodeUrl = $state('');
@@ -56,6 +57,9 @@
 <div class="rounded-xl border border-border/50 bg-card/20 p-6 shadow-sm">
   {#if step === 'idle'}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+      <div class="p-2 rounded-lg bg-gradient-to-r from-chart-2 via-chart-3 to-chart-1">
+        <ShieldCheck class="w-5 h-5 text-popover" />
+      </div>
       <div class="space-y-4 flex-1">
         <h3 class="text-lg font-bold tracking-tight">
           {$t('twofa.title', 'Two-Factor Authentication')}
