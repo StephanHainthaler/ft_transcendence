@@ -7,7 +7,8 @@
   import Button from "../ui/button/button.svelte";
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
   import {t, currentLocale} from "@lib/i18n/i18n";
-    import { isAppError, type AppError } from "@lib/types/error";
+  import { isAppError, type AppError } from "@lib/types/error";
+  import { Eye, EyeOff } from 'lucide-svelte';
 
   let user_nameBuffer = $state('');
   let emailBuffer = $state('');
@@ -15,6 +16,8 @@
   let userPasswordRepeatBuffer = $state('');
   let errorMessage = $state('');
   let isLoading = $state(false);
+  let showPassword = $state(false);
+  let showPasswordRepeat = $state(false);
 
   const handleSignupFormSubmit = async (e: Event) => {
     e.preventDefault();
@@ -40,25 +43,34 @@
       await goto('/');
     } catch (e: any) {
       if (isAppError(e))
-        errorMessage = $t('error.'+ e.message) || $t('error.general');
+        errorMessage = String($t('error.'+ e.message)) || String($t('error.general'));
       else
       {
         const rawError = e.message || e.error || String(e);
         const translationKey = rawError.includes('.') ? `${rawError}` : null;
-        errorMessage = translationKey ? $t(translationKey) : rawError;
+        errorMessage = translationKey ? $t(translationKey) : $t('error.general');
       }
     } finally {
       isLoading = false;
     }
   }
+
+  const togglePassword = () => {
+    showPassword = !showPassword;
+  };
+
+  const togglePasswordRepeat = () => {
+    showPasswordRepeat = !showPasswordRepeat;
+  };
+
 </script>
 
 <form class="space-y-6" onsubmit={handleSignupFormSubmit}>
   <div class="space-y-4">
-    <h2 class="text-2xl font-bold text-center">{$t('signup.register')}</h2>
+    <h2 class="text-2xl font-bold text-center">{$t('signup.register', 'Register')}</h2>
 
     <div class="space-y-2">
-      <Label for="username-input">{$t('signup.username')}</Label>
+      <Label for="username-input">{$t('signup.username', 'Username')}</Label>
       <Input
         id="user_name-input"
         type="text"
@@ -70,12 +82,12 @@
     </div>
 
     <div class="space-y-2">
-      <Label for="email-input">{$t('signup.email')}</Label>
+      <Label for="email-input">{$t('signup.email', 'Email')}</Label>
       <Input
         id="email-input"
         type="email"
         bind:value={emailBuffer}
-        placeholder={$t('signup.email_ph')}
+        placeholder={$t('signup.email_ph', 'Enter your email')}
         autocomplete="off"
         required
         disabled={isLoading}
@@ -83,31 +95,61 @@
     </div>
 
     <div class="space-y-2">
-      <Label for="password-input">{$t('signup.password')}</Label>
-      <Input
-        id="password-input"
-        type="password"
-        bind:value={userPasswordBuffer}
-        placeholder={$t('signup.password_ph')}
-        autocomplete="new-password"
-        required
-        disabled={isLoading}
-      />
+      <Label for="password-input">{$t('signup.password', 'Password')}</Label>
+      <div class="relative">
+        <Input
+          id="password-input"
+          type={showPassword ? 'text' : 'password'} 
+          bind:value={userPasswordBuffer}
+          placeholder={$t('signup.password_ph', 'Create a password')}
+          autocomplete="new-password"
+          required
+          disabled={isLoading}
+          class="pr-10" 
+        />
+        
+        <button
+          type="button"
+          class="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:text-foreground transition-colors z-50 cursor-pointer"
+          onclick={togglePassword}
+          tabindex="-1"
+        >
+          {#if showPassword}
+            <EyeOff size={20} />
+          {:else}
+            <Eye size={20} />
+          {/if}
+        </button>
+      </div>
     </div>
 
     <div class="space-y-2">
-      <Label for="password-repeat-input">{$t('signup.pass_repeat')}</Label>
-      <Input
-        id="password-repeat-input"
-        type="password"
-        bind:value={userPasswordRepeatBuffer}
-        placeholder={$t('signup.pass_confirm')}
-        autocomplete="new-password"
-        required
-        disabled={isLoading}
-      />
+      <Label for="password-repeat-input">{$t('signup.pass_repeat', 'Repeat your password')}</Label>
+      <div class="relative">
+        <Input
+          id="password-repeat-input"
+          type={showPasswordRepeat ? 'text' : 'password'} 
+          bind:value={userPasswordRepeatBuffer}
+          placeholder={$t('signup.pass_confirm', 'Confirm your password')}
+          autocomplete="new-password"
+          disabled={isLoading} 
+          required
+          class="pr-10" 
+        />
+        <button
+          type="button"
+          class="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground z-10"
+          onclick={togglePasswordRepeat}
+          tabindex="-1"
+        >
+          {#if showPasswordRepeat}
+            <EyeOff size={20} />
+          {:else}
+            <Eye size={20} />
+          {/if}
+        </button>
+      </div>
     </div>
-  </div>
 
   {#if errorMessage}
     <Alert variant="destructive">

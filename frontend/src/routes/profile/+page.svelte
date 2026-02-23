@@ -151,7 +151,7 @@
   </Dialog.Content>
 </Dialog.Root>
 
-<Card.Root class="size-full mx-auto">
+<Card.Root class="size-full mx-auto overflow-y-auto">
   <Card.Header>
      <Card.Action class="flex gap-4">
       <Button

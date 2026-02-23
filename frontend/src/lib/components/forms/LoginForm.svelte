@@ -8,12 +8,15 @@
   import { goto } from "$app/navigation";
   import { t } from "@lib/i18n/i18n";
   import { isAppError, type AppError } from "@lib/types/error";
+    import { EyeOff } from "lucide-svelte";
+    import { Eye } from "@lucide/svelte";
 
   let usernameBuffer = $state("");
   let userPasswordBuffer = $state("");
   let totpToken = $state("");
   let errorMessage = $state("");
   let requires2FA = $state(false);
+  let showPassword = $state(false);
 
   const handleLoginFormSubmit = async (e: Event) => {
     e.preventDefault();
@@ -48,6 +51,10 @@
     }
   }
 
+  const togglePassword = () => {
+    showPassword = !showPassword;
+  };
+
 </script>
 
 <form class="space-y-6" onsubmit={handleLoginFormSubmit}>
@@ -70,13 +77,29 @@
 
       <div class="space-y-2">
         <Label for="password">{$t('login.password', 'Password')}</Label>
-        <Input 
-          id="password"
-          type="password"
-          bind:value={userPasswordBuffer}
-          placeholder={$t('login.password_ph', 'Enter your password')}
-          required
-        />
+        <div class="relative">
+          <Input
+            id="password"
+            type={showPassword ? 'text' : 'password'} 
+            bind:value={userPasswordBuffer}
+            placeholder={$t('login.password_ph', 'Enter your password')}
+            autocomplete="new-password"
+            required
+          />
+          
+          <button
+            type="button"
+            class="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:text-foreground transition-colors z-50 cursor-pointer"
+            onclick={togglePassword}
+            tabindex="-1"
+          >
+            {#if showPassword}
+              <EyeOff size={20} />
+            {:else}
+              <Eye size={20} />
+            {/if}
+          </button>
+        </div>
       </div>
     {:else}
       <p class="text-sm text-center text-muted-foreground">

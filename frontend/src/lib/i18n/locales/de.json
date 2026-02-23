@@ -212,34 +212,6 @@
     "no_users": "Keine Benutzer gefunden!",
     "no_users_desc": "Es gibt keine anderen Benutzer zum Herausfordern. Lade Freunde ein!"
   },
-  "validation": {
-    "username": {
-      "required": "Benutzername erforderlich",
-      "max_len": "Maximal 20 Zeichen",
-      "symbols": "Darf nur Kleinbuchstaben, Ziffern, Punkte und Unterstriche enthalten",
-      "end_dot": "Darf nicht mit Punkt oder Unterstrich beginnen/enden",
-      "con_sep": "Darf keine aufeinanderfolgenden Trennzeichen enthalten"
-    },
-    "email": {
-      "required": "E-Mail erforderlich",
-      "invalid": "Ungültiges E-Mail-Format"
-    },
-    "password": {
-      "required": "Passwort erforderlich",
-      "min_len": "Mindestens 8 Zeichen",
-      "upper": "Mindestens ein Großbuchstabe",
-      "lower": "Mindestens ein Kleinbuchstabe",
-      "digit": "Mindestens eine Ziffer"
-    },
-    "display": {
-      "required": "Anzeigename erforderlich",
-      "max_len": "Maximal 20 Zeichen"
-    },
-    "avatar": {
-      "mime": "Dateityp nicht erlaubt (PNG, JPEG, WebP)",
-      "size": "Datei zu groß"
-    }
-  },
   "error": {
     "general": "Etwas ist schiefgelaufen",
     "404": "Nicht gefunden",
@@ -259,6 +231,34 @@
     "signup_fail": "Registrierungsfehler",
     "pass_mismatch": "Passwörter stimmen nicht überein",
     "pass_required": "Passwort erforderlich",
-    "user_not_found": "Benutzer nicht gefunden"
+    "user_not_found": "Benutzer nicht gefunden",
+    "validation": {
+      "username": {
+        "required": "Benutzername erforderlich",
+      "max_len": "Maximal 20 Zeichen",
+      "symbols": "Darf nur Kleinbuchstaben, Ziffern, Punkte und Unterstriche enthalten",
+      "end_dot": "Darf nicht mit Punkt oder Unterstrich beginnen/enden",
+      "con_sep": "Darf keine aufeinanderfolgenden Trennzeichen enthalten"
+      },
+      "email": {
+        "required": "E-Mail erforderlich",
+        "invalid": "Ungültiges E-Mail-Format"
+      },
+      "password": {
+        "required": "Passwort erforderlich",
+        "min_len": "Mindestens 8 Zeichen",
+        "upper": "Mindestens ein Großbuchstabe",
+        "lower": "Mindestens ein Kleinbuchstabe",
+        "digit": "Mindestens eine Ziffer"
+      },
+      "display": {
+        "required": "Anzeigename erforderlich",
+        "max_len": "Maximal 20 Zeichen"
+      },
+      "avatar": {
+        "mime": "Dateityp nicht erlaubt (PNG, JPEG, WebP)",
+        "size": "Datei zu groß"
+      }
+    }
   }
 }
