@@ -18,6 +18,7 @@
 
   let showPassword = $state(false);
   let showPasswordRepeat = $state(false);
+  let editMode = $state(false);
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -39,7 +40,6 @@
   let avatarSrc = $derived(session.avatarFile
     ? URL.createObjectURL(session.avatarFile)
     : client.avatar);
-  let editMode = $state(false);
 
   const toggleEditMode = () => {
     if (editMode === true) {
@@ -134,6 +134,15 @@
   const togglePasswordRepeat = () => {
     showPasswordRepeat = !showPasswordRepeat;
   };
+
+  $effect(() => {
+    if (!editMode) {
+      showPassword = false;
+      showPasswordRepeat = false;
+      session.passwd = '';
+      session.passwdRepeat = '';
+    }
+  });
 
 </script>
 
@@ -305,7 +314,7 @@
               autocomplete="new-password"
               disabled={!editMode}
             />
-                          <button
+              <button
                 type="button"
                 class="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:text-foreground transition-colors z-10 cursor-pointer disabled:opacity-50"
                 onclick={togglePasswordRepeat}
