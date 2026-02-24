@@ -192,7 +192,12 @@
 
     {:else if gameState === 'running'}
       <div class="flex-1 min-h-0">
-        <PongGame bind:this={pongRef} player1={challengingUser} player2={challengedUser} {onGameEnd} {matchDurationInMinutes} {pointsToWin} {AIdifficulty}/>
+        <PongGame 
+        bind:this={pongRef}
+        player1={challengingUser}
+        player2={challengedUser} {onGameEnd}
+        {matchDurationInMinutes} {pointsToWin}
+        {AIdifficulty}/>
       </div>
 
     {:else if gameState === 'result'}

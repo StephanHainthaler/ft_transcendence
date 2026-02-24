@@ -27,7 +27,7 @@
 </script>
 
 <Dialog.Root open={dialogOpen} onOpenChange={() => dialogOpen = false}>
-  <Dialog.Content class="flex flex-col max-w-[95%] md:max-w-[500px] h-auto p-8 bg-card/95 backdrop-blur-xl border-white/10 shadow-2xl overflow-hidden">
+  <Dialog.Content class="flex flex-col max-w-[95%] md:max-w-[600px] h-auto p-8 bg-card/95 backdrop-blur-xl border-white/10 shadow-2xl overflow-hidden">
     
     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-chart-2 via-chart-3 to-chart-1"></div>
 

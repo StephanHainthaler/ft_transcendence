@@ -9,12 +9,10 @@
     AIdifficulty = $bindable(0),
     button,
     page = "game",
-    players = 0,
   }: { 
     AIdifficulty: number,
     button?: Snippet
     page: "game" | "tournament",
-    players?: number,
   } = $props();
 
 const diffStyles = {

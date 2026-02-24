@@ -136,7 +136,9 @@
     "game": "Spiel",
     "settings": "Spieleinstellungen",
     "aiOpponent": "KI-Gegner",
+    "aiSettings": "KI-Einstellungen",
     "challenge": "Herausforderung",
+    "to_challenge": "Herausfordern",
     "pointsToWin": "Punkte zum Sieg",
     "matchDuration": "Spieldauer",
     "matchDurationInMinutes": "Dauer (Minuten)",
@@ -154,6 +156,7 @@
     "rightPlayer": "Rechter Spieler",
     "cancel": "Abbrechen",
     "startMatch": "Match starten",
+    "startTournament": "Turnier starten",
     "paused": "Pause",
     "overtime": "Verlängerung",
     "summary": "Zusammenfassung",
@@ -169,8 +172,11 @@
     "leaderboard_load_error": "Bestenliste konnte nicht geladen werden.",
     "match_record_error": "Fehler beim Speichern der Ergebnisse.",
     "end": "Ende",
-    "aiSettings": "KI-Einstellungen",
-    "startTournament": "Turnier starten"
+    "friends": "Freunde",
+    "users": "Benutzer",
+    "no_friends": "Deine Freundesliste ist leer",
+    "no_users": "Keine Benutzer verfügbar",
+    "no_chosen_users": "Keine Benutzer ausgewählt"
   },
   "profile": {
     "profile": "Profil",
@@ -180,7 +186,7 @@
     "username": "Benutzername",
     "email": "E-Mail",
     "password": "Passwort",
-    "new_pass": "neues-passwort",
+    "new_pass": "Neues Passwort",
     "pass_repeat": "Passwort wiederholen",
     "save": "Änderungen speichern",
     "cancel": "Abbrechen",
@@ -208,6 +214,9 @@
     "inval_user_count": "Ungültige Spieleranzahl!",
     "description": "Bitte wählen Sie eine gerade Anzahl an Teilnehmern",
     "remove": "Entfernen",
+    "description2": "Der Turnierbaum wird mit {{n}} KI-Gegnern gefüllt",
+    "description2_no_players": "Der Turnierbaum wird mit KI-Gegnern gefüllt",
+    "schedule": "Zeitplan",
     "failed": "Seitendaten konnten nicht geladen werden",
     "no_users": "Keine Benutzer gefunden!",
     "no_users_desc": "Es gibt keine anderen Benutzer zum Herausfordern. Lade Freunde ein!"
@@ -235,10 +244,10 @@
     "validation": {
       "username": {
         "required": "Benutzername erforderlich",
-      "max_len": "Maximal 20 Zeichen",
-      "symbols": "Darf nur Kleinbuchstaben, Ziffern, Punkte und Unterstriche enthalten",
-      "end_dot": "Darf nicht mit Punkt oder Unterstrich beginnen/enden",
-      "con_sep": "Darf keine aufeinanderfolgenden Trennzeichen enthalten"
+        "max_len": "Maximal 20 Zeichen",
+        "symbols": "Darf nur Kleinbuchstaben, Ziffern, Punkte und Unterstriche enthalten",
+        "end_dot": "Darf nicht mit Punkt oder Unterstrich beginnen/enden",
+        "con_sep": "Darf keine aufeinanderfolgenden Trennzeichen enthalten"
       },
       "email": {
         "required": "E-Mail erforderlich",
@@ -253,11 +262,11 @@
       },
       "display": {
         "required": "Anzeigename erforderlich",
-        "max_len": "Maximal 20 Zeichen"
+        "min_len": "Maximal 20 Zeichen"
       },
       "avatar": {
         "mime": "Dateityp nicht erlaubt (PNG, JPEG, WebP)",
-        "size": "Datei zu groß"
+        "size": "Datei zu groß. Maximale Größe ist 5MB"
       }
     }
   }

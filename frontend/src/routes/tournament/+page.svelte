@@ -19,7 +19,8 @@
   import UserChallenge from "@lib/components/game/UserChallenge.svelte";
   import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
   import { isAppError } from "@lib/types/error";
-    import { Users } from "lucide-svelte";
+  import { Users } from "lucide-svelte";
+    import TournamentWinner from "@lib/components/game/TournamentWinner.svelte";
 
   let availableUsers: AppUser[] = $state([]);
   let selectedUsers: AppUser[] = $state([]);
@@ -150,12 +151,12 @@
   confirmCallBack={startTournament}
   >
   {#snippet tournamentParticipents()}
-  <Grid title={$t('tournament.schedule', 'Schedule')}>
+  <Grid title={String($t('tournament.schedule', 'Schedule'))}>
       {#snippet children()}
         {#each tournament.getSchedule() as game}
           <MatchPlayersDisplay {game} />
         {/each}
-        {/snippet}
+      {/snippet}
     </Grid>
   {/snippet}
 </MatchStartDialog>
@@ -172,7 +173,7 @@
         <AiSetup
             bind:AIdifficulty={AIdifficulty}
             page="tournament"
-            players=0/>
+        />
       </div>
 
       <div class="grid grid-cols-2 gap-4 size-full">
@@ -241,22 +242,23 @@
           {/if}
         {/snippet}
         {#snippet actions()}
-          <Button size="sm" onclick={ async () => await returnToChallengePage() }>{$t('game.return', 'Return')}</Button>
+          <Button class="flex items-center justify-center w-full md:w-auto px-12 uppercase font-bold" variant="outline"
+           onclick={ async () => await returnToChallengePage() }>{$t('game.return', 'Return')}</Button>
 
           {#if tournament.isDone()}
-            <Button size="sm" onclick={ finishTournament }>{$t('tournament.finish', "Finish")}</Button>
+            <Button class="flex items-center justify-center w-full md:w-auto px-12 uppercase font-bold"
+             onclick={ finishTournament }>{$t('tournament.finish', "Finish")}</Button>
           {:else}
-            <Button size="sm" onclick={ startNextMatch }>{$t('game.nextMatch', "Next Match")}</Button>
+            <Button class="flex items-center justify-center w-full md:w-auto px-12 uppercase font-bold"
+             onclick={ startNextMatch }>{$t('game.nextMatch', "Next Match")}</Button>
           {/if}
         {/snippet}
       </MatchResult>
     {:else if gameState === 'finished' && winner}
-      <div class="flex flex-col items-center justify-center size-full gap-4">
-        <h1 class="text-4xl font-bold">{$t('tournament.finished', "Tournament Finished")}</h1>
-        <p class="text-xl">{$t('tournament.winnerAnnounce', "And the winner is...")}</p>
-        <div class="text-3xl text-cyan-400 font-bold">{winner.name}</div>
-        <Button size="sm" class="mt-8" onclick={ async () => await returnToChallengePage() }>{$t('game.return', 'Return')}</Button>
-      </div>
+      <TournamentWinner 
+        {winner} 
+        onReturn={async () => await returnToChallengePage()} 
+      />
     {/if}
   </Card.Content>
 </Card.Root>

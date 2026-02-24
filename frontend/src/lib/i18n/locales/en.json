@@ -4,6 +4,7 @@
   "welcome": "Welcome",
   "play": "Play",
   "moto": "ARENA_READY: LINK YOUR PADDLE TO THE GRID",
+  "healthcheck": "Check Connection",
   "login": {
     "login": "Login",
     "username": "Email or Username",
@@ -155,6 +156,7 @@
     "rightPlayer": "Right Player",
     "cancel": "Cancel",
     "startMatch": "Start Match",
+    "startTournament": "Start Tournament",
     "paused": "Paused",
     "overtime": "Overtime",
     "summary": "Match Summary",
@@ -184,7 +186,7 @@
     "username": "Username",
     "email": "Email",
     "password": "Password",
-    "new_pass": "new-password",
+    "new_pass": "New password",
     "pass_repeat": "Repeat Password",
     "save": "Save Changes",
     "cancel": "Cancel",
@@ -210,10 +212,14 @@
     "winn_is": "And the Winner is...",
     "start": "Start",
     "inval_user_count": "Invalid User count!",
-    "description": "Please select an even number or Participants",
+    "description": "Please select an even number of participants",
     "remove": "Remove",
     "description2": "The tournament bracket will be filled with {{n}} AI Opponents",
-    "description2_no_players": "The tournament bracket will be filled with AI Opponents"
+    "description2_no_players": "The tournament bracket will be filled with AI Opponents",
+    "schedule": "Schedule",
+    "failed": "Failed to load page data",
+    "no_users": "No users found!",
+    "no_users_desc": "There are no other users to challenge. Invite your friends to play!"
   },
   "error": {
     "general": "Something went wrong",
@@ -260,7 +266,7 @@
       },
       "avatar": {
         "mime": "Invalid file type. Allowed: PNG, JPEG, WebP",
-        "size": "File too large. Maximum size is MB"
+        "size": "File too large. Maximum size is 5MB"
       }
     }
   }

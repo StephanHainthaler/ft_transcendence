@@ -52,9 +52,8 @@
   </Item.Content>
 
   <Item.Actions>
-    <Button
+    <Button class="flex items-center justify-center w-full md:w-auto px-12 uppercase font-bold"
       onclick={callback}
-      class="min-w-24 transition-colors"
     >
       {buttonDesc || $t('tournament.choose', 'Choose')}
     </Button>

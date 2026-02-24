@@ -127,7 +127,7 @@
 
   <div class="px-4 max-w-6xl mx-auto space-y-8"> 
     <NeonHeader 
-      size="4xl"
+      size="2xl"
       text={activeTab === 'stats' ? $t('stats.title', 'Player Statistics') : $t('leaderboard.title', 'Global Leaderboard')} 
     />
 
@@ -145,7 +145,7 @@
         </div>
 
         <NeonHeader 
-          size="4xl"
+          size="2xl"
           text={$t('stats.match_history', 'Match History')}
         />
 
