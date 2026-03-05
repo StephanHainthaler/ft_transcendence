@@ -6,16 +6,18 @@
   import ActionCard from "@lib/components/custom/ActionCard.svelte";
   import { Play, Trophy, ArrowLeftRight } from "lucide-svelte";
 
-const userName = $derived.by(() => {
-    if (!client || client.status === 'error')
+  
+  let currentUser = $derived(client.user); 
+  let currentStatus = $derived(client.status);
+  
+  const userName = $derived.by(() => {
+      if (!currentUser || currentStatus === 'error' || currentStatus === 'loading')
+        return "Guest_Agent";
+      if (currentUser) {
+        return currentUser.displayName || currentUser.name || currentUser.user_name || "Unknown_Pilot";
+      }
       return "Guest_Agent";
-    if (client.status === 'loading')
-      return "Guest_Agent";
-    if (client.user) {
-      return client.user.displayName || client.user.name || client.user.user_name || "Unknown_Pilot";
-    }
-    return "Guest_Agent";
-  });
+    })
 
 </script>
 
@@ -34,7 +36,7 @@ const userName = $derived.by(() => {
   />
 
   <ActionCard
-    link="/play"
+    link="/game"
     icon={Play}
     icon_shade={ArrowLeftRight}
     colorClass="primary"

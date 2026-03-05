@@ -8,16 +8,18 @@
   import NeonHeader from "../custom/NeonHeader.svelte";
   import { Users, UserRoundX } from "lucide-svelte";
 
-  export let users: AppUser[];
-  export let friends: AppUser[];
-  export let userSelectionCallback: (u: AppUser) => void;
+  let { users, friends, userSelectionCallback }: 
+    { users: AppUser[];
+      friends: AppUser[];
+      userSelectionCallback: (u: AppUser) => void;
+    } = $props();
 
-  let activeTab: "users" | "friends" = "users";
+  let activeTab = $state<"users" | "friends">("users");
 
   const tabs = [
     { value: "users", label: $t('game.users', 'Users') },
     { value: "friends", label: $t('game.friends', 'Friends') },
-  ];
+  ] as const;
 
   function selectTab(value: "users" | "friends") {
     activeTab = value;
@@ -54,10 +56,10 @@
         <div class="flex sm:hidden justify-center space-x-2 mb-2 border border-gray-600 rounded-full px-3 py-1">
           {#each tabs as tab}
             <button
-              aria-label={tab.label}
+              aria-label={String(tab.label)}
               class="w-3 h-3 rounded-full
                 {activeTab === tab.value ? 'bg-cyan-400' : 'bg-gray-600'}"
-              on:click={() => selectTab(tab.value)}
+              onclick={() => selectTab(tab.value)}
             ></button>
           {/each}
         </div>
@@ -69,7 +71,7 @@
         <GridCard
           title={user.name}
           avatarUrl={user.avatarUrl}
-          buttonDesc={$t('game.challenge', 'Challenge')}
+          buttonDesc={String($t('game.challenge', 'Challenge'))}
           callback={() => userSelectionCallback(user)}
         />
       {:else}
@@ -86,7 +88,7 @@
           isOnline={!!client.onlineFriends.find((f) => f === friend.id)}
           title={friend.name}
           avatarUrl={friend.avatarUrl}
-          buttonDesc={$t('game.to_challenge', 'Challenge')}
+          buttonDesc={String($t('game.to_challenge', 'Challenge'))}
           callback={() => userSelectionCallback(friend)}
         />
       {:else}
