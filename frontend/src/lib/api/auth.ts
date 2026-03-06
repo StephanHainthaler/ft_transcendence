@@ -157,3 +157,15 @@ export async function enable2FA(totpToken: string): Promise<{ success: boolean; 
 
   return await request(req);
 }
+
+export async function disable2FA(): Promise<{ success: boolean; message: string }> {
+  const req = new Request(`${import.meta.env.VITE_API_URL}/auth/2fa/disable`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({}),
+  });
+
+  return await request(req);
+}

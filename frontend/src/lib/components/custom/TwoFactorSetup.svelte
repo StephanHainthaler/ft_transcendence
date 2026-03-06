@@ -1,31 +1,52 @@
 <script lang="ts">
-  import { setup2FA, enable2FA } from "$lib/api/auth";
+  import { setup2FA, enable2FA, disable2FA } from "$lib/api/auth";
   import { t } from "@lib/i18n/i18n";
   import { Alert, AlertDescription } from "$lib/components/ui/alert";
-  import Button from "$lib/components/ui/button/button.svelte";
+  import { Button } from "$lib/components/ui/button";
   import Input from "$lib/components/ui/input/input.svelte";
   import Label from "$lib/components/ui/label/label.svelte";
   import { ShieldCheck, KeyIcon, KeyRound } from "lucide-svelte";
+  import { client } from "@lib/api/index.svelte";
+  import { toast } from "svelte-sonner";
+  import { onMount } from "svelte";
 
-  let step: 'idle' | 'setup' | 'verify' | 'done' = $state('idle');
+  let step = $state<'idle' | 'setup' | 'verify'>('idle');
   let qrCodeUrl = $state('');
   let secretKey = $state('');
   let verifyCode = $state('');
   let errorMessage = $state('');
   let successMessage = $state('');
+  let successdisabledMessage = $state('');
+
+  let is2faActive = $state(false);
+
+
+  const syncStatus = (data?: any) => {
+    const source = data?.auth || client.auth;
+    is2faActive = source?.two_fa_enabled === 1;
+  };
 
   const mapTwoFaError = (e: any): string => {
     const msg = e?.message || e?.toString?.() || '';
-    if (msg === '2FA already enabled for this User') return $t('twofa.error_already_enabled', 'Two-Factor Authentication is already enabled');
-    if (msg === 'Invalid 2FA token') return $t('twofa.error_invalid_token', 'Invalid verification code');
-    return msg || $t('twofa.invalid_code', 'Invalid code. Please try again.');
+    if (msg === '2FA already enabled for this User')
+      return (String($t('twofa.error_already_enabled', 'Two-Factor Authentication is already enabled')));
+    if (msg === 'Invalid 2FA token')
+      return (String($t('twofa.error_invalid_token', 'Invalid verification code')));
+    if (msg.includes('already disabled'))
+    return (String($t('twofa.error_already_disabled', 'Two-Factor Authentication is already disabled')));
+    if (msg.includes('Unauthenticated') || msg.includes('401'))
+      return (String($t('twofa.error_unauthenticated', 'Session expired. Please login again')));
+    if (msg.includes('Invalid 2FA token') || msg.includes('Invalid code'))
+      return String($t('twofa.invalid_code', 'Invalid code. Please try again.'));
+    return msg || $t('twofa.error_generic', 'An error occurred. Please try again.');
   };
 
   const startSetup = async () => {
     try {
       errorMessage = '';
       const result = await setup2FA();
-      if (!result?.qrCodeUrl || !result?.secret) throw new Error('Invalid response');
+      if (!result?.qrCodeUrl || !result?.secret)
+        throw new Error('Invalid response');
       qrCodeUrl = result.qrCodeUrl;
       secretKey = result.secret;
       step = 'setup';
@@ -38,8 +59,11 @@
     try {
       errorMessage = '';
       await enable2FA(verifyCode);
-      successMessage = $t('twofa.enabled_success', 'Enabled successfully!');
-      step = 'done';
+      successMessage = (String($t('twofa.enabled_success', 'Enabled successfully!')));
+      const response = await client.getAuth();
+      syncStatus(response);
+      toast.success(successMessage);
+      reset();
     } catch (e: any) {
       errorMessage = mapTwoFaError(e);
     }
@@ -52,6 +76,27 @@
     verifyCode = '';
     errorMessage = '';
   };
+
+  const handleDisable2FA = async () => {
+    try {
+      const res = await disable2FA();
+      if (res.success) {
+        step = 'idle';
+        const response = await client.getAuth();
+        syncStatus(response);
+        successdisabledMessage = (String($t('twofa.disabled_success', '2FA disabled successfully')));
+        toast.success(successdisabledMessage);
+      }
+    } catch (e: any) {
+      errorMessage = mapTwoFaError(e);
+    }
+  };
+
+  onMount(async () => {
+    const response = await client.getAuth();
+    syncStatus(response);
+  });
+
 </script>
 
 <div class="rounded-xl border border-border/50 bg-card/20 p-6 shadow-sm">
@@ -73,12 +118,21 @@
       </div>
 
       <div class="flex-shrink-0">
+      {#if !is2faActive}
         <Button 
           class="bg-[#00E5FF] px-8 py-6 font-bold text-black hover:bg-[#00B4CC] transition-all duration-200 whitespace-nowrap" 
           onclick={startSetup}
         >
           {$t('twofa.enable_button', 'Enable 2FA')}
         </Button>
+      {:else}
+          <Button 
+          class="bg-[#00E5FF] px-8 py-6 font-bold text-black hover:bg-[#00B4CC] transition-all duration-200 whitespace-nowrap" 
+          onclick={handleDisable2FA}
+        >
+          {$t('twofa.disable_button', 'Disable 2FA')}
+        </Button>
+      {/if}
       </div>
     </div>
 
@@ -141,13 +195,5 @@
         </Button>
       </div>
     </div>
-
-  {:else if step === 'done'}
-    <div class="rounded-lg border border-cyan-500/30 bg-cyan-500/10 p-4 text-cyan-400">
-      <p class="text-sm font-medium">{successMessage}</p>
-    </div>
-    <Button variant="outline" class="mt-4 w-full" onclick={reset}>
-      {$t('twofa.done', 'Done')}
-    </Button>
   {/if}
 </div>

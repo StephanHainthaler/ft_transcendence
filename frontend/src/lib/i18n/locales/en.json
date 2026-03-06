@@ -40,7 +40,11 @@
     "error_no_user": "No Such User",
     "error_unauthenticated": "Unauthenticated",
     "error_missing_token": "Missing 2FA token",
-    "error_invalid_token": "Invalid 2FA token"
+    "error_invalid_token": "Invalid 2FA token",
+    "disable_button": "Disable 2FA",
+    "disabled_success": "2FA disabled successfully!",
+    "error_already_disabled": "2FA is already disabled",
+    "error_generic": "Something went wrong. Please try again."
   },
   "signup": {
     "signup": "Sign up",

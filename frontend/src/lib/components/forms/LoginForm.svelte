@@ -8,8 +8,8 @@
   import { goto } from "$app/navigation";
   import { t } from "@lib/i18n/i18n";
   import { isAppError, type AppError } from "@lib/types/error";
-    import { EyeOff } from "lucide-svelte";
-    import { Eye } from "@lucide/svelte";
+  import { EyeOff } from "lucide-svelte";
+  import { Eye, ChevronLeft } from "@lucide/svelte";
 
   let usernameBuffer = $state("");
   let userPasswordBuffer = $state("");
@@ -121,11 +121,11 @@
       </div>
       <Button 
         type="button" 
-        variant="ghost" 
+        variant="hard" 
         class="w-full"
         onclick={() => { requires2FA = false; totpToken = ''; }}
       >
-        ← {$t('login.back_to_login', 'Back to login')}
+        <ChevronLeft/> {$t('login.back_to_login', 'Back to login')}
       </Button>
     {/if}
   </div>

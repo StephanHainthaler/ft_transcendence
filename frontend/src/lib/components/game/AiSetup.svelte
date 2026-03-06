@@ -75,7 +75,7 @@ const diffStyles = {
       </div>
       <div class="flex items-center justify-center size-full mt-6">
         {#if page === "tournament"}
-          <p class="text-muted-foreground text-center text-sm md:text-base italic lowercase first-letter:uppercase px-4">
+          <p class="text-muted-foreground text-center text-sm md:text-base italic first-letter:uppercase px-4">
             {$t('tournament.description2_no_players', 'The tournament bracket will be filled with AI Opponents')}
           </p>
         {:else}

@@ -89,6 +89,7 @@ export function getAuthUserClient({
     return {
       email: authUser.email,
       user_name: authUser.user_name,
+      two_fa_enabled: authUser.two_fa_enabled ?? 0
     }
   }
   return null;
