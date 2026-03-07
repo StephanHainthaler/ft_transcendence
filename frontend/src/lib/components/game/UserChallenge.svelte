@@ -14,12 +14,13 @@
       userSelectionCallback: (u: AppUser) => void;
     } = $props();
 
+  type TabValue = "users" | "friends";
   let activeTab = $state<"users" | "friends">("users");
 
-  const tabs = [
-    { value: "users", label: $t('game.users', 'Users') },
-    { value: "friends", label: $t('game.friends', 'Friends') },
-  ] as const;
+const tabs = $derived<{ value: TabValue; label: string }[]>([
+    { value: "users", label: String($t('game.users', 'Users')) },
+    { value: "friends", label: String($t('game.friends', 'Friends')) },
+  ]);
 
   function selectTab(value: "users" | "friends") {
     activeTab = value;
