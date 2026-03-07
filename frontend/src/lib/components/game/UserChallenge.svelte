@@ -32,7 +32,7 @@
       <div class="flex flex-wrap items-start justify-between gap-4 w-full -mt-2 mb-2">
         <div class="flex-shrink-0 overflow-visible">
           <NeonHeader
-            text={$t('game.challenge', 'Challenge')}
+            text={$t('game.to_challenge', 'Challenge')}
             size="x1"
             level="h1"
           />
@@ -71,7 +71,7 @@
         <GridCard
           title={user.name}
           avatarUrl={user.avatarUrl}
-          buttonDesc={String($t('game.challenge', 'Challenge'))}
+          buttonDesc={String($t('game.to_challenge', 'Challenge'))}
           callback={() => userSelectionCallback(user)}
         />
       {:else}

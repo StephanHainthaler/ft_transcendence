@@ -165,7 +165,7 @@
         <Grid title="">
           <div class="-mt-8 mb-4">
             <NeonHeader
-              text={$t('game.challenge', 'Challenge AI')}
+              text={$t('game.to_challenge', 'Challenge AI')}
               size="x1" 
               level="h1" 
             />
@@ -176,7 +176,7 @@
                 <GridCard
                   title={user.name} 
                   avatarUrl={user.avatarUrl} 
-                  buttonDesc={$t('game.challenge', 'Challenge')} 
+                  buttonDesc={$t('game.to_challenge', 'Challenge')} 
                   callback={() => userSelectionCallback(user)}
                 />
               {:else}
