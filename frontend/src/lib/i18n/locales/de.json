@@ -206,7 +206,9 @@
     "no": "Nein",
     "delete_err": "Fehler beim Löschen des Kontos",
     "avatar_btn": "Avatar hochladen",
-    "loading2": "Lade..."
+    "loading2": "Lade...",
+    "choose_file": "Datei wählen",
+    "no_file": "Keine Datei ausgewählt"
   },
   "tournament": {
     "tournament": "Turnier",

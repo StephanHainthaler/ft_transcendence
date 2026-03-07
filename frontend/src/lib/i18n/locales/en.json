@@ -206,7 +206,9 @@
     "no": "No",
     "delete_err": "Error deleting account",
     "avatar_btn": "Upload Avatar",
-    "loading2": "Loading..."
+    "loading2": "Loading...",
+    "choose_file": "Choose file",
+    "no_file": "No file chosen"
   },
   "tournament": {
     "tournament": "Tournament",

@@ -19,6 +19,7 @@
   let showPassword = $state(false);
   let showPasswordRepeat = $state(false);
   let editMode = $state(false);
+  let selectedFileName = $state('');
 
   type ProfilePageData = {
     auth: AuthUserClient;
@@ -59,9 +60,11 @@
       if (avatarError) {
         toast.error(avatarError);
         input.value = '';
+        selectedFileName = '';
         return;
       }
       session.avatarFile = file;
+      selectedFileName = file.name;
       if (currentAvatarEl && input.files?.[0]) {
         const url = URL.createObjectURL(file);
         avatarSrc = url;
@@ -223,15 +226,26 @@
         {/await}
 
         {#if editMode}
-          <div class="flex-1">
+          <div class="mt-2 flex-1 justify-center">
             <Label for="avatar">{$t('profile.avatar_btn', 'Upload Avatar')}</Label>
-            <Input
-              id="avatar"
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              class="mt-2"
-              onchange={handleFileChange}
-            />
+            <div class="mt-2 flex items-center gap-2">
+              <Input
+                id="avatar"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                class="mt-2 hidden" 
+                onchange={handleFileChange}
+              />
+              <Button class="mt-2"
+                variant="outline" 
+                onclick={() => document.getElementById('avatar')?.click()}
+              >
+                {$t('profile.choose_file', 'Choose file')}
+              </Button>
+              <span class="mt-2 text-xs text-muted-foreground truncate max-w-[150px]">
+                {selectedFileName || $t('profile.no_file', 'No file chosen')}
+              </span>
+            </div>
           </div>
         {/if}
       </div>
