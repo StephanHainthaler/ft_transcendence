@@ -47,7 +47,7 @@ export class Ball
 	{
 		let x, y: number;
 
-		x = centerWidth - (this._width * 0.25);
+		x = centerWidth - (this._width * 0.5);
 		y = getRandomNumber(centerHeight * 0.95, centerHeight * 1.05);
 		return ({x, y});
 	}
