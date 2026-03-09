@@ -82,7 +82,11 @@
     "statistics": "Statistiken",
     "account": "Konto",
     "logout": "Abmelden",
-    "language": "Sprache"
+    "language": "Sprache",
+    "policies_terms": "Datenschutz und AGBs",
+    "privacy": "Datenschutzrichtlinien",
+    "terms": "Nutzungsbedingungen"
+
   },
   "stats": {
     "title": "Spielerstatistiken",

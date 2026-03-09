@@ -82,7 +82,10 @@
     "statistics": "Statistics",
     "account": "Account",
     "logout": "Logout",
-    "language": "Language"
+    "language": "Language",
+    "policies_terms": "Policies & Terms",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
   },
   "stats": {
     "title": "Player Statistics",
