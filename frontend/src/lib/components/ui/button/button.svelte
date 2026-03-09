@@ -16,6 +16,9 @@
 				ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
 				link: "text-primary underline-offset-4 hover:underline",
 				tab: "bg-card/20 text-muted-foreground border-border hover:text-primary hover:border-primary/50 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-neon data-[active=true]:border-primary",
+				easy: "bg-easy/20 text-white/70 border-easy/20 hover:bg-easy hover:text-white data-[active=true]:bg-easy data-[active=true]:shadow-[0_0_20px_var(--chart-2)]",
+				medium: "bg-medium/20 text-black/70 border-medium/20 hover:bg-medium hover:text-black data-[active=true]:bg-medium data-[active=true]:shadow-[0_0_20px_var(--chart-3)]",
+				hard: "bg-hard/20 text-white/70 border-hard/20 hover:bg-hard hover:text-white data-[active=true]:bg-hard data-[active=true]:shadow-[0_0_20px_var(--chart-1)]",
 			},
 			size: {
 				default: "h-9 px-4 py-2 has-[>svg]:px-3",

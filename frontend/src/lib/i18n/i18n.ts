@@ -3,7 +3,7 @@ import { writable } from 'svelte/store';
 import en from './locales/en.json';
 import ukr from './locales/ukr.json';
 import de from './locales/de.json';
-import { Writable } from '$lib/types/writable';
+import { Writable } from "@lib/types/writable";
 import { get } from 'svelte/store';
 
 export const localeSettings = new Writable<string>('app_locale');
@@ -12,6 +12,7 @@ const savedLocale = typeof window !== 'undefined' ? localStorage.getItem('app_lo
 
 i18next.init({
   lng: savedLocale || 'en',
+  lng: savedLocale || 'en',
   fallbackLng: 'en',
   resources: {
     en: { translation: en },
@@ -19,25 +20,15 @@ i18next.init({
     de: { translation: de }
   },
   interpolation: { escapeValue: false },
-  parseMissingKeyHandler: (key, def) => {
+  parseMissingKeyHandler: (key, defaultValue) => {
     console.warn(`Missing translation key: ${key}`);
-    return def;
+    return defaultValue || key;
   }
 });
 
 const createI18nStore = () => {
   const safeT = () => (key: string, options?: string) => {
-    let res;
-
-    if (typeof options === 'string')
-      res = i18next.t(key, { defaultValue: options });
-    else
-      res = i18next.t(key, options);
-    if (res === key) {
-      console.warn(`Missing translation for key: ${key}`);
-      return options ? options : "";
-    }
-    return res;
+      return i18next.t(key, options as any);
   };
 
   const { subscribe, set } = writable(safeT());
@@ -46,6 +37,10 @@ const createI18nStore = () => {
     subscribe,
     changeLanguage: async (lang: string) => {
       await i18next.changeLanguage(lang);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('app_locale', lang);}
+      set(safeT()); 
+      currentLocale.set(lang);
       if (typeof window !== 'undefined') {
         localStorage.setItem('app_locale', lang);}
       set(safeT()); 

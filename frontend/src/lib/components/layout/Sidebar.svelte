@@ -128,6 +128,7 @@
         </button>
       {/each}
     </div>
+
   </Sidebar.GroupContent>
 </Sidebar.Group>
   </Sidebar.Content>

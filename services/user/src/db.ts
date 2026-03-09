@@ -15,6 +15,7 @@ const users = defineTable('users', {
   ...modelDefinition(),
   name: text().notNull(),
   user_name: text().unique(),
+  two_fa_enabled: int().default(0),
 });
 
 const avatars = defineTable('avatars', {

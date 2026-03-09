@@ -2,9 +2,9 @@
   let { type, label } = $props();
   
   const styles = {
-    win: "bg-primary/10 text-primary border-primary/20 shadow-[0_0_10px_rgba(var(--my-primary),0.1)]",
-    draw: "bg-muted text-muted-foreground border-border",
-    loss: "bg-destructive/10 text-destructive border-destructive/20"
+    win: "bg-primary/10 text-easy border-primary/20 ",
+    draw: "bg-muted text-muted-foreground border-border ",
+    loss: "bg-primary/10 text-hard border-primary/20 "
   };
 </script>
 

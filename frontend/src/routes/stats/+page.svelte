@@ -8,6 +8,7 @@
   import CyberTable from "$lib/components/custom/CyberTable.svelte";
   import ResultBadge from "$lib/components/custom/ResultBadge.svelte";
   import type { AppUser } from '@shared/user';
+  import NeonHeader from '@lib/components/custom/NeonHeader.svelte';
 
   let stats = $state<UserStats | null>(null);
   let history = $state<MatchHistoryEntry[]>([]);
@@ -125,9 +126,10 @@
   </div>
 
   <div class="px-4 max-w-6xl mx-auto space-y-8"> 
-    <h1 class="text-4xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_var(--my-primary)]">
-      {activeTab === 'stats' ? $t('stats.title', 'Player Statistics') : $t('leaderboard.title', 'Global Leaderboard')}
-    </h1>
+    <NeonHeader 
+      size="2xl"
+      text={activeTab === 'stats' ? $t('stats.title', 'Player Statistics') : $t('leaderboard.title', 'Global Leaderboard')} 
+    />
 
     {#if isLoading}
     <div class="text-center py-20 font-mono animate-pulse text-primary">_ {$t('stats.loading', 'Loading...')}</div>
@@ -142,9 +144,10 @@
           <StatsCard label={$t('stats.highest_score', 'Highest Score')} value={stats?.highest_score} />
         </div>
 
-        <h2 class="text-4xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_var(--my-primary)]">
-          {$t('stats.match_history', 'Match History')}
-        </h2>
+        <NeonHeader 
+          size="2xl"
+          text={$t('stats.match_history', 'Match History')}
+        />
 
     <CyberTable headers={historyHeaders}>
       {#each history as match}
@@ -211,58 +214,58 @@
       {/each}
     </CyberTable>
 
-    {:else if activeTab === 'leaderboard'}
-      <CyberTable headers={[
-        { label: $t('leaderboard.rank', 'Rank'), class: "w-20 text-center opacity-50" },
-        { label: $t('leaderboard.player_id', 'Player ID'), class: "text-left hidden md:table-cell" },
-        { label: $t('leaderboard.nickname', 'Nickname'), class: "text-left min-w-[100px]" },
-        { label: $t('leaderboard.games_played', 'Games played'), class: "text-center hidden md:table-cell"},
-        { label: $t('stats.wins', 'Wins'), class: "text-center" },
-        { label: $t('stats.losses', 'Losses'), class: "text-center" },
-        { label: $t('leaderboard.points', 'Points'), class: "text-center pr-8" }
-      ]}>
-        {#each leaderboard.filter(player => player.user_id !== 0) as player}
-          {#if player.user_id !== 0}
-          <tr class="group hover:bg-primary/6 transition-all duration-300">
-            <td class="p-4 text-center">
-              <span class="font-mono text-xl font-black {player?.rank ?? 0 <= 3 ? 'text-primary drop-shadow-[0_0_5px_var(--my-primary)]' : 'text-white/20'}">
-                #{player.rank}
-              </span>
-            </td>
-            <td class="p-4 hidden md:table-cell">
-              <span class="font-bold text-xs text-white text-center uppercase tracking-wider hidden md:table-cell">{$t('stats.user')} {player.user_id}</span>
-            </td>
-            <td class="p-4 w-full">
-              <span class="font-black text-sm text-white uppercase tracking-wider group-hover:text-primary transition-colors block truncate">
-                {usersFindUsername(player.user_id)}
-              </span>
-            </td>
-            <td class="p-4 text-center font-mono text-white/60 hidden md:table-cell">
-              {player.wins + player.losses}
+      {:else if activeTab === 'leaderboard'}
+        <CyberTable headers={[
+          { label: $t('leaderboard.rank', 'Rank', 'Rank'), class: "w-20 text-center opacity-50" },
+          { label: $t('leaderboard.player_id', 'Player ID', 'Player ID'), class: "text-left hidden md:table-cell" },
+          { label: $t('leaderboard.nickname', 'Nickname', 'Nickname'), class: "text-left min-w-[100px]" },
+          { label: $t('leaderboard.games_played', 'Games played', 'Games played'), class: "text-center hidden md:table-cell"},
+          { label: $t('stats.wins', 'Wins', 'Wins'), class: "text-center" },
+          { label: $t('stats.losses', 'Losses', 'Losses'), class: "text-center" },
+          { label: $t('leaderboard.points', 'Points', 'Points'), class: "text-center pr-8" }
+        ]}>
+          {#each leaderboard.filter(player => player.user_id !== 0) as player}
+            {#if player.user_id !== 0}
+            <tr class="group hover:bg-primary/6 transition-all duration-300">
+              <td class="p-4 text-center">
+                <span class="font-mono text-xl font-black {player?.rank ?? 0 <= 3 ? 'text-primary drop-shadow-[0_0_5px_var(--my-primary)]' : 'text-white/20'}">
+                  #{player.rank}
+                </span>
               </td>
-              <td class="p-4 text-center font-mono text-white/80">{player.wins}</td>
-              <td class="p-4 text-center font-mono text-white/80">{player.losses}</td>
-              <td class="p-4 text-center pr-8 font-mono text-primary font-bold">{player.total_points}</td>
-            </tr>
-            {/if}
-          {:else}
-          <tr>
-            <td colspan="7" class="p-12 text-center bg-primary/5 border-t border-border/30">
-              <div class="w-full flex flex-col items-center justify-center gap-3 animate-pulse">
-                <span class="text-4xl opacity-20 filter grayscale">🎮</span>
-                <p class="text-muted-foreground text-center font-mono tracking-widest uppercase text-xs">
-                  {$t('stats.no_matches', 'No matches found in your history')}
-                </p>
-                <div class="w-16 h-[1px] bg-primary/30"></div>
-              </div>
-            </td>
+              <td class="p-4 hidden md:table-cell">
+                <span class="font-bold text-xs text-white text-center uppercase tracking-wider hidden md:table-cell">{$t('stats.user', 'User')} {player.user_id}</span>
+              </td>
+              <td class="p-4 max-w-[100px] md:max-w-[200px]">
+                <span class="font-black text-sm text-white uppercase tracking-wider group-hover:text-primary transition-colors block truncate">
+                  {usersFindUsername(player.user_id)}
+                </span>
+              </td>
+              <td class="p-4 text-center font-mono text-white/60 hidden md:table-cell">
+                {player.wins + player.losses}
+                </td>
+                <td class="p-4 text-center font-mono text-white/80">{player.wins}</td>
+                <td class="p-4 text-center font-mono text-white/80">{player.losses}</td>
+                <td class="p-4 text-center pr-8 font-mono text-primary font-bold">{player.total_points}</td>
+              </tr>
+              {/if}
+            {:else}
+            <tr>
+              <td colspan="7" class="p-12 text-center bg-primary/5 border-t border-border/30">
+                <div class="w-full flex flex-col items-center justify-center gap-3 animate-pulse">
+                  <span class="text-4xl opacity-20 filter grayscale">🎮</span>
+                  <p class="text-muted-foreground text-center font-mono tracking-widest uppercase text-xs">
+                    {$t('stats.no_matches', 'No matches found in your history', 'No matches found in your history')}
+                  </p>
+                  <div class="w-16 h-[1px] bg-primary/30"></div>
+                </div>
+              </td>
             <td class="p-4 text-center font-mono text-white/80">{player.wins}</td>
             <td class="p-4 text-center font-mono text-white/80">{player.losses}</td>
             <td class="p-4 text-center pr-8 font-mono text-primary font-bold">{player.total_points}</td>
-          </tr>
-          {/each}
-        </CyberTable>
-      {/if}
+            </tr>
+            {/each}
+          </CyberTable>
+        {/if}
 
       <div class="flex justify-center items-center mt-10 gap-6">
         <Button variant="tab" size="tab" disabled={currentPage <= 1} onclick={() => loadData(currentPage - 1)}>◂</Button>

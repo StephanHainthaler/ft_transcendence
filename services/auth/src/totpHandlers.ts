@@ -44,6 +44,19 @@ export function enableTotp(user: AuthUser, token: string): boolean
   return valid;
 }
 
+export function disableTotp(user: AuthUser): void {
+  db.from('auth_users')
+    .update({ 
+      two_fa_enabled: 0, 
+      totp_secret: null, 
+      backup_codes: null 
+    })
+    .where(eq('id', user.id))
+    .run();
+
+  user.two_fa_enabled = 0;
+  user.totp_secret = undefined;
+}
 
 export function verifyTotp(user: AuthUser, token: string): boolean
 {
@@ -53,7 +66,7 @@ export function verifyTotp(user: AuthUser, token: string): boolean
     secret: decrypt(user.totp_secret),
     encoding: 'base32',
     token,
-    window: 1,
+    window: 2,
   });
 }
 

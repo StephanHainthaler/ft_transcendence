@@ -49,7 +49,7 @@ We called our project KhukVvobisPgoberShainthaJuitz - a mix of our intra names.
 | `-`                  | Standard user management  | - [SQLite](https://www.sqlite.org/docs.html)<br> - REST API ([Fastify](https://fastify.dev/docs/latest/Reference/))<br> - [TypeScript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) | vvobis          | Major   | 2          | n.a.        |  - SQLite keeps data safe & consistent<br> - REST API is simple to use<br> - TypeScript prevents errors when handling user data<br>- Avatar Upload<br>- Profile Management|
 | `-`                  | Game stats                | - [SQLite](https://www.sqlite.org/docs.html) (Game Stats Service) | khuk            | Minor   | 1          | n.a.        |  - Separate database for stats so the user service doesn't get slowed down |
 | `-`                  | Remote authentication     | - [OAuth 2.0 (GitHub)](https://docs.github.com/en/apps/oauth-apps) | pgober          | Minor   | 1          | n.a.        |  - GitHub OAuth makes login easier for users<br> |
-| `-`                  | JWT & 2FA               | - [JWT](https://www.jwt.io/) (RS256 signing)<br> - [2FA](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication) | vvobis & juitz  | Minor   | 1          | n.a.        |  - Encodes User Information as JWT in cookie for authentication<br> - 2FA adds extra security when needed |
+| `-`                  | JWT & 2FA               | - [JWT](https://www.jwt.io/) (RS256 signing)<br> - [2FA](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication) | vvobis, juitz, khuk  | Minor   | 1          | n.a.        |  - Encodes User Information as JWT in cookie for authentication<br> - 2FA adds extra security when needed |
 |**AI-Algorithm**      |                           |                    |                 |         |            |            |                           |
 | `-`                  | AI Opponent               | - Mathematical Algorithm | pgober          | Major   | 2          | difficulty can be chosen in game settings        |  - Math-based AI is simple & fair<br> -  no need for complex ML |
 | **Gaming**           |                           |                    |                 |         |            |            |                           |
@@ -76,8 +76,8 @@ We called our project KhukVvobisPgoberShainthaJuitz - a mix of our intra names.
 |:-----------|:--------------------------------------------|:--------------------|:----------------------------|:--------------------------------------------------|
 | vvobis     | Product Owner / Technical Lead / Full-stack Developer, DevOps Engineer | Decision on features and priorities, Validate completed work & Review critical code changes, Make technology stack decisions   | Custom ORM, User Service, Tournament System, JWT & 2FA, Global Error Handling, Containerization & Deployment | - ORM type safety<br> > TypeScript generics<br> - JWT cross-service auth<br> > RS256 asymmetric signing<br> |
 | shaintha   | Scrum Master / Developer                    | Organization of team meetings, Ensure team communication  | Pong Game mechanics, Canvas rendering, Game physics, Game Pages Design | - game physics (velocity & collision with paddles)<br> > proper entity collisions & checks before movement<br> - design of user interface of the game associated pages<br> > usage of GridCards, Dialogues and tables |
-| khuk       | Full-stack Developer   | Write code for assigned features, Testing. Design and implementation of analytical services | Game Stats Microservice, Leaderboard ranking, Persistent Language Support (UKR/EN/DE), UI/UX Stability logic, Global Error Handling & ORM utility enhancements | - Stats isolation<br> > separate microservice<br> - UX Persistence<br> - UI Fallbacks<br> > centralized error interceptors & default i18n values |
-| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm | - OAuth secrets exposure<br> > env variables<br> - AI fairness<br> > mathematical algorithm vs ML complexity |
+| khuk       | Full-stack Developer   | Write code for assigned features, Testing. Design and implementation of analytical services | Game Stats Microservice, Leaderboard ranking, Persistent Language Support (UKR/EN/DE), UI/UX Stability logic, Global Error Handling & ORM utility enhancements, 2FA | - Stats isolation<br> > separate microservice<br> - UX Persistence<br> - UI Fallbacks<br> > centralized error interceptors & default i18n values |
+| pgober     | Developer                                   | Write code for assigned features, Testing, Documentation  | OAuth 2.0 (GitHub), AI Opponent algorithm, Language Support (help with german translations), Documentation | - OAuth secrets exposure<br> > env variables<br> - AI fairness<br> > mathematical algorithm vs ML complexity |
 | juitz      | Developer                                   | Write code for assigned features, Testing  | Web game (Canvas/WebSocket), 2FA | - gameplay consistency<br> > delta-time updates + resize scaling for stable speed<br> - account security<br> > end-to-end TOTP 2FA flow (secure setup, verification, login challenge) |
 
 For more information on the individual contributions, you can also check the Modules table above.
@@ -480,18 +480,22 @@ Workflow:
 - [Users via GitHub API](https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28)
 - [Scopes for OAuth apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps)
 
-
-#### Tools / Frameworks / etc.
-- [The TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-- [Inkscape](https://inkscape.org/) — Open-source professional vector graphics software for UI design elements
+#### Fastify
 - [Fastify Documentation](https://fastify.dev/docs/latest/)
 - [Fastify Getting-Started](https://fastify.dev/docs/latest/Guides/Getting-Started/)
 - [Fastify: Hooks](https://fastify.dev/docs/latest/Reference/Hooks/)
 - [Fastify Route Parameters](https://fastify.dev/docs/latest/Reference/Routes/)
+
+#### Tools / Frameworks / etc.
+- [The TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [Node.js SQLite Tutorial](https://www.sqlitetutorial.net/sqlite-nodejs/)
 - [Using fetch with TypeScript](https://kentcdodds.com/blog/using-fetch-with-type-script)
 - [MDN: HTTP Response Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) — Reference for the global error interceptors
 
+#### Design tools
+- [Inkscape](https://inkscape.org/) — Open-source professional vector graphics software for UI design elements
+- [OKLCH Color Picker & Converter](https://oklch.com/)
+- [Lucide icons](https://lucide.dev/)
 
 #### AI Usage
 

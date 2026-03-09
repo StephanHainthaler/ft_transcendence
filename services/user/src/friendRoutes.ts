@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyReply } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyReply } from "fastify";
 import { extractJWTFromHeader } from "@server/jwt/validate";
 import { db } from "./db";
 import { eq } from "@server/orm";

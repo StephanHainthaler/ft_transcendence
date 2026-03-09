@@ -3,13 +3,13 @@ import { createSession, createAuthUser, getAuthUser, updateUserCredentials, veri
 import { deleteUser } from "@server/user/api";
 import { AuthUserClient, } from "@shared/user";
 import type { AuthDeleteRequest, AuthGetUserRequest, AuthLoginReply, AuthLogoutRequest, AuthOAuthRequest, AuthSessionRequest, AuthSignUpRequest, AuthUpdateRequest, AuthValidateRequest } from "@shared/api/authReply";
-import { AuthUser } from "./db";
 import { generateTokenCookie, validateJWT, validateRefreshToken } from "./jwt";
 import { extractJWTFromHeader } from "@server/jwt/validate";
 import { ApiError } from "@server/error/apiError";
 import { validateUsername, validateEmail, validatePassword } from "@shared/validation";
 import { GITHUB_REDIRECT_URL, HTTP } from "./";
-import { setupTotp, enableTotp, verifyTotp, is2FAEnabled } from "./totpHandlers";
+import { setupTotp, enableTotp, verifyTotp, is2FAEnabled, disableTotp } from "./totpHandlers";
+import { db, type AuthUser, authUsers } from "./db";
 
 const secret = process.env.AUTH_HMAC_SECRET!;
 
@@ -22,7 +22,8 @@ export function authRoutes(fastify: FastifyInstance) {
 
       const authUserClient: AuthUserClient = {
         email: authUser.email,
-        user_name: authUser.user_name
+        user_name: authUser.user_name,
+        two_fa_enabled: authUser.two_fa_enabled
       };
       return repl.status(200).send({ success: true, auth: authUserClient });
     } catch (e: any) {
@@ -147,7 +148,7 @@ export function authRoutes(fastify: FastifyInstance) {
         return reply.code(404).send({ success: false, message: 'No Such User' });
 
       if (is2FAEnabled(authUser))
-        return reply.code(409).send({ success: false, message: '2FA already enabled for this User' });
+        return reply.code(409 || 500).send({ success: false, message: '2FA already enabled for this User' });
 
       const result = await setupTotp(authUser);
       return reply.code(200).send(result);
@@ -180,6 +181,28 @@ export function authRoutes(fastify: FastifyInstance) {
       return reply.code(e.code || 401).send({ success: false, message: e.message || 'Unauthenticated' });
     }
   });
+
+  fastify.post('/2fa/disable', async (request, reply) => {
+      try {
+        const token = extractJWTFromHeader(request.cookies.access_token);
+        const authUser =
+          getAuthUser({ authId: token.payload.sub })
+          ?? getAuthUser({ userId: token.payload.sub });
+
+        if (!authUser)
+          return reply.code(404).send({ success: false, message: 'No Such User' });
+
+        disableTotp(authUser);
+
+        return reply.code(200).send({ success: true, message: '2FA disabled successfully' });
+      } catch (e: any) {
+        request.log.error(e);
+        return reply.code(400).send({ 
+        success: false, 
+        message: e.message || 'Could not process 2FA deactivation' 
+      });
+      }
+    });
 
   fastify.post<AuthLogoutRequest>('/logout', (request, reply) => {
     try {

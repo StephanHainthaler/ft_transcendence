@@ -18,7 +18,7 @@ export type AuthUser = { id: number, user_id: number, user_name?: string, email?
 
 export const db = new DB<Schema>();
 
-const authUsers = defineTable(
+export const authUsers = defineTable(
   'auth_users', {
     ...modelDefinition(),
     user_id: int().notNull().unique(),

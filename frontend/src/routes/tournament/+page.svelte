@@ -17,6 +17,10 @@
   import MatchStartDialog from "@lib/components/game/MatchStartDialog.svelte";
   import MatchPlayersDisplay from "@lib/components/game/MatchPlayersDisplay.svelte";
   import UserChallenge from "@lib/components/game/UserChallenge.svelte";
+  import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
+  import { isAppError } from "@lib/types/error";
+  import { Users } from "lucide-svelte";
+    import TournamentWinner from "@lib/components/game/TournamentWinner.svelte";
 
   let availableUsers: AppUser[] = $state([]);
   let selectedUsers: AppUser[] = $state([]);
@@ -77,7 +81,6 @@
     try
     {
       const data = await client.getUsers();
-      console.log(data);
       availableUsers = data;
       const friendData = await client.getFriends();
       friends = friendData.friends;
@@ -85,7 +88,13 @@
     }
     catch (e: any)
     {
-      toast.error(`Failed to load Page Data: ${e.message || e}`)
+      if (isAppError(e)) {
+        toast.error(e.message, {
+          description: e.description || $t('tournament.load_err_desc', 'Failed to load users for tournament. Please try again later.')
+        });
+      } else {
+        toast.error($t('tournament.failed', 'Failed to load Page Data'));
+      }
     }
   }
 
@@ -131,18 +140,18 @@
 <MatchStartDialog
   bind:dialogOpen={dialogOpen}
   paragraphRecords={{
-      '1': $t('game.howToPlay'),
-      '2': $t('game.howToWin')
+      '1': $t('game.howToPlay', 'How to play'),
+      '2': $t('game.howToWin', 'How to win')
   }}
   labelRecords={{
-        [$t('game.pointsToWin')]: String(pointsToWin),
-        [$t('game.matchDuration')]: `${matchDurationInMinutes} ${$t('game.minutes')}`,
-        ...(isAi ? { [$t('game.AIdifficulty')]: AIdifficulty === 1 ? $t('game.easy') : AIdifficulty === 2 ? $t('game.medium') : $t('game.hard') } : {}),
+        [$t('game.pointsToWin', 'Points to Win')]: String(pointsToWin),
+        [$t('game.matchDuration', 'Match Duration')]: `${matchDurationInMinutes} ${$t('game.minutes', 'minutes')}`,
+        ...(isAi ? { [$t('game.AIdifficulty', 'AI Difficulty')]: AIdifficulty === 1 ? $t('game.easy', 'Easy') : AIdifficulty === 2 ? $t('game.medium', 'Medium') : $t('game.hard', 'Hard') } : {}),
   }}
   confirmCallBack={startTournament}
->
+  >
   {#snippet tournamentParticipents()}
-    <Grid title={$t('tournament.schedule', 'Schedule')}>
+  <Grid title={String($t('tournament.schedule', 'Schedule'))}>
       {#snippet children()}
         {#each tournament.getSchedule() as game}
           <MatchPlayersDisplay {game} />
@@ -155,36 +164,61 @@
 <Card.Root class="size-full">
   <Card.Content class="flex flex-col gap-4 size-full overflow-hidden">
     {#if gameState === 'setup'}
-
+    
       <div class="grid grid-cols-2 gap-4 min-h-[30%]">
         <RulesSetup
           bind:matchDurationInMinutes={matchDurationInMinutes}
           bind:pointsToWin={pointsToWin}
         />
-        <AiSetup bind:AIdifficulty={AIdifficulty} />
+        <AiSetup
+            bind:AIdifficulty={AIdifficulty}
+            page="tournament"
+        />
       </div>
 
       <div class="grid grid-cols-2 gap-4 size-full">
-        <UserChallenge users={availableUsers} friends={friends} userSelectionCallback={toggleUserSelected} />
-        <Grid title={$t('tournament.selected', 'Selected Players')}>
-          {#each selectedUsers as u}
-            <GridCard 
+        <UserChallenge 
+          users={availableUsers} 
+          friends={friends} 
+          userSelectionCallback={toggleUserSelected} 
+        />
+        
+        <Grid title="">
+          <div class="-mt-8 mb-10">
+            <NeonHeader
+              text={$t('tournament.selected', 'Selected Players')}
+              size="x1" 
+              level="h1" 
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            {#each selectedUsers as u}
+              <GridCard
                 title={u.name}
                 callback={() => toggleUserSelected(u)}
                 buttonDesc={$t('tournament.remove', 'Remove')}
-            />
-          {/each}
+              />
+            {:else}
+            <div class="flex flex-col items-center justify-center h-32 text-muted-foreground border border-dashed rounded-lg gap-2">
+              <Users size={24} strokeWidth={1.5} />
+              <p class="text-sm justify-center overflow-hidden">{$t('game.no_chosen_users', 'No chosen users')}</p>
+            </div>
+            {/each}
+          </div>
         </Grid>
       </div>
-      <div class='flex w-full justify-end'>
-        <Button size='lg' onclick={finishSetup}>
+
+      <div class='flex w-full justify-end pt-4'>
+        <Button class="flex items-center justify-center w-full md:w-auto px-12 uppercase font-bold"
+          onclick={finishSetup}>
             {$t('tournament.start', 'Start Tournament')}
         </Button>
       </div>
 
     {:else if gameState === 'running' && currentGame}
       {#key gameState}
-        <PongGame
+      <PongGame
           player1={currentGame.player1}
           player2={currentGame.player2}
           onGameEnd={async (d) => await onGameEnd(d)}
@@ -200,28 +234,31 @@
         challengedUser={currentGame.player1}
         challengingUser={currentGame.player2}
       >
-        {#snippet nextMatch()}
+      {#snippet nextMatch()}
           {#if nextGame}
-            <Grid title={$t("tournament.nextMatch", 'nextMatch')}>
+            <Grid title={$t("tournament.nextMatch", 'Next Match')}>
               <MatchPlayersDisplay game={nextGame} />
             </Grid>
           {/if}
         {/snippet}
         {#snippet actions()}
-          <Button size="sm" onclick={ async () => await returnToChallengePage() }>{$t('game.return')}</Button>
+          <Button class="flex items-center justify-center w-full md:w-auto px-12 uppercase font-bold" variant="outline"
+           onclick={ async () => await returnToChallengePage() }>{$t('game.return', 'Return')}</Button>
 
           {#if tournament.isDone()}
-            <Button size="sm" onclick={ finishTournament }>{$t('tournament.finish', "Finish")}</Button>
+            <Button class="flex items-center justify-center w-full md:w-auto px-12 uppercase font-bold"
+             onclick={ finishTournament }>{$t('tournament.finish', "Finish")}</Button>
           {:else}
-            <Button size="sm" onclick={ startNextMatch }>{$t('game.nextMatch', "Next Match")}</Button>
+            <Button class="flex items-center justify-center w-full md:w-auto px-12 uppercase font-bold"
+             onclick={ startNextMatch }>{$t('game.nextMatch', "Next Match")}</Button>
           {/if}
         {/snippet}
       </MatchResult>
     {:else if gameState === 'finished' && winner}
-      <h1>{$t('tournament.finished', "Tournemnt Finished")}</h1>
-      <p>{$t('tournament.winnerAnnounce', "And the winner is...")}</p>
-      <p>{winner.name}</p>
-      <Button size="sm" onclick={ async () => await returnToChallengePage() }>{$t('game.return')}</Button>
+      <TournamentWinner 
+        {winner} 
+        onReturn={async () => await returnToChallengePage()} 
+      />
     {/if}
   </Card.Content>
 </Card.Root>

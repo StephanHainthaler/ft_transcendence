@@ -23,6 +23,7 @@ export interface UserGame extends Record<string, string | number | undefined> {
 export interface AuthUserClient {
   user_name?: string,
   email?: string,
+  two_fa_enabled?: number,
 }
 
 export interface Friendship {

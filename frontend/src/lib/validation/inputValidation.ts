@@ -8,8 +8,7 @@ import {
   AVATAR_ALLOWED_MIME_TYPES,
 } from '@shared/validation';
 
-import { t } from "@lib/i18n/i18n";
-import { get } from 'svelte/store';
+import { type AppError } from '@lib/types/error';
 
 type InputType = 'username' | 'email' | 'password' | 'displayName';
 
@@ -35,7 +34,11 @@ export function validateInputThrow(input?: string, {
 
   if (type) {
     const error = validators[type](input);
-    if (error) throw new Error(get(t)(error));
+    if (error) 
+    {
+      const errorInstance = new Error(error);
+      throw Object.assign(errorInstance, { isAppError: true }) as AppError;
+    }
   }
   return input;
 }

@@ -28,7 +28,7 @@
 
 <Card.Root class="flex flex-1 min-h-0 flex flex-col size-full">
   <Card.Header>
-    <Card.Title class="text-white text-center text-2xl md:text-3xl font-extrabold uppercase drop-shadow-[0_0_10px_var(--my-primary)]">{$t('game.summary')}</Card.Title>
+    <Card.Title class="text-white text-center text-2xl md:text-3xl font-extrabold uppercase drop-shadow-[0_0_10px_var(--my-primary)]">{$t('game.summary', 'Match Summary')}</Card.Title>
   </Card.Header>
   <Card.Content class="flex flex-col flex-1 min-h-0 overflow-hidden size-full">
     {#if matchData}
@@ -39,11 +39,11 @@
           </colgroup>
           <tbody>
             <tr>
-              <td class={matchData.winner_id === matchData.player_one_id ? "text-green-700 text-center text-2xl md:text-3xl font-extrabold p-3" : "text-red-700 text-center text-2xl md:text-3xl font-extrabold p-3"}>
-                {matchData.winner_id === matchData.player_one_id ? $t('game.win') : $t('game.lose')}
+              <td class={matchData.winner_id === matchData.player_one_id ? "text-easy uppercase text-center text-2xl md:text-3xl font-extrabold p-3 drop-shadow-[0_0_10px_var(--chart-2)]" : "text-hard uppercase text-center text-2xl md:text-3xl font-extrabold p-3 drop-shadow-[0_0_10px_var(--chart-1)]"}>
+                {matchData.winner_id === matchData.player_one_id ? $t('game.win', 'Win') : $t('game.lose', 'Lose')}
               </td>
-              <td class={matchData.winner_id === matchData.player_one_id ? "text-red-700 text-center text-2xl md:text-3xl font-extrabold p-3" : "text-green-700 text-center text-2xl md:text-3xl font-extrabold p-3"}>
-                {matchData.winner_id === matchData.player_one_id ? $t('game.lose') : $t('game.win')}
+              <td class={matchData.winner_id === matchData.player_one_id ? "text-hard uppercase text-center text-2xl md:text-3xl font-extrabold p-3 drop-shadow-[0_0_10px_var(--chart-1)]" : "text-easy uppercase text-center text-2xl md:text-3xl font-extrabold p-3 drop-shadow-[0_0_10px_var(--chart-2)]"}>
+                {matchData.winner_id === matchData.player_one_id ? $t('game.lose', 'Lose') : $t('game.win', 'Win')}
               </td>
             </tr>
             <tr>
@@ -55,8 +55,8 @@
               <td class="text-white text-center text-2xl font-bold p-3">{matchData.p2_score}</td>
             </tr>
             <tr>
-              <td class="text-gray-600 text-center text-base md:text-lg lg:text-xl font-semibold p-3" colspan="2">
-                {$t('game.matchDuration')}: {formatDuration(matchData.duration ?? 0)}
+              <td class="text-gray-400 text-center text-base md:text-lg lg:text-xl font-semibold p-3" colspan="2">
+                {$t('game.matchDuration', 'Match Duration')}: {formatDuration(matchData.duration ?? 0)}
               </td>
             </tr>
           </tbody>
@@ -70,7 +70,7 @@
         </style>
       </div>
     {:else}
-      <p>{$t('game.noMatchData')}</p>
+      <p>{$t('game.noMatchData', 'No match data available')}</p>
     {/if}
     <div class="flex flex-grow"></div>
     <div class="w-full flex justify-end gap-4 mt-3">

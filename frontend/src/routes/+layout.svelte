@@ -13,16 +13,12 @@
   let sidebarOpen = $state(false);
 
   onMount(async () => {
-      console.log("Checking session status...");
-      try {
-        if (client.loggedIn && client.status !== 'ready')
-          await client.init();
-      } catch (err) {
-        console.error("Session invalid on backend. Logging out...");
-        client.loggedIn = false;
-        client.user = null;
-        goto('/auth', { replaceState: true });
-      }
+    try {
+      if (client.loggedIn && client.status !== 'ready')
+        await client.init();
+    } catch (err) {
+      goto('/auth', { replaceState: true });
+    }
   })
 
   beforeNavigate((nav) => {
@@ -55,3 +51,4 @@
     </div>
   </main>
 </SB.Provider>
+
