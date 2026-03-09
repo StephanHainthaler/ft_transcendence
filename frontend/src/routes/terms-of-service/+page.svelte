@@ -11,7 +11,7 @@
       <NeonHeader
         size="2xl"
         level="h1"
-        text={$t('terms.title', 'Terms of Service')}
+        text={$t('terms.title')}
       />
     </Card.Title>
   </Card.Header>
@@ -19,14 +19,11 @@
   <Card.Content class="space-y-6 text-sm leading-relaxed">
 
     <p class="text-muted-foreground">
-      {$t('terms.updated', 'Last updated')}: March 09, 2026
+      {$t('terms.updated')}: 09-03-2026
     </p>
 
     <p>
-      {$t(
-        'terms.intro',
-        'Please read these terms and conditions carefully before using Our Service.'
-      )}
+      {$t('terms.intro')}
     </p>
 
     <Separator />
@@ -34,67 +31,50 @@
     <!-- Interpretation -->
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">
-        {$t('terms.interpretation_defs', 'Interpretation and Definitions')}
+        {$t('terms.interpretation_defs')}
       </h2>
 
       <Separator />
 
       <h3 class="font-semibold">
-        {$t('terms.interpretation', 'Interpretation')}
+        {$t('terms.interpretation')}
       </h3>
 
       <p>
-        {$t(
-          'terms.interpretation_text',
-          'The words whose initial letters are capitalized have meanings defined under the following conditions.'
-        )}
+        {$t('terms.interpretation_text')}
       </p>
 
       <h3 class="font-semibold">
-        {$t('terms.definitions', 'Definitions')}
+        {$t('terms.definitions')}
       </h3>
 
       <ul class="list-disc pl-6 space-y-2">
         <li>
-          <strong>Affiliate</strong> —
-          {$t(
-            'terms.def_affiliate',
-            'An entity that controls, is controlled by, or is under common control with a party.'
-          )}
+          <strong>{$t('terms.label_affiliate')}</strong> — {$t('terms.def_affiliate')}
         </li>
 
         <li>
-          <strong>Country</strong> — Austria
+          <strong>{$t('terms.label_country')}</strong> — {$t('terms.country_name')}
         </li>
 
         <li>
-          <strong>Company</strong> —
-          {$t('terms.def_company', 'FT_TRANSCENDENCE')}
+          <strong>{$t('terms.label_company')}</strong> — {$t('terms.def_company')}
         </li>
 
         <li>
-          <strong>Device</strong> —
-          {$t(
-            'terms.def_device',
-            'Any device capable of accessing the Service such as a computer or mobile device.'
-          )}
+          <strong>{$t('terms.label_device')}</strong> — {$t('terms.def_device')}
         </li>
 
         <li>
-          <strong>Service</strong> —
-          {$t('terms.def_service', 'The Website')}
+          <strong>{$t('terms.label_service')}</strong> — {$t('terms.def_service')}
         </li>
 
         <li>
-          <strong>Third-Party Social Media Service</strong> —
-          {$t(
-            'terms.def_thirdparty',
-            'Services or content provided by third parties that may appear in the Service.'
-          )}
+          <strong>{$t('terms.label_thirdparty')}</strong> — {$t('terms.def_thirdparty')}
         </li>
 
         <li>
-          <strong>Website</strong> —
+          <strong>{$t('terms.label_website')}</strong> — 
           <a
             href="https://www.KhukVvobisPgoberShainthaJuitz.at"
             target="_blank"
@@ -106,11 +86,7 @@
         </li>
 
         <li>
-          <strong>You</strong> —
-          {$t(
-            'terms.def_you',
-            'The individual accessing or using the Service.'
-          )}
+          <strong>{$t('terms.label_you')}</strong> — {$t('terms.def_you')}
         </li>
       </ul>
     </section>
@@ -119,186 +95,86 @@
 
     <!-- Acknowledgment -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">
-        {$t('terms.ack', 'Acknowledgment')}
-      </h2>
-
+      <h2 class="text-xl font-semibold">{$t('terms.ack')}</h2>
       <Separator />
-
-      <p>
-        {$t(
-          'terms.ack_text1',
-          'These Terms and Conditions govern the use of this Service and the agreement between You and the Company.'
-        )}
-      </p>
-
-      <p>
-        {$t(
-          'terms.ack_text2',
-          'By accessing or using the Service You agree to be bound by these Terms.'
-        )}
-      </p>
-
-      <p>
-        {$t(
-          'terms.age',
-          'You represent that you are over the age of 18. The Company does not permit those under 18 to use the Service.'
-        )}
-      </p>
+      <p>{$t('terms.ack_text1')}</p>
+      <p>{$t('terms.ack_text2')}</p>
+      <p>{$t('terms.age')}</p>
     </section>
 
     <Separator />
 
     <!-- External Links -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">
-        {$t('terms.links', 'Links to Other Websites')}
-      </h2>
-
+      <h2 class="text-xl font-semibold">{$t('terms.links')}</h2>
       <Separator />
-
-      <p>
-        {$t(
-          'terms.links_text',
-          'Our Service may contain links to third-party websites or services that are not owned or controlled by the Company.'
-        )}
-      </p>
-
-      <p>
-        {$t(
-          'terms.links_disclaimer',
-          'The Company assumes no responsibility for the content, privacy policies, or practices of third-party websites.'
-        )}
-      </p>
+      <p>{$t('terms.links_text')}</p>
+      <p>{$t('terms.links_disclaimer')}</p>
     </section>
 
     <Separator />
 
     <!-- Termination -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">
-        {$t('terms.termination', 'Termination')}
-      </h2>
-
+      <h2 class="text-xl font-semibold">{$t('terms.termination')}</h2>
       <Separator />
-
-      <p>
-        {$t(
-          'terms.termination_text',
-          'We may terminate or suspend Your access immediately, without prior notice, if You breach these Terms.'
-        )}
-      </p>
+      <p>{$t('terms.termination_text')}</p>
     </section>
 
     <Separator />
 
     <!-- Liability -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">
-        {$t('terms.liability', 'Limitation of Liability')}
-      </h2>
-
+      <h2 class="text-xl font-semibold">{$t('terms.liability')}</h2>
       <Separator />
-
-      <p>
-        {$t(
-          'terms.liability_text',
-          'The entire liability of the Company shall be limited to the amount paid through the Service or 100 USD if nothing was purchased.'
-        )}
-      </p>
+      <p>{$t('terms.liability_text')}</p>
     </section>
 
     <Separator />
 
     <!-- Disclaimer -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">
-        {$t('terms.disclaimer', '"AS IS" Disclaimer')}
-      </h2>
-
+      <h2 class="text-xl font-semibold">{$t('terms.disclaimer')}</h2>
       <Separator />
-
-      <p>
-        {$t(
-          'terms.disclaimer_text',
-          'The Service is provided "AS IS" and "AS AVAILABLE" without warranties of any kind.'
-        )}
-      </p>
+      <p>{$t('terms.disclaimer_text')}</p>
     </section>
 
     <Separator />
 
     <!-- Governing Law -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">
-        {$t('terms.law', 'Governing Law')}
-      </h2>
-
+      <h2 class="text-xl font-semibold">{$t('terms.law')}</h2>
       <Separator />
-
-      <p>
-        {$t(
-          'terms.law_text',
-          'The laws of Austria shall govern these Terms and Your use of the Service.'
-        )}
-      </p>
+      <p>{$t('terms.law_text')}</p>
     </section>
 
     <Separator />
 
     <!-- EU Users -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">
-        {$t('terms.eu', 'For European Union Users')}
-      </h2>
-
+      <h2 class="text-xl font-semibold">{$t('terms.eu')}</h2>
       <Separator />
-
-      <p>
-        {$t(
-          'terms.eu_text',
-          'EU consumers benefit from mandatory provisions of the law of their country of residence.'
-        )}
-      </p>
+      <p>{$t('terms.eu_text')}</p>
     </section>
 
     <Separator />
 
     <!-- Changes -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">
-        {$t('terms.changes', 'Changes to These Terms')}
-      </h2>
-
+      <h2 class="text-xl font-semibold">{$t('terms.changes')}</h2>
       <Separator />
-
-      <p>
-        {$t(
-          'terms.changes_text',
-          'We reserve the right to modify or replace these Terms at any time.'
-        )}
-      </p>
+      <p>{$t('terms.changes_text')}</p>
     </section>
 
     <Separator />
 
     <!-- Contact -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">
-        {$t('terms.contact', 'Contact Us')}
-      </h2>
-
+      <h2 class="text-xl font-semibold">{$t('terms.contact')}</h2>
       <Separator />
-
-      <p>
-        {$t(
-          'terms.contact_desc',
-          'If you have any questions about these Terms, you can contact us:'
-        )}
-      </p>
-
+      <p>{$t('terms.contact_desc')}</p>
       <ul class="list-disc pl-6">
-        <li>By phone: +42 420 4242420</li>
+        <li>{$t('terms.contact_phone')}: +42 420 4242420</li>
       </ul>
     </section>
 
