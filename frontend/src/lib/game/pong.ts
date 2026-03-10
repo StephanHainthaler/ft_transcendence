@@ -51,7 +51,7 @@ export class Pong
 		this._ball = new Ball(this, this._player1, this._player2);
 
 		// set match timer
-		this._matchStartTime = new Date().getTime();
+		this._matchStartTime = Math.floor(new Date().getTime() / 1000);
 
 		// start frame requesting loop
 		this._isPaused = false;
