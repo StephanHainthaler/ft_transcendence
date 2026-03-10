@@ -129,7 +129,6 @@ export function updateStatsForUser(userId: number, isWinner: boolean, score: num
 		let newRank = currentRankValue + rankDelta;
 		if (newRank < 0)
 			newRank = 0;
-		console.log(`newRank: ${newRank}`);
 		const ret = getDb().from('user_stats').update({
 			wins: newWins,
 			losses: newLosses,
@@ -141,7 +140,6 @@ export function updateStatsForUser(userId: number, isWinner: boolean, score: num
 		.where(eq('user_id', userId))
 		.run();
 
-	console.log(ret);
 	}
 }
 
@@ -160,7 +158,6 @@ export function recordMatch(data: MatchSubmissionData) : number | bigint | null
 	try
 	{
 		const timestamp = Math.floor(Date.now() / 1000);
-		console.log("Inside recordMatch: winner id: ", data.winner_id, "p1 id: ", data.player_one_id, "p2 id: ", data.player_two_id);
 		if (data.winner_id == data.player_one_id) {
 			updateStatsForUser(data.player_one_id, true, data.p1_score);
 			updateStatsForUser(data.player_two_id, false, data.p2_score);

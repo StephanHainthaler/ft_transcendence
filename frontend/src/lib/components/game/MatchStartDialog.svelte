@@ -7,8 +7,7 @@
   import { Button } from "../ui/button";
   import type { Snippet } from "svelte";
   import NeonHeader from "../custom/NeonHeader.svelte";
-  import { MoveVertical, Keyboard } from "lucide-svelte";
-  import * as Tabs from "$lib/components/ui/tabs";
+  import { Keyboard } from "lucide-svelte";
 
   let {
     dialogOpen = $bindable(),

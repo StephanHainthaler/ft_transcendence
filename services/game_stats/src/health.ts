@@ -10,8 +10,4 @@ export async function registerHealthRoute(app: FastifyInstance)
 	app.get("/health", handleHealthCheck);
 }
 
-// export async function registerHealthRoute(app: FastifyInstance) {
-//     app.get("/health", async () => {
-//         return { status: "ok" };
-//     });
-// }
+

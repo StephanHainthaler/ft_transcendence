@@ -142,11 +142,9 @@ describe('Game Stats Logic Tests', () => {
 	test('4. Should not allow rank to drop below 0', () => {
 		recordMatch(MATCH_DATA_HIGH_SCORE);
 		const statsC1 = getUserStats(USER_C) as UserStats;
-		console.log(`Starting Rank for User C: ${statsC1.rank}`);
 		assert.strictEqual(statsC1.rank, 995, 'Rank should be 995 from the start');
 		simulateLosses(201, USER_C);
 		const statsC2 = getUserStats(USER_C) as UserStats;
-		console.log(`Final Rank for User C: ${statsC2.rank}`);
 		assert.strictEqual(statsC2.rank, 0, 'Rank should not be negative');
 	});
 });

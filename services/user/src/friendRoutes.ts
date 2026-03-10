@@ -52,7 +52,6 @@ const registerFriendRequest = (fromId: number, toId: number) => {
     }
     return db.from('friendships').insert({ user_from_id: fromId, user_to_id: toId, status: 'pending' }).select('*').single();
   } catch (e) {
-    console.log(e);
     throw sqliteErrorToApiError(e);
   }
 }

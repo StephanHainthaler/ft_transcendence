@@ -45,8 +45,6 @@ async function startApiGateway() {
   if (!USER_URL) throw new Error("USER_SERVICE_URL is not defined");
   if (!GAME_STATS_URL) throw new Error("GAME_STATS_SERVICE_URL is not defined");
 
-  console.log(AUTH_URL);
-
   const fastify = createServer();
 
   fastify.register(fastifyCookie);
@@ -59,7 +57,6 @@ async function startApiGateway() {
       let response: Response;
       try {
         const authReqUrl = `${AUTH_URL}/validate`;
-        console.log("Trying validate req with:", authReqUrl, "on request: ", request.originalUrl);
         response = await fetch(authReqUrl, {
           method: 'post',
           headers: {
@@ -109,7 +106,6 @@ async function startApiGateway() {
   });
 
   const http2 = HTTP === 'https';
-  console.log('running with https:', http2);
 
   fastify.register(proxy, {
     upstream: USER_URL,

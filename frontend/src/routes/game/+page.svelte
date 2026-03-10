@@ -40,7 +40,6 @@
     {
       const data = await client.getUsers();
       const friendsData = await client.getFriends();
-      console.log(data);
       users = data;
       if (!users || users.length === 0) {
         throw Object.assign(new Error($t('tournament.no_users', 'No users found!')), {isAppError: true}, {

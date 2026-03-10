@@ -4,13 +4,11 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    ports:
-      - "3000"
     networks:
       transcendence_network:
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000"]
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://127.0.0.1:3000"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -75,8 +73,6 @@ services:
       dockerfile: services/api/Dockerfile
     env_file:
       - env/prod/.env.api
-    ports:
-      - "3000"
     networks:
       transcendence_network:
     restart: unless-stopped
@@ -114,8 +110,6 @@ services:
       dockerfile: services/user/Dockerfile
     env_file:
       - env/prod/.env.user
-    ports:
-      - "3001"
     networks:
       transcendence_network:
     restart: unless-stopped
@@ -149,8 +143,6 @@ services:
       dockerfile: services/auth/Dockerfile
     env_file:
       - env/prod/.env.auth
-    ports:
-      - "3002"
     networks:
       transcendence_network:
     restart: unless-stopped
@@ -183,8 +175,6 @@ services:
       dockerfile: services/game_stats/Dockerfile
     env_file:
       - env/prod/.env.game_stats
-    ports:
-      - "3003"
     networks:
       transcendence_network:
     restart: unless-stopped

@@ -1,11 +1,10 @@
 FROM node:25-alpine3.22 AS builder
 WORKDIR /app
 
-RUN npm update
 COPY package*.json ./
 COPY services/user/package*.json ./services/user/
 COPY services/shared-server/package*.json ./services/shared-server/
-RUN npm install
+RUN npm install --loglevel=error
 
 COPY shared ./shared
 COPY services/shared-server ./services/shared-server

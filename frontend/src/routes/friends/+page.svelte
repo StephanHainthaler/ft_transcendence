@@ -14,7 +14,6 @@
 
   const removeFriendship = async (friendShipId: number) => {
     try {
-      console.log('removing');
       await client.removeFriendship(friendShipId);
     } catch (e: any) {
       toast.error($t('friends.remove_fail', 'Failed to remove friendship'));
