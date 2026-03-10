@@ -82,7 +82,10 @@
     "statistics": "Statistics",
     "account": "Account",
     "logout": "Logout",
-    "language": "Language"
+    "language": "Language",
+    "policies_terms": "Policies & Terms",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
   },
   "stats": {
     "title": "Player Statistics",
@@ -275,5 +278,138 @@
         "size": "File too large. Maximum size is 5MB"
       }
     }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "updated": "Last updated",
+    "intro": "This Privacy Policy describes our policies and procedures regarding the collection, use, and disclosure of your information when you use the Service and informs you about your privacy rights and how the law protects you.",
+    "use_data": "We use your Personal Data to provide and improve the Service. By using the Service, you agree to the collection and use of information in accordance with this Privacy Policy.",
+
+    "interpretation": "Interpretation and Definitions",
+    "interpretation_title": "Interpretation",
+    "interpretation_text": "The words whose initial letters are capitalized have meanings defined under the following conditions. The following definitions have the same meaning whether they appear in singular or plural form.",
+
+    "definitions": "Definitions",
+    "label_account": "Account",
+    "def_account": "A unique account created for you to access our Service or parts of our Service.",
+    "label_affiliate": "Affiliate",
+    "def_affiliate": "An entity that controls, is controlled by, or is under common control with a party.",
+    "label_company": "Company",
+    "def_company": "FT_TRANSCENDENCE",
+    "label_cookies": "Cookies",
+    "def_cookies": "Small files placed on your device that store browsing data and preferences.",
+    "label_country": "Country",
+    "country_name": "Austria",
+    "label_device": "Device",
+    "def_device": "Any device capable of accessing the Service such as a computer or mobile device.",
+    "label_personal_data": "Personal Data",
+    "def_personal_data": "Information relating to an identified or identifiable individual.",
+    "label_service": "Service",
+    "def_service": "The Website",
+    "label_usage_data": "Usage Data",
+    "def_usage": "Data collected automatically during the use of the Service.",
+    "label_you": "You",
+    "def_you": "The individual accessing or using the Service.",
+
+    "collecting": "Collecting and Using Your Personal Data",
+    "types": "Types of Data Collected",
+    "personal_data": "Personal Data",
+    "personal_desc": "While using our Service, we may ask you to provide certain personally identifiable information.",
+    "data_email": "Email address",
+    "usage_data": "Usage Data",
+    "usage_desc": "Usage Data is collected automatically when using the Service and may include IP address, browser type, visited pages, and other diagnostic data.",
+
+    "cookies": "Tracking Technologies and Cookies",
+    "cookies_desc": "We use cookies and similar tracking technologies to track activity on our Service and store certain information.",
+    "cookies_essential": "Necessary Cookies",
+    "cookies_essential_desc": "Essential for providing core website functionality.",
+    "cookies_consent": "Consent Cookies",
+    "cookies_consent_desc": "Identify whether users accepted cookie policies.",
+    "cookies_functional": "Functionality Cookies",
+    "cookies_functional_desc": "Remember preferences such as login details or language.",
+
+    "retention": "Retention of Your Personal Data",
+    "retention_desc": "The Company will retain your Personal Data only as long as necessary for the purposes described in this Privacy Policy.",
+    "retention_accounts": "User accounts: up to 24 months after account closure",
+    "retention_tickets": "Support tickets: up to 24 months",
+    "retention_analytics": "Analytics data: up to 24 months",
+    "retention_logs": "Server logs: up to 24 months",
+
+    "security": "Security of Your Personal Data",
+    "security_desc": "While we strive to protect your Personal Data using commercially reasonable means, no transmission or storage method is completely secure.",
+
+    "children": "Children's Privacy",
+    "children_desc": "Our Service does not address anyone under the age of 16. We do not knowingly collect personal information from children under 16.",
+
+    "changes": "Changes to this Privacy Policy",
+    "changes_desc": "We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated revision date.",
+
+    "contact": "Contact Us",
+    "contact_desc": "If you have any questions about this Privacy Policy, you can contact us:",
+    "contact_phone": "By phone"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "updated": "Last updated",
+    "intro": "Please read these terms and conditions carefully before using Our Service.",
+
+    "interpretation_defs": "Interpretation and Definitions",
+    "interpretation": "Interpretation",
+    "interpretation_text": "The words whose initial letters are capitalized have meanings defined under the following conditions.",
+    "definitions": "Definitions",
+
+    "label_affiliate": "Affiliate",
+    "def_affiliate": "An entity that controls, is controlled by, or is under common control with a party.",
+
+    "label_country": "Country",
+    "country_name": "Austria",
+
+    "label_company": "Company",
+    "def_company": "FT_TRANSCENDENCE",
+
+    "label_device": "Device",
+    "def_device": "Any device capable of accessing the Service such as a computer or mobile device.",
+
+    "label_service": "Service",
+    "def_service": "The Website",
+
+    "label_thirdparty": "Third-Party Social Media Service",
+    "def_thirdparty": "Services or content provided by third parties that may appear in the Service.",
+
+    "label_website": "Website",
+
+    "label_you": "You",
+    "def_you": "The individual accessing or using the Service.",
+
+    "ack": "Acknowledgment",
+    "ack_text1": "These Terms and Conditions govern the use of this Service and the agreement between You and the Company.",
+    "ack_text2": "By accessing or using the Service You agree to be bound by these Terms.",
+    "age": "You represent that you are over the age of 18. The Company does not permit those under 18 to use the Service.",
+
+    "links": "Links to Other Websites",
+    "links_text": "Our Service may contain links to third-party websites or services that are not owned or controlled by the Company.",
+    "links_disclaimer": "The Company assumes no responsibility for the content, privacy policies, or practices of third-party websites.",
+
+    "termination": "Termination",
+    "termination_text": "We may terminate or suspend Your access immediately, without prior notice, if You breach these Terms.",
+
+    "liability": "Limitation of Liability",
+    "liability_text": "The entire liability of the Company shall be limited to the amount paid through the Service or 100 USD if nothing was purchased.",
+
+    "disclaimer": "\"AS IS\" Disclaimer",
+    "disclaimer_text": "The Service is provided \"AS IS\" and \"AS AVAILABLE\" without warranties of any kind.",
+
+    "law": "Governing Law",
+    "law_text": "The laws of Austria shall govern these Terms and Your use of the Service.",
+
+    "eu": "For European Union Users",
+    "eu_text": "EU consumers benefit from mandatory provisions of the law of their country of residence.",
+
+    "changes": "Changes to These Terms",
+    "changes_text": "We reserve the right to modify or replace these Terms at any time.",
+
+    "contact": "Contact Us",
+    "contact_desc": "If you have any questions about these Terms, you can contact us:",
+    "contact_phone": "By phone"
   }
 }

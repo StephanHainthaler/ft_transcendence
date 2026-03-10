@@ -82,7 +82,11 @@
     "statistics": "Statistiken",
     "account": "Konto",
     "logout": "Abmelden",
-    "language": "Sprache"
+    "language": "Sprache",
+    "policies_terms": "Datenschutz und AGBs",
+    "privacy": "Datenschutzrichtlinien",
+    "terms": "Nutzungsbedingungen"
+
   },
   "stats": {
     "title": "Spielerstatistiken",
@@ -274,5 +278,133 @@
         "size": "Datei zu groß. Maximale Größe ist 5MB"
       }
     }
+  },
+  "privacy": {
+    "title": "Datenschutzrichtlinie",
+    "updated": "Zuletzt aktualisiert",
+    "intro": "Diese Datenschutzrichtlinie beschreibt unsere Richtlinien und Verfahren zur Erhebung, Verwendung und Offenlegung Ihrer Informationen, wenn Sie den Dienst nutzen, und informiert Sie über Ihre Datenschutzrechte und den gesetzlichen Schutz.",
+    "use_data": "Wir verwenden Ihre personenbezogenen Daten, um den Dienst bereitzustellen und zu verbessern. Durch die Nutzung des Dienstes stimmen Sie der Erhebung und Nutzung von Informationen gemäß dieser Datenschutzrichtlinie zu.",
+
+    "interpretation": "Auslegung und Definitionen",
+    "interpretation_title": "Auslegung",
+    "interpretation_text": "Wörter, deren Anfangsbuchstaben großgeschrieben sind, haben unter den folgenden Bedingungen definierte Bedeutungen. Die folgenden Definitionen haben dieselbe Bedeutung, unabhängig davon, ob sie im Singular oder Plural erscheinen.",
+
+    "definitions": "Definitionen",
+    "label_account": "Konto",
+    "def_account": "Ein einzigartiges Konto, das für Sie erstellt wurde, um auf unseren Dienst oder Teile unseres Dienstes zuzugreifen.",
+    "label_affiliate": "Affiliate",
+    "def_affiliate": "Eine Einheit, die eine Partei kontrolliert, von ihr kontrolliert wird oder unter gemeinsamer Kontrolle mit ihr steht.",
+    "label_company": "Unternehmen",
+    "def_company": "FT_TRANSCENDENCE",
+    "label_cookies": "Cookies",
+    "def_cookies": "Kleine Dateien, die auf Ihrem Gerät gespeichert werden und Browsing-Daten sowie Präferenzen speichern.",
+    "label_country": "Land",
+    "country_name": "Österreich",
+    "label_device": "Gerät",
+    "def_device": "Jedes Gerät, das auf den Dienst zugreifen kann, z. B. ein Computer oder mobiles Gerät.",
+    "label_personal_data": "Personenbezogene Daten",
+    "def_personal_data": "Informationen über eine identifizierte oder identifizierbare Person.",
+    "label_service": "Dienst",
+    "def_service": "Die Website",
+    "label_usage_data": "Nutzungsdaten",
+    "def_usage": "Daten, die automatisch während der Nutzung des Dienstes gesammelt werden.",
+    "label_you": "Sie",
+    "def_you": "Die Person, die auf den Dienst zugreift oder ihn nutzt.",
+
+    "collecting": "Erhebung und Nutzung Ihrer personenbezogenen Daten",
+    "types": "Arten der erhobenen Daten",
+    "personal_data": "Personenbezogene Daten",
+    "personal_desc": "Bei der Nutzung unseres Dienstes können wir Sie bitten, bestimmte persönlich identifizierbare Informationen anzugeben.",
+    "data_email": "E-Mail-Adresse",
+    "usage_data": "Nutzungsdaten",
+    "usage_desc": "Nutzungsdaten werden automatisch bei der Nutzung des Dienstes gesammelt und können IP-Adresse, Browsertyp, besuchte Seiten und andere Diagnosedaten enthalten.",
+
+    "cookies": "Tracking-Technologien und Cookies",
+    "cookies_desc": "Wir verwenden Cookies und ähnliche Tracking-Technologien, um Aktivitäten auf unserem Dienst zu verfolgen und bestimmte Informationen zu speichern.",
+    "cookies_essential": "Notwendige Cookies",
+    "cookies_essential_desc": "Erforderlich für die Bereitstellung der Kernfunktionen der Website.",
+    "cookies_consent": "Zustimmungscookies",
+    "cookies_consent_desc": "Zeigen an, ob Benutzer den Cookie-Richtlinien zugestimmt haben.",
+    "cookies_functional": "Funktionale Cookies",
+    "cookies_functional_desc": "Merken Präferenzen wie Login-Daten oder Sprache.",
+
+    "retention": "Aufbewahrung Ihrer personenbezogenen Daten",
+    "retention_desc": "Das Unternehmen bewahrt Ihre personenbezogenen Daten nur so lange auf, wie es für die in dieser Datenschutzrichtlinie beschriebenen Zwecke erforderlich ist.",
+    "retention_accounts": "Benutzerkonten: bis zu 24 Monate nach Kontoschließung",
+    "retention_tickets": "Support-Tickets: bis zu 24 Monate",
+    "retention_analytics": "Analysedaten: bis zu 24 Monate",
+    "retention_logs": "Serverprotokolle: bis zu 24 Monate",
+
+    "security": "Sicherheit Ihrer personenbezogenen Daten",
+    "security_desc": "Wir bemühen uns, Ihre personenbezogenen Daten mit wirtschaftlich angemessenen Mitteln zu schützen, jedoch ist keine Übertragungs- oder Speicherungsmethode vollständig sicher.",
+
+    "children": "Datenschutz von Kindern",
+    "children_desc": "Unser Dienst richtet sich nicht an Personen unter 16 Jahren. Wir sammeln wissentlich keine personenbezogenen Daten von Kindern unter 16 Jahren.",
+
+    "changes": "Änderungen dieser Datenschutzrichtlinie",
+    "changes_desc": "Wir können diese Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Änderungen werden auf dieser Seite mit einem aktualisierten Überprüfungsdatum veröffentlicht.",
+
+    "contact": "Kontaktieren Sie uns",
+    "contact_desc": "Wenn Sie Fragen zu dieser Datenschutzrichtlinie haben, können Sie uns kontaktieren:",
+    "contact_phone": "Per Telefon"
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "updated": "Zuletzt aktualisiert",
+    "intro": "Bitte lesen Sie diese Nutzungsbedingungen sorgfältig durch, bevor Sie unseren Service verwenden.",
+
+    "interpretation_defs": "Auslegung und Definitionen",
+    "interpretation": "Auslegung",
+    "interpretation_text": "Wörter, deren Anfangsbuchstaben großgeschrieben sind, haben unter den folgenden Bedingungen definierte Bedeutungen.",
+    "definitions": "Definitionen",
+
+    "label_affiliate": "Partnerunternehmen",
+    "label_country": "Land",
+    "label_company": "Unternehmen",
+    "label_device": "Gerät",
+    "label_service": "Service",
+    "label_thirdparty": "Drittanbieter-Social-Media-Dienst",
+    "label_website": "Website",
+    "label_you": "Sie",
+
+    "country_name": "Österreich",
+    "contact_phone": "Telefon",
+
+    "def_affiliate": "Eine Einheit, die eine Partei kontrolliert, von ihr kontrolliert wird oder unter gemeinsamer Kontrolle mit ihr steht.",
+    "def_company": "FT_TRANSCENDENCE",
+    "def_device": "Jedes Gerät, das auf den Service zugreifen kann, wie zum Beispiel ein Computer oder ein mobiles Gerät.",
+    "def_service": "Die Website",
+    "def_thirdparty": "Dienste oder Inhalte, die von Drittanbietern bereitgestellt werden und im Service erscheinen können.",
+    "def_you": "Die Person, die auf den Service zugreift oder ihn nutzt.",
+
+    "ack": "Bestätigung",
+    "ack_text1": "Diese Nutzungsbedingungen regeln die Nutzung dieses Services sowie die Vereinbarung zwischen Ihnen und dem Unternehmen.",
+    "ack_text2": "Durch den Zugriff auf oder die Nutzung des Services erklären Sie sich mit diesen Bedingungen einverstanden.",
+    "age": "Sie bestätigen, dass Sie mindestens 18 Jahre alt sind. Das Unternehmen erlaubt Personen unter 18 Jahren nicht, den Service zu nutzen.",
+
+    "links": "Links zu anderen Websites",
+    "links_text": "Unser Service kann Links zu Websites oder Diensten Dritter enthalten, die nicht im Besitz des Unternehmens sind oder von diesem kontrolliert werden.",
+    "links_disclaimer": "Das Unternehmen übernimmt keine Verantwortung für Inhalte, Datenschutzrichtlinien oder Praktiken von Websites Dritter.",
+
+    "termination": "Beendigung",
+    "termination_text": "Wir können Ihren Zugriff sofort und ohne vorherige Ankündigung beenden oder aussetzen, wenn Sie gegen diese Bedingungen verstoßen.",
+
+    "liability": "Haftungsbeschränkung",
+    "liability_text": "Die gesamte Haftung des Unternehmens ist auf den über den Service gezahlten Betrag begrenzt oder auf 100 USD, falls nichts gekauft wurde.",
+
+    "disclaimer": "\"WIE BESEHEN\"-Haftungsausschluss",
+    "disclaimer_text": "Der Service wird \"WIE BESEHEN\" und \"WIE VERFÜGBAR\" ohne jegliche Garantien bereitgestellt.",
+
+    "law": "Geltendes Recht",
+    "law_text": "Für diese Bedingungen und Ihre Nutzung des Services gilt das Recht der Republik Österreich.",
+
+    "eu": "Für Nutzer in der Europäischen Union",
+    "eu_text": "Verbraucher in der Europäischen Union profitieren von zwingenden gesetzlichen Bestimmungen des Landes ihres Wohnsitzes.",
+
+    "changes": "Änderungen dieser Bedingungen",
+    "changes_text": "Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern oder zu ersetzen.",
+
+    "contact": "Kontakt",
+    "contact_desc": "Wenn Sie Fragen zu diesen Bedingungen haben, können Sie uns kontaktieren:"
   }
 }

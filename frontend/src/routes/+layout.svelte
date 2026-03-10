@@ -25,7 +25,7 @@
     const target = nav.to;
     if (!nav.to)
       return;
-    if (target?.route.id !== '/' && !target?.route.id?.includes('auth')) {
+    if (target?.route.id !== '/' && !target?.route.id?.includes('auth') && !target?.route.id?.includes('privacy-policy') && !target?.route.id?.includes('terms-of-service')) {
       if (!client.loggedIn)
       {
         nav.cancel();
