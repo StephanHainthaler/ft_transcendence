@@ -162,8 +162,23 @@
           #{match.id}
         </td>
 
+
           <td class="p-4 text-center font-mono text-[9px] sm:text-[12px] text-white/70 hidden md:table-cell">
-            {new Date(match.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            <div class="flex flex-col">
+              <span>
+                {new Date(match.timestamp * 1000).toLocaleDateString('de-AT', { 
+                  day: '2-digit', 
+                  month: '2-digit', 
+                  year: '2-digit' 
+                })}
+              </span>
+              <span class="text-[8px] sm:text-[10px] opacity-50">
+                {new Date(match.timestamp * 1000).toLocaleTimeString('de-AT', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </span>
+            </div>
           </td>
 
           <td class="p-4 hidden md:table-cell">

@@ -294,7 +294,7 @@ export class Pong
 		else
 			matchData.winner_id = matchData.player_two_id;
 		matchData.duration = new Date().getTime() - this._matchStartTime - this._pauseDuration - this._preMatchDuration;
-		matchData.timestamp = this._matchStartTime;
+		matchData.timestamp = Math.floor(this._matchStartTime / 1000);
 		return (matchData);
 	}
 
