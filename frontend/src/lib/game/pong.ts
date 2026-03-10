@@ -51,7 +51,7 @@ export class Pong
 		this._ball = new Ball(this, this._player1, this._player2);
 
 		// set match timer
-		this._matchStartTime = Math.floor(new Date().getTime() / 1000);
+		this._matchStartTime = new Date().getTime();
 
 		// start frame requesting loop
 		this._isPaused = false;
@@ -294,7 +294,7 @@ export class Pong
 		else
 			matchData.winner_id = matchData.player_two_id;
 		matchData.duration = new Date().getTime() - this._matchStartTime - this._pauseDuration - this._preMatchDuration;
-		matchData.timestamp = this._matchStartTime;
+		matchData.timestamp = Math.floor(this._matchStartTime / 1000);
 		return (matchData);
 	}
 
