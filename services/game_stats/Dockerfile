@@ -1,6 +1,7 @@
-FROM node:24-alpine3.22 AS builder
+FROM node:25-alpine3.22 AS builder
 WORKDIR /app
 
+RUN npm update
 COPY package*.json ./
 COPY services/game_stats/package*.json ./services/game_stats/
 COPY services/shared-server/package*.json ./services/shared-server/
@@ -13,7 +14,7 @@ COPY services/game_stats ./services/game_stats
 WORKDIR /app/services/game_stats
 RUN npm run build
 
-FROM node:24-alpine3.22 AS app
+FROM node:25-alpine3.22 AS app
 WORKDIR /app
 
 RUN apk add --no-cache openssl && \

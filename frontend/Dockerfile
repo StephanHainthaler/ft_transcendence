@@ -1,7 +1,8 @@
-FROM node:24-alpine3.22 AS builder
+FROM node:25-alpine3.22 AS builder
 WORKDIR /app
 
 COPY package*.json ./
+RUN npm update
 RUN npm install
 
 COPY frontend /app/frontend
@@ -12,7 +13,7 @@ WORKDIR /app/frontend/
 RUN npm install
 RUN npm run build
 
-FROM node:24-alpine3.22 AS app
+FROM node:25-alpine3.22 AS app
 WORKDIR /app
 
 COPY --from=builder /app/node_modules ./node_modules

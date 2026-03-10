@@ -1,6 +1,7 @@
-FROM node:24-alpine3.22 AS builder
+FROM node:25-alpine3.22 AS builder
 WORKDIR /app
 
+RUN npm update
 COPY package*.json ./
 COPY services/user/package*.json ./services/user/
 COPY services/shared-server/package*.json ./services/shared-server/
@@ -11,9 +12,10 @@ COPY services/shared-server ./services/shared-server
 COPY services/user ./services/user
 
 WORKDIR /app/services/user
+
 RUN npm run build
 
-FROM node:24-alpine3.22 AS app
+FROM node:25-alpine3.22 AS app
 WORKDIR /app
 
 RUN apk add --no-cache openssl && \
