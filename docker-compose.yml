@@ -40,23 +40,21 @@ services:
       transcendence_network:
     restart: unless-stopped
     depends_on:
-      - api
-      - frontend
-      # frontend:
-      #   condition: service_healthy
-      # api:
-      #   condition: service_healthy
+      frontend:
+        condition: service_healthy
+      api:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:443"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 256M
-    #       cpus: "0.5"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
     logging:
       driver: json-file
       options:
@@ -127,20 +125,20 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 512M
-    #       cpus: "0.5"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
     stop_grace_period: 10s
-    # volumes:
-    #   - user_db:/app/db
-    #   - user_data:/app/data
+    volumes:
+      - user_db:/app/db
+      - user_data:/app/data
     security_opt:
       - no-new-privileges:true
 
@@ -162,19 +160,19 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 512M
-    #       cpus: "0.5"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
     stop_grace_period: 10s
-    # volumes:
-    #   - auth_db:/app/db
+    volumes:
+      - auth_db:/app/db
     security_opt:
       - no-new-privileges:true
 
@@ -196,27 +194,27 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 512M
-    #       cpus: "0.5"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
     stop_grace_period: 10s
-    # volumes:
-    #   - stats_db:/app/db
+    volumes:
+      - stats_db:/app/db
     security_opt:
       - no-new-privileges:true
 
-# volumes:
-#   auth_db:
-#   user_db:
-#   user_data:
-#   stats_db:
+volumes:
+  auth_db:
+  user_db:
+  user_data:
+  stats_db:
 
 networks:
   transcendence_network:

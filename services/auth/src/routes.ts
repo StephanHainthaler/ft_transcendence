@@ -148,7 +148,7 @@ export function authRoutes(fastify: FastifyInstance) {
         return reply.code(404).send({ success: false, message: 'No Such User' });
 
       if (is2FAEnabled(authUser))
-        return reply.code(409 || 500).send({ success: false, message: '2FA already enabled for this User' });
+        return reply.code(409).send({ success: false, message: '2FA already enabled for this User' });
 
       const result = await setupTotp(authUser);
       return reply.code(200).send(result);
