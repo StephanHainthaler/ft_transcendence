@@ -147,10 +147,10 @@
           ] as route}
             <Sidebar.MenuItem>
               <Sidebar.MenuButton 
-                class="px-4 py-5 rounded-none border-l-2 border-transparent hover:border-primary hover:bg-primary/5 hover:text-primary transition-all group"
+                class="px-4 py-2 rounded-none border-l-2 border-transparent hover:border-primary hover:bg-primary/5 hover:text-primary transition-all group"
                 onclick={() => goto(route.path)}
               >
-                <span class="font-bold uppercase tracking-widest text-[11px]">
+                <span class="font-bold uppercase text-[9px] text-white/40 tracking-widest hover:text-primary">
                   {$t(route.label)}
                 </span>
               </Sidebar.MenuButton>
