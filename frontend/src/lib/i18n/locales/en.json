@@ -3,6 +3,9 @@
   "menu": "Menu",
   "welcome": "Welcome",
   "play": "Play",
+  "online": "online",
+  "offline": "offline",
+  "finish": "Finish",
   "moto": "ARENA_READY: LINK YOUR PADDLE TO THE GRID",
   "healthcheck": "Check Connection",
   "login": {
@@ -124,7 +127,7 @@
   "buttons": {
     "next": "Next",
     "previous": "Previous"
-  }, 
+  },
   "friends": {
     "card_title": "Friends",
     "send": "Send",
@@ -151,6 +154,7 @@
     "matchDurationInMinutes": "Match Duration (in minutes)",
     "minutes": "minutes",
     "AIdifficulty": "AI Difficulty",
+    "nextMatch": "Next Match",
     "easy": "Easy",
     "medium": "Medium",
     "hard": "Hard",
@@ -214,6 +218,7 @@
     "no_file": "No file chosen"
   },
   "tournament": {
+    "nextMatch": "Next Match",
     "tournament": "Tournament",
     "available": "Available Players",
     "selected": "Selected Players",

@@ -14,7 +14,8 @@
   import { validateInputThrow, validateAvatarFile } from "@lib/validation/inputValidation";
   import NeonHeader from "@lib/components/custom/NeonHeader.svelte";
   import { isAppError } from "@lib/types/error";
-    import { EyeOff } from "lucide-svelte";
+  import { EyeOff } from "lucide-svelte";
+  import { goto } from "$app/navigation";
 
   let showPassword = $state(false);
   let showPasswordRepeat = $state(false);
@@ -29,11 +30,21 @@
     passwdRepeat: string;
   };
 
-  const sessionPromise = client.getSession();
+
+  const user = client.user;
+  const auth = client.auth;
+
+  if ( !user || !auth ) {
+      goto('/auth')
+  }
+
+  const sessionPromise = client.getSession().catch(() => {
+    goto('/auth');
+  });
 
   let session: ProfilePageData = $state({
-    auth: client.auth!,
-    user: client.user!,
+    auth: auth,
+    user: user,
     passwd: '',
     passwdRepeat: ''
   });
@@ -90,6 +101,7 @@
         passwd = session.passwd;
       }
 
+      await client.getUser();
       const combinedUpdatePromise = Promise.all([
         client.updateUserInfo(session.user, session.avatarFile),
         client.updateCredentials({ email, user_name, passwd })
@@ -176,6 +188,7 @@
   </Dialog.Content>
 </Dialog.Root>
 
+{#if user && auth}
 <Card.Root class="size-full mx-auto overflow-y-auto">
   <Card.Header>
      <Card.Action class="flex gap-4">
@@ -233,11 +246,11 @@
                 id="avatar"
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
-                class="mt-2 hidden" 
+                class="mt-2 hidden"
                 onchange={handleFileChange}
               />
               <Button class="mt-2"
-                variant="outline" 
+                variant="outline"
                 onclick={() => document.getElementById('avatar')?.click()}
               >
                 {$t('profile.choose_file', 'Choose file')}
@@ -300,7 +313,7 @@
                 bind:value={session.passwd}
                 autocomplete="new-password"
                 disabled={!editMode}
-                class="pr-10" 
+                class="pr-10"
               />
               <button
                 type="button"
@@ -319,7 +332,7 @@
           </div>
           <div class="space-y-2">
           <Label for="password-repeat">{$t('profile.pass_repeat', 'Repeat Password')}</Label>
-          <div class="relative"> 
+          <div class="relative">
             <Input
               id="password-repeat"
               type="password"
@@ -360,3 +373,4 @@
     </div>
   </Card.Content>
 </Card.Root>
+{/if}

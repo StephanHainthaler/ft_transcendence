@@ -3,6 +3,9 @@
   "menu": "Menü",
   "welcome": "Willkommen",
   "play": "Spielen",
+  "online": "online",
+  "finish": "Beenden",
+  "offline": "offline",
   "moto": "ARENA_READY: VERBINDE DEIN PADDLE MIT DEM GRID",
   "healthcheck": "Verbindung prüfen",
   "login": {
@@ -125,7 +128,7 @@
   "buttons": {
     "next": "Weiter",
     "previous": "Zurück"
-  }, 
+  },
   "friends": {
     "card_title": "Freunde",
     "send": "Senden",
@@ -167,6 +170,7 @@
     "startTournament": "Turnier starten",
     "paused": "Pause",
     "overtime": "Verlängerung",
+    "nextMatch": "Nächstes Spiel",
     "summary": "Zusammenfassung",
     "win": "Sieg",
     "lose": "Niederlage",
@@ -228,7 +232,8 @@
     "schedule": "Zeitplan",
     "failed": "Seitendaten konnten nicht geladen werden",
     "no_users": "Keine Benutzer gefunden!",
-    "no_users_desc": "Es gibt keine anderen Benutzer zum Herausfordern. Lade Freunde ein!"
+    "no_users_desc": "Es gibt keine anderen Benutzer zum Herausfordern. Lade Freunde ein!",
+    "nextMatch": "Nächstes Spiel"
   },
   "error": {
     "general": "Etwas ist schiefgelaufen",

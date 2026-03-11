@@ -1,6 +1,7 @@
 import fastifyCookie from '@fastify/cookie';
 import { healthRoutes } from './health';
 import { createServer } from "@server/fastify/createServer";
+import { extractJWTFromHeader } from '@server/jwt/validate';
 
 export const HTTP = process.env.HTTP_PROTOCOL;
 if (!HTTP) {
@@ -39,6 +40,8 @@ const publicRoutes = [
   '/health',
 ];
 
+export const refreshTokenLifetime = 1000 * 60 * 60 * 24 * 10;
+
 async function startApiGateway() {
 
   if (!AUTH_URL) throw new Error("AUTH_SERVICE_URL is not defined");
@@ -52,7 +55,6 @@ async function startApiGateway() {
   const proxy = await import ('@fastify/http-proxy');
 
   fastify.addHook('onRequest', async (request, reply) => {
-    console.info(`REQUEST WITH URL ${request.originalUrl}`);
     if (!publicRoutes.some(r => request.url.includes(r))) {
       let response: Response;
       try {
@@ -79,14 +81,16 @@ async function startApiGateway() {
         const data = await response.json();
 
         if (!response.ok) {
-          return reply.status(response.status).send(data);
+          return reply.status(response.status).clearCookie('access_token').send(data);
         }
 
         if (response.status === 201) {
+          const access_jwt = extractJWTFromHeader(data.access_token);
           request.headers.cookie = `${request.headers.cookie || ''}; access_token=${data.access_token}`;
           reply
             .setCookie("access_token", data.access_token, {
               httpOnly: true,
+              expires: new Date(access_jwt.payload.iat + access_jwt.payload.exp),
               path: '/',
               sameSite: 'strict',
               secure: HTTP === 'https'
@@ -94,6 +98,7 @@ async function startApiGateway() {
             .setCookie('refresh_token', data.refresh_token, {
               httpOnly: true,
               path: '/',
+              expires: new Date(Date.now() + refreshTokenLifetime),
               sameSite: 'strict',
               secure: HTTP === 'https'
             })

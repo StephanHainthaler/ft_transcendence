@@ -8,7 +8,7 @@ import { ApiError } from "@server/error/apiError";
 
 const jwtHeader = { alg: 'HS256', typ: "JWT" };
 const jwtHeaderString = JSON.stringify(jwtHeader);
-const lifeTimeMs = 1000 * 60 * 5;
+const lifeTimeMs = 1000 * 60 * 15;
 
 export function generateJWT(user: Partial<User>, secret: string): JWT {
   if (!user?.id) throw new ApiError({ message: 'Missing user id for token minting', code: 400 });

@@ -9,7 +9,7 @@
   import { client } from "@lib/api/index.svelte";
   import { goto } from "$app/navigation";
 
-if (browser && client.loggedIn) {
+  if (browser && client.loggedIn) {
     goto('/');
   }
 
@@ -29,7 +29,7 @@ if (browser && client.loggedIn) {
         {$t('OAuth.oauth', 'OAuth')}
       </Tabs.Trigger>
     </Tabs.List>
-    
+
     <Card.Root class="w-full max-w-md shadow-xl mt-2">
       <Card.Content class="pt-6 w-full">
         <Tabs.Content value="login">

@@ -42,18 +42,18 @@ export class ApiClient {
     try
     {
       this.status = 'loading';
-      const [userResponse, authResponse] = await Promise.all([
-              this.getUser(),
-              this.getAuth()
-            ]);
+      const [userResponse, authResponse] = [
+              await this.getUser(),
+              await this.getAuth()
+            ];
       this.userStore.set(userResponse.user);
       this.authStore.set(authResponse.auth);
       this.loggedIn = true;
       this.status = 'ready';
     } catch (e: any)
     {
-      if (e.code === 401 || e.status === 401) {
-        this.clearSession();
+      this.clearSession();
+      if (e.code === 401 || e.status === 401 || e.success === false) {
         this.avatarUrl = undefined;
         this.loggedIn = false;
         this.status = 'ready';

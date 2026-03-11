@@ -2,6 +2,9 @@
   "main_name": "Transcendence",
   "menu": "Меню",
   "welcome": "Ласкаво просимо",
+  "online": "oнлайн",
+  "offline": "oфлайн",
+  "finish": "Завершити",
   "play": "Грати",
   "moto": "ARENA_READY: ПРИЄДНУЙ СВОЮ РАКЕТКУ ДО МЕРЕЖІ",
   "healthcheck": "Перевірити з'єднання",
@@ -124,7 +127,7 @@
   "buttons": {
     "next": "Далі",
     "previous": "Назад"
-  }, 
+  },
   "friends": {
     "card_title": "Друзі",
     "send": "Надіслати",
@@ -141,6 +144,7 @@
   },
   "game": {
     "game": "Гра",
+    "nextMatch": "Наступний матч",
     "settings": "Налаштування гри",
     "aiOpponent": "ШІ Супротивник",
     "aiSettings": "Налаштування ШІ",
@@ -215,6 +219,7 @@
   },
   "tournament": {
     "tournament": "Турнір",
+    "nextMatch": "Наступний матч",
     "available": "Доступні гравці",
     "selected": "Обрані гравці",
     "choose": "Обрати",

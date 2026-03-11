@@ -7,10 +7,10 @@
   import { Play, Trophy, ArrowLeftRight } from "lucide-svelte";
 
   
-  let currentUser = $derived(client.user); 
   let currentStatus = $derived(client.status);
   
   const userName = $derived.by(() => {
+      let currentUser = client.user;
       if (!currentUser || currentStatus === 'error' || currentStatus === 'loading')
         return "Guest_Agent";
       if (currentUser) {

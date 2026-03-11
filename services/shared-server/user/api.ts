@@ -17,11 +17,11 @@ export const USER_API = `${HTTP}://${userUrl}`;
 
 
 
-export async function deleteUser(token: JWT) {
+export async function deleteUser(access_token: string) {
   const response = await fetch(`${USER_API}/delete`, {
     method: 'delete',
     headers: {
-      'Authorization': `Bearer ${token.raw}`,
+        "Cookie": `access_token=${access_token}`,
     }
   });
 
