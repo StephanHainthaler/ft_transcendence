@@ -9,7 +9,7 @@ import { ApiError } from "@server/error/apiError";
 import { validateUsername, validateEmail, validatePassword } from "@shared/validation";
 import { GITHUB_REDIRECT_URL, HTTP } from "./";
 import { setupTotp, enableTotp, verifyTotp, is2FAEnabled, disableTotp } from "./totpHandlers";
-import { db, type AuthUser, authUsers } from "./db";
+import { type AuthUser } from "./db";
 
 const secret = process.env.AUTH_HMAC_SECRET!;
 
@@ -53,13 +53,11 @@ export function authRoutes(fastify: FastifyInstance) {
           throw new ApiError({ message: 'No Session Found', code: 401 });
         }
 
-        validateRefreshToken({ id: session.auth_id }, refresh_token);
         const authUser = getAuthUser({ userId: session.user_id });
         if (!authUser)
           return reply.code(400).send({ message: 'Invalid User', success: false });
 
         validateRefreshToken({ id: authUser.id }, refresh_token);
-        deleteSession({ authId: authUser.id });
         const newSession = createSession(authUser, secret);
 
         const auth = getAuthUserClient({ authId: authUser.id });

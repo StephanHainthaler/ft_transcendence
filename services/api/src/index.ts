@@ -1,6 +1,7 @@
 import fastifyCookie from '@fastify/cookie';
 import { healthRoutes } from './health';
 import { createServer } from "@server/fastify/createServer";
+import { extractJWTFromHeader } from '@server/jwt/validate';
 
 export const HTTP = process.env.HTTP_PROTOCOL;
 if (!HTTP) {
@@ -38,6 +39,8 @@ const publicRoutes = [
   '/auth/github-oauth',
   '/health',
 ];
+
+export const refreshTokenLifetime = 1000 * 60 * 60 * 24 * 10;
 
 async function startApiGateway() {
 
@@ -82,10 +85,12 @@ async function startApiGateway() {
         }
 
         if (response.status === 201) {
+          const access_jwt = extractJWTFromHeader(data.access_token);
           request.headers.cookie = `${request.headers.cookie || ''}; access_token=${data.access_token}`;
           reply
             .setCookie("access_token", data.access_token, {
               httpOnly: true,
+              expires: new Date(access_jwt.payload.iat + access_jwt.payload.exp),
               path: '/',
               sameSite: 'strict',
               secure: HTTP === 'https'
@@ -93,6 +98,7 @@ async function startApiGateway() {
             .setCookie('refresh_token', data.refresh_token, {
               httpOnly: true,
               path: '/',
+              expires: new Date(Date.now() + refreshTokenLifetime),
               sameSite: 'strict',
               secure: HTTP === 'https'
             })

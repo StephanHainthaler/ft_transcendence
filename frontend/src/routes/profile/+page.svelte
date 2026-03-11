@@ -101,6 +101,7 @@
         passwd = session.passwd;
       }
 
+      await client.getUser();
       const combinedUpdatePromise = Promise.all([
         client.updateUserInfo(session.user, session.avatarFile),
         client.updateCredentials({ email, user_name, passwd })

@@ -68,6 +68,7 @@
       }
       else 
       {
+        await client.getUser();
         const [s, h] = await Promise.all([
           client.getUserStats(userId),
           client.getMatchHistory(userId, page)
