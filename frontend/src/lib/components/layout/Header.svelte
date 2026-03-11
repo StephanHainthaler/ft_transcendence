@@ -1,5 +1,4 @@
 <script>
-  import { client } from "@lib/api/index.svelte";
   import { t } from "@lib/i18n/i18n";
   import { LayoutGrid, X } from "lucide-svelte";
 

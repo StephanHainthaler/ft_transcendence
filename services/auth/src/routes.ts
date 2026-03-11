@@ -74,7 +74,6 @@ export function authRoutes(fastify: FastifyInstance) {
             refresh_token: newSession.refreshToken,
           });
       } catch (e: any) {
-        console.log("Refresh token validation failed", e.message || e);
         request.log.error(e);
         return reply.status(e.code || 401).send({ success: false, message: e.message || 'Unauthenticated' });
       }
@@ -148,7 +147,7 @@ export function authRoutes(fastify: FastifyInstance) {
         return reply.code(404).send({ success: false, message: 'No Such User' });
 
       if (is2FAEnabled(authUser))
-        return reply.code(409 || 500).send({ success: false, message: '2FA already enabled for this User' });
+        return reply.code(409).send({ success: false, message: '2FA already enabled for this User' });
 
       const result = await setupTotp(authUser);
       return reply.code(200).send(result);
@@ -228,7 +227,6 @@ export function authRoutes(fastify: FastifyInstance) {
         return reply.status(400).send({ success: false, message: "Error: Missing OAuth code" });
       }
 
-      console.log(GITHUB_REDIRECT_URL);
 
       // Exchange code for access_token with GitHub
       const response = await fetch(`https://github.com/login/oauth/access_token`, {
@@ -452,7 +450,6 @@ export function authRoutes(fastify: FastifyInstance) {
 
   fastify.post<AuthSessionRequest>('/sessions', (req, repl) => {
     try {
-      console.log('got sessions request', req.body);
 
       const sessions = getSessions(req.body.ids);
 

@@ -145,8 +145,6 @@ export async function deleteUser(userId: number) {
       .select('*')
       .all();
 
-    console.log(`deleteing avatars: ${JSON.stringify(avatars)}`);
-
     await Promise.all(avatars.map(async (a) => {
       try {
         if (!a.location.startsWith('https://')) {

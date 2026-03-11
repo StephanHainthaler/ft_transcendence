@@ -118,8 +118,6 @@ export function userRoutes(fastify: FastifyInstance) {
       let avatarMimetype: string | undefined;
 
       for await (const part of parts) {
-        console.log('Part:', part.fieldname, part.type);
-
         if (part.type === 'file' && part.fieldname === 'avatar') {
           const mimeErr = validateAvatarMimeType(part.mimetype);
           if (mimeErr) throw new ApiError({ code: 400, message: mimeErr });

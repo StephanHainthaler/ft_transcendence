@@ -169,8 +169,6 @@ export function createSession(user: AuthUser, secret: string): { accessToken: JW
     expires_in: refreshTokenLifetime,
   };
 
-  console.log(user);
-
   let currentSession: Session | null;
   try {
     currentSession = db
@@ -185,7 +183,6 @@ export function createSession(user: AuthUser, secret: string): { accessToken: JW
 
   try {
     if (currentSession) {
-      console.log('updateing session: ', session)
       db
         .from('sessions')
         .withDeleted()
@@ -193,14 +190,12 @@ export function createSession(user: AuthUser, secret: string): { accessToken: JW
         .where(eq('id', currentSession.id))
         .run();
     } else {
-      console.log('inserting session: ', session)
       db
         .from('sessions')
         .insert(session)
         .run();
     }
   } catch (e) {
-    console.log(e);
     throw sqliteErrorToApiError(e);
   }
 

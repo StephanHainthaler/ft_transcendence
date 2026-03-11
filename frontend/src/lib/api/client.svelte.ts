@@ -59,7 +59,6 @@ export class ApiClient {
         this.status = 'ready';
         if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/auth'))
           {
-            console.log("Session expired or missing. Redirecting to /auth...");
             goto('/auth');
           }
         }
@@ -255,7 +254,7 @@ export class ApiClient {
       await logoutRequest();
       goto('/auth');
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }

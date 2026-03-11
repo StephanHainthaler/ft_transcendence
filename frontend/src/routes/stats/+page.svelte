@@ -104,7 +104,6 @@
       console.error('Failed to load users');
       return;
     }
-    console.log("Loaded users:", users);
     users.forEach(user => {
       usernames[user.id] = user.displayName || user.name || 'Unknown_Pilot';
     });

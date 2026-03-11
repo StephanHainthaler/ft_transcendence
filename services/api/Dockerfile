@@ -1,19 +1,20 @@
-FROM node:24-alpine3.22 AS builder
+FROM node:25-alpine3.22 AS builder
 WORKDIR /app
 
 COPY package*.json ./
 COPY services/api/package*.json ./services/api/
 COPY services/shared-server/package*.json ./services/shared-server/
-RUN npm install
+RUN npm install --loglevel=error
 
 COPY shared ./shared
 COPY services/shared-server ./services/shared-server
 COPY services/api ./services/api
 
 WORKDIR /app/services/api
+
 RUN npm run build
 
-FROM node:24-alpine3.22 AS app
+FROM node:25-alpine3.22 AS app
 WORKDIR /app
 
 RUN apk add --no-cache openssl && \

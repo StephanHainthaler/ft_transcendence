@@ -4,13 +4,11 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    ports:
-      - "3000"
     networks:
       transcendence_network:
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000"]
+      test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://127.0.0.1:3000"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -40,23 +38,21 @@ services:
       transcendence_network:
     restart: unless-stopped
     depends_on:
-      - api
-      - frontend
-      # frontend:
-      #   condition: service_healthy
-      # api:
-      #   condition: service_healthy
+      frontend:
+        condition: service_healthy
+      api:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--no-check-certificate", "-q", "--spider", "https://localhost:443"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 256M
-    #       cpus: "0.5"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
     logging:
       driver: json-file
       options:
@@ -77,8 +73,6 @@ services:
       dockerfile: services/api/Dockerfile
     env_file:
       - env/prod/.env.api
-    ports:
-      - "3000"
     networks:
       transcendence_network:
     restart: unless-stopped
@@ -116,8 +110,6 @@ services:
       dockerfile: services/user/Dockerfile
     env_file:
       - env/prod/.env.user
-    ports:
-      - "3001"
     networks:
       transcendence_network:
     restart: unless-stopped
@@ -127,20 +119,20 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 512M
-    #       cpus: "0.5"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
     stop_grace_period: 10s
-    # volumes:
-    #   - user_db:/app/db
-    #   - user_data:/app/data
+    volumes:
+      - user_db:/app/db
+      - user_data:/app/data
     security_opt:
       - no-new-privileges:true
 
@@ -151,8 +143,6 @@ services:
       dockerfile: services/auth/Dockerfile
     env_file:
       - env/prod/.env.auth
-    ports:
-      - "3002"
     networks:
       transcendence_network:
     restart: unless-stopped
@@ -162,19 +152,19 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 512M
-    #       cpus: "0.5"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
     stop_grace_period: 10s
-    # volumes:
-    #   - auth_db:/app/db
+    volumes:
+      - auth_db:/app/db
     security_opt:
       - no-new-privileges:true
 
@@ -185,8 +175,6 @@ services:
       dockerfile: services/game_stats/Dockerfile
     env_file:
       - env/prod/.env.game_stats
-    ports:
-      - "3003"
     networks:
       transcendence_network:
     restart: unless-stopped
@@ -196,27 +184,27 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 512M
-    #       cpus: "0.5"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
     stop_grace_period: 10s
-    # volumes:
-    #   - stats_db:/app/db
+    volumes:
+      - stats_db:/app/db
     security_opt:
       - no-new-privileges:true
 
-# volumes:
-#   auth_db:
-#   user_db:
-#   user_data:
-#   stats_db:
+volumes:
+  auth_db:
+  user_db:
+  user_data:
+  stats_db:
 
 networks:
   transcendence_network:
