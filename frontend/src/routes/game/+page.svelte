@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { isAppError } from "../../lib/types/error";
   import { AppUser } from "@shared/user";
   import { client } from "@lib/api/index.svelte";
   import * as Card from "$lib/components/ui/card";
@@ -84,12 +85,11 @@
   const onGameEnd = (data: MatchSubmissionData)  =>
   {
     gameState = 'result';
-    console.log(data);
     matchData = data;
     try
     {
       client.sendMatchResults(data);
-    } 
+    }
     catch (e: any){
       console.error("GameEnd Error:", e.message);
     }
@@ -150,7 +150,7 @@
         <AiSetup bind:AIdifficulty={AIdifficulty}>
           {#snippet button()}
             <div class="mt-4 w-full flex justify-center">
-              <Button 
+              <Button
                 class="w-full transition-all duration-300 uppercase font-black text-xs sm:text-sm"
                 onclick={challengeAICallback}>
                 {$t('game.challengeAI', 'Challenge AI')}
@@ -165,17 +165,17 @@
           <div class="-mt-8 mb-4">
             <NeonHeader
               text={$t('game.to_challenge', 'Challenge AI')}
-              size="x1" 
-              level="h1" 
+              size="x1"
+              level="h1"
             />
           </div>
           <div class="overflow-y-auto h-full pr-2 custom-scrollbar">
             <div class="grid grid-cols-1">
               {#each users as user}
                 <GridCard
-                  title={user.name} 
-                  avatarUrl={user.avatarUrl} 
-                  buttonDesc={$t('game.to_challenge', 'Challenge')} 
+                  title={user.name}
+                  avatarUrl={user.avatarUrl}
+                  buttonDesc={$t('game.to_challenge', 'Challenge')}
                   callback={() => userSelectionCallback(user)}
                 />
               {:else}
@@ -191,7 +191,7 @@
 
     {:else if gameState === 'running'}
       <div class="flex-1 min-h-0">
-        <PongGame 
+        <PongGame
         bind:this={pongRef}
         player1={challengingUser}
         player2={challengedUser} {onGameEnd}
@@ -200,7 +200,7 @@
       </div>
 
     {:else if gameState === 'result'}
-      <MatchResult 
+      <MatchResult
         matchData={matchData}
         {challengedUser}
         {challengingUser}

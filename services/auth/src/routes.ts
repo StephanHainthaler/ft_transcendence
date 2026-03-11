@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession, getSessions, refreshTokenLifetime } from "./dbHandlers";
+import { createSession, createAuthUser, getAuthUser, updateUserCredentials, verifyUserCredentials, getSession, getAuthUserClient, deleteAuthUser, deleteSession, getSessions, refreshTokenLifetime, authUserExists } from "./dbHandlers";
 import { deleteUser } from "@server/user/api";
 import { AuthUserClient, } from "@shared/user";
 import type { AuthDeleteRequest, AuthGetUserRequest, AuthLoginReply, AuthLogoutRequest, AuthOAuthRequest, AuthSessionRequest, AuthSignUpRequest, AuthUpdateRequest, AuthValidateRequest } from "@shared/api/authReply";
@@ -50,7 +50,7 @@ export function authRoutes(fastify: FastifyInstance) {
 
         const session = getSession({ token: refresh_token });
         if (!session) {
-          throw new ApiError({ message: 'Unauthenticated', code: 401 });
+          throw new ApiError({ message: 'No Session Found', code: 401 });
         }
 
         validateRefreshToken({ id: session.auth_id }, refresh_token);
@@ -196,9 +196,9 @@ export function authRoutes(fastify: FastifyInstance) {
         return reply.code(200).send({ success: true, message: '2FA disabled successfully' });
       } catch (e: any) {
         request.log.error(e);
-        return reply.code(400).send({ 
-        success: false, 
-        message: e.message || 'Could not process 2FA deactivation' 
+        return reply.code(400).send({
+        success: false,
+        message: e.message || 'Could not process 2FA deactivation'
       });
       }
     });
@@ -315,8 +315,7 @@ export function authRoutes(fastify: FastifyInstance) {
       const passwordErr = validatePassword(passwd);
       if (passwordErr) throw new ApiError({ code: 400, message: passwordErr });
 
-      const authUser = getAuthUser({ user_name, email });
-      if (authUser)
+      if (authUserExists({ user_name, email }))
         return reply
           .code(409)
           .send({
@@ -427,7 +426,7 @@ export function authRoutes(fastify: FastifyInstance) {
       const authUser = getAuthUser({ userId: token.payload.sub });
       if (!authUser) throw new ApiError({ code: 404, message: 'No such User' });
 
-      await deleteUser(token);
+      await deleteUser(req.cookies.access_token || "");
       await deleteAuthUser(authUser);
 
       return repl

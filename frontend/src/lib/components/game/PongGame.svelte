@@ -31,10 +31,6 @@
     }
   })
 
-  export const resetPong = () => {
-    pong.resetMatch(gameCanvas!);
-  }
-
 </script>
 
 <div class="size-full flex flex-col">

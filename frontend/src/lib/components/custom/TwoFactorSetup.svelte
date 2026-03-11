@@ -93,8 +93,12 @@
   };
 
   onMount(async () => {
-    const response = await client.getAuth();
-    syncStatus(response);
+    try {
+        const response = await client.getAuth();
+        syncStatus(response);
+    } catch (e: any) {
+        errorMessage = mapTwoFaError(e);
+    }
   });
 
 </script>
@@ -117,17 +121,17 @@
         </p>
       </div>
 
-      <div class="flex-shrink-0">
+      <div class="shrink-0">
       {#if !is2faActive}
-        <Button 
-          class="bg-[#00E5FF] px-8 py-6 font-bold text-black hover:bg-[#00B4CC] transition-all duration-200 whitespace-nowrap" 
+        <Button
+          class="bg-[#00E5FF] px-8 py-6 font-bold text-black hover:bg-[#00B4CC] transition-all duration-200 whitespace-nowrap"
           onclick={startSetup}
         >
           {$t('twofa.enable_button', 'Enable 2FA')}
         </Button>
       {:else}
-          <Button 
-          class="bg-[#00E5FF] px-8 py-6 font-bold text-black hover:bg-[#00B4CC] transition-all duration-200 whitespace-nowrap" 
+          <Button
+          class="bg-[#00E5FF] px-8 py-6 font-bold text-black hover:bg-[#00B4CC] transition-all duration-200 whitespace-nowrap"
           onclick={handleDisable2FA}
         >
           {$t('twofa.disable_button', 'Disable 2FA')}
@@ -148,7 +152,7 @@
         <div class="shrink-0 rounded-lg bg-white p-2">
           <img src={qrCodeUrl} alt="QR Code" class="size-32" />
         </div>
-        
+
         <div class="flex-1 space-y-4">
           <p class="text-sm font-medium">{$t('twofa.scan_qr', 'Scan the QR code in your app:')}</p>
           <details class="group">
@@ -186,9 +190,9 @@
         <Button variant="outline" class="border-border/50" onclick={reset}>
           {$t('twofa.cancel', 'Cancel')}
         </Button>
-        <Button 
-          class="bg-[#00E5FF] font-bold text-black hover:bg-[#00B4CC]" 
-          onclick={verifyAndEnable} 
+        <Button
+          class="bg-[#00E5FF] font-bold text-black hover:bg-[#00B4CC]"
+          onclick={verifyAndEnable}
           disabled={verifyCode.length !== 6}
         >
           {$t('twofa.verify_enable', 'Verify and Enable')}

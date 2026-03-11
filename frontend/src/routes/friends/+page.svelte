@@ -99,9 +99,9 @@
       <Grid title={$t('friends.send', 'Send Requests')}>
         {#each users as u}
           {#if !friends.find(fr => fr.id === u.id)}
-            <GridCard 
-              title={u.name} 
-              buttonDesc={$t('friends.add', 'Add Friend')} 
+            <GridCard
+              title={u.name}
+              buttonDesc={$t('friends.add', 'Add Friend')}
               callback={async () => await sendFriendRequest(u.id)}
             />
           {/if}
@@ -113,7 +113,7 @@
           <GridCard
             isOnline={!!client.onlineFriends.find(f => f !== client.user?.id && (a.user_to_id === f || a.user_from_id === f))}
             title={friends.find(u => u.id === a.user_to_id || u.id === a.user_from_id)?.name ?? '?'}
-            buttonDesc={$t('friends.remove', 'Remove')} 
+            buttonDesc={$t('friends.remove', 'Remove')}
             callback={async () => await removeFriendship(a.id)}
           />
         {/each}
@@ -121,9 +121,9 @@
 
       <Grid title={$t('friends.cancel', 'Pending Sent')}>
         {#each pendingSend as p}
-          <GridCard 
-            title={friends.find(u => u.id === p.user_to_id)?.name ?? '?'} 
-            buttonDesc={$t('friends.cancel', 'Cancel Request')} 
+          <GridCard
+            title={friends.find(u => u.id === p.user_to_id)?.name ?? '?'}
+            buttonDesc={$t('friends.cancel', 'Cancel Request')}
             callback={async () => await removeFriendship(p.id)}
           />
         {/each}
@@ -131,13 +131,14 @@
 
       <Grid title={$t('friends.accept', 'Pending Received')}>
         {#each pendingRec as u}
-          <GridCard 
-            title={friends.find(fr => fr.id === u.user_from_id)?.name ?? '?'} 
-            buttonDesc={$t('friends.reject', 'Reject')} 
+          <GridCard
+            title={friends.find(fr => fr.id === u.user_from_id)?.name ?? '?'}
+            buttonDesc={$t('friends.reject', 'Reject')}
             callback={async () => await removeFriendship(u.id)}
           >
             {#snippet extraBtn()}
-              <Button class='btn primary sm' onclick={async () => await acceptFriendRequest(u.id)}>
+              <Button class="flex items-center justify-center w-full md:w-auto px-12 uppercase font-bold"
+                  onclick={async () => await acceptFriendRequest(u.id)}>
                 {$t('friends.accept', 'Accept')}
               </Button>
             {/snippet}

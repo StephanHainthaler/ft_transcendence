@@ -23,6 +23,25 @@ export function hashRefreshToken(token: string): string {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
 
+export function authUserExists({ email, user_name }: { email?: string, user_name?: string }): boolean {
+    let hasUser = false;
+
+    try {
+        if (email) {
+            const user = db.from('auth_users').select('*').where(eq('email', email)).single();
+            hasUser = hasUser || !!user;
+        }
+        if (user_name) {
+            const user = db.from('auth_users').select('*').where(eq('user_name', user_name)).single();
+            hasUser = hasUser || !!user;
+        }
+    } catch (e: any) {
+        throw sqliteErrorToApiError(e);
+    }
+
+    return hasUser;
+}
+
 export function getAuthUser({
   user_name, authId, userId, email, oauthId
 }:{

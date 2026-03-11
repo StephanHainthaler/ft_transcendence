@@ -52,7 +52,6 @@ async function startApiGateway() {
   const proxy = await import ('@fastify/http-proxy');
 
   fastify.addHook('onRequest', async (request, reply) => {
-    console.info(`REQUEST WITH URL ${request.originalUrl}`);
     if (!publicRoutes.some(r => request.url.includes(r))) {
       let response: Response;
       try {
@@ -79,7 +78,7 @@ async function startApiGateway() {
         const data = await response.json();
 
         if (!response.ok) {
-          return reply.status(response.status).send(data);
+          return reply.status(response.status).clearCookie('access_token').send(data);
         }
 
         if (response.status === 201) {
