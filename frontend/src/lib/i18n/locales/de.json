@@ -152,7 +152,7 @@
     "to_challenge": "Herausfordern",
     "pointsToWin": "Punkte zum Sieg",
     "matchDuration": "Spieldauer",
-    "matchDurationInMinutes": "Dauer (Minuten)",
+    "matchDurationInMinutes": "Dauer (in Minuten)",
     "minutes": "Min",
     "AIdifficulty": "KI-Schwierigkeit",
     "easy": "Einfach",
@@ -228,6 +228,7 @@
     "inval_user_count": "Ungültige Spieleranzahl!",
     "description": "Bitte wählen Sie eine gerade Anzahl an Teilnehmern",
     "remove": "Entfernen",
+    "description2": "Der Turnierbaum wird mit {{n}} KI-Gegnern gefüllt",
     "description2_no_players": "Der Turnierbaum wird mit KI-Gegnern gefüllt",
     "schedule": "Zeitplan",
     "failed": "Seitendaten konnten nicht geladen werden",
@@ -276,7 +277,7 @@
       },
       "display": {
         "required": "Anzeigename erforderlich",
-        "min_len": "Maximal 20 Zeichen"
+        "min_len": "Anzeigename muss maximal 20 Zeichen haben"
       },
       "avatar": {
         "mime": "Dateityp nicht erlaubt (PNG, JPEG, WebP)",
