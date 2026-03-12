@@ -119,11 +119,32 @@ async function storeAvatar(userId: number, avatar: { buffer: Buffer, mimetype: s
 
 export async function createUser(user: User, oauthAvatarUrl?: string): Promise<{ user: User, avatar: Avatar | null }> {
   try {
-    const newUser = db
-      .from('users')
-      .insert(user)
-      .select('*')
-      .single();
+    let existingUser = null;
+    if (user.user_name) {
+      existingUser = db
+        .from('users')
+        .select('*')
+        .withDeleted()
+        .where(eq('name', user.name))
+        .single();
+    }
+
+    let newUser;
+    if (existingUser) {
+      newUser = db
+        .from('users')
+        .withDeleted()
+        .update({ deleted_at: null, ...user })
+        .where(eq('id', existingUser.id))
+        .select('*')
+        .single();
+    } else {
+      newUser = db
+        .from('users')
+        .insert(user)
+        .select('*')
+        .single();
+    }
     if (!newUser) throw new ApiError({ code: 500, message: 'Failed to create user' });
 
     let newAvatar: Avatar | null = null;

@@ -19,9 +19,17 @@ export function userRoutes(fastify: FastifyInstance) {
     }
   }>('/:userId?', async (request, reply) => {
     try {
-      const token = extractJWTFromHeader(request.cookies.access_token);
+      let token_sub;
+      if (request.cookies.access_token) {
+        const token = extractJWTFromHeader(request.cookies.access_token);
+        token_sub = token.payload.sub;
+      } else if (request.params.userId) {
+        token_sub = request.params.userId;
+      } else {
+        throw new ApiError({ code: 404, 'message': "User not found" });
+      }
       try {
-        const { user, avatar } = getUser(token.payload.sub);
+        const { user, avatar } = getUser(token_sub);
         if (!user) {
           return reply.status(404).send({ success: false, message: "No such user" })
         } else {

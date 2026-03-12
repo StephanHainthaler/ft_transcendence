@@ -298,7 +298,7 @@ export function authRoutes(fastify: FastifyInstance) {
 
     } catch (e) {
       request.log.error(e);
-      return reply.code(500).send({ success: false, message: `OAuth Login Error` });
+      return reply.code(401).send({ success: false, message: `OAuth Login Error` });
     }
   });
 
