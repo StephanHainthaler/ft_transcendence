@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "npm run prepare && vite dev --mode development",
     "prod": "node build",
+	"prebuild": "svelte-kit sync || echo ''",
 		"build": "vite build --mode production -c vite.config.prod.ts",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",

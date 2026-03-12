@@ -150,6 +150,10 @@
     showPasswordRepeat = !showPasswordRepeat;
   };
 
+  const onDialogOpenChange = () => {
+    deleteDialogOpen = !deleteDialogOpen
+  }
+
   $effect(() => {
     if (!editMode) {
       showPassword = false;
@@ -161,7 +165,7 @@
 
 </script>
 
-<Dialog.Root open={deleteDialogOpen}>
+<Dialog.Root open={deleteDialogOpen} onOpenChange={onDialogOpenChange}>
   <Dialog.Content>
     <Dialog.Header>
       <Dialog.Title>{$t('profile.delete_account', 'Delete Account')}</Dialog.Title>
