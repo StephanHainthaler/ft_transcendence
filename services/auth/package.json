@@ -1,0 +1,22 @@
+{
+  "name": "@ft_transcendence/auth",
+  "scripts": {
+    "build": "npm run prepare && tsc && tsc-alias",
+    "prepare": "mkdirp db",
+    "dev": "npm run prepare && tsx watch --env-file=../../env/dev/.env.auth src/index.ts",
+    "test": "tsx --test --test-reporter=spec ./tests/*.test.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@types/node": "^24.10.0",
+    "argon2": "^0.44.0",
+    "better-sqlite3": "^12.6.2",
+    "fastify": "^5.6.1",
+    "fastify-pino-pretty": "^5.2.0",
+    "tsc-alias": "^1.8.16",
+    "mkdirp": "^3.0.1",
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}

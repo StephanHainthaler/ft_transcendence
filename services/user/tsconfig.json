@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../../shared/*"],
+      "@server/*": ["../shared-server/*"]
+    }
+  },
+  "include": ["src/**/*", "../../shared/**/*, tests/**/*.test.ts", "../shared-server/*"],
+  "exclude": ["**/*test*"]
+}

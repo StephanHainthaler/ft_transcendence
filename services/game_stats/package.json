@@ -1,0 +1,23 @@
+{
+	"name": "@ft_transcendence/game_stats",
+	"description": "Game Statistic",
+	"scripts": {
+		"build": "npm run prepare && tsc && tsc-alias --dir dist/services/game_stats",
+		"prepare": "mkdirp db",
+		"dev": "npm run prepare && tsx watch --env-file=../../env/dev/.env.game_stats ./src/index.ts",
+		"test": "tsx --tsconfig=./tsconfig.json --env-file=../../env/dev/.env.game_stats --test ./tests/tests.ts"
+	},
+	"dependencies": {
+		"@types/node": "^24.10.0",
+		"better-sqlite3": "^12.4.1",
+		"fastify": "^5.6.2",
+		"fastify-pino-pretty": "^5.2.0",
+		"mkdirp": "^3.0.1",
+		"tsc-alias": "^1.8.16",
+		"typescript": "^5.9.3"
+	},
+	"devDependencies": {
+		"@types/better-sqlite3": "^7.6.13",
+		"tsx": "^4.16.2"
+	}
+}

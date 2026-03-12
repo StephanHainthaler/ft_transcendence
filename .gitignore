@@ -1,0 +1,15 @@
+!env
+.claude/
+*node_modules
+*.nfs*
+dist
+*package-lock.json
+frontend/.svelte-kit/
+build/
+*.db
+**/*.db
+services/**/db/
+frontend/.vscode/
+.vscode
+*.env*
+!.env.example

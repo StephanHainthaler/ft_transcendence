@@ -1,0 +1,35 @@
+Pong definitions and rules:
+
+1.) Canvas:
+
+    -) Background:  black
+    -) Players:     white
+    -) Ball:        white
+    -) U/L Borders: white
+    -) Points:      white
+    -) Middle line: white
+    -) Timer:       white / red
+
+2.) Players:
+
+    -) Will be displayed via rectangles on the left and right halves of the screen. There may be space between the left/right screen borders and the players.
+    -) The player on the left side will be considered player 1 and the one on the right side will be considered player 2.
+    -) Can ONLY move vertically between the upper and lower borders.
+    -) When playing locally against an opponent, moving will be done via keys 'W' or 'ARROW_UP' for moving up and 'S' or 'ARROW_DOWN' for moving down for player 1 and player 2 respectively.
+    -) When playing against an AI opponent, moving will be done via keys 'W' for moving up and 'S' for moving down.
+
+3.) Ball:
+
+    -) EVERY time a new round starts, meaning until one opponent scores a point, the ball will RANDOMLY choose a direction and a RANDOM angle to go from the middle line.
+    -) The angle should be within reasonable boundaries
+    -) After the round starts, the ball should have a slower intial speed. When the ball is then returned by a player, the velocity should increase to a reasonable tempo.
+    -) Apart from the inital velocity to the first return of the ball, its speed should consistently be the same.
+    -) If a player touches the ball from their front or the the top/bottom of the rectangle, the direction should change according on where the ball hit the player.
+
+4.) Match:
+
+    -) The game ends either when one player reaches the maximum number of points or when the match duration is exceeded.
+    -) Should both players have the sam amount of point when the match duration is exceeded, the match prolongs until one player scores a point.
+    -) A player earns points by scoring a goal against the opponents by getting the ball past their enemies.
+    -) There should be a timer showing the remaining time of the match. Before the match starts, there should be a previous countdown of at least three seconds.
+    -) When the match ends, a message should be displayed showing the winner and the final score.
