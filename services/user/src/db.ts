@@ -14,7 +14,7 @@ export interface Schema {
 const users = defineTable('users', {
   ...modelDefinition(),
   name: text().notNull(),
-  user_name: text().unique(),
+  user_name: text().unique().notNull(),
   two_fa_enabled: int().default(0),
 });
 

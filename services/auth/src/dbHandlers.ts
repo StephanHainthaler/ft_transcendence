@@ -1,7 +1,7 @@
 import { db } from "./db";
 import { AuthUser, Session } from "./db";
 import { AuthUserClient, User } from "@shared/user"
-import { createUser } from "@server/user/api"
+import { createUser, getUser } from "@server/user/api"
 import argon2 from "argon2";
 import { generateJWT } from "./jwt";
 import crypto from "crypto";
@@ -118,11 +118,15 @@ export async function verifyUserCredentials({
   email, user_name, passwd,
 }: {
   email?: string, user_name?: string, passwd?: string
-}): Promise<AuthUser> {
+}, authUser?: AuthUser): Promise<AuthUser> {
   if (!email && !user_name) throw new ApiError({ message: "Missing email or user_name", code: 400 });
   if (!passwd) throw new ApiError({ message: "Missing password", code: 400 });
 
-  const user = getAuthUser({ user_name, email });
+  let user;
+  if (!authUser)
+    user = getAuthUser({ user_name, email });
+  else
+    user = authUser;
 
   if (!user) throw new ApiError({ message: "Invalid credentials", code: 401 });
   if (!await argon2.verify(user.passwd, passwd)) throw new ApiError({ message: "Invalid credentials", code: 401 });
@@ -148,21 +152,56 @@ export async function updateUserCredentials(newAuthUser: Partial<AuthUser>) {
 }
 
 export async function createAuthUser(authUser: Partial<AuthUser>): Promise<{ user: User, authUser: AuthUser }> {
-  const user = { name: authUser.user_name };
-  const { user: newUser } = await createUser(user);
-  authUser.user_id = newUser.id;
-  authUser.two_fa_enabled = authUser.two_fa_enabled ?? 0;
-
-  if (!authUser.passwd) throw new ApiError({ code: 404, message: "Password missing" });
+  if (!authUser.passwd) throw new ApiError({ code: 400, message: "Password missing" });
+  const plainPasssord = authUser.passwd;
   authUser.passwd = await hashPassword(authUser.passwd);
 
-  let newAuthUser;
+  let existingAuthUser;
   try {
-    newAuthUser = db
+    existingAuthUser = db
       .from('auth_users')
-      .insert(authUser)
       .select('*')
+      .withDeleted()
+      .where(eq('oauth_id', authUser.oauth_id ?? 0))
+      .or(eq('user_name', authUser.user_name))
+      .or(eq('email', authUser.email))
       .single();
+  } catch (e) {
+    throw sqliteErrorToApiError(e);
+  }
+
+  let newAuthUser;
+  let newUser;
+  try {
+    if (existingAuthUser) {
+      if (!authUser.oauth_id)
+        await verifyUserCredentials({ email: authUser.email, passwd: plainPasssord, user_name: authUser.user_name }, existingAuthUser);
+      const user: Partial<User> = { user_name: authUser.user_name, name: authUser.user_name };
+      const { user: createdUser } = await createUser(user);
+      newUser = createdUser;
+      authUser.user_id = newUser.id;
+      authUser.two_fa_enabled = authUser.two_fa_enabled ?? 0;
+
+      const query = db
+        .from('auth_users')
+        .withDeleted()
+        .update({ deleted_at: null, ...authUser })
+        .where(eq('id', existingAuthUser.id))
+        .select('*');
+      newAuthUser = query.single();
+    } else {
+      const user = { user_name: authUser.user_name, name: authUser.user_name };
+      const { user: createdUser } = await createUser(user);
+      newUser = createdUser;
+      authUser.user_id = newUser.id;
+      authUser.two_fa_enabled = authUser.two_fa_enabled ?? 0;
+
+      newAuthUser = db
+        .from('auth_users')
+        .insert(authUser)
+        .select('*')
+        .single();
+    }
   } catch (e) {
     throw sqliteErrorToApiError(e);
   }
