@@ -225,6 +225,7 @@
     "choose": "Choose",
     "winn_is": "And the Winner is...",
     "start": "Start",
+    "finish": "Finish",
     "inval_user_count": "Invalid User count!",
     "description": "Please select an even number of participants",
     "remove": "Remove",
