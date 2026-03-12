@@ -22,6 +22,7 @@ clean:
 
 fclean: clean
 	@npm run clean:db
+	@docker compose down -v
 
 test:
 	npm run test:backend

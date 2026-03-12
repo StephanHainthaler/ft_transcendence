@@ -11,3 +11,5 @@ build/
 services/**/db/
 frontend/.vscode/
 .vscode
+*.env*
+!.env.example
