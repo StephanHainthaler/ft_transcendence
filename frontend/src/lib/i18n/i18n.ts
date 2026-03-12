@@ -12,7 +12,6 @@ const savedLocale = typeof window !== 'undefined' ? localStorage.getItem('app_lo
 
 i18next.init({
   lng: savedLocale || 'en',
-  lng: savedLocale || 'en',
   fallbackLng: 'en',
   resources: {
     en: { translation: en },
@@ -21,7 +20,6 @@ i18next.init({
   },
   interpolation: { escapeValue: false },
   parseMissingKeyHandler: (key, defaultValue) => {
-    console.warn(`Missing translation key: ${key}`);
     return defaultValue || key;
   }
 });
