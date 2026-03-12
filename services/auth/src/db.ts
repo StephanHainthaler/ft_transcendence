@@ -39,7 +39,7 @@ const sessions = defineTable(
   'sessions', {
     ...modelDefinition(),
     auth_id: int().notNull().notNull().references(() => authUsers.columns.id),
-    user_id: int().unique().notNull(),
+    user_id: int().unique().notNull().references(() => authUsers.columns.user_id),
     token: text().notNull(),
     expires_in: int().notNull(),
     minted_at: int().notNull()

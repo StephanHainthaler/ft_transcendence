@@ -1,7 +1,7 @@
 import { db } from "./db";
 import { AuthUser, Session } from "./db";
 import { AuthUserClient, User } from "@shared/user"
-import { createUser, getUser } from "@server/user/api"
+import { createUser } from "@server/user/api"
 import argon2 from "argon2";
 import { generateJWT } from "./jwt";
 import crypto from "crypto";
