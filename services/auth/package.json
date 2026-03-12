@@ -1,10 +1,9 @@
 {
   "name": "@ft_transcendence/auth",
   "scripts": {
-    "build": "tsc && tsc-alias",
-    "predev": "mkdirp db",
-    "prebuild": "mkdirp db",
-    "dev": "tsx watch --env-file=../../env/dev/.env.auth src/index.ts",
+    "build": "npm run prepare && tsc && tsc-alias",
+    "prepare": "mkdirp db",
+    "dev": "npm run prepare && tsx watch --env-file=../../env/dev/.env.auth src/index.ts",
     "test": "tsx --test --test-reporter=spec ./tests/*.test.ts"
   },
   "dependencies": {

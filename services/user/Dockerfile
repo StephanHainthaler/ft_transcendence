@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY services/user/package*.json ./services/user/
 COPY services/shared-server/package*.json ./services/shared-server/
-RUN npm install --loglevel=error
+RUN npm install
 
 COPY shared ./shared
 COPY services/shared-server ./services/shared-server

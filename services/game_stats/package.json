@@ -2,10 +2,9 @@
 	"name": "@ft_transcendence/game_stats",
 	"description": "Game Statistic",
 	"scripts": {
-		"build": "tsc && tsc-alias --dir dist/services/game_stats",
-		"prebuild": "mkdirp db",
-		"predev": "mkdirp db",
-		"dev": "tsx watch --env-file=../../env/dev/.env.game_stats ./src/index.ts",
+		"build": "npm run prepare && tsc && tsc-alias --dir dist/services/game_stats",
+		"prepare": "mkdirp db",
+		"dev": "npm run prepare && tsx watch --env-file=../../env/dev/.env.game_stats ./src/index.ts",
 		"test": "tsx --tsconfig=./tsconfig.json --env-file=../../env/dev/.env.game_stats --test ./tests/tests.ts"
 	},
 	"dependencies": {

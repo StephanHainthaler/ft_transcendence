@@ -24,7 +24,7 @@
     "docker:build:api": "npm run build -w @ft_transcendence/api",
     "clean:workspaces": "npm run clean --workspaces --if-present",
     "clean:root": "rm -rf node_modules",
-    "clean:db": "rm -f services/**/db/*.db services/**/db/*.db-journal services/**/db/*.db-wal",
+    "clean:db": "rm -rf services/**/db services/**/data",
     "clean": "npm run clean:workspaces && npm run clean:root"
   },
   "devDependencies": {
