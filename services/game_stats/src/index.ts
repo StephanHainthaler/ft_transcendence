@@ -35,7 +35,7 @@ async function start()
 				request.log.error(error, `GLOBAL SERVER ERROR: ${errorMessage}`);
 				return reply.code(500).send({
           success: false,
-          message: 'Internal Server Error', // 👈 Виправлення: завжди загальне повідомлення
+          message: 'Internal Server Error',
         });
 			}
 			else

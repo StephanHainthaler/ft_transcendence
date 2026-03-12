@@ -62,7 +62,7 @@
     "pass_confirm": "Passwort bestätigen",
     "loading": "Registrierung...",
     "pass_no_match": "Passwörter stimmen nicht überein",
-    "username_taken": "Benutzername ist bereits vergeben"
+    "username_taken": "Benutzername oder Email ist bereits vergeben"
   },
   "OAuth": {
     "oauth": "OAuth",

@@ -26,23 +26,6 @@
         }
     };
 
-    // <!-- <button 
-    //   class="group relative overflow-hidden border-2 border-accent/20 bg-accent/5 p-8 transition-all hover:border-accent hover:bg-accent/10"
-    //   onclick={() => {goto('/tournament')}}
-    // >
-    //   <div class="relative flex items-center gap-6">
-    //     <div class="p-3 bg-accent/10 border border-accent/20 group-hover:bg-accent group-hover:text-black transition-all">
-    //       <Trophy class="size-8" fill="currentColor" />
-    //     </div>
-    //     <div class="md:table-cell text-left max-w-[250px] align-middle truncate pr-2">
-    //       <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tighter italic group-hover:text-accent">
-    //         {$t('tournament.tournament', 'Tournament') || "Tournament"}
-    //       </h2>
-    //     </div>
-    //   </div>
-    //   <Trophy class="size-10 sm:size-20 text-accent/5 absolute -right-4 -bottom-4 -rotate-12 group-hover:scale-110 transition-transform" />
-    // </button> -->
-
     const theme = $derived(themes[colorClass] || themes.primary);
 
 </script>

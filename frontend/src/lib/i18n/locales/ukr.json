@@ -62,7 +62,7 @@
     "pass_confirm": "Підтвердіть пароль",
     "loading": "Реєстрація...",
     "pass_no_match": "Паролі не збігаються",
-    "username_taken": "Ім'я користувача вже зайняте"
+    "username_taken": "Ім'я користувача або email вже зайняті"
   },
   "OAuth": {
     "oauth": "OAuth",

@@ -21,7 +21,7 @@ export const user_stats_table = defineTable('user_stats', {
 
 export const match_history_table = defineTable('match_history', {
   ...modelDefinition(),
-	timestamp: int().notNull(), //Unix-time??
+	timestamp: int().notNull(),
 	player_one_id: int().notNull().references(() => user_stats_table.columns.user_id),
 	player_two_id: int().notNull().references(() => user_stats_table.columns.user_id),
 	winner_id: int().notNull().references(() => user_stats_table.columns.user_id),
@@ -30,7 +30,6 @@ export const match_history_table = defineTable('match_history', {
   p2_score: int().notNull()
 });
 
-// export let db = new DB<Schema>();
 let databaseInstance: DB<Schema> | null = null;
 
 export function getDb(): DB<Schema> {
